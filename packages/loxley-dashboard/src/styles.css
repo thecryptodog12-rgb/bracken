@@ -2648,3 +2648,137 @@ button {
   width: 16px;
   height: 16px;
 }
+
+/* ── E3-levenscyclus ────────────────────────────────────────────────────────
+   Twee banen: publiek boven, verzegeld onder. De enige lijn die omhoog kruist
+   is de laatste -- dat is het hele punt van het plaatje. */
+.lifecycle {
+  margin: 34px 0 0;
+}
+.lifecycle__cap {
+  max-width: 64ch;
+  margin-bottom: 18px;
+}
+.lifecycle__cap p {
+  margin: 0;
+  color: var(--ink-3);
+  line-height: 1.55;
+}
+.lifecycle__svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.lc-band {
+  fill: var(--accent-bg);
+}
+.lc-band--sealed {
+  fill: color-mix(in oklab, var(--ink) 8%, transparent);
+}
+.lc-lane-label {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  fill: var(--ink-4);
+}
+.lc-lane-label--sealed {
+  fill: var(--ink-4);
+}
+
+.lc-link {
+  fill: none;
+  stroke: var(--ink-4);
+  stroke-width: 1.4;
+  stroke-dasharray: 3 4;
+}
+/* De onthulling is de enige doorgetrokken, gekleurde lijn. */
+.lc-link--reveal {
+  stroke: var(--accent-deep);
+  stroke-width: 2.2;
+  stroke-dasharray: none;
+}
+
+.lc-node__ring {
+  fill: var(--paper-2);
+  stroke: var(--ink-4);
+  stroke-width: 1.4;
+}
+.lc-node--public .lc-node__ring {
+  stroke: var(--accent-deep);
+}
+.lc-node__num {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-anchor: middle;
+  fill: var(--ink-2);
+}
+.lc-node__label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-anchor: middle;
+  fill: var(--ink-3);
+}
+
+.lifecycle__steps {
+  list-style: none;
+  margin: 26px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+.lifecycle__step {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--paper-2);
+  border: 1px solid var(--rule-soft);
+}
+/* Verzegelde stappen krijgen een messing merkteken: hier gebeurt het werk dat
+   niemand kan inzien. */
+.lifecycle__step--sealed {
+  border-left: 2px solid var(--brass);
+}
+.lifecycle__step--public {
+  border-left: 2px solid var(--accent-deep);
+}
+.lifecycle__step-num {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-4);
+  line-height: 1.5;
+}
+.lifecycle__step h4 {
+  margin: 0 0 3px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.lifecycle__step p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+.lifecycle__foot {
+  margin: 18px 0 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-4);
+  border-top: 1px solid var(--rule-soft);
+  padding-top: 14px;
+}
+
+@media (max-width: 720px) {
+  .lc-lane-label {
+    font-size: 8px;
+  }
+  .lc-node__label {
+    font-size: 8.5px;
+  }
+}

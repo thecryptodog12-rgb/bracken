@@ -14,6 +14,7 @@ import Pulse from './Pulse'
 import Inspector from './Inspector'
 import Loader from './Loader'
 import Operator from './Operator'
+import Lifecycle from './Lifecycle'
 import { useAllE3s, useCrispPolls, useE3Details, useRecentBallots } from './lib/useE3s'
 import { adaptHistoryEntries, adaptInspectorDetail, adaptInspectorE3List, adaptPoll } from './lib/adapt'
 import { formatE3Id } from './lib/pollMeta'
@@ -320,6 +321,10 @@ export default function App() {
           ) : !hasE3s ? (
             <div className='inspector'>
               <StatusNote>No E3s on the network yet. They will appear here once one is requested on-chain.</StatusNote>
+              {/* Een lege lijst is de eerste indruk die de meeste bezoekers
+                  krijgen. In plaats van doodlopen: laten zien wat er straks in
+                  die lijst verschijnt en waarom het bijzonder is. */}
+              <Lifecycle />
             </div>
           ) : (
             <Inspector
