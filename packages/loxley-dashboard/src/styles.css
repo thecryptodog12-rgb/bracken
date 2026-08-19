@@ -16,15 +16,19 @@
      alles wat op de keten leeft, messing voor het handjevol dingen die geld
      of risico betekenen (bonds, tickets, slashing).
      ------------------------------------------------------------------ */
-  --ink: #15211b;
-  --ink-2: #2b3a33;
-  --ink-3: #57665e;
-  --ink-4: #8a978f;
-  --rule: #e2e6dd;
-  --rule-soft: #edf0e8;
-  --paper: #f6f3e9;
-  --paper-2: #fffdf7;
-  --paper-3: #ece7d9;
+  /* Geen zwart. De inkt is greenwood, het papier is getint -- een neutraal
+     grijs blad leest als "standaard template" en dat is precies wat dit niet
+     moet zijn. Datavlakken (--paper-2) blijven bijna-wit, anders wordt een
+     tabel met cijfers onleesbaar. */
+  --ink: #1d3527;
+  --ink-2: #33513c;
+  --ink-3: #5c7a65;
+  --ink-4: #8ba392;
+  --rule: #cfe0cb;
+  --rule-soft: #dcebd7;
+  --paper: #e9f4e6;
+  --paper-2: #fbfdfa;
+  --paper-3: #d8e8d4;
 
   --accent-bg: #e7f1e8;
   --accent-soft: #c3ddc9;
@@ -39,6 +43,9 @@
   --foot-bg: #15211b;
   --foot-ink: #f6f3e9;
 
+  /* Display staat los van de leesserif: hoog contrast, alleen voor de paar
+     plekken waar de pagina iets beweert. */
+  --display: 'Instrument Serif', 'Iowan Old Style', Palatino, Georgia, serif;
   --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
   --sans: 'Geist', 'Söhne', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   --mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', 'Menlo', monospace;
@@ -74,15 +81,15 @@
 }
 
 :root[data-theme='dark'] {
-  --ink: #e8eee6;
-  --ink-2: #c4cfc6;
-  --ink-3: #94a29a;
-  --ink-4: #6d7c74;
-  --rule: #263029;
-  --rule-soft: #1d2620;
-  --paper: #10160f;
-  --paper-2: #161e17;
-  --paper-3: #1c251d;
+  --ink: #e4f0e4;
+  --ink-2: #bed2c1;
+  --ink-3: #8ea795;
+  --ink-4: #67806f;
+  --rule: #22352a;
+  --rule-soft: #1a2a20;
+  --paper: #0d1610;
+  --paper-2: #131f17;
+  --paper-3: #1a281e;
   --accent-bg: #14291d;
   --accent-soft: #234c36;
   --accent-deep: #6fcb9a;
@@ -276,11 +283,11 @@ button {
   }
 }
 .intro__title {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-weight: 400;
-  font-size: clamp(34px, 4.4vw, 52px);
+  font-size: clamp(42px, 5.6vw, 72px);
   line-height: 1.08;
-  letter-spacing: -0.018em;
+  letter-spacing: -0.012em;
   margin: 0 0 18px;
   text-wrap: balance;
   color: var(--ink);
@@ -821,19 +828,20 @@ button {
 
 /* ── History ────────────────────────────────────────────────────────────── */
 .section__eyebrow {
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink-3);
-  font-weight: 540;
-  margin-bottom: 8px;
+  color: var(--ink-4);
+  font-weight: 400;
+  margin-bottom: 12px;
 }
 .section__title {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-weight: 400;
-  font-size: 28px;
+  font-size: 34px;
   margin: 0;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
   color: var(--ink);
 }
 .history__head {
@@ -1550,11 +1558,11 @@ button {
   opacity: 0.6;
 }
 .insp-head__title {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-weight: 400;
-  font-size: clamp(24px, 2.6vw, 32px);
+  font-size: clamp(28px, 3.2vw, 42px);
   line-height: 1.2;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
   margin: 0 0 14px;
   text-wrap: balance;
   color: var(--ink);
@@ -2019,11 +2027,11 @@ button {
   max-width: 760px;
 }
 .opguide__title {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-weight: 400;
-  font-size: clamp(28px, 3.4vw, 40px);
+  font-size: clamp(36px, 4.4vw, 56px);
   line-height: 1.12;
-  letter-spacing: -0.022em;
+  letter-spacing: -0.012em;
   margin: 6px 0 12px;
   color: var(--ink);
   text-wrap: balance;
@@ -2412,10 +2420,10 @@ button {
   margin-bottom: 20px;
 }
 .reqs__title {
-  font-family: var(--serif);
-  font-size: 27px;
+  font-family: var(--display);
+  font-size: 34px;
   line-height: 1.15;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
   margin: 0 0 8px;
   color: var(--ink);
 }
