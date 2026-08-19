@@ -10,7 +10,7 @@ import Footer from './components/Footer'
 
 export default {
   logo: (
-    <Link href='https://theloxley.com' target='_self'>
+    <Link href='https://theinterfold.com' target='_self'>
       <img src='/loxley-logo.png' style={{ maxWidth: '150px', borderRadius: '0px' }} />
     </Link>
   ),
@@ -20,7 +20,7 @@ export default {
     key: 'enclave-rename',
     text: (
       <span>
-        Enclave is now <strong>The Loxley</strong>.
+        Enclave is now <strong>Loxley</strong>.
       </span>
     ),
   },
@@ -43,7 +43,7 @@ export default {
     const { asPath } = useRouter()
     if (asPath !== '/') {
       return {
-        titleTemplate: '%s - The Loxley',
+        titleTemplate: '%s - Loxley',
       }
     }
   },
@@ -53,8 +53,8 @@ export default {
     } = useConfig()
     return (
       <>
-        <title>{title ? title : 'The Loxley'}</title>
-        <meta name='title' content={title ? title : 'The Loxley'} />
+        <title>{title ? title : 'Loxley'}</title>
+        <meta name='title' content={title ? title : 'Loxley'} />
         <meta
           name='description'
           content={
@@ -65,8 +65,8 @@ export default {
         />
 
         <meta property='og:type' content='website' />
-        <meta property='og:url' content='https://docs.theloxley.com' />
-        <meta property='og:title' content={title ? title : 'The Loxley'} />
+        <meta property='og:url' content='https://docs.theinterfold.com' />
+        <meta property='og:title' content={title ? title : 'Loxley'} />
         <meta
           property='og:description'
           content={
@@ -75,11 +75,11 @@ export default {
               : 'Infrastructure for confidential coordination powered by Encrypted Execution Environments (E3).'
           }
         />
-        <meta property='og:image' content='https://docs.theloxley.com/loxley-meta.jpg' />
+        <meta property='og:image' content='https://docs.theinterfold.com/loxley-meta.jpg' />
 
         <meta property='twitter:card' content='summary_large_image' />
-        <meta property='twitter:url' content='https://docs.theloxley.com' />
-        <meta property='twitter:title' content={title ? title : 'The Loxley'} />
+        <meta property='twitter:url' content='https://docs.theinterfold.com' />
+        <meta property='twitter:title' content={title ? title : 'Loxley'} />
         <meta
           property='twitter:description'
           content={

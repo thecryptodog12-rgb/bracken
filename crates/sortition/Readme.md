@@ -6,7 +6,7 @@ encryption, and decryption.
 
 ## Overview
 
-The Loxley system uses a score-based sortition mechanism to select a committee of ciphernodes to
+Loxley system uses a score-based sortition mechanism to select a committee of ciphernodes to
 perform threshold homomorphic encryption operations. The flow involves:
 
 1. **Operator Setup** - Bonding ciphernode bond tokens and ticket balance

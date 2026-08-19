@@ -7,11 +7,11 @@
 // README, and the Sepolia block explorer) — no guessed paths.
 
 export const LINKS = {
-  site: 'https://theloxley.com/',
-  blog: 'https://blog.theloxley.com/',
-  docs: 'https://docs.theloxley.com/introduction',
-  architecture: 'https://docs.theloxley.com/architecture-overview',
-  crisp: 'https://docs.theloxley.com/CRISP/introduction',
+  site: 'https://theinterfold.com/',
+  blog: 'https://blog.theinterfold.com/',
+  docs: 'https://docs.theinterfold.com/introduction',
+  architecture: 'https://docs.theinterfold.com/architecture-overview',
+  crisp: 'https://docs.theinterfold.com/CRISP/introduction',
   repo: 'https://github.com/gnosisguild/loxley',
   explorer: 'https://sepolia.etherscan.io',
 } as const

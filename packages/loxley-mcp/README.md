@@ -1,8 +1,8 @@
 # @loxley/mcp
 
-MCP server for [The Loxley](https://theloxley.com) documentation. Allows AI assistants to answer
-questions about The Loxley by fetching content directly from
-[docs.theloxley.com](https://docs.theloxley.com).
+MCP server for [Loxley](https://theinterfold.com) documentation. Allows AI assistants to answer
+questions about Loxley by fetching content directly from
+[docs.theinterfold.com](https://docs.theinterfold.com).
 
 ## Requirements
 

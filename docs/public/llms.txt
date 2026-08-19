@@ -1,21 +1,21 @@
-# The Loxley
+# Loxley
 
-The Loxley is a distributed network for confidential coordination between independent parties.
+Loxley is a distributed network for confidential coordination between independent parties.
 
 It enables shared, verifiable outcomes from private inputs without third-party custody, data exposure, or reliance on trusted hardware.
 
 Key concept: confidential coordination — producing shared outcomes from private inputs across independent parties.
 
 Start here:
-https://docs.theloxley.com/introduction
+https://docs.theinterfold.com/introduction
 
 Related resources:
-https://theloxley.com/
-https://blog.theloxley.com/
+https://theinterfold.com/
+https://blog.theinterfold.com/
 
 Core resources:
-https://docs.theloxley.com/architecture-overview
-https://docs.theloxley.com/use-cases
+https://docs.theinterfold.com/architecture-overview
+https://docs.theinterfold.com/use-cases
 
 Repository:
 https://github.com/gnosisguild/loxley

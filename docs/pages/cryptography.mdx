@@ -22,7 +22,7 @@ You do not need to read every section in order. If the execution model is still 
 When many parties jointly generate keys or decrypt, classical threshold protocols spread trust
 across participants: if enough of them behave, the protocol succeeds. That works well inside a
 closed group, but it leaves **observers** with little to verify—they mostly assume the right nodes
-ran the right steps. The Loxley design pushes in a different direction, often summarised as the
+ran the right steps. Loxley design pushes in a different direction, often summarised as the
 **coordination trilemma**: keep individual data and intermediate secrets confidential, avoid giving
 any one party full control over decryption, and still make each cryptographic step **publicly
 checkable** without re-running the whole computation.
@@ -35,7 +35,7 @@ rather than on blind trust in operators.
 ### One execution, end to end
 
 Each confidential workload is an FHE program running inside an **E3**. After someone requests such a
-computation, a committee of **N** [ciphernodes](https://blog.theloxley.com/ciphernodes/) is drawn
+computation, a committee of **N** [ciphernodes](https://blog.theinterfold.com/ciphernodes/) is drawn
 using **sortition**, so membership follows publicly checkable ticket scoring rather than a central
 picker. There is **no trusted dealer** handing out key material: every ciphernode contributes its
 own share of the work and takes part in **PVDKG** (publicly verifiable DKG), producing proofs

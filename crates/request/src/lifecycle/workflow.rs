@@ -6,7 +6,7 @@
 
 //! Pure, actor-free E3 lifecycle tracking service.
 //!
-//! The Loxley node is choreographed: each subsystem reacts to protocol events
+//! Loxley node is choreographed: each subsystem reacts to protocol events
 //! independently. Historically there was no single, durable source of truth for
 //! "what stage is this E3 at?". [`E3LifecycleService`] fills that gap. It is a
 //! pure observer over the lifecycle-bearing events on the bus: it maintains a

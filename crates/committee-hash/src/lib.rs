@@ -76,7 +76,7 @@ pub fn committee_hash_field_hex(addresses: &[Address]) -> (String, String) {
 /// `keccak256(abi.encode(chainId, loxley, e3Id, committeeHash,
 /// ciphertextOutputHash, committeePublicKey))`.
 ///
-/// The Loxley address prevents cross-deployment replay. The remaining
+/// Loxley address prevents cross-deployment replay. The remaining
 /// fields prevent replay across chains, E3s, committees, ciphertexts, or DKG
 /// keys within one deployment.
 pub fn hash_decryption_domain(

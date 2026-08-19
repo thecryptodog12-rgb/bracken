@@ -72,7 +72,7 @@ contract E3RefundManager is IE3RefundManager, Ownable2StepUpgradeable {
     //                 Storage Variables                      //
     //                                                        //
     ////////////////////////////////////////////////////////////
-    /// @notice The Loxley contract (contains lifecycle functionality)
+    /// @notice Loxley contract (contains lifecycle functionality)
     ILoxley public loxley;
     /// @notice The bonding registry for node rewards
     IBondingRegistry public bondingRegistry;
@@ -179,7 +179,7 @@ contract E3RefundManager is IE3RefundManager, Ownable2StepUpgradeable {
 
     /// @notice Initializes the E3RefundManager contract
     /// @param _owner The owner address
-    /// @param _loxley The Loxley contract address
+    /// @param _loxley Loxley contract address
     /// @param _treasury The protocol treasury address
     function initialize(
         address _owner,

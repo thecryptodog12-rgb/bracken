@@ -3,7 +3,17 @@ title: 'Ciphernode Operators'
 description: 'Overview of ciphernode operations, contracts, and lifecycle'
 ---
 
+import { Callout } from 'nextra/components'
+
 # Ciphernode Operators
+
+<Callout type='warning'>
+  **Loxley is not deployed yet.** Contract addresses on this page are placeholders. Loxley is a fork of
+  [theinterfold/interfold](https://github.com/theinterfold/interfold) targeting Robinhood Chain (chain id `4663`); the
+  addresses that used to sit here belonged to the upstream Interfold deployment on Ethereum and would have sent you to
+  someone else's contracts. They are archived in `packages/loxley-contracts/upstream-interfold-deployments.reference.json`.
+</Callout>
+
 
 Ciphernodes are the distributed workers that power the Loxley network. They participate in threshold
 cryptography to enable encrypted execution environments (E3s) while ensuring no single party can
@@ -11,7 +21,7 @@ access the underlying plaintext data.
 
 > **Interactive setup:** the dashboard has a step-by-step operator guide. It reads the live bonding
 > registry and sends each on-chain step from your wallet. Open
-> [Run a ciphernode](https://dashboard.theloxley.com/#operator).
+> [Run a ciphernode](https://dashboard.theinterfold.com/#operator).
 
 ## What is a Ciphernode?
 
@@ -29,7 +39,7 @@ malicious behavior.
 
 ## Contract Architecture
 
-The Loxley protocol uses several contracts that work together:
+Loxley protocol uses several contracts that work together:
 
 | Contract               | Purpose                                                             |
 | ---------------------- | ------------------------------------------------------------------- |
@@ -45,15 +55,15 @@ The Loxley protocol uses several contracts that work together:
 
 | Contract                  | Address                                      | Deploy block |
 | ------------------------- | -------------------------------------------- | ------------ |
-| Loxley                    | `0x28cF63B459e6218C69EA97ea7D90541cf648c715` | 25786382     |
-| CiphernodeRegistry        | `0xC927A5B2d8F68697bC28C0670df05178c93df2d7` | 25786378     |
-| BondingRegistry           | `0x0ec90465095C21830BEcED07e032809A2Bd2915F` | 25473398     |
-| SlashingManager           | `0x974E865B1BB24AF2a9ef8204AdEA9251Cc7C5FD9` | 25786375     |
-| E3RefundManager           | `0x1940eF168f4E0B3dA24BEca539856684793B0F6e` | 25786384     |
-| LoxleyTicketToken         | `0xC0B5b49a3949eC4B520eF21BaCFE16e3695F3B5D` | 25786372     |
-| LoxleyToken (LOX)         | `0xE172e9B6cfBeeB5593bDcE3f077356FDb33af904` | 25473449     |
-| USDS (fee token)          | `0xdC035D45d973E3EC169d2276DDab16f1e407384F` | 20663730     |
-| sUSDS (ticket collateral) | `0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD` | 20677434     |
+| Loxley                    | `0xTBD_NOT_DEPLOYED` | 25786382     |
+| CiphernodeRegistry        | `0xTBD_NOT_DEPLOYED` | 25786378     |
+| BondingRegistry           | `0xTBD_NOT_DEPLOYED` | 25473398     |
+| SlashingManager           | `0xTBD_NOT_DEPLOYED` | 25786375     |
+| E3RefundManager           | `0xTBD_NOT_DEPLOYED` | 25786384     |
+| LoxleyTicketToken         | `0xTBD_NOT_DEPLOYED` | 25786372     |
+| LoxleyToken (LOX)         | `0xTBD_NOT_DEPLOYED` | 25473449     |
+| USDS (fee token)          | `0xTBD_NOT_DEPLOYED` | 20663730     |
+| sUSDS (ticket collateral) | `0xTBD_NOT_DEPLOYED` | 20677434     |
 
 Mainnet E3 requests can remain paused during operator onboarding. Check `requestsPaused()` on the
 Loxley contract before you ask requesters to submit E3s. Ciphernodes can still bond, register, and
@@ -63,15 +73,15 @@ add ticket collateral while requests are paused.
 
 | Contract             | Address                                      | Deploy block |
 | -------------------- | -------------------------------------------- | ------------ |
-| Loxley               | `0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7` | 11459000     |
-| CiphernodeRegistry   | `0xCD571e311c11a6259ad95b7F95C1f2AF2b60ae6A` | 11458978     |
-| BondingRegistry      | `0x77384A924C18FfE00A9325815723121534105Abd` | 11458979     |
-| SlashingManager      | `0x4CE0107239719003ad07F65e0ae18a09aD2dcfDE` | 11458977     |
-| E3RefundManager      | `0x5967Ef0390760013Cc0A42e1ACf85DBb86619D17` | 11459002     |
-| LoxleyTicketToken    | `0x9e271C60139fA951EFb8954Dd0454B524630d767` | 11458976     |
-| LoxleyToken (LOX)    | `0x7ffCCe335EEd0f3e3CbaD491ac68BF72a223606B` | 11458986     |
-| MockUSDC (fee token) | `0xD4B8e32C718B87f81d8e58fB3a3f061D92CcBb27` | 11458975     |
-| Faucet               | `0x2797A03F78a4237D6ba97170589BBD1Dca382207` | 11458989     |
+| Loxley               | `0xTBD_NOT_DEPLOYED` | 11459000     |
+| CiphernodeRegistry   | `0xTBD_NOT_DEPLOYED` | 11458978     |
+| BondingRegistry      | `0xTBD_NOT_DEPLOYED` | 11458979     |
+| SlashingManager      | `0xTBD_NOT_DEPLOYED` | 11458977     |
+| E3RefundManager      | `0xTBD_NOT_DEPLOYED` | 11459002     |
+| LoxleyTicketToken    | `0xTBD_NOT_DEPLOYED` | 11458976     |
+| LoxleyToken (LOX)    | `0xTBD_NOT_DEPLOYED` | 11458986     |
+| MockUSDC (fee token) | `0xTBD_NOT_DEPLOYED` | 11458975     |
+| Faucet               | `0xTBD_NOT_DEPLOYED` | 11458989     |
 
 ### Proof Verification
 
@@ -82,7 +92,7 @@ intended for public-network rehearsal. Replace it before enabling production CRI
 
 | Mainnet bootstrap contract       | Address                                      | Deploy block |
 | -------------------------------- | -------------------------------------------- | ------------ |
-| MockE3Program                    | `0x4976E5E47852eFCe6851d35B95A1A2E19456F3D7` | 25786371     |
+| MockE3Program                    | `0xTBD_NOT_DEPLOYED` | 25786371     |
 | DeployableMockCiphertextVerifier | `0xB568e5aD762F7a75F1EC65A985ec4038F6409297` | 25786403     |
 
 > **The current Sepolia deployment does not verify proofs.** It was deployed with
@@ -92,11 +102,11 @@ intended for public-network rehearsal. Replace it before enabling production CRI
 
 | Mock contract          | Address                                      | Deploy block |
 | ---------------------- | -------------------------------------------- | ------------ |
-| MockE3Program          | `0x90Ec1EA7db6a722154f688dFc2694024c3e6948f` | 11458997     |
-| MockComputeProvider    | `0x7B1CAd2995e3b29E3c3B15d2ADfA51418C8A0775` | 11458993     |
-| MockDecryptionVerifier | `0xa40a028e15C0858AaE1E7DA851Bc39A0D7bf04Ab` | 11458994     |
-| MockCiphertextVerifier | `0xfef59f643085cD9D66B433DF563eDC329Fad17C7` | 11458995     |
-| MockPkVerifier         | `0xf051f38554AA2db3577be06e6Bb5302DdEFbd2ef` | 11458996     |
+| MockE3Program          | `0xTBD_NOT_DEPLOYED` | 11458997     |
+| MockComputeProvider    | `0xTBD_NOT_DEPLOYED` | 11458993     |
+| MockDecryptionVerifier | `0xTBD_NOT_DEPLOYED` | 11458994     |
+| MockCiphertextVerifier | `0xTBD_NOT_DEPLOYED` | 11458995     |
+| MockPkVerifier         | `0xTBD_NOT_DEPLOYED` | 11458996     |
 
 `loxley config check` reports this too, so you do not have to remember which deployment you are
 pointed at.
@@ -212,4 +222,4 @@ Follow these guides in order to become an active ciphernode operator:
 4. **[Exits, Rewards & Slashing](./exits-and-slashing)** - Learn about rewards and exit procedures
 
 To do the on-chain steps in a browser instead of the CLI, use the
-[interactive operator guide](https://dashboard.theloxley.com/#operator) on the dashboard.
+[interactive operator guide](https://dashboard.theinterfold.com/#operator) on the dashboard.

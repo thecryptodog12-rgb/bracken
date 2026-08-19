@@ -27,8 +27,8 @@ const Footer: React.FC = () => {
           <a href='https://warpcast.com/loxleye3' target='_blank' rel='noopener noreferrer' aria-label='Farcaster'>
             <CastleTurret size={18} />
           </a>
-          <a href='https://theloxley.com' target='_blank' rel='noopener noreferrer'>
-            Secured with The Loxley
+          <a href='https://theinterfold.com' target='_blank' rel='noopener noreferrer'>
+            Secured with Loxley
           </a>
           <a
             href='https://www.gnosisguild.org/'

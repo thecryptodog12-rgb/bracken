@@ -79,7 +79,7 @@ function PrivacyExplainer() {
             <li>
               <span className='privacy__num'>1</span>
               <div>
-                <b>Sealed on your device.</b> Each ballot is encrypted in your browser before it leaves you. The Loxley network only ever
+                <b>Sealed on your device.</b> Each ballot is encrypted in your browser before it leaves you. Loxley network only ever
                 sees ciphertext.
               </div>
             </li>

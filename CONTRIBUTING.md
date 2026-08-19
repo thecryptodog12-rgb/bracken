@@ -1,4 +1,4 @@
-# Contributing to The Loxley
+# Contributing to Loxley
 
 Thank you for your interest in contributing to the Loxley! We value your contributions in making
 Loxley better.

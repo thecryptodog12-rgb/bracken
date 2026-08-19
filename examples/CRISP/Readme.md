@@ -5,8 +5,8 @@ decision-making, leveraging fully homomorphic encryption (FHE) and distributed t
 cryptography (DTC) to enable verifiable secret ballots. Built with Loxley, CRISP safeguards
 democratic systems and decision-making applications against coercion, manipulation, and other
 vulnerabilities. To learn more about CRISP, you can read our
-[blog post](https://blog.theloxley.com/crisp-private-voting-secret-ballot-fhe-zkp-mpc/) or visit the
-[documentation](https://docs.theloxley.com/CRISP/introduction).
+[blog post](https://blog.theinterfold.com/crisp-private-voting-secret-ballot-fhe-zkp-mpc/) or visit the
+[documentation](https://docs.theinterfold.com/CRISP/introduction).
 
 ## Project Structure
 
@@ -29,7 +29,7 @@ CRISP/
 ```
 
 You can have an extended explanation of the single folders in the dedicated
-[documentation](https://docs.theloxley.com/CRISP/introduction#project-structure).
+[documentation](https://docs.theinterfold.com/CRISP/introduction#project-structure).
 
 ## Prerequisites
 

@@ -17,7 +17,7 @@ function eventAbi(abi: readonly any[], name: string): any {
 const LOXLEY_E3_REQUESTED = eventAbi(loxleyAbi as any, 'E3Requested')
 const LOXLEY_PLAINTEXT_PUBLISHED = eventAbi(loxleyAbi as any, 'PlaintextOutputPublished')
 const LOXLEY_REWARDS_DISTRIBUTED = eventAbi(loxleyAbi as any, 'RewardsDistributed')
-// The Loxley E3StageChanged event is the reliable, program-agnostic signal for
+// Loxley E3StageChanged event is the reliable, program-agnostic signal for
 // each lifecycle transition (the registry's CommitteePublished event signature
 // has drifted from this package's ABI on the live deployment, so we don't use it).
 const LOXLEY_E3_STAGE_CHANGED = eventAbi(loxleyAbi as any, 'E3StageChanged')

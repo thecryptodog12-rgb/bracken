@@ -12,7 +12,7 @@ and economics rather than trusted hardware. Committees of **ciphernodes** are se
 jointly generate a threshold BFV key (DKG), compute over encrypted inputs, and threshold-decrypt the
 output — every step backed by ZK proofs verified on-chain.
 
-- Docs: https://docs.theloxley.com · License: LGPL-3.0-only
+- Docs: https://docs.theinterfold.com · License: LGPL-3.0-only
 - Unified version across all crates and npm packages (currently 0.4.0)
 - Reference app: **CRISP** (`examples/CRISP`, excluded from the workspace)
 

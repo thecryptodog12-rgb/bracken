@@ -5,7 +5,17 @@ description:
   configuration, and BFV parameter switching'
 ---
 
+import { Callout } from 'nextra/components'
+
 # Deploy Your E3 to Sepolia
+
+<Callout type='warning'>
+  **Loxley is not deployed yet.** Contract addresses on this page are placeholders. Loxley is a fork of
+  [theinterfold/interfold](https://github.com/theinterfold/interfold) targeting Robinhood Chain (chain id `4663`); the
+  addresses that used to sit here belonged to the upstream Interfold deployment on Ethereum and would have sent you to
+  someone else's contracts. They are archived in `packages/loxley-contracts/upstream-interfold-deployments.reference.json`.
+</Callout>
+
 
 This tutorial takes you from a working local E3 (from [Quick Start](/quick-start) or CRISP) to a
 live deployment on Sepolia testnet.
@@ -27,13 +37,13 @@ You'll need:
   [sepoliafaucet.com](https://sepoliafaucet.com),
   [Google Cloud faucet](https://cloud.google.com/application/web3/faucet/ethereum/sepolia), or
   [PoW faucet](https://sepolia-faucet.pk910.de).
-- **Test LOX** — for ciphernode bonding (only if you're running your own nodes). The LoxleyToken
-  (LOX) is deployed at `0x7ffCCe335EEd0f3e3CbaD491ac68BF72a223606B`.
+- **Test LOX** — for ciphernode bonding (only if you're running your own nodes). LoxleyToken
+  (LOX) is deployed at `0xTBD_NOT_DEPLOYED`.
 - **Test USDC** — for E3 fees and tickets. Mock USDC at
-  `0xD4B8e32C718B87f81d8e58fB3a3f061D92CcBb27`.
+  `0xTBD_NOT_DEPLOYED`.
 
 > **Faucet:** the quickest way to get both test tokens is the on-chain faucet at
-> `0x2797A03F78a4237D6ba97170589BBD1Dca382207`. Run `loxley faucet` (with the `faucet` address set
+> `0xTBD_NOT_DEPLOYED`. Run `loxley faucet` (with the `faucet` address set
 > in your config) and it sends a fixed amount of LOX and mock USDC to your signer. Each token is
 > only topped up if your balance is below the per-token threshold. If the faucet runs dry, reach out
 > on the [community Telegram](https://t.me/enclave_e3).
@@ -61,9 +71,9 @@ PRIVATE_KEY=0x...
 CHAIN_ID=11155111
 
 # Deployed Loxley contract addresses (Sepolia)
-LOXLEY_ADDRESS=0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7
-CIPHERNODE_REGISTRY_ADDRESS=0xCD571e311c11a6259ad95b7F95C1f2AF2b60ae6A
-FEE_TOKEN_ADDRESS=0xD4B8e32C718B87f81d8e58fB3a3f061D92CcBb27
+LOXLEY_ADDRESS=0xTBD_NOT_DEPLOYED
+CIPHERNODE_REGISTRY_ADDRESS=0xTBD_NOT_DEPLOYED
+FEE_TOKEN_ADDRESS=0xTBD_NOT_DEPLOYED
 ```
 
 ---
@@ -156,7 +166,7 @@ Update your coordination server to point to Sepolia:
 # .env for the server
 WS_RPC_URL=wss://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
 HTTP_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
-LOXLEY_ADDRESS=0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7
+LOXLEY_ADDRESS=0xTBD_NOT_DEPLOYED
 E3_PROGRAM_ADDRESS=<your deployed program address>
 CHAIN_ID=11155111
 ```

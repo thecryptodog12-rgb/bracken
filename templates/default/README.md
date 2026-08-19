@@ -1,6 +1,6 @@
 # Template
 
-The Loxley Protocol Template provides a complete development environment for building and testing
+Loxley Protocol Template provides a complete development environment for building and testing
 applications with Fully Homomorphic Encryption (FHE). This template enables local deployment and
 interaction with the Loxley protocol without requiring the core contracts to be copied and avoiding
 complexities of specific programs (as zk circuits for CRISP).

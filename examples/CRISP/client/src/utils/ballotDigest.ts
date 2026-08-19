@@ -23,7 +23,7 @@ const CRISP_PROGRAM_ABI = parseAbi([
  * round names its own program, so no extra configuration reaches the browser.
  *
  * @param client The public client.
- * @param loxleyAddress The Loxley contract for this round.
+ * @param loxleyAddress Loxley contract for this round.
  * @param e3Id The round.
  * @returns The CRISP program address.
  */

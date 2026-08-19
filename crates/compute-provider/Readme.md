@@ -1,7 +1,7 @@
 # FHE Compute Manager
 
 This project provides a flexible and efficient framework for managing Secure Programs (SP) of the
-[Loxley Protocol](https://theloxley.com). It supports both sequential and parallel processing, with
+[Loxley Protocol](https://theinterfold.com). It supports both sequential and parallel processing, with
 the ability to integrate various compute providers.
 
 ## Features

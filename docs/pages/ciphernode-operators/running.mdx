@@ -3,7 +3,17 @@ title: 'Running a Ciphernode'
 description: 'Three ways to run a ciphernode: DappNode, Loxley CLI, or Docker'
 ---
 
+import { Callout } from 'nextra/components'
+
 # Running a Ciphernode
+
+<Callout type='warning'>
+  **Loxley is not deployed yet.** Contract addresses on this page are placeholders. Loxley is a fork of
+  [theinterfold/interfold](https://github.com/theinterfold/interfold) targeting Robinhood Chain (chain id `4663`); the
+  addresses that used to sit here belonged to the upstream Interfold deployment on Ethereum and would have sent you to
+  someone else's contracts. They are archived in `packages/loxley-contracts/upstream-interfold-deployments.reference.json`.
+</Callout>
+
 
 This guide covers three methods to run a ciphernode, from easiest to most flexible. Choose the
 method that best fits your infrastructure.
@@ -43,7 +53,7 @@ DappNode provides a user-friendly interface for running a ciphernode with minima
 
 ## Method 2: Loxley CLI (Recommended)
 
-The Loxley CLI provides the most control and is recommended for production deployments.
+Loxley CLI provides the most control and is recommended for production deployments.
 
 ### Install the CLI
 
@@ -98,19 +108,19 @@ chains:
     chain_id: 1
     contracts:
       loxley:
-        address: '0x28cF63B459e6218C69EA97ea7D90541cf648c715'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 25786382
       ciphernode_registry:
-        address: '0xC927A5B2d8F68697bC28C0670df05178c93df2d7'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 25786378
       bonding_registry:
-        address: '0x0ec90465095C21830BEcED07e032809A2Bd2915F'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 25473398
       slashing_manager:
-        address: '0x974E865B1BB24AF2a9ef8204AdEA9251Cc7C5FD9'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 25786375
       fee_token:
-        address: '0xdC035D45d973E3EC169d2276DDab16f1e407384F'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 20663730
 
   - name: sepolia
@@ -118,22 +128,22 @@ chains:
     chain_id: 11155111
     contracts:
       loxley:
-        address: '0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 11459000
       ciphernode_registry:
-        address: '0xCD571e311c11a6259ad95b7F95C1f2AF2b60ae6A'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 11458978
       bonding_registry:
-        address: '0x77384A924C18FfE00A9325815723121534105Abd'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 11458979
       slashing_manager:
-        address: '0x4CE0107239719003ad07F65e0ae18a09aD2dcfDE'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 11458977
       fee_token:
-        address: '0xD4B8e32C718B87f81d8e58fB3a3f061D92CcBb27'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 11458975
       faucet:
-        address: '0x2797A03F78a4237D6ba97170589BBD1Dca382207'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 11458989
 ```
 
@@ -235,22 +245,22 @@ chains:
     chain_id: 11155111
     contracts:
       loxley:
-        address: '0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 11459000
       ciphernode_registry:
-        address: '0xCD571e311c11a6259ad95b7F95C1f2AF2b60ae6A'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 11458978
       bonding_registry:
-        address: '0x77384A924C18FfE00A9325815723121534105Abd'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 11458979
       slashing_manager:
-        address: '0x4CE0107239719003ad07F65e0ae18a09aD2dcfDE'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 11458977
       fee_token:
-        address: '0xD4B8e32C718B87f81d8e58fB3a3f061D92CcBb27'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 11458975
       faucet:
-        address: '0x2797A03F78a4237D6ba97170589BBD1Dca382207'
+        address: '0xTBD_NOT_DEPLOYED'
         deploy_block: 11458989
 ```
 
@@ -389,11 +399,11 @@ Each contract can be specified as a simple address string or with a deploy block
 ```yaml
 contracts:
   loxley:
-    address: '0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7'
+    address: '0xTBD_NOT_DEPLOYED'
     deploy_block: 11459000
-  ciphernode_registry: '0xCD571e311c11a6259ad95b7F95C1f2AF2b60ae6A'
+  ciphernode_registry: '0xTBD_NOT_DEPLOYED'
   faucet:
-    address: '0x2797A03F78a4237D6ba97170589BBD1Dca382207'
+    address: '0xTBD_NOT_DEPLOYED'
     deploy_block: 11458989
 ```
 

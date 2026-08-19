@@ -43,7 +43,7 @@ contract MyProgram is IE3Program, Ownable {
   event InputPublished(uint256 indexed e3Id, bytes data, uint256 index);
 
   /// @notice Initialize the contract, binding it to a specified RISC Zero verifier.
-  /// @param _loxley The Loxley contract address
+  /// @param _loxley Loxley contract address
   /// @param _verifier The RISC Zero verifier address
   /// @param _imageId The image ID for the guest program
   constructor(ILoxley _loxley, IRiscZeroVerifier _verifier, bytes32 _imageId) Ownable(msg.sender) {

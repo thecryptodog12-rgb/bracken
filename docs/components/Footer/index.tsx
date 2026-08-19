@@ -21,7 +21,7 @@ const Footer = () => {
           marginBottom: '1rem',
         }}
       /> */}
-      <p>{new Date().getFullYear()} © The Loxley</p>
+      <p>{new Date().getFullYear()} © Loxley</p>
       <ul className={classes.socialLinks}>
         {socialLinks.map(({ name, icon, url }, i) => {
           return (

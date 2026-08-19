@@ -62,7 +62,7 @@ const HeroSection: React.FC = () => {
             <div className='col' style={{ gap: 16 }}>
               <div className='row' style={{ gap: 10, flexWrap: 'wrap' }}>
                 <span className='muted'>A simple demonstration of CRISP technology.</span>
-                <a href='https://docs.theloxley.com' target='_blank' rel='noreferrer' className='linkish'>
+                <a href='https://docs.theinterfold.com' target='_blank' rel='noreferrer' className='linkish'>
                   Learn more →
                 </a>
               </div>

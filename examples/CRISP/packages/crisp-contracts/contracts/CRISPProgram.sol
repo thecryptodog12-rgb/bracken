@@ -239,7 +239,7 @@ contract CRISPProgram is IE3Program, Ownable, EIP712 {
 
   /// @notice Bind this program to its permanent Loxley controller.
   /// @dev Loxley must register this program before the owner calls this function.
-  /// @param _loxley The Loxley controller that registered this program.
+  /// @param _loxley Loxley controller that registered this program.
   function bindLoxley(ILoxley _loxley) external onlyOwner {
     if (address(loxley) != address(0)) revert LoxleyAlreadyBound();
     if (address(_loxley) == address(0)) revert LoxleyAddressZero();

@@ -1,6 +1,6 @@
 <div align="center">
   <picture>
-    <img src="./docs/public/loxley-meta.jpg" alt="The Loxley" width="100%">
+    <img src="./docs/public/loxley-meta.jpg" alt="Loxley" width="100%">
   </picture>
 
 [![Docs][docs-badge]][docs] [![Github Actions][gha-badge]][gha] [![Hardhat][hardhat-badge]][hardhat]
@@ -8,22 +8,30 @@
 
 </div>
 
-# The Loxley
+# Loxley
 
-> **Note:** The Loxley was previously known as **Loxley**.  
-> Many repositories, packages, and CLI tools still use the `loxley` name while the project
-> transitions.
+> **Note:** Loxley is a fork of [theinterfold/interfold](https://github.com/theinterfold/interfold)
+> (LGPL-3.0), retargeted at Robinhood Chain (chain id `4663`). Upstream was itself previously known
+> as **Enclave**.
+>
+> **Nothing is deployed yet.** Contract addresses throughout this repo and the docs are placeholders;
+> the upstream Ethereum deployment is archived in
+> `packages/loxley-contracts/upstream-interfold-deployments.reference.json`. No LOX token exists —
+> the tokenomics pages describe upstream's FOLD and are flagged as such.
+>
+> Links to `theinterfold.com` are deliberate: that content lives upstream and renaming the URLs would
+> only break them.
 
-This is the monorepo for **The Loxley**, an open-source protocol for confidential coordination.
+This is the monorepo for **Loxley**, an open-source protocol for confidential coordination.
 
-The Loxley leverages a combination of Fully Homomorphic Encryption (FHE), Zero-Knowledge Proofs
+Loxley leverages a combination of Fully Homomorphic Encryption (FHE), Zero-Knowledge Proofs
 (ZKPs), and Multi-Party Computation (MPC) to enable Encrypted Execution Environments (E3), with
 integrity and privacy guarantees rooted in cryptography and economics, rather than hardware and
 attestations.
 
 ## Documentation
 
-Full documentation is available at: https://docs.theloxley.com
+Full documentation is available at: https://docs.theinterfold.com
 
 ## Quick Start
 
@@ -206,7 +214,7 @@ This workspace's minimum supported rustc version is 1.91.1.
 
 ## Architecture
 
-The Loxley employs a modular architecture involving numerous actors and participants. The sequence
+Loxley employs a modular architecture involving numerous actors and participants. The sequence
 diagram below offers a high-level overview of the protocol, but necessarily omits most detail.
 
 ```mermaid
@@ -256,7 +264,7 @@ sequenceDiagram
 
 ### Overview
 
-The Loxley uses a unified versioning strategy where all packages (Rust crates and npm packages)
+Loxley uses a unified versioning strategy where all packages (Rust crates and npm packages)
 share the same version number. Releases are triggered by git tags and follow semantic versioning.
 
 ### Quick Release
@@ -357,7 +365,7 @@ Once the tag is pushed, GitHub Actions automatically:
 
 ### Version Format
 
-The Loxley follows [Semantic Versioning](https://semver.org/):
+Loxley follows [Semantic Versioning](https://semver.org/):
 
 - **Stable**: `v1.0.0` - Production ready
 - **Pre-release**: `v1.0.0-beta.1` - Testing/preview versions
@@ -490,9 +498,9 @@ This repo created under the [LGPL-3.0+ license](LICENSE.md).
 [hardhat-badge]: https://img.shields.io/badge/Built%20with-Hardhat-FFDB1C.svg
 [license]: https://opensource.org/license/lgpl-3-0
 [license-badge]: https://img.shields.io/badge/License-LGPLv3.0-blue.svg
-[docs]: https://docs.theloxley.com
+[docs]: https://docs.theinterfold.com
 [docs-badge]: https://img.shields.io/badge/Documentation-blue.svg
-[quick-start]: https://docs.theloxley.com/quick-start
-[crisp]: https://docs.theloxley.com/CRISP/introduction
+[quick-start]: https://docs.theinterfold.com/quick-start
+[crisp]: https://docs.theinterfold.com/CRISP/introduction
 [telegram]: https://t.me/+raYAZgrwgOw2ODJh
 [contributing]: CONTRIBUTING.md
