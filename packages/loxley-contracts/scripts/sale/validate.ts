@@ -62,7 +62,7 @@ Sale deployment
   safe:              ${deployment.safe}
   saleDeployer:      ${deployment.saleDeployer}
   mode:              LiquidityLauncher / LBPStrategy
-  LOX:              ${deployment.fold}
+  LOXLEY:              ${deployment.fold}
   CCA auction:       ${deployment.auction}
   Uniswap URL:       ${
     deployment.uniswapAuctionUrl ??
@@ -76,7 +76,7 @@ Sale deployment
   validationHook:    ${deployment.validationHook ?? ZERO}
   config hash:       ${planConfigHash(plan)}
 
-LOX lifecycle
+LOXLEY lifecycle
   current timestamp: ${formatTimestamp(currentTimestamp)}
   CCA_START:         ${formatTimestamp(config.fold.ccaStart)} (${formatSecondsDelta(BigInt(config.fold.ccaStart), currentTimestamp)})
   CCA_END:           ${formatTimestamp(config.fold.ccaEnd)} (${formatSecondsDelta(BigInt(config.fold.ccaEnd), currentTimestamp)})
@@ -210,16 +210,16 @@ export async function validateDeployment(
 
   const claimSource = await fold.CLAIM_SOURCE();
   printValue("claimSource", claimSource);
-  if (address(claimSource, "LOX.CLAIM_SOURCE") === ZERO) {
+  if (address(claimSource, "LOXLEY.CLAIM_SOURCE") === ZERO) {
     throw new Error(
-      "LOX.CLAIM_SOURCE is not set. Execute the Safe activation batch first: LOX.acceptOwnership(), LOX.setClaimSource(auction), and PredicateValidationHook.setAuction(auction) if applicable.",
+      "LOXLEY.CLAIM_SOURCE is not set. Execute the Safe activation batch first: LOXLEY.acceptOwnership(), LOXLEY.setClaimSource(auction), and PredicateValidationHook.setAuction(auction) if applicable.",
     );
   }
-  assertEq("LOX.CLAIM_SOURCE", claimSource, deployment.auction);
+  assertEq("LOXLEY.CLAIM_SOURCE", claimSource, deployment.auction);
 
   const bondingRegistry = await fold.BONDING_REGISTRY();
   assertEq(
-    "LOX.BONDING_REGISTRY",
+    "LOXLEY.BONDING_REGISTRY",
     bondingRegistry,
     config.fold.bondingRegistry,
   );
@@ -243,7 +243,7 @@ export async function validateDeployment(
 
   const foldTotalSupply = await fold.totalSupply();
   printValue(
-    "LOX total supply",
+    "LOXLEY total supply",
     `${foldTotalSupply} (${formatFold(foldTotalSupply)})`,
   );
 
@@ -376,17 +376,17 @@ export async function validateDeployment(
   printValue("lbp auction registered", true);
 
   assertEq(
-    "LOX whitelist LiquidityLauncher",
+    "LOXLEY whitelist LiquidityLauncher",
     await fold.transferWhitelist(plan.liquidityLauncher),
     false,
   );
   assertEq(
-    "LOX whitelist LBPStrategy",
+    "LOXLEY whitelist LBPStrategy",
     await fold.transferWhitelist(plan.lbpStrategy),
     true,
   );
   assertEq(
-    "LOX whitelist PositionManager",
+    "LOXLEY whitelist PositionManager",
     await fold.transferWhitelist(plan.lbp.positionManager),
     true,
   );
@@ -438,35 +438,35 @@ export async function validateDeployment(
   const saleAmount = BigInt(config.saleAmount);
   if (auctionBalance > saleAmount) {
     throw new Error(
-      `LOX auction balance exceeds sale amount: ${auctionBalance} > ${saleAmount}`,
+      `LOXLEY auction balance exceeds sale amount: ${auctionBalance} > ${saleAmount}`,
     );
   }
   if (currentBlock < BigInt(config.auction.claimBlock)) {
-    assertEq("LOX auction balance", auctionBalance, saleAmount);
+    assertEq("LOXLEY auction balance", auctionBalance, saleAmount);
   } else {
     console.log(
-      `  ok LOX auction balance <= sale amount (${auctionBalance}, ${formatFold(auctionBalance)})`,
+      `  ok LOXLEY auction balance <= sale amount (${auctionBalance}, ${formatFold(auctionBalance)})`,
     );
   }
   printValue(
-    "auction LOX balance",
+    "auction LOXLEY balance",
     `${auctionBalance} (${formatFold(auctionBalance)})`,
   );
 
   const ccaStart = await fold.CCA_START();
-  assertEq("LOX.CCA_START", ccaStart, config.fold.ccaStart);
+  assertEq("LOXLEY.CCA_START", ccaStart, config.fold.ccaStart);
   printValue("CCA_START", formatTimestamp(ccaStart));
 
   const ccaEnd = await fold.CCA_END();
-  assertEq("LOX.CCA_END", ccaEnd, config.fold.ccaEnd);
+  assertEq("LOXLEY.CCA_END", ccaEnd, config.fold.ccaEnd);
   printValue("CCA_END", formatTimestamp(ccaEnd));
 
   const noMoreLocks = await fold.NO_MORE_LOCKS();
-  assertEq("LOX.NO_MORE_LOCKS", noMoreLocks, plan.fold.noMoreLocks);
+  assertEq("LOXLEY.NO_MORE_LOCKS", noMoreLocks, plan.fold.noMoreLocks);
   printValue("NO_MORE_LOCKS", formatTimestamp(noMoreLocks));
 
   const tgeTimestamp = await fold.tgeTimestamp();
-  assertEq("LOX.tgeTimestamp", tgeTimestamp, 0);
+  assertEq("LOXLEY.tgeTimestamp", tgeTimestamp, 0);
   printValue("tgeTimestamp", tgeTimestamp);
 
   const configHash = planConfigHash(plan);
@@ -477,12 +477,12 @@ export async function validateDeployment(
   );
   printValue("used config hash", configHash);
 
-  const owner = address(await fold.owner(), "LOX.owner");
-  const pendingOwner = await optionalView("LOX.pendingOwner", () =>
+  const owner = address(await fold.owner(), "LOXLEY.owner");
+  const pendingOwner = await optionalView("LOXLEY.pendingOwner", () =>
     fold.pendingOwner(),
   );
-  printValue("LOX owner", owner);
-  if (pendingOwner !== undefined) printValue("LOX pendingOwner", pendingOwner);
+  printValue("LOXLEY owner", owner);
+  if (pendingOwner !== undefined) printValue("LOXLEY pendingOwner", pendingOwner);
 
   if (owner === config.safe) {
     const defaultAdminRole = ethersLib.ZeroHash;
@@ -528,13 +528,13 @@ export async function validateDeployment(
   } else {
     const normalizedPendingOwner = address(
       String(pendingOwner),
-      "LOX.pendingOwner",
+      "LOXLEY.pendingOwner",
     );
     if (allowPendingOwner && normalizedPendingOwner === config.safe) {
-      console.log("  ok LOX ownership is pending Safe acceptance");
+      console.log("  ok LOXLEY ownership is pending Safe acceptance");
     } else {
       throw new Error(
-        `LOX owner is ${owner}; expected accepted Safe ${config.safe}`,
+        `LOXLEY owner is ${owner}; expected accepted Safe ${config.safe}`,
       );
     }
   }

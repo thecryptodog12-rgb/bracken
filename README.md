@@ -16,7 +16,7 @@
 >
 > **Nothing is deployed yet.** Contract addresses throughout this repo and the docs are placeholders;
 > the upstream Ethereum deployment is archived in
-> `packages/loxley-contracts/upstream-interfold-deployments.reference.json`. No LOX token exists —
+> `packages/loxley-contracts/upstream-interfold-deployments.reference.json`. No LOXLEY token exists —
 > the tokenomics pages describe upstream's FOLD and are flagged as such.
 >
 > Links to `theinterfold.com` are deliberate: that content lives upstream and renaming the URLs would

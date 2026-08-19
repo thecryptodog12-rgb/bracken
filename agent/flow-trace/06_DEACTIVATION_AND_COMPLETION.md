@@ -27,9 +27,9 @@ Bond owner submits removeTicketBalanceFor(operator, 50)
     │  │                                                         │
     │  │  removeTicketBalanceFor(operator, 50):                  │
     │  │    1. require(msg.sender == bondOwnerOf(operator))      │
-    │  │    2. require(amount != 0, registered, sufficient tLOX)│
+    │  │    2. require(amount != 0, registered, sufficient tLOXLEY)│
     │  │    3. ticketToken.burnTickets(operator, amount)         │
-    │  │       → tLOX destroyed, underlying becomes claimable      │
+    │  │       → tLOXLEY destroyed, underlying becomes claimable      │
     │  │    4. _exits.queueTicketsForExit(                       │
     │  │         operator, exitDelay, amount                      │
     │  │       )                                                  │
@@ -57,10 +57,10 @@ Bond owner submits unbondCiphernodeFor(operator, 20000)
     │  │                                                         │
     │  │  unbondCiphernodeFor(operator, 20000):                     │
     │  │    1. require(msg.sender == bondOwnerOf(operator))      │
-    │  │    2. require(amount != 0, sufficient bonded LOX)      │
+    │  │    2. require(amount != 0, sufficient bonded LOXLEY)      │
     │  │    3. operators[op].ciphernodeBond -= 20000                │
     │  │    4. _exits.queueCiphernodeBondsForExit(op, exitDelay, 20000)│
-    │  │       → Pending LOX remains in totalBonded(bondOwner)  │
+    │  │       → Pending LOXLEY remains in totalBonded(bondOwner)  │
     │  │         token-level locked-floor accounting             │
     │  │    5. _updateOperatorStatus(operator)                   │
     │  │       → If ciphernodeBond <                                │
@@ -81,7 +81,7 @@ Bond owner submits both owner-authorized calls
 ├─ Calls removeTicketBalanceFor(operator, 50) first
 └─ Then calls unbondCiphernodeFor(operator, 20000)
   → Tickets are queued in ExitQueueLib
-  → LOX is queued in ExitQueueLib pending ciphernode bond exits and remains counted in totalBonded()
+  → LOXLEY is queued in ExitQueueLib pending ciphernode bond exits and remains counted in totalBonded()
 ```
 
 ---
@@ -148,7 +148,7 @@ Bond owner or operator submits deregisterOperatorFor(operator)
    └─ the bond owner may also claim ciphernode bonds
 ```
 
-The ticket collateral asset and LOX are both paid to the bond owner. The queue and slash target
+The ticket collateral asset and LOXLEY are both paid to the bond owner. The queue and slash target
 remain keyed by the operator until the claim completes.
 
 The next registration uses a free tree index before it appends a leaf. Historical E3 roots remain
@@ -480,8 +480,8 @@ Time ─────────────────────────
 │ or deactivate    │   EXIT DELAY       │                  │
 │                  │  (configured)      │                  │
 │ Assets queued    │                    │ Assets claimable │
-│ tLOX burned     │  Cannot cancel     │ asset returned   │
-│ LOX locked      │  Can be slashed!   │ LOX returned to │
+│ tLOXLEY burned     │  Cannot cancel     │ asset returned   │
+│ LOXLEY locked      │  Can be slashed!   │ LOXLEY returned to │
 │                  │                    │ bond owner       │
 │                  │                    │                  │
 

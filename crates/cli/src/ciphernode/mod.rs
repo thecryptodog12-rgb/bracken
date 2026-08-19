@@ -96,7 +96,7 @@ pub enum CiphernodeCommands {
         #[command(flatten)]
         chain: ChainArgs,
     },
-    /// Manage LOX ciphernode bonding for an operator
+    /// Manage LOXLEY ciphernode bonding for an operator
     Bond {
         #[command(subcommand)]
         command: BondCommands,
@@ -164,12 +164,12 @@ pub enum CiphernodeCommands {
 
 #[derive(Subcommand, Clone, Debug)]
 pub enum BondCommands {
-    /// Bond LOX into an operator position
+    /// Bond LOXLEY into an operator position
     Bond {
         #[arg(long = "amount")]
         amount: String,
     },
-    /// Queue LOX from an operator position for exit
+    /// Queue LOXLEY from an operator position for exit
     Unbond {
         #[arg(long = "amount")]
         amount: String,

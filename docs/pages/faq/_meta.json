@@ -1,11 +1,11 @@
 {
-  "lox-token": {
-    "title": "LOX Token"
+  "loxley-token": {
+    "title": "LOXLEY Token"
   },
   "auction": {
-    "title": "The LOX Auction"
+    "title": "The LOXLEY Auction"
   },
   "transferability": {
-    "title": "LOX Transferability"
+    "title": "LOXLEY Transferability"
   }
 }

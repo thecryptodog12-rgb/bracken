@@ -12,9 +12,8 @@ server, Compute Providers, or other network participants.
 ### Phase 1: Request
 
 1. **Define the E3 Program**: Author your Secure Process using the tooling described in
-   [Writing the Secure Process](/write-secure-program). Loxley currently ships first-party
-   support for the BFV scheme via [fhe.rs](https://github.com/gnosisguild/fhe.rs) and the SAFE
-   library.
+   [Writing the Secure Process](/write-secure-program). Loxley currently ships first-party support
+   for the BFV scheme via [fhe.rs](https://github.com/gnosisguild/fhe.rs) and the SAFE library.
 2. **Choose a Compute Provider**: Your program must align with the execution backend (e.g.,
    [RISC Zero](https://www.risczero.com/) for [CRISP](/CRISP/introduction) or a custom FHE
    coprocessor).
@@ -96,8 +95,8 @@ expires.
 1. **Execution**: The CP retrieves encrypted inputs and executes the Secure Process defined in your
    E3 program.
 2. **Publish Output**: The ciphertext output and accompanying proof are submitted to the Loxley
-   contract via `publishCiphertextOutput`. Loxley contract calls your E3 Program's `verify`
-   function to validate the proof before accepting the output.
+   contract via `publishCiphertextOutput`. Loxley contract calls your E3 Program's `verify` function
+   to validate the proof before accepting the output.
 
    ```solidity
    function publishCiphertextOutput(

@@ -30,7 +30,7 @@ output — every step backed by ZK proofs verified on-chain.
 | Sortition   | Random committee selection (`crates/sortition`)                                                                           |
 | Slashing    | Fault attribution, accusation quorum, commitment consistency (`crates/slashing`)                                          |
 | Aggregator  | Role that recursively aggregates DKG/decryption proofs (`crates/aggregator`)                                              |
-| LOX / tLOX  | `LoxleyToken` (ciphernode bonding) / `LoxleyTicketToken` (non-transferable collateral-backed tickets) — see flow-trace 02 |
+| LOXLEY / tLOXLEY  | `LoxleyToken` (ciphernode bonding) / `LoxleyTicketToken` (non-transferable collateral-backed tickets) — see flow-trace 02 |
 | IMT         | Incremental Merkle Tree used for on-chain node registration — see flow-trace 01                                           |
 | CRT         | Chinese Remainder Theorem moduli used by BFV presets and share aggregation (C7)                                           |
 

@@ -115,9 +115,9 @@
   "internals": {
     "title": "Technical Deep Dives"
   },
-  "-- LOX Token": {
+  "-- LOXLEY Token": {
     "type": "separator",
-    "title": "LOX Token"
+    "title": "LOXLEY Token"
   },
   "tokenomics": {
     "title": "Tokenomics"

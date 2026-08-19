@@ -10,9 +10,9 @@ pragma solidity 0.8.28;
  * @notice The slice of a voting escrow `BondedVotes` reads: what it custodies, and how much of
  * that it attributes to an account.
  *
- * @dev Stands in for the real escrow, whose voting-power curve is flat — locked LOX produces
+ * @dev Stands in for the real escrow, whose voting-power curve is flat — locked LOXLEY produces
  * exactly its own amount in voting power, with no decay and no boost. That is what makes escrow
- * power addable to bonded LOX at all, so the mock reproduces it by storing amounts directly.
+ * power addable to bonded LOXLEY at all, so the mock reproduces it by storing amounts directly.
  */
 contract MockVotingEscrow {
     address public token;

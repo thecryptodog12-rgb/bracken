@@ -318,7 +318,7 @@ Protocol configuration is valid
   name:                 ${config.name}
   chainId:              ${config.chainId}
   protocol owner:       ${config.protocolOwner}
-  LOX:                 ${config.fold}
+  LOXLEY:                 ${config.fold}
   escrow votes adapter: ${config.escrowVotesAdapter ?? "(not configured)"}
   fee token:            ${config.feeToken}
   ticket underlying:    ${config.ticketUnderlyingToken}

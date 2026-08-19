@@ -6,8 +6,8 @@
 | ------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `Loxley.sol`                    | Main protocol coordinator — handles E3 requests, param sets, fee routing, and output publication |
 | `CiphernodeRegistryOwnable.sol` | Ciphernode registration and committee selection                                                  |
-| `BondingRegistry.sol`           | LOX token bonding for ciphernodes; tracks bond amounts and manages bond lifecycle                |
-| `LoxleyToken.sol`               | LOX governance/utility token                                                                     |
+| `BondingRegistry.sol`           | LOXLEY token bonding for ciphernodes; tracks bond amounts and manages bond lifecycle                |
+| `LoxleyToken.sol`               | LOXLEY governance/utility token                                                                     |
 | `LoxleyTicketToken.sol`         | Collateral-backed tickets used by ciphernodes for sortition entry                                |
 | `SlashingManager.sol`           | Fault attribution and slashing for dishonest ciphernodes (accusation → quorum → slash)           |
 | `E3RefundManager.sol`           | Issues refunds to requesters when an E3 fails                                                    |
@@ -53,7 +53,7 @@ examples.
 
 ## To deploy
 
-Phase 1 deploys LOX plus the CCA sale:
+Phase 1 deploys LOXLEY plus the CCA sale:
 
 ```sh
 pnpm sale --network sepolia --action prepare --safe 0xSafe
@@ -71,7 +71,7 @@ pnpm sale --network sepolia --action prepare --safe 0xSafe \
 ```
 
 The Safe owners then approve the queued sale activation in the Safe UI. For a
-plain sale this is `LOX.acceptOwnership()`; for a Predicate-gated sale the same
+plain sale this is `LOXLEY.acceptOwnership()`; for a Predicate-gated sale the same
 batch also calls `PredicateValidationHook.setAuction(<CCA auction>)`. After
 that, rerun sale validation without `--allow-pending-owner`.
 
@@ -238,7 +238,7 @@ pnpm ciphernode:add --network [network]
 
 Options:
 
-- `--ciphernode-bond-amount`: Amount of LOX to bond (default: 1000 LOX)
+- `--ciphernode-bond-amount`: Amount of LOXLEY to bond (default: 1000 LOXLEY)
 - `--ticket-amount`: Amount of the configured ticket collateral token
 
 For testing/development, you can also use the admin task to register any

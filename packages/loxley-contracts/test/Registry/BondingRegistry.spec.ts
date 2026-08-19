@@ -332,7 +332,7 @@ describe("BondingRegistry", function () {
       );
     });
 
-    it("transfers ownership and migrates active plus pending LOX accounting", async function () {
+    it("transfers ownership and migrates active plus pending LOXLEY accounting", async function () {
       const {
         bondingRegistry,
         ciphernodeBondToken,
@@ -415,7 +415,7 @@ describe("BondingRegistry", function () {
       );
     });
 
-    it("aggregates owned LOX and reduces the owner's lock on slash", async function () {
+    it("aggregates owned LOXLEY and reduces the owner's lock on slash", async function () {
       const {
         bondingRegistry,
         ciphernodeBondToken,
@@ -510,7 +510,7 @@ describe("BondingRegistry", function () {
   });
 
   describe("bondCiphernodeFor()", function () {
-    it("allows operators to bond LOX", async function () {
+    it("allows operators to bond LOXLEY", async function () {
       const { bondingRegistry, ciphernodeBondToken, operator1 } =
         await loadFixture(setup);
 
@@ -625,7 +625,7 @@ describe("BondingRegistry", function () {
   });
 
   describe("unbondCiphernodeFor()", function () {
-    it("allows operators to unbond LOX", async function () {
+    it("allows operators to unbond LOXLEY", async function () {
       const { bondingRegistry, ciphernodeBondToken, operator1 } =
         await loadFixture(setup);
 
@@ -2486,7 +2486,7 @@ describe("BondingRegistry", function () {
       } = await loadFixture(setup);
 
       // Register and fund tickets so the generic ExitQueueLib ticket path is
-      // exercised directly alongside LOX exits.
+      // exercised directly alongside LOXLEY exits.
       const bondAmount = REQUIRED_CIPHERNODE_BOND;
       await ciphernodeBondToken
         .connect(operator1)

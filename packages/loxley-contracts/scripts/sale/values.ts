@@ -774,7 +774,7 @@ export function assertEq(
 }
 
 export function formatFold(value: bigint | string): string {
-  return `${ethersLib.formatUnits(value, 18)} LOX`;
+  return `${ethersLib.formatUnits(value, 18)} LOXLEY`;
 }
 
 export async function optionalView<T>(

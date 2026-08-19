@@ -167,10 +167,10 @@ pub(crate) async fn deactivate(
             .await?
             .get_receipt()
             .await?;
-        require_successful_receipt("unbond LOX", &receipt)?;
+        require_successful_receipt("unbond LOXLEY", &receipt)?;
         log!(
             out,
-            "Queued {} LOX from {:#x} (tx: {:#x})",
+            "Queued {} LOXLEY from {:#x} (tx: {:#x})",
             amount,
             operator,
             receipt.transaction_hash
@@ -234,7 +234,7 @@ pub(crate) async fn status(out: Console, ctx: &ChainContext, operator: Address) 
     );
     log!(
         out,
-        "  Requirements: minTickets={}, ticketPrice={} tLOX, ciphernodeBond={} LOX",
+        "  Requirements: minTickets={}, ticketPrice={} tLOXLEY, ciphernodeBond={} LOXLEY",
         min_ticket_balance,
         format_amount(ticket_price, ticket_decimals),
         format_amount(required_ciphernode_bond, ciphernode_bond_decimals)

@@ -245,13 +245,13 @@ export function buildSaleSafeActions(
   };
   const actions: SafeAction[] = [
     {
-      description: "LOX.acceptOwnership()",
+      description: "LOXLEY.acceptOwnership()",
       transaction: acceptOwnership,
     },
   ];
   const foldInterface = new ethersLib.Interface(FOLD_TOKEN_SAFE_ABI);
   actions.push({
-    description: `LOX.setClaimSource(${deployment.auction})`,
+    description: `LOXLEY.setClaimSource(${deployment.auction})`,
     transaction: {
       to: deployment.fold,
       value: "0",

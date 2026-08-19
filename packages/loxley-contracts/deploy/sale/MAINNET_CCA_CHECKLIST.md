@@ -1,6 +1,6 @@
 # Mainnet CCA Deployment Checklist
 
-This is the deployment-only checklist for the mainnet LOX + Uniswap CCA launch.
+This is the deployment-only checklist for the mainnet LOXLEY + Uniswap CCA launch.
 Do not use it as the post-auction migration, exit, or claim checklist.
 
 ## Mainnet Addresses
@@ -92,13 +92,13 @@ Required values:
 
 ## 4. Time Model
 
-- [ ] LOX lifecycle uses timestamps.
+- [ ] LOXLEY lifecycle uses timestamps.
 - [ ] CCA auction mechanics use block numbers.
 - [ ] `plan` derives CCA block numbers from configured timestamps.
-- [ ] Pre-sale / LOX `CCA_START`: July 6, 2026 at 10:00 AM US Eastern.
+- [ ] Pre-sale / LOXLEY `CCA_START`: July 6, 2026 at 10:00 AM US Eastern.
 - [ ] Auction start: July 8, 2026 at 10:00 AM US Eastern.
 - [ ] Auction end: July 10, 2026 at 10:00 AM US Eastern.
-- [ ] UTC pre-sale / LOX `CCA_START`: July 6, 2026 at 14:00 UTC.
+- [ ] UTC pre-sale / LOXLEY `CCA_START`: July 6, 2026 at 14:00 UTC.
 - [ ] UTC auction start: July 8, 2026 at 14:00 UTC.
 - [ ] UTC auction end: July 10, 2026 at 14:00 UTC.
 - [ ] `NO_MORE_LOCKS` is `CCA_END + 40 days + 4 years + 30 days`.
@@ -153,17 +153,17 @@ Check every printed line:
 - [ ] LiquidityLauncher is `0x00004c4ccc709Ef590F7C81102C0689F0263D4e9`.
 - [ ] LBPStrategy is `0xb98766A35cdc28415be0767D4EA41e39fBA3e000`.
 - [ ] Initializer factory is `0x00cCa200BF124dBfA848937c553864f4B4CE0632`.
-- [ ] LOX says `discovered at deploy`.
+- [ ] LOXLEY says `discovered at deploy`.
 - [ ] CCA auction says `discovered from LBPStrategy.InitializerCreated`.
-- [ ] Auction LOX is `120,000,000`.
+- [ ] Auction LOXLEY is `120,000,000`.
 - [ ] LP reserve is `30,000,000`.
-- [ ] Total minted/distributed LOX is `150,000,000`.
+- [ ] Total minted/distributed LOXLEY is `150,000,000`.
 - [ ] Required raise is `400 ETH`.
-- [ ] Floor price corresponds to `0.000012 ETH/LOX`.
+- [ ] Floor price corresponds to `0.000012 ETH/LOXLEY`.
 - [ ] Tick spacing corresponds to `1%` of floor price.
 - [ ] CCA blocks line matches expected July 8 to July 10 window.
-- [ ] LOX timestamps line matches expected July 6 to July 10 lifecycle.
-- [ ] LOX `noMoreLocks` line is `1915884000` (`2030-09-17T14:00:00Z`).
+- [ ] LOXLEY timestamps line matches expected July 6 to July 10 lifecycle.
+- [ ] LOXLEY `noMoreLocks` line is `1915884000` (`2030-09-17T14:00:00Z`).
 - [ ] `claimBlock = migrationBlock`.
 - [ ] Config hash is recorded in launch notes.
 - [ ] Plan file is generated and inspected.
@@ -181,15 +181,15 @@ pnpm sale --network mainnet --action deploy \
 Check:
 
 - [ ] Deploy transaction mined.
-- [ ] LOX address printed and recorded.
+- [ ] LOXLEY address printed and recorded.
 - [ ] CCA auction address printed and recorded.
 - [ ] Uniswap auction URL printed and opens.
 - [ ] Deployment file is written.
 - [ ] Safe proposal URL is printed.
 - [ ] `*.safe-builder.json` is written.
 - [ ] `*.safe-transactions.json` is written.
-- [ ] Safe activation batch includes `LOX.acceptOwnership()`.
-- [ ] Safe activation batch includes `LOX.setClaimSource(auction)`.
+- [ ] Safe activation batch includes `LOXLEY.acceptOwnership()`.
+- [ ] Safe activation batch includes `LOXLEY.setClaimSource(auction)`.
 - [ ] If Predicate is enabled, Safe activation batch includes
       `PredicateValidationHook.setAuction(auction)`.
 - [ ] If Safe API proposal fails, import `*.safe-builder.json` in Safe
@@ -206,8 +206,8 @@ Check in the Safe UI before execution:
 - [ ] Safe address is `0x5429D8c7fD14023f3c414126F94BbE25A05fC018`.
 - [ ] Batch has exactly 2 transactions if Predicate is disabled.
 - [ ] Batch has exactly 3 transactions if Predicate is enabled.
-- [ ] Transaction 1 target is LOX and calldata is `acceptOwnership()`.
-- [ ] Transaction 2 target is LOX and calldata is `setClaimSource(auction)`.
+- [ ] Transaction 1 target is LOXLEY and calldata is `acceptOwnership()`.
+- [ ] Transaction 2 target is LOXLEY and calldata is `setClaimSource(auction)`.
 - [ ] If Predicate is enabled, transaction 3 target is PredicateValidationHook
       and calldata is `setAuction(auction)`.
 - [ ] Safe owners approve.
@@ -225,25 +225,25 @@ pnpm sale --network mainnet --action validate \
 Required pass conditions:
 
 - [ ] `saleDeployer.protocolAdmin = Foundation Safe`.
-- [ ] `LOX.owner = Foundation Safe`.
-- [ ] `LOX.pendingOwner = zero`.
-- [ ] `LOX.CLAIM_SOURCE = auction`.
-- [ ] `LOX.BONDING_REGISTRY = BondingRegistry proxy`.
-- [ ] Auction token is LOX.
-- [ ] Auction total supply is `120,000,000 LOX`.
+- [ ] `LOXLEY.owner = Foundation Safe`.
+- [ ] `LOXLEY.pendingOwner = zero`.
+- [ ] `LOXLEY.CLAIM_SOURCE = auction`.
+- [ ] `LOXLEY.BONDING_REGISTRY = BondingRegistry proxy`.
+- [ ] Auction token is LOXLEY.
+- [ ] Auction total supply is `120,000,000 LOXLEY`.
 - [ ] Auction currency is ETH sentinel zero address.
 - [ ] Auction tokens recipient is Foundation Safe.
 - [ ] Auction funds recipient is LBPStrategy.
 - [ ] Auction validation hook is correct.
-- [ ] LOX auction balance is `120,000,000 LOX`.
-- [ ] LOX total supply is `150,000,000 LOX`.
-- [ ] LBP reserve is `30,000,000 LOX`.
+- [ ] LOXLEY auction balance is `120,000,000 LOXLEY`.
+- [ ] LOXLEY total supply is `150,000,000 LOXLEY`.
+- [ ] LBP reserve is `30,000,000 LOXLEY`.
 - [ ] LBP strategy values validate.
 - [ ] LBP recipient is Foundation Safe.
 - [ ] LBP position recipient is Foundation Safe.
-- [ ] LiquidityLauncher is not transfer-whitelisted on LOX after distribution.
-- [ ] LBPStrategy is transfer-whitelisted on LOX.
-- [ ] PositionManager is transfer-whitelisted on LOX.
+- [ ] LiquidityLauncher is not transfer-whitelisted on LOXLEY after distribution.
+- [ ] LBPStrategy is transfer-whitelisted on LOXLEY.
+- [ ] PositionManager is transfer-whitelisted on LOXLEY.
 - [ ] Safe has `DEFAULT_ADMIN_ROLE`.
 - [ ] Operator does not have `DEFAULT_ADMIN_ROLE`.
 - [ ] Sale deployer does not have `DEFAULT_ADMIN_ROLE`.
@@ -263,5 +263,5 @@ Deployment is complete only when:
 - [ ] Uniswap auction URL opens on mainnet.
 - [ ] Predicate verification path is confirmed on the Uniswap UI, if enabled.
 - [ ] Foundation Safe owners have the deployment file, plan file, Safe proposal,
-      LOX address, auction address, and Uniswap URL.
+      LOXLEY address, auction address, and Uniswap URL.
 - [ ] Team announcement uses the verified Uniswap mainnet auction URL.

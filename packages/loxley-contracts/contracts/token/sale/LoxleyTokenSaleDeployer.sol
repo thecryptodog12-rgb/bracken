@@ -23,20 +23,20 @@ interface IFoldToken {
 /**
  * @title LoxleyTokenSaleDeployer
  * @notice Designated-operator sale deployment factory. The Safe passed as
- *         `protocolAdmin` becomes the LOX owner.
+ *         `protocolAdmin` becomes the LOXLEY owner.
  * @dev The CCA auction address is discovered by the script from LBPStrategy
- *      logs after deployment. The Safe then accepts LOX ownership and sets
- *      LOX's claim source once.
+ *      logs after deployment. The Safe then accepts LOXLEY ownership and sets
+ *      LOXLEY's claim source once.
  */
 contract LoxleyTokenSaleDeployer {
     /// @param liquidityLauncher The deployed Uniswap LiquidityLauncher.
     /// @param lbpStrategy The deployed Uniswap LBPStrategy singleton.
-    /// @param ccaStart LOX CCA lifecycle start timestamp.
-    /// @param ccaEnd LOX CCA lifecycle end timestamp.
-    /// @param noMoreLocks LOX lock sunset timestamp.
-    /// @param bondingRegistry Bonding registry proxy used by LOX.
-    /// @param auctionAmount LOX sent to the CCA auction.
-    /// @param reservedTokenAmountForLP LOX reserved by LBPStrategy for LP.
+    /// @param ccaStart LOXLEY CCA lifecycle start timestamp.
+    /// @param ccaEnd LOXLEY CCA lifecycle end timestamp.
+    /// @param noMoreLocks LOXLEY lock sunset timestamp.
+    /// @param bondingRegistry Bonding registry proxy used by LOXLEY.
+    /// @param auctionAmount LOXLEY sent to the CCA auction.
+    /// @param reservedTokenAmountForLP LOXLEY reserved by LBPStrategy for LP.
     /// @param distributionSalt Salt passed to LiquidityLauncher.distributeToken.
     /// @param currency Auction/LBP currency; zero means native ETH.
     /// @param migrationBlock Block after which LBP migration can run.
@@ -46,8 +46,8 @@ contract LoxleyTokenSaleDeployer {
     /// @param positionDefinitions Encoded LBPStrategy position definitions.
     /// @param lpAllocationSchedule Encoded LBPStrategy currency allocation.
     /// @param auctionConfigData Encoded CCA auction parameters.
-    /// @param saleLabel Label recorded on the LOX mint event.
-    /// @param foldInitCodeHash keccak256 of the LOX creation code + constructor args.
+    /// @param saleLabel Label recorded on the LOXLEY mint event.
+    /// @param foldInitCodeHash keccak256 of the LOXLEY creation code + constructor args.
     struct LbpSaleConfig {
         address liquidityLauncher;
         address lbpStrategy;
@@ -79,7 +79,7 @@ contract LoxleyTokenSaleDeployer {
     error ArithmeticOverflow();
     error UnauthorizedOperator(address caller);
 
-    /// @notice The Safe that becomes LOX owner/admin.
+    /// @notice The Safe that becomes LOXLEY owner/admin.
     // solhint-disable-next-line immutable-vars-naming
     address public immutable protocolAdmin;
 
@@ -116,10 +116,10 @@ contract LoxleyTokenSaleDeployer {
     }
 
     /**
-     * @notice Deploys LOX and starts a Uniswap LiquidityLauncher/LBPStrategy
+     * @notice Deploys LOXLEY and starts a Uniswap LiquidityLauncher/LBPStrategy
      *         distribution in one transaction.
      * @dev Callable only by the operator wallet that deployed this factory.
-     *      LOX ownership is transferred to
+     *      LOXLEY ownership is transferred to
      *      the Safe at the end, but remains pending until the Safe accepts it.
      */
     function deploySaleWithLiquidityLauncher(

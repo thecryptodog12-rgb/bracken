@@ -1,0 +1,75 @@
+---
+title: 'LOXLEY Token'
+description:
+  'Frequently asked questions about the LOXLEY token — its purpose, utility, and role in the Loxley
+  network'
+---
+
+import { Callout } from 'nextra/components'
+
+# LOXLEY Token
+
+<Callout type='error'>
+  **This page describes upstream Interfold's FOLD token, not Loxley's.** Loxley is a fork of
+  [theinterfold/interfold](https://github.com/theinterfold/interfold); no LOXLEY token has been
+  issued, no auction has been held, and none of the fundraising, valuations, allocations or unlock
+  schedules below belong to this project. The text survives here as inherited documentation and must
+  be rewritten or removed before Loxley makes any claim of its own.
+</Callout>
+
+## What role does LOXLEY play in the Loxley network?
+
+Loxley is a distributed network for confidential coordination. Applications request Encrypted
+Execution Environments (E3s), while ciphernodes coordinate and secure each computation.
+
+LOXLEY supports the economic operation of the network.
+
+## What is the utility of the LOXLEY token?
+
+LOXLEY has three main, interlocking functions:
+
+- **Ciphernode bonding** — Ciphernode operators bond LOXLEY to become eligible for network duties.
+  Bonded LOXLEY remains locked while the operator is registered and may be subject to
+  protocol-defined withdrawal periods and penalties for provable misbehavior or failure to fulfill
+  assigned responsibilities. These mechanisms align operational responsibility with economic
+  accountability.
+- **Protocol incentives** — Alongside a share of completed E3 fees, ciphernode operators may receive
+  LOXLEY incentives for successfully completing protocol-defined duties as members of an E3
+  committee.
+- **Governance** — LOXLEY is expected to support governance participation via the Loxley DAO.
+  Governance may include decisions related to network parameters, protocol upgrades, and treasury
+  administration. Governance processes may include secret-ballot mechanisms powered by the Loxley
+  network.
+
+## When does LOXLEY become generally transferable?
+
+General LOXLEY transferability can be enabled at or after Aug 19 at **14:00 UTC (10 AM ET)**.
+
+At or after Unix timestamp **`1787148000`**, anyone can call the `tge()` function on the LOXLEY
+contract to enable general transferability.
+
+Once that transaction is executed, LOXLEY becomes generally transferable.
+
+General LOXLEY transferability and Network Alpha are distinct milestones within the broader Loxley
+launch sequence.
+
+## How can I use LOXLEY to operate a ciphernode?
+
+Operating a ciphernode is designed to be permissionless. The setup involves provisioning cloud-based
+or personal hardware, running the ciphernode software, bonding the ciphernode, and completing
+onchain registration.
+
+Once registered, operators can participate in E3 committees when selected under protocol rules.
+
+For current setup requirements, bonding instructions, and operator documentation, see
+[Ciphernode Operators](/ciphernode-operators).
+
+## Can I delegate my LOXLEY to a ciphernode operator?
+
+No. Loxley's bonding model is deliberately operator-only. Every LOXLEY bonded to a ciphernode
+represents capital at risk to the operator running it.
+
+Delegated capital would allow operators to run partially-owned ciphernodes, diluting accountability
+and weakening the network's economic security guarantees.
+
+If you need support, join the designated [Telegram group](https://t.me/enclave_e3).

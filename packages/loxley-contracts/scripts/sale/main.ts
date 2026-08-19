@@ -13,15 +13,15 @@ import { actionValidate } from "./validate";
 
 function printHelp(): void {
   console.log(`
-Loxley LOX sale pipeline
+Loxley LOXLEY sale pipeline
 
 One script, selected by --action:
   --action prepare      Deploy Safe-owned MockBondingRegistry proxy + sale deployer
   --action plan         Resolve schedule/economics and write the deploy plan
   --action deploy       Operator submits deploySaleWithLiquidityLauncher
   --action propose-safe Propose Safe activation: accept ownership + set claim source
-  --action validate     Check LOX/CCA/Safe invariants
-  --action bid-claim    Submit a CCA bid, exit, and claim LOX
+  --action validate     Check LOXLEY/CCA/Safe invariants
+  --action bid-claim    Submit a CCA bid, exit, and claim LOXLEY
   --action full-test    Self-contained Sepolia/local rehearsal
 
 Common flags:
@@ -34,7 +34,7 @@ Common flags:
   --safe-builder <file>     Optional Safe Transaction Builder import path
   --liquidity-launcher 0x... Override LiquidityLauncher address
   --lbp-strategy 0x...      Override LBPStrategy address
-  --reserved-token-amount-for-lp N  LOX wei reserved for LP in LBP mode
+  --reserved-token-amount-for-lp N  LOXLEY wei reserved for LP in LBP mode
   --lp-allocation-rate-mps N Percent of raised currency routed to LP, 1e7 = 100%
   --migration-delay-blocks N Blocks after auction end before LBP migrate() is allowed
   --pool-fee N              Uniswap v4 pool fee for LBP migration
@@ -43,7 +43,7 @@ Common flags:
   --presale-start T         Unix seconds or ISO time when pre-bids open
   --auction-start T         Unix seconds or ISO time when non-zero CCA issuance starts
   --auction-end T           Unix seconds or ISO time when the CCA closes
-  --floor-price-eth-per-fold N  Human ETH/LOX floor price, e.g. 0.000012
+  --floor-price-eth-per-fold N  Human ETH/LOXLEY floor price, e.g. 0.000012
   --tick-spacing-percent-of-floor N  CCA price increment as % of floor (default 1)
   --lp-allocation-percent N Percent of raised ETH routed to LP (default 25)
   --predicate-registry 0x... Deploy a Safe-owned Predicate validation hook
@@ -51,13 +51,13 @@ Common flags:
   --predicate-hook 0x...     Use an already deployed validation hook
   --hook-data 0x...          Encoded Predicate attestation for --action bid-claim
   --auction-duration-blocks N  CCA length in blocks when not deriving blocks from timestamps (default 40)
-  --cca-offset-seconds N    Seconds until LOX CCA_START from now (default 86400 = 1 day)
-  --cca-duration-seconds N  Seconds LOX CCA lasts (default 604800 = 7 days)
-  --cca-start-timestamp N   Unix seconds for LOX CCA_START; also derives CCA blocks by default
-  --cca-end-timestamp N     Unix seconds for LOX CCA_END; also derives CCA blocks by default
+  --cca-offset-seconds N    Seconds until LOXLEY CCA_START from now (default 86400 = 1 day)
+  --cca-duration-seconds N  Seconds LOXLEY CCA lasts (default 604800 = 7 days)
+  --cca-start-timestamp N   Unix seconds for LOXLEY CCA_START; also derives CCA blocks by default
+  --cca-end-timestamp N     Unix seconds for LOXLEY CCA_END; also derives CCA blocks by default
   --auction-start-timestamp N  Unix seconds used only for CCA startBlock derivation
   --auction-end-timestamp N    Unix seconds used only for CCA endBlock derivation
-  --derive-auction-blocks   Derive CCA blocks from the LOX timestamps
+  --derive-auction-blocks   Derive CCA blocks from the LOXLEY timestamps
   --seconds-per-block N     Block-time estimate for timestamp -> block conversion (default 12)
 
 Examples:

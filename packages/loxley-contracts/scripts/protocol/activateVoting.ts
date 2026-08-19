@@ -39,7 +39,7 @@ export async function actionActivateVoting(): Promise<void> {
   const ciphernodeBondToken: string = await registry.getCiphernodeBondToken();
   if (ciphernodeBondToken.toLowerCase() !== config.fold.toLowerCase()) {
     throw new Error(
-      `BondingRegistry bonds ${ciphernodeBondToken}, not LOX (${config.fold}). ` +
+      `BondingRegistry bonds ${ciphernodeBondToken}, not LOXLEY (${config.fold}). ` +
         "Execute the governance batch from --action deploy first.",
     );
   }
@@ -57,8 +57,8 @@ export async function actionActivateVoting(): Promise<void> {
     return;
   }
 
-  // Defaults to LOX itself, which counts wallet-held votes. Setting `escrowVotesAdapter` makes
-  // locking a precondition for voting; the constructor checks the escrow custodies this same LOX.
+  // Defaults to LOXLEY itself, which counts wallet-held votes. Setting `escrowVotesAdapter` makes
+  // locking a precondition for voting; the constructor checks the escrow custodies this same LOXLEY.
   const votesSource = config.escrowVotesAdapter ?? config.fold;
 
   const factory = await ethers.getContractFactory("BondedVotes");
@@ -76,7 +76,7 @@ Bonded voting activated
   BondedCheckpoints: ${deployment.bondedCheckpoints}
   BondedVotes:       ${deployment.bondedVotes}
   Votes source:      ${votesSource}${
-    config.escrowVotesAdapter ? " (locked LOX only)" : " (wallet-held LOX)"
+    config.escrowVotesAdapter ? " (locked LOXLEY only)" : " (wallet-held LOXLEY)"
   }
 
 Point the governance plugin at BondedVotes as its voting token.

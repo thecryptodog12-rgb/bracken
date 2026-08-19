@@ -8,12 +8,12 @@ import { Callout } from 'nextra/components'
 # Ciphernode Operators
 
 <Callout type='warning'>
-  **Loxley is not deployed yet.** Contract addresses on this page are placeholders. Loxley is a fork of
-  [theinterfold/interfold](https://github.com/theinterfold/interfold) targeting Robinhood Chain (chain id `4663`); the
-  addresses that used to sit here belonged to the upstream Interfold deployment on Ethereum and would have sent you to
-  someone else's contracts. They are archived in `packages/loxley-contracts/upstream-interfold-deployments.reference.json`.
+  **Loxley is not deployed yet.** Contract addresses on this page are placeholders. Loxley is a fork
+  of [theinterfold/interfold](https://github.com/theinterfold/interfold) targeting Robinhood Chain
+  (chain id `4663`); the addresses that used to sit here belonged to the upstream Interfold
+  deployment on Ethereum and would have sent you to someone else's contracts. They are archived in
+  `packages/loxley-contracts/upstream-interfold-deployments.reference.json`.
 </Callout>
-
 
 Ciphernodes are the distributed workers that power the Loxley network. They participate in threshold
 cryptography to enable encrypted execution environments (E3s) while ensuring no single party can
@@ -45,23 +45,23 @@ Loxley protocol uses several contracts that work together:
 | ---------------------- | ------------------------------------------------------------------- |
 | **Loxley**             | Core coordinator that manages E3 requests and computation lifecycle |
 | **CiphernodeRegistry** | Tracks registered operators and manages committee formation         |
-| **BondingRegistry**    | Handles ciphernode bonds (LOX) and ticket balances (tLOX)           |
+| **BondingRegistry**    | Handles ciphernode bonds (LOXLEY) and ticket balances (tLOXLEY)     |
 | **SlashingManager**    | Processes slashing proposals, appeals, and ban enforcement          |
 | **E3RefundManager**    | Calculates and distributes refunds when an E3 fails                 |
-| **LoxleyToken**        | LOX token used for ciphernode bonding                               |
-| **LoxleyTicketToken**  | Non-transferable tLOX token representing ticket balances            |
+| **LoxleyToken**        | LOXLEY token used for ciphernode bonding                            |
+| **LoxleyTicketToken**  | Non-transferable tLOXLEY token representing ticket balances         |
 
 ### Mainnet Contract Addresses
 
-| Contract                  | Address                                      | Deploy block |
-| ------------------------- | -------------------------------------------- | ------------ |
+| Contract                  | Address              | Deploy block |
+| ------------------------- | -------------------- | ------------ |
 | Loxley                    | `0xTBD_NOT_DEPLOYED` | 25786382     |
 | CiphernodeRegistry        | `0xTBD_NOT_DEPLOYED` | 25786378     |
 | BondingRegistry           | `0xTBD_NOT_DEPLOYED` | 25473398     |
 | SlashingManager           | `0xTBD_NOT_DEPLOYED` | 25786375     |
 | E3RefundManager           | `0xTBD_NOT_DEPLOYED` | 25786384     |
 | LoxleyTicketToken         | `0xTBD_NOT_DEPLOYED` | 25786372     |
-| LoxleyToken (LOX)         | `0xTBD_NOT_DEPLOYED` | 25473449     |
+| LoxleyToken (LOXLEY)      | `0xTBD_NOT_DEPLOYED` | 25473449     |
 | USDS (fee token)          | `0xTBD_NOT_DEPLOYED` | 20663730     |
 | sUSDS (ticket collateral) | `0xTBD_NOT_DEPLOYED` | 20677434     |
 
@@ -71,15 +71,15 @@ add ticket collateral while requests are paused.
 
 ### Sepolia Contract Addresses
 
-| Contract             | Address                                      | Deploy block |
-| -------------------- | -------------------------------------------- | ------------ |
+| Contract             | Address              | Deploy block |
+| -------------------- | -------------------- | ------------ |
 | Loxley               | `0xTBD_NOT_DEPLOYED` | 11459000     |
 | CiphernodeRegistry   | `0xTBD_NOT_DEPLOYED` | 11458978     |
 | BondingRegistry      | `0xTBD_NOT_DEPLOYED` | 11458979     |
 | SlashingManager      | `0xTBD_NOT_DEPLOYED` | 11458977     |
 | E3RefundManager      | `0xTBD_NOT_DEPLOYED` | 11459002     |
 | LoxleyTicketToken    | `0xTBD_NOT_DEPLOYED` | 11458976     |
-| LoxleyToken (LOX)    | `0xTBD_NOT_DEPLOYED` | 11458986     |
+| LoxleyToken (LOXLEY) | `0xTBD_NOT_DEPLOYED` | 11458986     |
 | MockUSDC (fee token) | `0xTBD_NOT_DEPLOYED` | 11458975     |
 | Faucet               | `0xTBD_NOT_DEPLOYED` | 11458989     |
 
@@ -92,7 +92,7 @@ intended for public-network rehearsal. Replace it before enabling production CRI
 
 | Mainnet bootstrap contract       | Address                                      | Deploy block |
 | -------------------------------- | -------------------------------------------- | ------------ |
-| MockE3Program                    | `0xTBD_NOT_DEPLOYED` | 25786371     |
+| MockE3Program                    | `0xTBD_NOT_DEPLOYED`                         | 25786371     |
 | DeployableMockCiphertextVerifier | `0xB568e5aD762F7a75F1EC65A985ec4038F6409297` | 25786403     |
 
 > **The current Sepolia deployment does not verify proofs.** It was deployed with
@@ -100,8 +100,8 @@ intended for public-network rehearsal. Replace it before enabling production CRI
 > mocks that accept any proof. Use this network to wire up and operate a node, not to test proving
 > correctness.
 
-| Mock contract          | Address                                      | Deploy block |
-| ---------------------- | -------------------------------------------- | ------------ |
+| Mock contract          | Address              | Deploy block |
+| ---------------------- | -------------------- | ------------ |
 | MockE3Program          | `0xTBD_NOT_DEPLOYED` | 11458997     |
 | MockComputeProvider    | `0xTBD_NOT_DEPLOYED` | 11458993     |
 | MockDecryptionVerifier | `0xTBD_NOT_DEPLOYED` | 11458994     |
@@ -129,9 +129,9 @@ against `BondingRegistry`.
 | ------------------------------------------------------- | ---------------------- | -------------------------------------------------------- |
 | `setBondOwner(bondOwner)`                               | Operator key           | Authorize the wallet that controls this position         |
 | `proposeBondOwner(operator, newOwner)`                  | Bond owner             | Nominate a replacement owner                             |
-| `acceptBondOwner(operator)`                             | Nominated owner        | Accept the position and move the LOX accounting          |
-| `bondCiphernodeFor(operator, amount)`                   | Bond owner             | Bond LOX from the caller's wallet                        |
-| `unbondCiphernodeFor(operator, amount)`                 | Bond owner             | Queue bonded LOX for exit                                |
+| `acceptBondOwner(operator)`                             | Nominated owner        | Accept the position and move the LOXLEY accounting       |
+| `bondCiphernodeFor(operator, amount)`                   | Bond owner             | Bond LOXLEY from the caller's wallet                     |
+| `unbondCiphernodeFor(operator, amount)`                 | Bond owner             | Queue bonded LOXLEY for exit                             |
 | `registerOperatorFor(operator)`                         | Bond owner             | Add the operator key to the ciphernode registry          |
 | `deregisterOperatorFor(operator)`                       | Bond owner or operator | Request deregistration and queue all collateral          |
 | `addTicketBalanceFor(operator, amount)`                 | Bond owner             | Deposit the fee token and mint tickets                   |
@@ -152,7 +152,7 @@ Read the current state with these view functions:
 | `isRegistered(operator)`       | Whether the key is in the registry                                |
 | `isActive(operator)`           | Whether the operator is eligible for sortition                    |
 | `availableTickets(operator)`   | `floor(ticketBalance / ticketPrice)`                              |
-| `totalBonded(account)`         | LOX that counts toward the locked-floor collateral of an owner    |
+| `totalBonded(account)`         | LOXLEY that counts toward the locked-floor collateral of an owner |
 | `hasExitInProgress(operator)`  | Whether an exit is queued                                         |
 
 > `isCiphernodeBonded` and registration use different thresholds. `isCiphernodeBonded` tests the
@@ -193,7 +193,7 @@ stateDiagram-v2
 | State           | Description                                                                        |
 | --------------- | ---------------------------------------------------------------------------------- |
 | **Unbonded**    | No ciphernode bond deposited; cannot register                                      |
-| **Bonded**      | LOX bonded but not yet registered in the registry                                  |
+| **Bonded**      | LOXLEY bonded but not yet registered in the registry                               |
 | **Registered**  | In the registry but lacking minimum ticket balance                                 |
 | **Active**      | Fully operational; eligible for committee selection via sortition                  |
 | **Inactive**    | Registered but below minimum requirements (tickets or ciphernode bond)             |
@@ -205,7 +205,7 @@ Before operating a ciphernode, ensure you have:
 
 | Requirement           | Details                                                                                    |
 | --------------------- | ------------------------------------------------------------------------------------------ |
-| **LOX Tokens**        | Mainnet requires at least `32,000 LOX` for the ciphernode bond                             |
+| **LOXLEY Tokens**     | Mainnet requires at least `32,000 LOXLEY` for the ciphernode bond                          |
 | **Ticket collateral** | Mainnet requires at least `1,000 sUSDS` shares for one ticket                              |
 | **ETH**               | Gas for transactions on your target network                                                |
 | **Hardware**          | Linux/macOS, 8+ cores, 32GB+ DDR5 RAM, 500GB+ NVMe SSD, stable internet with open UDP port |

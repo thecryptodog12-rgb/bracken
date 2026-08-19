@@ -42,7 +42,7 @@ function useSidebarAutoScroll() {
 }
 
 // Nextra auto-scrolls the sidebar to center the active item on every page
-// mount. For items near the bottom of a long sidebar (e.g. LOX Token),
+// mount. For items near the bottom of a long sidebar (e.g. LOXLEY Token),
 // this pushes them off-screen whenever the active page is near the top.
 // Fix: save the scroll position before navigation and restore it after
 // Nextra's scroll has run.

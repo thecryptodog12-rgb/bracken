@@ -508,7 +508,7 @@ export default function Operator() {
                     )
                   }
                 >
-                  {label('bondCiphernode', 'Bond LOX')}
+                  {label('bondCiphernode', 'Bond LOXLEY')}
                 </button>
               </div>
               {!bondOwnerSet && <Note>Complete step 2 first — the registry only accepts collateral from an authorized bond owner.</Note>}

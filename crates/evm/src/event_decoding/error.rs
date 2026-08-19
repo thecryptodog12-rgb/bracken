@@ -125,10 +125,10 @@ mod tests {
 
     #[test]
     fn test_decode_string_revert() {
-        // Standard `revert("No LOX")` -> Error(string)
-        let data = Revert::from("No LOX").abi_encode();
+        // Standard `revert("No LOXLEY")` -> Error(string)
+        let data = Revert::from("No LOXLEY").abi_encode();
         let decoded = decode_error(&data).unwrap();
-        assert_eq!(decoded, "No LOX");
+        assert_eq!(decoded, "No LOXLEY");
     }
 
     #[test]

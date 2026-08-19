@@ -26,15 +26,15 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 ### Tokens and bonding
 
 - Ticket deposits/withdrawals use **raw stablecoin base units**, never `× ticketPrice`;
-  `ticketPrice` is used only in the activation check and sortition eligibility. tLOX is minted 1:1
+  `ticketPrice` is used only in the activation check and sortition eligibility. tLOXLEY is minted 1:1
   with its underlying asset. — `BondingRegistry.sol` (`addTicketBalance`, `removeTicketBalance`);
   `flow-trace/02`
-- Tickets (tLOX) are **non-transferable**: `permit`/`delegateBySig` always revert; transfers
+- Tickets (tLOXLEY) are **non-transferable**: `permit`/`delegateBySig` always revert; transfers
   restricted to mint/burn/bonding/whitelist. Collateral cannot be moved to dodge slashing; snapshot
   eligibility at `requestBlock-1` stays attributable. — `flow-trace/02`
-- `totalBonded(account)` = active LOX ciphernode bond + pending-but-still-slashable exits; LOX
+- `totalBonded(account)` = active LOXLEY ciphernode bond + pending-but-still-slashable exits; LOXLEY
   `_update` enforces locked-floor accounting. — `flow-trace/02`
-- A bond-owner transfer must preserve the previous owner's locked-LOX coverage. The wallet balance
+- A bond-owner transfer must preserve the previous owner's locked-LOXLEY coverage. The wallet balance
   plus remaining bonds must equal or exceed `lockedBalanceOf(previousOwner)`. —
   `BondingRegistry.acceptBondOwner`; `flow-trace/01`, `02`
 - **Bonded-voting history mirrors the mapping, never a delta.**
@@ -42,7 +42,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   `BondedCheckpoints`, and must be called from every site that mutates it: bond, slash, both sides
   of a bond-owner transfer, and exit claim (which mutates through a storage pointer inside
   `BondingAssetLib`, so the checkpoint is taken by the caller). Unbonding is deliberately not a
-  write site — the LOX stays with the registry until claimed. A missed site is caught by
+  write site — the LOXLEY stays with the registry until claimed. A missed site is caught by
   `bonded(owner) == totalBonded(owner)`, which compares the checkpoint's current value against the
   mapping at the same instant, and holds for every owner that has been synchronized at least once —
   configuring `BondedCheckpoints` does not backfill, so an owner that bonded beforehand reads as
@@ -53,25 +53,25 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   by a checkpoint per block. — `BondingRegistry.sol`; `BondedCheckpoints.sol`; `flow-trace/02`
 - **The numerator comes from the votes source; the denominator is always the token.**
   `BondedVotes.getPastVotes` sums whatever `votesSource` attributes to the account and that
-  account's bonded LOX, while `getPastTotalSupply` passes the **token's** supply through unchanged.
-  `votesSource` is either the token itself (wallet-held LOX votes, the original behaviour) or an
-  escrow adapter (only locked LOX votes, so holders must lock to participate while operators keep
+  account's bonded LOXLEY, while `getPastTotalSupply` passes the **token's** supply through unchanged.
+  `votesSource` is either the token itself (wallet-held LOXLEY votes, the original behaviour) or an
+  escrow adapter (only locked LOXLEY votes, so holders must lock to participate while operators keep
   weight by bonding). Reading the denominator off the escrow instead would omit the bonded half and
   let participation exceed 100%. Summed voting power must never exceed total supply. —
   `BondedVotes.sol`; `flow-trace/02`
-- **Escrowed and bonded LOX cannot overlap; vesting-locked and bonded do, and must be netted.**
+- **Escrowed and bonded LOXLEY cannot overlap; vesting-locked and bonded do, and must be netted.**
   Escrowing custodies the token in the escrow and bonding custodies it in the registry, so no token
   can be in both. Both were transferred rather than burned, so both are still inside the token's
   total supply — which is what makes the ratio sound in either configuration. Under an escrow votes
   source `BondedVotes` adds a third source, `LoxleyToken.lockedBalanceAt`, because vesting-locked
-  LOX sits in the holder's own wallet and the transfer hook will not let it reach the escrow. That
+  LOXLEY sits in the holder's own wallet and the transfer hook will not let it reach the escrow. That
   source **does** overlap the bond: a bond satisfies a lock (`transferableBalanceOf` nets the two),
-  so bonded LOX is reported by `lockedBalanceAt` and by the bonded history while existing once.
+  so bonded LOXLEY is reported by `lockedBalanceAt` and by the bonded history while existing once.
   `_lockedVotes` therefore subtracts the bond from the locked balance, saturating at zero, making
   the pair worth `max(bonded, locked)` — then caps the result at the account's wallet balance,
   because slashing takes the bond without taking the lock and would otherwise leave the account
-  voting with LOX the slash recipient now holds. The lock schedule is read **only** when the votes
-  source is an escrow: when the token votes for itself, locked LOX is wallet LOX the token has
+  voting with LOXLEY the slash recipient now holds. The lock schedule is read **only** when the votes
+  source is an escrow: when the token votes for itself, locked LOXLEY is wallet LOXLEY the token has
   already counted. — `BondedVotes.sol`; `LoxleyToken.sol`; `flow-trace/02`
 - **The lock schedule is present-state, not history.** `lockedBalanceAt` walks an account's
   **current** locks and evaluates them against the timestamp given, so a lock created after a
@@ -98,16 +98,16 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   constructed after the registry is configured — `protocol/deployContracts` therefore deploys
   `BondedCheckpoints` only, and `--action activate-voting` deploys `BondedVotes` once the governance
   batch has run. — `BondedVotes.sol`; `protocol/activateVoting.ts`; `flow-trace/02`
-- **`BondedVotes.balanceOf` attributes custodied LOX to whoever it belongs to.** Bonding moves LOX
+- **`BondedVotes.balanceOf` attributes custodied LOXLEY to whoever it belongs to.** Bonding moves LOXLEY
   into the registry and locking moves it into the escrow, while the adapter attributes each to the
   account it belongs to, so counting it at the custodian's address as well would place the same
   tokens twice and push summed balances above total supply — the denominator every holder-percentage
   view divides by. The registry's entry subtracts `totalCiphernodeBondLiability`, saturating at
   zero, and the escrow's own entry is netted to zero for the same reason — every unit it holds is
-  attributed to a locker, and it publishes no liability total to subtract instead; locked LOX is
+  attributed to a locker, and it publishes no liability total to subtract instead; locked LOXLEY is
   added per account via the escrow's `votingPowerForAccount`, which is delegation-blind, rather than
   the adapter's own `balanceOf`, which counts lock NFTs rather than tokens. `getVotes` needs no such
-  adjustment: the registry never delegates, so bonded LOX carries no wallet votes to double. —
+  adjustment: the registry never delegates, so bonded LOXLEY carries no wallet votes to double. —
   `BondedVotes.sol`; `flow-trace/02`
 - **`setBondedCheckpoints` is one-shot per ciphernode bond token, and self-verifying.** It requires
   the checkpoint contract to name this registry **and** to accept a write from it, checked by
@@ -240,7 +240,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 - Slashed **ticket** funds are always escrowed first; destination depends on terminal outcome
   (failure → honest nodes; none → snapshotted treasury; success → split by `successSlashedNodeBps`).
   **Ciphernode-bond** slashes do not leave the registry at execution: the amount is recorded in
-  `slashedCiphernodeBond` and the LOX stays in registry custody. Only `withdrawSlashedFunds`
+  `slashedCiphernodeBond` and the LOXLEY stays in registry custody. Only `withdrawSlashedFunds`
   (owner-called) moves it to `slashedFundsTreasury`, releasing the matching
   `totalCiphernodeBondLiability` as it goes — so custody and liability are retired together. —
   `BondingRegistry.slashCiphernodeBond`, `BondingRegistry.withdrawSlashedFunds`; `flow-trace/05`
@@ -547,7 +547,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   dropped write leaves the reference at `address(0)` while the script still exits zero.
 - **A deployment must end with a verified wiring graph.** After configuration, `deployLoxley.ts`
   reads back every cross-contract reference (Loxley, CiphernodeRegistry, BondingRegistry,
-  LoxleyTicketToken, SlashingManager, E3RefundManager, LOX as the BondingRegistry ciphernode bond
+  LoxleyTicketToken, SlashingManager, E3RefundManager, LOXLEY as the BondingRegistry ciphernode bond
   token) plus the BondingRegistry reward-distributor authorization for Loxley, and throws with the
   full list of mismatches. Add a read-back for each new cross-contract setter.
 - **A deployment must also enable bonded voting.** `protocol/deployContracts` deploys

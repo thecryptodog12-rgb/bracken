@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 232 44" width="232" height="44" role="img" aria-label="Loxley">
+  <title>Loxley</title>
+  <!--
+    Hood-merk + woordmerk, gelijk aan packages/loxley-dashboard/src/Wordmark.tsx.
+    De cowl met het gezicht leeg gelaten: de identiteit is verborgen, het
+    silhouet niet.
+
+    currentColor werkt niet in een <img>, dus de kleuren staan hier expliciet.
+    Greenwood voor het merk, forest ink voor de naam.
+  -->
+  <g transform="translate(2, 10) scale(1.0)">
+    <path
+      d="M12 1.6c-4.9 0-8.6 3.9-8.6 9.2v9.4c0 1 .8 1.8 1.8 1.8h3.4v-8.2a3.4 3.4 0 0 1 6.8 0V22h3.4c1 0 1.8-.8 1.8-1.8v-9.4c0-5.3-3.7-9.2-8.6-9.2Z"
+      fill="#1c5c3f" />
+    <path
+      d="M12 5.4c-3 0-5.2 2.4-5.2 5.6 0 1.5.5 2.8 1.4 3.8V13a3.8 3.8 0 0 1 7.6 0v1.8c.9-1 1.4-2.3 1.4-3.8 0-3.2-2.2-5.6-5.2-5.6Z"
+      fill="#1c5c3f" fill-opacity="0.28" />
+  </g>
+  <text x="34" y="31" fill="#15211b" font-size="27" letter-spacing="-0.4"
+    font-family="'Iowan Old Style','Palatino Linotype',Palatino,Georgia,'Times New Roman',serif">Loxley</text>
+</svg>

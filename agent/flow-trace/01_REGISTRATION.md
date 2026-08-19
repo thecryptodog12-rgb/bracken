@@ -14,7 +14,7 @@ environment metadata.
 ## Identity model: bond owner vs operator key
 
 The on-chain operator remains the address whose key is loaded by the ciphernode. That address is
-inserted into the registry, owns the non-transferable tLOX voting balance, submits sortition
+inserted into the registry, owns the non-transferable tLOXLEY voting balance, submits sortition
 tickets, signs DKG proofs, and is the identity targeted by bans and slashes.
 
 Before creating a position, the operator can run:
@@ -29,7 +29,7 @@ The operator may correct the address while the position is empty. Every collater
 action requires the configured owner; after funding or registration, rotation is two-step:
 `proposeBondOwner(operator, newOwner)` from the current owner, followed by
 `acceptBondOwner(operator)` from the proposed owner. Acceptance is blocked if moving the operator's
-LOX credit would leave the previous owner's wallet-plus-remaining-bonds below its current locked LOX
+LOXLEY credit would leave the previous owner's wallet-plus-remaining-bonds below its current locked LOXLEY
 balance.
 
 Only that owner can call the financial/lifecycle `...For(operator)` entry points:
@@ -108,7 +108,7 @@ Operator runs:
    ├─ Allows owner == operator (separate owner recommended)
    ├─ Allows operator correction only while the position is empty
    ├─ Requires current-owner proposal + new-owner acceptance after funding
-   ├─ Preserves the previous owner's locked-LOX coverage on acceptance
+   ├─ Preserves the previous owner's locked-LOXLEY coverage on acceptance
    ├─ Stores bondOwners[operator] = owner
    └─ Emits BondOwnerSet(operator, owner)
 ```
@@ -117,11 +117,11 @@ Until this transaction is mined, `bondOwnerOf(operator)` returns the zero addres
 owner-authorized position calls fail.
 
 The current owner can later call `proposeBondOwner(operator, newOwner)`. Acceptance by `newOwner`
-moves the operator's active plus pending LOX credit between `_bondedByOwner` accounts atomically
+moves the operator's active plus pending LOXLEY credit between `_bondedByOwner` accounts atomically
 only when the previous owner's wallet balance plus its remaining bonds still covers
-`lockedBalanceOf(previousOwner)`. This prevents ownership rotation from converting bonded locked LOX
-into an unlocked exit payout. A position backed entirely by locked LOX can be rotated after the old
-owner exits and reclaims it, or after equivalent LOX is returned to that owner's wallet. Successful
+`lockedBalanceOf(previousOwner)`. This prevents ownership rotation from converting bonded locked LOXLEY
+into an unlocked exit payout. A position backed entirely by locked LOXLEY can be rotated after the old
+owner exits and reclaims it, or after equivalent LOXLEY is returned to that owner's wallet. Successful
 acceptance emits a new `BondOwnerSet`, so the event projection follows rotations.
 
 ---
@@ -141,7 +141,7 @@ Bond owner
 ├─ BondingRegistry.registerOperatorFor(operator)
 │  ├─ Verifies msg.sender == bondOwnerOf(operator)
 │  ├─ Verifies the operator is not banned or already registered
-│  ├─ Verifies the operator has the required LOX bond
+│  ├─ Verifies the operator has the required LOXLEY bond
 │  ├─ Sets operators[operator].registered = true
 │  ├─ Calls registry.addCiphernode(operator)
 │  │  ├─ Inserts uint160(operator) into the Lean IMT
@@ -152,7 +152,7 @@ Bond owner
 ├─ stablecoin.approve(LoxleyTicketToken, ticketAmount)
 └─ BondingRegistry.addTicketBalanceFor(operator, ticketAmount)
    ├─ Reverts with NotRegistered() when registration has not happened
-   ├─ Mints tLOX to the operator from the owner's stablecoin
+   ├─ Mints tLOXLEY to the operator from the owner's stablecoin
    └─ Calls _updateOperatorStatus(operator)
       └─ Activates when bond and ticket thresholds are met
 ```
@@ -163,7 +163,7 @@ ciphernode bond is the reverse: `registerOperatorFor` requires
 `ciphernodeBond >= requiredCiphernodeBond`, so the bond must already be in place. The only valid
 order is bond, register, tickets.
 
-The node's address—not the bond owner's—is inserted into the IMT, owns the tLOX balance, and remains
+The node's address—not the bond owner's—is inserted into the IMT, owns the tLOXLEY balance, and remains
 the committee and slashing identity.
 
 ---
@@ -197,7 +197,7 @@ User runs: loxley ciphernode status
    Active:           true
    Exit Pending:     false
    Ticket Balance:   100 (available: 95)
-   Ciphernode Bond:     50000 LOX
+   Ciphernode Bond:     50000 LOXLEY
    Pending Exits:    tickets=0, ciphernode bond=0
    Requirements:     minTickets=10, ticketPrice=1000000, ciphernodeBond=50000
 ```

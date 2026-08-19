@@ -230,7 +230,7 @@ contract LoxleyToken is
     /// @notice The CCA auction contract, set once by the owner after launch.
     address public CLAIM_SOURCE;
 
-    /// @notice Registry whose bonded LOX counts toward locked balances.
+    /// @notice Registry whose bonded LOXLEY counts toward locked balances.
     IBondingRegistry public immutable BONDING_REGISTRY;
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -319,7 +319,7 @@ contract LoxleyToken is
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * @notice Deploys LOX with no TGE set.
+     * @notice Deploys LOXLEY with no TGE set.
      * @dev The initial owner receives every role via the {_transferOwnership}
      *      sync. Operational roles can additionally be granted to dedicated
      *      keys post-deployment.
@@ -327,7 +327,7 @@ contract LoxleyToken is
      * @param ccaStart_ CCA auction window start;
      * @param ccaEnd_ CCA auction window end; after `ccaStart_`.
      * @param noMoreLocks_ Absolute timestamp after which token locks no longer apply.
-     * @param bondingRegistry_ Registry whose bonded LOX
+     * @param bondingRegistry_ Registry whose bonded LOXLEY
      */
     constructor(
         address initialOwner_,
@@ -335,7 +335,7 @@ contract LoxleyToken is
         uint64 ccaEnd_,
         uint64 noMoreLocks_,
         IBondingRegistry bondingRegistry_
-    ) ERC20("Loxley", "LOX") ERC20Permit("Loxley") Ownable(initialOwner_) {
+    ) ERC20("Loxley", "LOXLEY") ERC20Permit("Loxley") Ownable(initialOwner_) {
         if (ccaStart_ <= block.timestamp) {
             revert InvalidCcaWindow(ccaStart_, ccaEnd_);
         }
@@ -360,7 +360,7 @@ contract LoxleyToken is
     // Minting
     // ─────────────────────────────────────────────────────────────────────────
 
-    /// @notice Plain vanilla admin mint: LOX with no lock attached. Only
+    /// @notice Plain vanilla admin mint: LOXLEY with no lock attached. Only
     ///         allowed before TGE (Virtual, CCA, and Cooldown phases).
     function mint(
         address recipient,

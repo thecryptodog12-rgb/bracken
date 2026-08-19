@@ -76,7 +76,7 @@ abstract contract MockCCAAuctionBase {
     /// @notice Minimal ETH bid path for Sepolia/local deployment rehearsals.
     /// @dev The real Uniswap CCA handles pricing. This mock distributes the
     ///      funded sale supply pro-rata by ETH contributed so tests can verify
-    ///      claims and LOX claim locks without a frontend.
+    ///      claims and LOXLEY claim locks without a frontend.
     function bid() external payable {
         if (currency != address(0)) revert NativeEthOnly();
         if (block.number < startBlock) revert AuctionNotStarted();

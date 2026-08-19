@@ -8,12 +8,12 @@ import { Callout } from 'nextra/components'
 # Running a Ciphernode
 
 <Callout type='warning'>
-  **Loxley is not deployed yet.** Contract addresses on this page are placeholders. Loxley is a fork of
-  [theinterfold/interfold](https://github.com/theinterfold/interfold) targeting Robinhood Chain (chain id `4663`); the
-  addresses that used to sit here belonged to the upstream Interfold deployment on Ethereum and would have sent you to
-  someone else's contracts. They are archived in `packages/loxley-contracts/upstream-interfold-deployments.reference.json`.
+  **Loxley is not deployed yet.** Contract addresses on this page are placeholders. Loxley is a fork
+  of [theinterfold/interfold](https://github.com/theinterfold/interfold) targeting Robinhood Chain
+  (chain id `4663`); the addresses that used to sit here belonged to the upstream Interfold
+  deployment on Ethereum and would have sent you to someone else's contracts. They are archived in
+  `packages/loxley-contracts/upstream-interfold-deployments.reference.json`.
 </Callout>
-
 
 This guide covers three methods to run a ciphernode, from easiest to most flexible. Choose the
 method that best fits your infrastructure.
@@ -384,15 +384,15 @@ the check.
 
 Each chain requires these contract addresses:
 
-| Contract              | Description                         | Required for ciphernode |
-| --------------------- | ----------------------------------- | ----------------------- |
-| `loxley`              | Main Loxley coordinator contract    | Yes                     |
-| `ciphernode_registry` | Tracks registered operators         | Yes                     |
-| `bonding_registry`    | Manages bonds and tickets           | Yes                     |
-| `slashing_manager`    | Manages slashing penalties          | Yes                     |
-| `e3_program`          | E3 Program contract address         | No                      |
-| `fee_token`           | Fee token address for E3 requests   | No                      |
-| `faucet`              | Testnet faucet for LOX + fee tokens | No                      |
+| Contract              | Description                            | Required for ciphernode |
+| --------------------- | -------------------------------------- | ----------------------- |
+| `loxley`              | Main Loxley coordinator contract       | Yes                     |
+| `ciphernode_registry` | Tracks registered operators            | Yes                     |
+| `bonding_registry`    | Manages bonds and tickets              | Yes                     |
+| `slashing_manager`    | Manages slashing penalties             | Yes                     |
+| `e3_program`          | E3 Program contract address            | No                      |
+| `fee_token`           | Fee token address for E3 requests      | No                      |
+| `faucet`              | Testnet faucet for LOXLEY + fee tokens | No                      |
 
 Each contract can be specified as a simple address string or with a deploy block for faster syncing:
 
@@ -486,5 +486,5 @@ Control verbosity with the `-v` flag:
 
 Once your node is running:
 
-1. **[Register & Ciphernode bond](./registration)** - Bond LOX and register as an operator
+1. **[Register & Ciphernode bond](./registration)** - Bond LOXLEY and register as an operator
 2. **[Add Tickets](./tickets-and-sortition)** - Purchase tickets to participate in sortition

@@ -10,8 +10,8 @@ import Footer from './components/Footer'
 
 export default {
   logo: (
-    <Link href='https://theinterfold.com' target='_self'>
-      <img src='/loxley-logo.png' style={{ maxWidth: '150px', borderRadius: '0px' }} />
+    <Link href='/' target='_self'>
+      <img src='/loxley-logo.svg' alt='Loxley' style={{ maxWidth: '150px', borderRadius: '0px' }} />
     </Link>
   ),
   logoLink: false,

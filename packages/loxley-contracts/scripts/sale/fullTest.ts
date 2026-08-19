@@ -78,12 +78,12 @@ export async function actionFullTest(): Promise<void> {
   if (safe === operatorAddress) {
     const fold = await ethers.getContractAt("LoxleyToken", deployment.fold);
     await (await fold.acceptOwnership()).wait();
-    console.log(`Accepted LOX ownership: ${deployment.fold}`);
+    console.log(`Accepted LOXLEY ownership: ${deployment.fold}`);
     await (await fold.setClaimSource(deployment.auction)).wait();
-    console.log(`Set LOX claim source: ${deployment.auction}`);
+    console.log(`Set LOXLEY claim source: ${deployment.auction}`);
   } else {
     console.log(
-      `LOX ownership is pending Safe activation. Execute the Safe batch from ${safe}: acceptOwnership(), setClaimSource(), and Predicate hook setup if applicable.`,
+      `LOXLEY ownership is pending Safe activation. Execute the Safe batch from ${safe}: acceptOwnership(), setClaimSource(), and Predicate hook setup if applicable.`,
     );
   }
 
@@ -101,7 +101,7 @@ Full Sepolia/local rehearsal complete
   config:     ${configFile}
   plan:       ${planFile}
   deployment: ${deploymentPath(config)}
-  LOX:       ${deployment.fold}
+  LOXLEY:       ${deployment.fold}
   auction:    ${deployment.auction}
 `);
 }

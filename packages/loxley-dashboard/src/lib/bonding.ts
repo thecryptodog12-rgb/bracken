@@ -52,7 +52,7 @@ export type OperatorStatus = {
 }
 
 export type AccountFunds = {
-  /** Ciphernode bond-token (LOX) balance of the connected wallet. */
+  /** Ciphernode bond-token (LOXLEY) balance of the connected wallet. */
   ciphernodeBondBalance: bigint
   /** Ciphernode bond-token allowance granted to the bonding registry. */
   ciphernodeBondAllowance: bigint
@@ -79,7 +79,7 @@ export async function fetchBondingConfig(): Promise<BondingConfig> {
   })) as Address
 
   const [ciphernodeBondSymbol, ciphernodeBondDecimals, ticketSymbol, ticketDecimals] = await Promise.all([
-    tokenSymbol(ciphernodeBondToken, 'LOX'),
+    tokenSymbol(ciphernodeBondToken, 'LOXLEY'),
     tokenDecimals(ciphernodeBondToken, 18),
     tokenSymbol(ticketBase, 'USDC'),
     tokenDecimals(ticketBase, 6),

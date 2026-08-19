@@ -21,7 +21,7 @@ contract Faucet {
 
     function faucet() external {
         // Top up each token independently: a tester who spent their fee
-        // tokens but still holds LOX must still be able to replenish the
+        // tokens but still holds LOXLEY must still be able to replenish the
         // fee token (and vice versa).
         bool needsFold = fold.balanceOf(msg.sender) < AMOUNT_FOLD;
         bool needsFeeToken = feeToken.balanceOf(msg.sender) < AMOUNT_FEE_TOKEN;
@@ -32,7 +32,7 @@ contract Faucet {
 
         if (needsFold) {
             if (fold.balanceOf(address(this)) < AMOUNT_FOLD) {
-                revert("No LOX");
+                revert("No LOXLEY");
             }
             fold.transfer(msg.sender, AMOUNT_FOLD);
         }

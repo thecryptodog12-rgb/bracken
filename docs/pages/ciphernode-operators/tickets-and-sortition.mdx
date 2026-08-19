@@ -10,15 +10,15 @@ ticket system and sortition algorithm.
 
 ## Ticket Overview
 
-| Token     | Purpose                                            | Transferable |
-| --------- | -------------------------------------------------- | ------------ |
-| **LOX**   | Ciphernode bond - required to register             | Yes          |
-| **tLOX**  | Ticket token - determines committee selection odds | No           |
-| **sUSDS** | Mainnet ticket collateral token                    | Yes          |
-| **USDS**  | Mainnet fee token for E3 requests                  | Yes          |
+| Token       | Purpose                                            | Transferable |
+| ----------- | -------------------------------------------------- | ------------ |
+| **LOXLEY**  | Ciphernode bond - required to register             | Yes          |
+| **tLOXLEY** | Ticket token - determines committee selection odds | No           |
+| **sUSDS**   | Mainnet ticket collateral token                    | Yes          |
+| **USDS**    | Mainnet fee token for E3 requests                  | Yes          |
 
-Tickets are priced in the configured ticket collateral token and minted into non-transferable tLOX
-balances:
+Tickets are priced in the configured ticket collateral token and minted into non-transferable
+tLOXLEY balances:
 
 ```
 availableTickets = floor(ticketTokenBalance / ticketPrice)
@@ -38,12 +38,12 @@ loxley --config /path/to/owner.yaml ciphernode tickets \
 This:
 
 1. Pulls ticket collateral from the bond owner
-2. Mints equivalent tLOX to the operator address
+2. Mints equivalent tLOXLEY to the operator address
 3. Re-evaluates the operator's active status
 
 To buy tickets from a wallet instead of the CLI, use step 5 of the
-[interactive operator guide](https://dashboard.theinterfold.com/#operator). It prices the purchase from
-the live `ticketPrice` and handles the approval.
+[interactive operator guide](https://dashboard.theinterfold.com/#operator). It prices the purchase
+from the live `ticketPrice` and handles the approval.
 
 ### Burn Tickets
 
@@ -186,12 +186,12 @@ Watch your node logs for:
 
 ## Troubleshooting
 
-| Symptom                         | Possible Cause                           | Solution                        |
-| ------------------------------- | ---------------------------------------- | ------------------------------- |
-| Never being selected            | Low ticket count relative to peers       | Add more tickets                |
-| `isActive` is false             | Below minimum tickets or ciphernode bond | Top up tickets or bond more LOX |
-| `SubmissionWindowClosed` errors | RPC latency or slow submission           | Use faster RPC, check network   |
-| Committee missing your operator | Submission didn't succeed                | Check logs, retry next round    |
+| Symptom                         | Possible Cause                           | Solution                           |
+| ------------------------------- | ---------------------------------------- | ---------------------------------- |
+| Never being selected            | Low ticket count relative to peers       | Add more tickets                   |
+| `isActive` is false             | Below minimum tickets or ciphernode bond | Top up tickets or bond more LOXLEY |
+| `SubmissionWindowClosed` errors | RPC latency or slow submission           | Use faster RPC, check network      |
+| Committee missing your operator | Submission didn't succeed                | Check logs, retry next round       |
 
 ## Best Practices
 

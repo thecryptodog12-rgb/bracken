@@ -34,10 +34,10 @@ pub(crate) async fn execute(
                 .await?
                 .get_receipt()
                 .await?;
-            require_successful_receipt("unbond LOX", &receipt)?;
+            require_successful_receipt("unbond LOXLEY", &receipt)?;
             log!(
                 out,
-                "Queued {} LOX for operator {:#x} (tx: {:#x})",
+                "Queued {} LOXLEY for operator {:#x} (tx: {:#x})",
                 amount,
                 operator,
                 receipt.transaction_hash
@@ -106,10 +106,10 @@ async fn bond_ciphernode(
         .await?
         .get_receipt()
         .await?;
-    require_successful_receipt("bond LOX", &receipt)?;
+    require_successful_receipt("bond LOXLEY", &receipt)?;
     log!(
         out,
-        "Bonded {} LOX for operator {:#x} (tx: {:#x})",
+        "Bonded {} LOXLEY for operator {:#x} (tx: {:#x})",
         amount,
         operator,
         receipt.transaction_hash

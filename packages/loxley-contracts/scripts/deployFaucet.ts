@@ -22,10 +22,10 @@ import {
  * Force-deploys a fresh Faucet (the deployAndSave guard is idempotent on the
  * constructor args, so it would otherwise return the existing address),
  * overwrites the `Faucet` entry in deployed_contracts.json, whitelists it in
- * LOX and funds it with LOX + mock USDC.
+ * LOXLEY and funds it with LOXLEY + mock USDC.
  *
- * LOX funding uses `mint()`, which is only valid while LOX is in the Virtual
- * phase (before CCA_START). The deployer holds no LOX of its own, so there is
+ * LOXLEY funding uses `mint()`, which is only valid while LOXLEY is in the Virtual
+ * phase (before CCA_START). The deployer holds no LOXLEY of its own, so there is
  * no alternative funding path — the script aborts if the window has passed.
  *
  * Usage: hardhat run scripts/deployFaucet.ts --network sepolia
@@ -49,7 +49,7 @@ const main = async () => {
   const feeTokenAddress = readDeploymentArgs("MockUSDC", chain)?.address;
   if (!foldAddress || !feeTokenAddress) {
     throw new Error(
-      "LoxleyToken (LOX) and/or MockUSDC not found in deployed_contracts.json. " +
+      "LoxleyToken (LOXLEY) and/or MockUSDC not found in deployed_contracts.json. " +
         "Run the full deploy first.",
     );
   }
@@ -61,8 +61,8 @@ const main = async () => {
   const phase = await fold.phase();
   if (phase !== 0n) {
     throw new Error(
-      `LOX is no longer in the Virtual phase (phase=${phase}); mint() is closed, ` +
-        "so the faucet cannot be funded with LOX. Re-run the full deploy to reset the CCA window.",
+      `LOXLEY is no longer in the Virtual phase (phase=${phase}); mint() is closed, ` +
+        "so the faucet cannot be funded with LOXLEY. Re-run the full deploy to reset the CCA window.",
     );
   }
 
@@ -91,10 +91,10 @@ const main = async () => {
     chain,
   );
 
-  console.log("Whitelisting Faucet in LOX...");
+  console.log("Whitelisting Faucet in LOXLEY...");
   await (await fold.setTransferWhitelisted(faucetAddress, true)).wait();
 
-  console.log("Minting LOX to Faucet...");
+  console.log("Minting LOXLEY to Faucet...");
   await (
     await fold.mint(
       faucetAddress,
@@ -112,7 +112,7 @@ const main = async () => {
     ============================================
     Faucet:  ${faucetAddress}
     Block:   ${blockNumber}
-    LOX:    ${ethers.formatEther(foldSupply)}
+    LOXLEY:    ${ethers.formatEther(foldSupply)}
     USDC:    ${ethers.formatUnits(usdcSupply, 6)}
     ============================================
   `);

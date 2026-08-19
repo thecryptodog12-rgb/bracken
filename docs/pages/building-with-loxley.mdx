@@ -1,8 +1,8 @@
 # Building with the Loxley
 
-Loxley smart contract acts as the central coordinator for all E3 operations. It manages
-computation requests, input validation, Ciphernode Committees (CiCos), and result publication while
-maintaining the security and privacy guarantees of the protocol.
+Loxley smart contract acts as the central coordinator for all E3 operations. It manages computation
+requests, input validation, Ciphernode Committees (CiCos), and result publication while maintaining
+the security and privacy guarantees of the protocol.
 
 ## Loxley Smart Contract
 
@@ -258,8 +258,7 @@ event InputPublished(uint256 indexed e3Id, bytes data, uint256 inputHash, uint25
 ### Result Publication Flow
 
 1. The Compute Provider submits a proof and ciphertext output.
-2. Loxley uses the E3 Program contract to verify the proof and emits
-   `CiphertextOutputPublished`.
+2. Loxley uses the E3 Program contract to verify the proof and emits `CiphertextOutputPublished`.
 3. Ciphernodes decrypt the ciphertext output.
 4. The plaintext result is then published and the Decryption Verifier validates the decryption
    proof.

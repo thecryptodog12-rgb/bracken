@@ -13,7 +13,7 @@ import {
 
 /**
  * @title MockVotesToken
- * @notice Stand-in for LOX where a test needs a votes token but not the real one.
+ * @notice Stand-in for LOXLEY where a test needs a votes token but not the real one.
  *
  * @dev `LoxleyToken` cannot be constructed without a deployed bonding registry and a future CCA
  * window, which is more setup than a test that only needs the token's voting surface. This carries
