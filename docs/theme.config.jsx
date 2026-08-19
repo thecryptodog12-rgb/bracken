@@ -10,17 +10,44 @@ import Footer from './components/Footer'
 
 export default {
   logo: (
-    <Link href='/' target='_self'>
-      <img src='/loxley-logo.svg' alt='Loxley' style={{ maxWidth: '150px', borderRadius: '0px' }} />
+    <Link href='/' target='_self' aria-label='Loxley'>
+      {/* Inline i.p.v. <img src>: currentColor werkt niet binnen een img, dus
+          een extern bestand kan niet meekleuren met light/dark. Het merk houdt
+          zijn greenwood, de naam erft de tekstkleur van het thema. */}
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '9px' }}>
+        <svg width='22' height='22' viewBox='0 0 24 24' fill='none' aria-hidden='true'>
+          <path
+            d='M12 1.6c-4.9 0-8.6 3.9-8.6 9.2v9.4c0 1 .8 1.8 1.8 1.8h3.4v-8.2a3.4 3.4 0 0 1 6.8 0V22h3.4c1 0 1.8-.8 1.8-1.8v-9.4c0-5.3-3.7-9.2-8.6-9.2Z'
+            fill='var(--lox-accent)'
+          />
+          <path
+            d='M12 5.4c-3 0-5.2 2.4-5.2 5.6 0 1.5.5 2.8 1.4 3.8V13a3.8 3.8 0 0 1 7.6 0v1.8c.9-1 1.4-2.3 1.4-3.8 0-3.2-2.2-5.6-5.2-5.6Z'
+            fill='var(--lox-accent)'
+            fillOpacity='0.28'
+          />
+        </svg>
+        <span
+          style={{
+            fontFamily: 'var(--lox-display)',
+            fontSize: '22px',
+            lineHeight: 1,
+            letterSpacing: '-0.014em',
+            color: 'var(--lox-ink)',
+          }}
+        >
+          Loxley
+        </span>
+      </span>
     </Link>
   ),
   logoLink: false,
 
   banner: {
-    key: 'enclave-rename',
+    key: 'loxley-fork-preview',
     text: (
       <span>
-        Enclave is now <strong>Loxley</strong>.
+        <strong>Loxley</strong> is an unreleased fork of The Interfold, targeting Robinhood Chain. Nothing is deployed; addresses in these
+        docs are placeholders.
       </span>
     ),
   },
@@ -94,9 +121,10 @@ export default {
         <link rel='icon' type='image/png' sizes='32x32' href='/favicon-32x32.png' />
         <link rel='icon' type='image/png' sizes='16x16' href='/favicon-16x16.png' />
         <link rel='manifest' href='/site.webmanifest' />
-        <link rel='mask-icon' href='/safari-pinned-tab.svg' color='#5bbad5' />
-        <meta name='msapplication-TileColor' content='#da532c' />
-        <meta name='theme-color' content='#ffffff' />
+        <link rel='mask-icon' href='/safari-pinned-tab.svg' color='#1c5c3f' />
+        <meta name='msapplication-TileColor' content='#1c5c3f' />
+        <meta name='theme-color' content='#e9f4e6' media='(prefers-color-scheme: light)' />
+        <meta name='theme-color' content='#0d1610' media='(prefers-color-scheme: dark)' />
       </>
     )
   },

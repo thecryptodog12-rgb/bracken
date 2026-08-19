@@ -1,7 +1,15 @@
+/* Display-serif + mono, gelijk aan het dashboard. Via @import i.p.v. een
+   <link> in next/head -- Next raadt stylesheets daar expliciet af. */
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&display=swap');
+
 @font-face {
   font-family: 'Barlow';
   src: url(/Barlow-Regular.woff) format('woff');
   font-weight: 400;
+  /* Zonder dit valt de browser terug op `auto`, wat in de praktijk block is:
+     tot 3 seconden onzichtbare tekst terwijl het bestand laadt. Met swap staat
+     de pagina meteen in de fallback en wisselt hij door. */
+  font-display: swap;
 }
 
 body {
@@ -30,4 +38,145 @@ img {
   .nextra-sidebar-container ul:has(> li > a[href^='#']) {
     display: none;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Loxley — visuele taal, gelijk aan packages/loxley-dashboard.
+
+   Dezelfde regel als daar: geen zwart. Inkt is greenwood, papier is getint.
+   Nextra's eigen chrome (sidebar, zoek, code) hangt aan --nextra-primary-hue,
+   dus die wordt meegedraaid in plaats van per component overschreven.
+   ───────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --lox-ink: #1d3527;
+  --lox-ink-2: #33513c;
+  --lox-ink-3: #5c7a65;
+  --lox-paper: #e9f4e6;
+  --lox-paper-2: #fbfdfa;
+  --lox-rule: #cfe0cb;
+  --lox-accent: #1c5c3f;
+  --lox-brass: #9a7328;
+
+  /* Greenwood i.p.v. Nextra's standaard blauw (203deg). */
+  --nextra-primary-hue: 155deg;
+  --nextra-primary-saturation: 54%;
+
+  --lox-display: 'Instrument Serif', 'Iowan Old Style', Palatino, Georgia, serif;
+  --lox-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+
+.dark {
+  --lox-ink: #e4f0e4;
+  --lox-ink-2: #bed2c1;
+  --lox-ink-3: #8ea795;
+  --lox-paper: #0d1610;
+  --lox-paper-2: #131f17;
+  --lox-rule: #22352a;
+  --lox-accent: #6fcb9a;
+  --lox-brass: #d8a548;
+
+  --nextra-primary-hue: 152deg;
+  --nextra-primary-saturation: 46%;
+}
+
+/* Nextra's stylesheet laadt na deze en zet bg-white op body, dus dit moet
+   winnen. !important is hier het overschrijven van een vendor-regel, niet
+   luiheid -- er is geen selector die specifieker kan zijn dan `body`. */
+body {
+  background-color: var(--lox-paper) !important;
+  color: var(--lox-ink-2);
+}
+
+/* Koppen krijgen de display-serif. Nextra zet ze standaard vet-sans, wat naast
+   Barlow-lopende-tekst nergens een moment maakt. */
+article h1,
+article h2,
+article h3 {
+  font-family: var(--lox-display);
+  font-weight: 400 !important;
+  letter-spacing: -0.012em;
+  color: var(--lox-ink);
+}
+article h1 {
+  font-size: clamp(34px, 4.2vw, 52px) !important;
+  line-height: 1.08;
+}
+article h2 {
+  font-size: clamp(26px, 2.8vw, 34px) !important;
+  border-top: 1px solid var(--lox-rule);
+  padding-top: 1.6rem;
+}
+article h3 {
+  font-size: 21px !important;
+}
+article h4,
+article h5,
+article h6 {
+  color: var(--lox-ink);
+}
+
+/* Micro-typografie: mono-kapitalen met brede tracking, zoals het dashboard. */
+.nextra-breadcrumb,
+.nextra-toc > div > p:first-child {
+  font-family: var(--lox-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Tabellen zijn hier het werkpaard (contractadressen, requirements). Nextra
+   geeft ze nauwelijks structuur; een getinte kop en fijne lijnen maken lange
+   adreslijsten leesbaar. */
+article table {
+  width: 100%;
+  border: 1px solid var(--lox-rule);
+  border-radius: 10px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  font-size: 13px;
+}
+article table th {
+  background: var(--lox-paper);
+  font-family: var(--lox-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--lox-ink-3);
+  border-bottom: 1px solid var(--lox-rule);
+}
+article table td {
+  border-bottom: 1px solid var(--lox-rule);
+}
+article table tr:last-child td {
+  border-bottom: 0;
+}
+article table code {
+  font-size: 12px;
+}
+
+/* Inline code: de adressen en env-vars waar deze docs vol mee staan. */
+article code {
+  font-family: var(--lox-mono);
+  background: color-mix(in oklab, var(--lox-accent) 9%, transparent);
+  color: var(--lox-ink);
+  border-radius: 4px;
+  padding: 0.1em 0.34em;
+}
+article pre code {
+  background: transparent;
+  padding: 0;
+}
+
+/* Blockquote als kanttekening, niet als grijze doos. */
+article blockquote {
+  border-left: 2px solid var(--lox-accent);
+  color: var(--lox-ink-3);
+  font-style: normal;
+}
+
+img {
+  border-radius: 10px;
 }

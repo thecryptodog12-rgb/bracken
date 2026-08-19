@@ -55,15 +55,15 @@ Loxley protocol uses several contracts that work together:
 
 | Contract                  | Address              | Deploy block |
 | ------------------------- | -------------------- | ------------ |
-| Loxley                    | `0xTBD_NOT_DEPLOYED` | 25786382     |
-| CiphernodeRegistry        | `0xTBD_NOT_DEPLOYED` | 25786378     |
-| BondingRegistry           | `0xTBD_NOT_DEPLOYED` | 25473398     |
-| SlashingManager           | `0xTBD_NOT_DEPLOYED` | 25786375     |
-| E3RefundManager           | `0xTBD_NOT_DEPLOYED` | 25786384     |
-| LoxleyTicketToken         | `0xTBD_NOT_DEPLOYED` | 25786372     |
-| LoxleyToken (LOXLEY)      | `0xTBD_NOT_DEPLOYED` | 25473449     |
-| USDS (fee token)          | `0xTBD_NOT_DEPLOYED` | 20663730     |
-| sUSDS (ticket collateral) | `0xTBD_NOT_DEPLOYED` | 20677434     |
+| Loxley                    | `0xTBD_NOT_DEPLOYED` | —     |
+| CiphernodeRegistry        | `0xTBD_NOT_DEPLOYED` | —     |
+| BondingRegistry           | `0xTBD_NOT_DEPLOYED` | —     |
+| SlashingManager           | `0xTBD_NOT_DEPLOYED` | —     |
+| E3RefundManager           | `0xTBD_NOT_DEPLOYED` | —     |
+| LoxleyTicketToken         | `0xTBD_NOT_DEPLOYED` | —     |
+| LoxleyToken (LOXLEY)      | `0xTBD_NOT_DEPLOYED` | —     |
+| USDS (fee token)          | `0xTBD_NOT_DEPLOYED` | —     |
+| sUSDS (ticket collateral) | `0xTBD_NOT_DEPLOYED` | —     |
 
 Mainnet E3 requests can remain paused during operator onboarding. Check `requestsPaused()` on the
 Loxley contract before you ask requesters to submit E3s. Ciphernodes can still bond, register, and
@@ -73,15 +73,15 @@ add ticket collateral while requests are paused.
 
 | Contract             | Address              | Deploy block |
 | -------------------- | -------------------- | ------------ |
-| Loxley               | `0xTBD_NOT_DEPLOYED` | 11459000     |
-| CiphernodeRegistry   | `0xTBD_NOT_DEPLOYED` | 11458978     |
-| BondingRegistry      | `0xTBD_NOT_DEPLOYED` | 11458979     |
-| SlashingManager      | `0xTBD_NOT_DEPLOYED` | 11458977     |
-| E3RefundManager      | `0xTBD_NOT_DEPLOYED` | 11459002     |
-| LoxleyTicketToken    | `0xTBD_NOT_DEPLOYED` | 11458976     |
-| LoxleyToken (LOXLEY) | `0xTBD_NOT_DEPLOYED` | 11458986     |
-| MockUSDC (fee token) | `0xTBD_NOT_DEPLOYED` | 11458975     |
-| Faucet               | `0xTBD_NOT_DEPLOYED` | 11458989     |
+| Loxley               | `0xTBD_NOT_DEPLOYED` | —     |
+| CiphernodeRegistry   | `0xTBD_NOT_DEPLOYED` | —     |
+| BondingRegistry      | `0xTBD_NOT_DEPLOYED` | —     |
+| SlashingManager      | `0xTBD_NOT_DEPLOYED` | —     |
+| E3RefundManager      | `0xTBD_NOT_DEPLOYED` | —     |
+| LoxleyTicketToken    | `0xTBD_NOT_DEPLOYED` | —     |
+| LoxleyToken (LOXLEY) | `0xTBD_NOT_DEPLOYED` | —     |
+| MockUSDC (fee token) | `0xTBD_NOT_DEPLOYED` | —     |
+| Faucet               | `0xTBD_NOT_DEPLOYED` | —     |
 
 ### Proof Verification
 
@@ -92,7 +92,7 @@ intended for public-network rehearsal. Replace it before enabling production CRI
 
 | Mainnet bootstrap contract       | Address                                      | Deploy block |
 | -------------------------------- | -------------------------------------------- | ------------ |
-| MockE3Program                    | `0xTBD_NOT_DEPLOYED`                         | 25786371     |
+| MockE3Program                    | `0xTBD_NOT_DEPLOYED`                         | —     |
 | DeployableMockCiphertextVerifier | `0xB568e5aD762F7a75F1EC65A985ec4038F6409297` | 25786403     |
 
 > **The current Sepolia deployment does not verify proofs.** It was deployed with
@@ -102,11 +102,11 @@ intended for public-network rehearsal. Replace it before enabling production CRI
 
 | Mock contract          | Address              | Deploy block |
 | ---------------------- | -------------------- | ------------ |
-| MockE3Program          | `0xTBD_NOT_DEPLOYED` | 11458997     |
-| MockComputeProvider    | `0xTBD_NOT_DEPLOYED` | 11458993     |
-| MockDecryptionVerifier | `0xTBD_NOT_DEPLOYED` | 11458994     |
-| MockCiphertextVerifier | `0xTBD_NOT_DEPLOYED` | 11458995     |
-| MockPkVerifier         | `0xTBD_NOT_DEPLOYED` | 11458996     |
+| MockE3Program          | `0xTBD_NOT_DEPLOYED` | —     |
+| MockComputeProvider    | `0xTBD_NOT_DEPLOYED` | —     |
+| MockDecryptionVerifier | `0xTBD_NOT_DEPLOYED` | —     |
+| MockCiphertextVerifier | `0xTBD_NOT_DEPLOYED` | —     |
+| MockPkVerifier         | `0xTBD_NOT_DEPLOYED` | —     |
 
 `loxley config check` reports this too, so you do not have to remember which deployment you are
 pointed at.
