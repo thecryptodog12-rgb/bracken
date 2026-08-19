@@ -16,13 +16,7 @@
 
 export function Mark({ className = '' }: { className?: string }) {
   return (
-    <svg
-      className={`mark ${className}`}
-      viewBox='0 0 24 24'
-      fill='none'
-      aria-hidden='true'
-      focusable='false'
-    >
+    <svg className={`mark ${className}`} viewBox='0 0 24 24' fill='none' aria-hidden='true' focusable='false'>
       {/* cowl: shoulders up over a raised hood */}
       <path
         d='M12 1.6c-4.9 0-8.6 3.9-8.6 9.2v9.4c0 1 .8 1.8 1.8 1.8h3.4v-8.2a3.4 3.4 0 0 1 6.8 0V22h3.4c1 0 1.8-.8 1.8-1.8v-9.4c0-5.3-3.7-9.2-8.6-9.2Z'

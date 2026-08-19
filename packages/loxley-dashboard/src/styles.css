@@ -93,7 +93,6 @@
   --foot-ink: #e8eee6;
 }
 
-
 * {
   box-sizing: border-box;
 }
@@ -2399,4 +2398,245 @@ button {
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+/* ── Ciphernode requirements ────────────────────────────────────────────────
+   Rendert met of zonder keten. Collateral-cijfers zijn ketenstaat en worden
+   als "unavailable" getoond wanneer die ontbreekt -- nooit als plausibel
+   ogende placeholder. */
+.reqs {
+  margin: 34px 0 8px;
+}
+.reqs__head {
+  max-width: 62ch;
+  margin-bottom: 20px;
+}
+.reqs__title {
+  font-family: var(--serif);
+  font-size: 27px;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+.reqs__lede {
+  margin: 0;
+  color: var(--ink-3);
+  line-height: 1.55;
+}
+.reqs__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(268px, 1fr));
+  gap: 14px;
+}
+.reqs__card {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--paper-2);
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+}
+.reqs__card--wide {
+  grid-column: 1 / -1;
+}
+.reqs__card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.reqs__card-head h3 {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin: 0;
+  color: var(--ink);
+}
+.reqs__src {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--ink-4);
+}
+
+.reqs__rows {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+.reqs__rows > div {
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: 12px;
+  align-items: baseline;
+}
+.reqs__rows dt {
+  font-size: 12px;
+  color: var(--ink-4);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.reqs__rows dd {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+.reqs__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+}
+.reqs__dot--yes {
+  background: var(--accent-deep);
+}
+.reqs__dot--partial {
+  background: var(--brass);
+}
+
+/* Collateral: de enige cijfers die geld kosten, dus ook visueel zwaarder. */
+.reqs__figures {
+  margin: 0 0 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+}
+.reqs__figures dt {
+  font-size: 12px;
+  color: var(--ink-4);
+  margin-bottom: 5px;
+}
+.reqs__figure {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 21px;
+  line-height: 1.1;
+  color: var(--brass);
+  letter-spacing: -0.01em;
+}
+.reqs__figure span {
+  font-size: 12px;
+  color: var(--ink-4);
+  letter-spacing: 0.03em;
+}
+
+.reqs__calc {
+  border-top: 1px solid var(--rule-soft);
+  padding-top: 14px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.reqs__calc label {
+  font-size: 12px;
+  color: var(--ink-4);
+}
+.reqs__input {
+  width: 84px;
+  padding: 7px 9px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+}
+.reqs__input:focus-visible {
+  outline: 2px solid var(--accent-soft);
+  outline-offset: 1px;
+  border-color: var(--accent-deep);
+}
+.reqs__calc-out {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.reqs__calc-out strong {
+  font-family: var(--mono);
+  font-weight: 500;
+  color: var(--ink);
+}
+.reqs__muted {
+  color: var(--ink-4);
+}
+
+.reqs__unavailable {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-3);
+  border-left: 2px solid var(--brass);
+  padding-left: 12px;
+}
+.reqs__foot {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-4);
+  margin-top: auto;
+}
+
+/* Segmented control: minimum vs recommended */
+.reqs__seg {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--paper-3);
+  border-radius: 999px;
+}
+.reqs__seg-btn {
+  font: inherit;
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-4);
+  cursor: pointer;
+}
+.reqs__seg-btn.is-on {
+  background: var(--paper-2);
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+}
+
+/* Theme-toggle: system / light / dark. Zit rechts in de header, buiten de nav,
+   zodat hij niet als vierde tab leest. */
+.themetoggle {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition:
+    color 120ms,
+    border-color 120ms,
+    background 120ms;
+}
+.themetoggle:hover {
+  color: var(--ink);
+  border-color: var(--ink-4);
+  background: var(--paper-2);
+}
+.themetoggle:focus-visible {
+  outline: 2px solid var(--accent-soft);
+  outline-offset: 2px;
+}
+.themetoggle svg {
+  width: 16px;
+  height: 16px;
 }

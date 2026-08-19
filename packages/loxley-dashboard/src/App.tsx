@@ -21,6 +21,7 @@ import { LINKS, explorerAddress } from './lib/links'
 import { CONTRACTS } from './lib/chain'
 import { isE3Active, solidityStageToUiIdx, type E3FullDetails, type E3Summary } from './lib/e3'
 import { Wordmark } from './Wordmark'
+import ThemeToggle from './ThemeToggle'
 
 function Header({ density, view, onNav }: { density: string; view: string; onNav: (id: string) => void }) {
   const link = (id: string, label: string) => (
@@ -54,6 +55,7 @@ function Header({ density, view, onNav }: { density: string; view: string; onNav
           {link('crisp', 'CRISP')}
           {link('operator', 'Run a ciphernode')}
         </nav>
+        <ThemeToggle />
       </div>
     </header>
   )

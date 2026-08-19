@@ -16,6 +16,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { erc20Abi, formatUnits, isAddress, parseUnits, type Address, type Hash } from 'viem'
 import Loader from './Loader'
+import Requirements from './Requirements'
 import { CONTRACTS, bondingRegistryAbi, faucetAbi } from './lib/chain'
 import { LINKS, explorerAddress, explorerTx } from './lib/links'
 import { ZERO_ADDRESS, simulateAndWrite, useBonding, type BondingConfig, type OperatorStatus } from './lib/bonding'
@@ -239,12 +240,22 @@ export default function Operator() {
         <div className='emptystate'>
           <div className='emptystate__note'>
             <span className='emptystate__dot' aria-hidden='true' />
-            <span>Couldn't reach the bonding registry. Retrying automatically…</span>
+            <span>
+              Can&apos;t reach the bonding registry, so the live collateral figures and the on-chain steps are unavailable. Point{' '}
+              <code>VITE_SEPOLIA_RPC</code> at an endpoint you trust and reload. Everything below is protocol-level and holds either way.
+            </span>
           </div>
         </div>
       ) : loading && !config ? (
-        <Loader label='Loading bonding parameters' sub='Reading from Sepolia…' />
-      ) : config ? (
+        <Loader label='Loading bonding parameters' sub='Reading from the bonding registry…' />
+      ) : null}
+
+      {/* Renders with or without a chain. The moment the RPC is down is exactly
+          when someone is deciding whether running a node is worth their time --
+          handing them a blank page is the worst possible answer. */}
+      <Requirements config={config ?? null} />
+
+      {config ? (
         <>
           <ParameterStrip config={config} />
 
