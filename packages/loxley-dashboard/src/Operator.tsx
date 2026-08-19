@@ -17,6 +17,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { erc20Abi, formatUnits, isAddress, parseUnits, type Address, type Hash } from 'viem'
 import Loader from './Loader'
 import Requirements from './Requirements'
+import Sortition from './Sortition'
 import { CONTRACTS, bondingRegistryAbi, faucetAbi } from './lib/chain'
 import { LINKS, explorerAddress, explorerTx } from './lib/links'
 import { ZERO_ADDRESS, simulateAndWrite, useBonding, type BondingConfig, type OperatorStatus } from './lib/bonding'
@@ -254,6 +255,11 @@ export default function Operator() {
           when someone is deciding whether running a node is worth their time --
           handing them a blank page is the worst possible answer. */}
       <Requirements config={config ?? null} />
+
+      {/* Waarom iemand tickets zou kopen is de vraag die de hele
+          operator-pagina probeert te beantwoorden. Die hoort hier,
+          direct na de kosten en voor de on-chain stappen. */}
+      <Sortition />
 
       {config ? (
         <>

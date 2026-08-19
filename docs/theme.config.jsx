@@ -117,6 +117,10 @@ export default {
         />
         <meta property='twitter:image' content='/loxley-meta.jpg' />
 
+        {/* SVG eerst: dat is het enige icoon dat al vervangen is. De PNG's
+            eronder zijn nog Interfold's beeldmerk en blijven staan als
+            fallback tot ze opnieuw geexporteerd zijn. */}
+        <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
         <link rel='apple-touch-icon' sizes='180x180' href='/apple-touch-icon.png' />
         <link rel='icon' type='image/png' sizes='32x32' href='/favicon-32x32.png' />
         <link rel='icon' type='image/png' sizes='16x16' href='/favicon-16x16.png' />
