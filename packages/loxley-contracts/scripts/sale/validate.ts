@@ -62,7 +62,7 @@ Sale deployment
   safe:              ${deployment.safe}
   saleDeployer:      ${deployment.saleDeployer}
   mode:              LiquidityLauncher / LBPStrategy
-  FOLD:              ${deployment.fold}
+  LOX:              ${deployment.fold}
   CCA auction:       ${deployment.auction}
   Uniswap URL:       ${
     deployment.uniswapAuctionUrl ??
@@ -76,7 +76,7 @@ Sale deployment
   validationHook:    ${deployment.validationHook ?? ZERO}
   config hash:       ${planConfigHash(plan)}
 
-FOLD lifecycle
+LOX lifecycle
   current timestamp: ${formatTimestamp(currentTimestamp)}
   CCA_START:         ${formatTimestamp(config.fold.ccaStart)} (${formatSecondsDelta(BigInt(config.fold.ccaStart), currentTimestamp)})
   CCA_END:           ${formatTimestamp(config.fold.ccaEnd)} (${formatSecondsDelta(BigInt(config.fold.ccaEnd), currentTimestamp)})
@@ -210,16 +210,16 @@ export async function validateDeployment(
 
   const claimSource = await fold.CLAIM_SOURCE();
   printValue("claimSource", claimSource);
-  if (address(claimSource, "FOLD.CLAIM_SOURCE") === ZERO) {
+  if (address(claimSource, "LOX.CLAIM_SOURCE") === ZERO) {
     throw new Error(
-      "FOLD.CLAIM_SOURCE is not set. Execute the Safe activation batch first: FOLD.acceptOwnership(), FOLD.setClaimSource(auction), and PredicateValidationHook.setAuction(auction) if applicable.",
+      "LOX.CLAIM_SOURCE is not set. Execute the Safe activation batch first: LOX.acceptOwnership(), LOX.setClaimSource(auction), and PredicateValidationHook.setAuction(auction) if applicable.",
     );
   }
-  assertEq("FOLD.CLAIM_SOURCE", claimSource, deployment.auction);
+  assertEq("LOX.CLAIM_SOURCE", claimSource, deployment.auction);
 
   const bondingRegistry = await fold.BONDING_REGISTRY();
   assertEq(
-    "FOLD.BONDING_REGISTRY",
+    "LOX.BONDING_REGISTRY",
     bondingRegistry,
     config.fold.bondingRegistry,
   );
@@ -243,7 +243,7 @@ export async function validateDeployment(
 
   const foldTotalSupply = await fold.totalSupply();
   printValue(
-    "FOLD total supply",
+    "LOX total supply",
     `${foldTotalSupply} (${formatFold(foldTotalSupply)})`,
   );
 
@@ -376,17 +376,17 @@ export async function validateDeployment(
   printValue("lbp auction registered", true);
 
   assertEq(
-    "FOLD whitelist LiquidityLauncher",
+    "LOX whitelist LiquidityLauncher",
     await fold.transferWhitelist(plan.liquidityLauncher),
     false,
   );
   assertEq(
-    "FOLD whitelist LBPStrategy",
+    "LOX whitelist LBPStrategy",
     await fold.transferWhitelist(plan.lbpStrategy),
     true,
   );
   assertEq(
-    "FOLD whitelist PositionManager",
+    "LOX whitelist PositionManager",
     await fold.transferWhitelist(plan.lbp.positionManager),
     true,
   );
@@ -438,35 +438,35 @@ export async function validateDeployment(
   const saleAmount = BigInt(config.saleAmount);
   if (auctionBalance > saleAmount) {
     throw new Error(
-      `FOLD auction balance exceeds sale amount: ${auctionBalance} > ${saleAmount}`,
+      `LOX auction balance exceeds sale amount: ${auctionBalance} > ${saleAmount}`,
     );
   }
   if (currentBlock < BigInt(config.auction.claimBlock)) {
-    assertEq("FOLD auction balance", auctionBalance, saleAmount);
+    assertEq("LOX auction balance", auctionBalance, saleAmount);
   } else {
     console.log(
-      `  ok FOLD auction balance <= sale amount (${auctionBalance}, ${formatFold(auctionBalance)})`,
+      `  ok LOX auction balance <= sale amount (${auctionBalance}, ${formatFold(auctionBalance)})`,
     );
   }
   printValue(
-    "auction FOLD balance",
+    "auction LOX balance",
     `${auctionBalance} (${formatFold(auctionBalance)})`,
   );
 
   const ccaStart = await fold.CCA_START();
-  assertEq("FOLD.CCA_START", ccaStart, config.fold.ccaStart);
+  assertEq("LOX.CCA_START", ccaStart, config.fold.ccaStart);
   printValue("CCA_START", formatTimestamp(ccaStart));
 
   const ccaEnd = await fold.CCA_END();
-  assertEq("FOLD.CCA_END", ccaEnd, config.fold.ccaEnd);
+  assertEq("LOX.CCA_END", ccaEnd, config.fold.ccaEnd);
   printValue("CCA_END", formatTimestamp(ccaEnd));
 
   const noMoreLocks = await fold.NO_MORE_LOCKS();
-  assertEq("FOLD.NO_MORE_LOCKS", noMoreLocks, plan.fold.noMoreLocks);
+  assertEq("LOX.NO_MORE_LOCKS", noMoreLocks, plan.fold.noMoreLocks);
   printValue("NO_MORE_LOCKS", formatTimestamp(noMoreLocks));
 
   const tgeTimestamp = await fold.tgeTimestamp();
-  assertEq("FOLD.tgeTimestamp", tgeTimestamp, 0);
+  assertEq("LOX.tgeTimestamp", tgeTimestamp, 0);
   printValue("tgeTimestamp", tgeTimestamp);
 
   const configHash = planConfigHash(plan);
@@ -477,12 +477,12 @@ export async function validateDeployment(
   );
   printValue("used config hash", configHash);
 
-  const owner = address(await fold.owner(), "FOLD.owner");
-  const pendingOwner = await optionalView("FOLD.pendingOwner", () =>
+  const owner = address(await fold.owner(), "LOX.owner");
+  const pendingOwner = await optionalView("LOX.pendingOwner", () =>
     fold.pendingOwner(),
   );
-  printValue("FOLD owner", owner);
-  if (pendingOwner !== undefined) printValue("FOLD pendingOwner", pendingOwner);
+  printValue("LOX owner", owner);
+  if (pendingOwner !== undefined) printValue("LOX pendingOwner", pendingOwner);
 
   if (owner === config.safe) {
     const defaultAdminRole = ethersLib.ZeroHash;
@@ -528,13 +528,13 @@ export async function validateDeployment(
   } else {
     const normalizedPendingOwner = address(
       String(pendingOwner),
-      "FOLD.pendingOwner",
+      "LOX.pendingOwner",
     );
     if (allowPendingOwner && normalizedPendingOwner === config.safe) {
-      console.log("  ok FOLD ownership is pending Safe acceptance");
+      console.log("  ok LOX ownership is pending Safe acceptance");
     } else {
       throw new Error(
-        `FOLD owner is ${owner}; expected accepted Safe ${config.safe}`,
+        `LOX owner is ${owner}; expected accepted Safe ${config.safe}`,
       );
     }
   }

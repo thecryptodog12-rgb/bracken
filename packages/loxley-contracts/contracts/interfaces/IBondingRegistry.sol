@@ -171,7 +171,7 @@ interface IBondingRegistry {
     error BondOwnerAlreadySet(address operator, address bondOwner);
 
     /// @notice Moving a ciphernode bond position would leave the previous owner with
-    ///         less wallet-plus-bonded FOLD than its current locked balance.
+    ///         less wallet-plus-bonded LOX than its current locked balance.
     error BondOwnerTransferViolatesLock(
         address bondOwner,
         uint256 lockedBalance,
@@ -450,9 +450,9 @@ interface IBondingRegistry {
     ) external view returns (address);
 
     /**
-     * @notice Get FOLD that still counts toward an account's locked-floor collateral.
-     * @dev Includes active ciphernode bond plus pending FOLD exits that remain slashable/not returned.
-     * @param account Bond owner whose aggregate FOLD bond credit is queried
+     * @notice Get LOX that still counts toward an account's locked-floor collateral.
+     * @dev Includes active ciphernode bond plus pending LOX exits that remain slashable/not returned.
+     * @param account Bond owner whose aggregate LOX bond credit is queried
      * @return Active plus pending ciphernode-bond amount
      */
     function totalBonded(address account) external view returns (uint256);
@@ -466,7 +466,7 @@ interface IBondingRegistry {
 
     /**
      * @notice Point this registry at the contract that records bonded history.
-     * @dev Settable once per ciphernode bond token. Bonded FOLD is transferred to this registry and never
+     * @dev Settable once per ciphernode bond token. Bonded LOX is transferred to this registry and never
      * delegated, so without a recorded history an operator's bonded weight is invisible to
      * governance. The history lives off this contract because it is within a few hundred bytes of
      * the EIP-170 limit.
@@ -714,7 +714,7 @@ interface IBondingRegistry {
     /**
      * @notice Accept a proposed operator position from its current bond owner.
      * @dev Moves ownership accounting for active and pending ciphernode bond collateral
-     *      only when doing so preserves the previous owner's locked-FOLD coverage.
+     *      only when doing so preserves the previous owner's locked-LOX coverage.
      */
     function acceptBondOwner(address operator) external;
 

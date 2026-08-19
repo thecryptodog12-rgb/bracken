@@ -2589,7 +2589,7 @@ describe("LoxleyToken", function () {
       expect(tb).to.be.closeTo(grantAmount, ethers.parseEther("0.02"));
     });
 
-    it("transferableBalanceOf counts bonded FOLD toward the locked floor", async function () {
+    it("transferableBalanceOf counts bonded LOX toward the locked floor", async function () {
       const signers = await ethers.getSigners();
       const [, beneficiary, , operator] = signers;
       const beneficiaryAddress = await beneficiary.getAddress();
@@ -2814,7 +2814,7 @@ describe("LoxleyToken", function () {
       );
     });
 
-    it("blocks bond-owner rotation that would detach locked FOLD", async function () {
+    it("blocks bond-owner rotation that would detach locked LOX", async function () {
       const signers = await ethers.getSigners();
       const [, beneficiary, newOwner, operator] = signers;
       const beneficiaryAddress = await beneficiary.getAddress();

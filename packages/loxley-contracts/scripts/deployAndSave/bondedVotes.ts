@@ -19,11 +19,11 @@ import {
  * The arguments for the deployAndSaveBondedVotes function
  */
 export interface BondedVotesArgs {
-  /** FOLD. Supplies the metadata, the total supply and the quorum denominator. */
+  /** LOX. Supplies the metadata, the total supply and the quorum denominator. */
   token: string;
   /**
-   * Where per-account voting power is read. Pass `token` to count wallet-held FOLD, or an escrow
-   * IVotes adapter to count only locked FOLD. Defaults to `token`, preserving the original
+   * Where per-account voting power is read. Pass `token` to count wallet-held LOX, or an escrow
+   * IVotes adapter to count only locked LOX. Defaults to `token`, preserving the original
    * behaviour for callers that predate the lock-to-vote model.
    */
   votesSource?: string;

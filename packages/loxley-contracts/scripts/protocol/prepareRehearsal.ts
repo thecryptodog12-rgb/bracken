@@ -118,7 +118,7 @@ export async function actionPrepareRehearsal(): Promise<void> {
   console.log(`
 Protocol rehearsal prerequisites deployed
   protocol owner:              ${protocolOwner}
-  FOLD test token:             ${config.fold}
+  LOX test token:             ${config.fold}
   fee test token:              ${config.feeToken}
   ticket-underlying test token:${config.ticketUnderlyingToken}
   BondingRegistry proxy:       ${config.bondingRegistryProxy}

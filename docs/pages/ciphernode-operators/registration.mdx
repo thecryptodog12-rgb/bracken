@@ -18,7 +18,7 @@ operator. Make sure your node is already [running](./running) before proceeding.
 Registration supports one or two wallets:
 
 - The **operator key** runs the node and authorizes its initial bond owner.
-- The **bond owner** holds FOLD and the ticket collateral token. It controls the position lifecycle.
+- The **bond owner** holds LOX and the ticket collateral token. It controls the position lifecycle.
 
 Using a separate cold wallet or Safe as the bond owner is strongly recommended so the running node
 does not hold the key controlling collateral. Self-ownership is supported if an operator prefers a
@@ -26,15 +26,15 @@ single-wallet setup. Ensure the selected bond-owner wallet has:
 
 | Token     | Amount Required                          | Purpose                      |
 | --------- | ---------------------------------------- | ---------------------------- |
-| **FOLD**  | Mainnet: `32,000 FOLD`                   | Ciphernode bond collateral   |
+| **LOX**  | Mainnet: `32,000 LOX`                   | Ciphernode bond collateral   |
 | **sUSDS** | Mainnet: `1,000 sUSDS` shares per ticket | Ticket balance for sortition |
 | **ETH**   | Sufficient for gas                       | Transaction fees             |
 
-> **Testnet tokens:** on Sepolia you can self-serve test FOLD and mock USDC from the faucet with
+> **Testnet tokens:** on Sepolia you can self-serve test LOX and mock USDC from the faucet with
 > `loxley faucet` (requires the `faucet` contract address in your config — see
 > [Running a Node → Contract Addresses](/ciphernode-operators/running#contract-addresses)). Each
-> call tops up FOLD and the fee token independently, only when your balance for that token is below
-> the faucet threshold. One call dispenses enough FOLD to meet the default Sepolia ciphernode bond.
+> call tops up LOX and the fee token independently, only when your balance for that token is below
+> the faucet threshold. One call dispenses enough LOX to meet the default Sepolia ciphernode bond.
 > If the faucet runs dry, reach out on the [community Telegram](https://t.me/enclave_e3).
 
 ## Registration Steps
@@ -59,7 +59,7 @@ Ciphernode status on mainnet:
   Ticket balance: 0 (0 available)
   Ciphernode bond: 0
   Pending exits: tickets=0, bond=0
-  Requirements: minTickets=1, ticketPrice=1000 tFOLD, ciphernodeBond=32000 FOLD
+  Requirements: minTickets=1, ticketPrice=1000 tLOX, ciphernodeBond=32000 LOX
 ```
 
 ### Step 2: Authorize the Bond Owner
@@ -91,8 +91,8 @@ loxley --config /path/to/owner.yaml ciphernode tickets \
 The CLI submits any required token approval first. Safe owners can submit the same
 `bondCiphernodeFor`, `registerOperatorFor`, and `addTicketBalanceFor` calls through the Safe
 interface. The owner supplies the assets, while the operator address is added to the registry Merkle
-tree and receives non-transferable tFOLD. With the recommended separate-owner setup, the hot
-operator key does not control FOLD or ticket collateral withdrawals, and protocol rewards are
+tree and receives non-transferable tLOX. With the recommended separate-owner setup, the hot
+operator key does not control LOX or ticket collateral withdrawals, and protocol rewards are
 credited to the bond owner.
 
 The number of usable tickets is calculated as:
@@ -124,7 +124,7 @@ Ciphernode status on mainnet:
   Ticket balance: 1000 (1 available)
   Ciphernode bond: 32000
   Pending exits: tickets=0, bond=0
-  Requirements: minTickets=1, ticketPrice=1000 tFOLD, ciphernodeBond=32000 FOLD
+  Requirements: minTickets=1, ticketPrice=1000 tLOX, ciphernodeBond=32000 LOX
 ```
 
 ## Operator CLI Commands
@@ -187,7 +187,7 @@ loxley --config /path/to/new-owner.yaml ciphernode accept-bond-owner \
   --operator 0xOPERATOR
 ```
 
-Active and pending FOLD ownership accounting moves atomically on acceptance. The operator key is not
+Active and pending LOX ownership accounting moves atomically on acceptance. The operator key is not
 involved in rotation.
 
 ### Multi-Chain Support
@@ -208,7 +208,7 @@ Current Ethereum Mainnet launch values (verify on-chain before depositing):
 | Parameter                | Value                | Description                         |
 | ------------------------ | -------------------- | ----------------------------------- |
 | `ticketPrice`            | 1,000 sUSDS shares   | Ticket collateral needed per ticket |
-| `requiredCiphernodeBond` | 32,000 FOLD          | Minimum FOLD needed to register     |
+| `requiredCiphernodeBond` | 32,000 LOX          | Minimum LOX needed to register     |
 | `minTicketBalance`       | 1 ticket             | Minimum tickets to be active        |
 | `exitDelay`              | 2,592,000s (30 days) | Wait time before claiming exits     |
 
@@ -249,7 +249,7 @@ status changes due to balance or bond updates.
 
 | Issue                     | Cause                                          | Solution                                                |
 | ------------------------- | ---------------------------------------------- | ------------------------------------------------------- |
-| `isActive` is false       | Below minimum ciphernode bond (80%) or tickets | Add more FOLD or tickets                                |
+| `isActive` is false       | Below minimum ciphernode bond (80%) or tickets | Add more LOX or tickets                                |
 | Registration fails        | Already registered, banned, or unbonded        | Check `isRegistered()`, ban status, and ciphernode bond |
 | Ticket purchase fails     | Insufficient stablecoin or allowance           | Ensure balance and approve spending                     |
 | "NodeNotEligible" in logs | Not registered before E3 request               | Register before requests are made                       |

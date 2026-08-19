@@ -566,7 +566,7 @@ A ready committee must finalize at or before its absolute DKG deadline.
    finalization retains every winner's lock. The generation cannot rotate until all request-time
    committee obligations are released.
 
-9. **Operator identity is unchanged by delegated bonding**: tFOLD is minted to the operator, and
+9. **Operator identity is unchanged by delegated bonding**: tLOX is minted to the operator, and
    `submitTicket` is still sent by the operator key. Sortition hashes, eligibility snapshots,
    committee membership, and party IDs never use the bond-owner address.
 

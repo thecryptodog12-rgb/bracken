@@ -148,13 +148,13 @@ export async function bidClaim(
 
   const balance = await fold.balanceOf(buyerAddress);
   const lockCount = await fold.lockCount(buyerAddress);
-  if (balance === 0n) throw new Error("Buyer did not receive FOLD");
+  if (balance === 0n) throw new Error("Buyer did not receive LOX");
   if (lockCount === 0n) {
-    throw new Error("Buyer claim did not create a FOLD lock");
+    throw new Error("Buyer claim did not create a LOX lock");
   }
   await expectTransferRestricted(fold.connect(buyer), deployment.safe);
   console.log(
-    `Buyer ${buyerAddress} claimed ${balance} FOLD wei with ${lockCount} lock entry`,
+    `Buyer ${buyerAddress} claimed ${balance} LOX wei with ${lockCount} lock entry`,
   );
   if (bidId !== undefined) {
     deployment.testBidId = bidId.toString();
@@ -168,5 +168,5 @@ async function expectTransferRestricted(fold: any, to: string): Promise<void> {
   } catch {
     return;
   }
-  throw new Error("Expected claimed FOLD to be transfer-restricted before TGE");
+  throw new Error("Expected claimed LOX to be transfer-restricted before TGE");
 }

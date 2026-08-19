@@ -233,9 +233,9 @@ export const deployLoxley = async (
   const ciphernodeRegistryAddress = await ciphernodeRegistry.getAddress();
   console.log("CiphernodeRegistry deployed to:", ciphernodeRegistryAddress);
 
-  // BondingRegistry is deployed before FOLD so its address can be passed to
+  // BondingRegistry is deployed before LOX so its address can be passed to
   // the token constructor.  The ciphernode bond token is set to address(0) temporarily
-  // and fixed after FOLD is deployed with the complete asset configuration.
+  // and fixed after LOX is deployed with the complete asset configuration.
   console.log("Deploying BondingRegistry...");
   const { bondingRegistry } = await deployAndSaveBondingRegistry({
     owner: ownerAddress,
@@ -257,10 +257,10 @@ export const deployLoxley = async (
   console.log("Setting BondingRegistry address in LoxleyTicketToken...");
   await loxleyTicketToken.setRegistry(bondingRegistryAddress);
 
-  // FOLD is deployed with BondingRegistry's real address. Local deployments set
+  // LOX is deployed with BondingRegistry's real address. Local deployments set
   // the deployer as the one-time claim source placeholder; production sale
   // deployments set the actual auction after it exists.
-  console.log("Deploying FOLD token...");
+  console.log("Deploying LOX token...");
   const { loxleyToken } = await deployAndSaveLoxleyToken({
     owner: ownerAddress,
     ccaStart,
@@ -274,7 +274,7 @@ export const deployLoxley = async (
   const loxleyTokenAddress = await loxleyToken.getAddress();
   console.log("LoxleyToken deployed to:", loxleyTokenAddress);
 
-  // Fix up BondingRegistry's ciphernode bond token now that FOLD exists.
+  // Fix up BondingRegistry's ciphernode bond token now that LOX exists.
   console.log("Setting ciphernode bond token in BondingRegistry...");
   await (
     await bondingRegistry.setBondingAssetConfig({
@@ -296,13 +296,13 @@ export const deployLoxley = async (
   }
 
   // Whitelist BondingRegistry so bonded transfers work pre-TGE.
-  console.log("Whitelisting BondingRegistry in FOLD...");
+  console.log("Whitelisting BondingRegistry in LOX...");
   await (
     await loxleyToken.setTransferWhitelisted(bondingRegistryAddress, true)
   ).wait();
 
   // ── Bonded voting ───────────────────────────────────────────────────────
-  // Bonded FOLD is transferred to BondingRegistry and never delegated, so without a recorded
+  // Bonded LOX is transferred to BondingRegistry and never delegated, so without a recorded
   // history an operator's bonded weight is invisible to governance while still counting in the
   // quorum denominator. Attached after the license token is set: rotating it detaches the history.
   console.log("Deploying BondedCheckpoints...");
@@ -328,9 +328,9 @@ export const deployLoxley = async (
   ).wait();
 
   // ── Testnet faucet (sepolia only) ───────────────────────────────────────
-  // Deploy a public Faucet pre-funded with FOLD + mock USDC so testers can
-  // self-serve tokens. FOLD is in the Virtual phase here (CCA_START is ~1h
-  // out), so we mint unlocked FOLD and whitelist the faucet to bypass the
+  // Deploy a public Faucet pre-funded with LOX + mock USDC so testers can
+  // self-serve tokens. LOX is in the Virtual phase here (CCA_START is ~1h
+  // out), so we mint unlocked LOX and whitelist the faucet to bypass the
   // pre-TGE transfer gate. Only on sepolia, and only with mocks present.
   if (networkName === "sepolia" && mockStableToken) {
     // Stock the faucet for this many self-serve claims. Supply is derived from
@@ -351,14 +351,14 @@ export const deployLoxley = async (
     const FAUCET_FOLD_SUPPLY = amountFold * FAUCET_TARGET_MINTS;
     const FAUCET_USDC_SUPPLY = amountFeeToken * FAUCET_TARGET_MINTS;
 
-    // Whitelist the faucet so faucet -> tester FOLD transfers pass the
+    // Whitelist the faucet so faucet -> tester LOX transfers pass the
     // pre-TGE gate (transferWhitelist[from] short-circuits the restriction).
-    console.log("Whitelisting Faucet in FOLD...");
+    console.log("Whitelisting Faucet in LOX...");
     await (
       await loxleyToken.setTransferWhitelisted(faucetAddress, true)
     ).wait();
 
-    console.log("Minting FOLD to Faucet...");
+    console.log("Minting LOX to Faucet...");
     await (
       await loxleyToken.mint(
         faucetAddress,
@@ -373,7 +373,7 @@ export const deployLoxley = async (
     ).wait();
 
     console.log(
-      `Faucet funded with ${ethers.formatEther(FAUCET_FOLD_SUPPLY)} FOLD ` +
+      `Faucet funded with ${ethers.formatEther(FAUCET_FOLD_SUPPLY)} LOX ` +
         `and ${ethers.formatUnits(FAUCET_USDC_SUPPLY, 6)} USDC.`,
     );
   }
@@ -894,7 +894,7 @@ export const deployLoxley = async (
     Deployment Complete!
     ============================================
     MockFeeToken: ${feeTokenAddress}
-    LoxleyToken (FOLD): ${loxleyTokenAddress}
+    LoxleyToken (LOX): ${loxleyTokenAddress}
     LoxleyTicketToken: ${loxleyTicketTokenAddress}
     SlashingManager: ${slashingManagerAddress}
     BondingRegistry: ${bondingRegistryAddress}

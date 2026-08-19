@@ -215,16 +215,16 @@ Loxley sale plan
   liquidityLauncher:${plan.liquidityLauncher}
   lbpStrategy:   ${plan.lbpStrategy}
   initializerFactory: ${plan.initializerFactory}
-  FOLD:          discovered at deploy
+  LOX:          discovered at deploy
   CCA auction:   discovered from LBPStrategy.InitializerCreated
-  auction FOLD:  ${plan.lbpSaleConfig.auctionAmount}
-  LP FOLD reserve:${plan.lbpSaleConfig.reservedTokenAmountForLP}
+  auction LOX:  ${plan.lbpSaleConfig.auctionAmount}
+  LP LOX reserve:${plan.lbpSaleConfig.reservedTokenAmountForLP}
   CCA floorPrice:${plan.auction.floorPrice}
   CCA tickSpacing:${plan.auction.tickSpacing}
   required raise:${plan.auction.requiredCurrencyRaised}
   migrationBlock:${plan.lbp.migratorParams.migrationBlock}
   bondingRegistry proxy: ${plan.fold.bondingRegistry}
-  FOLD timestamps: start=${plan.fold.ccaStart} end=${plan.fold.ccaEnd} noMoreLocks=${plan.fold.noMoreLocks}
+  LOX timestamps: start=${plan.fold.ccaStart} end=${plan.fold.ccaEnd} noMoreLocks=${plan.fold.noMoreLocks}
   CCA blocks:    start=${plan.auction.startBlock} end=${plan.auction.endBlock} claim=${plan.auction.claimBlock}
   config hash:   ${planConfigHash(plan)}
   plan file:     ${planFile}

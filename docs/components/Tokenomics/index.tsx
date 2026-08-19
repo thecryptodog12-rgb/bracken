@@ -25,7 +25,7 @@ type Slice = {
   group: Group
 }
 
-// FOLD sold at the CCA sits inside Investors. FOLD left unsold returns to the
+// LOX sold at the CCA sits inside Investors. LOX left unsold returns to the
 // Foundation but carries no vest, so it is tracked as its own category.
 // Shares are the allocation sheet's exact values, which sum to exactly 100%.
 // Rounding them all to two decimals would print a column summing to 100.01%,

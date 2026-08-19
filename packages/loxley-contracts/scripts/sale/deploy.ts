@@ -115,7 +115,7 @@ export async function deployFromPlan(
 
   console.log(`Submitting deploySaleWithLiquidityLauncher for ${config.name}`);
   console.log(`  mode:             LiquidityLauncher / LBPStrategy`);
-  console.log(`  FOLD:             discovered after deploy`);
+  console.log(`  LOX:             discovered after deploy`);
   console.log(
     `  auction:          discovered from LBPStrategy.InitializerCreated`,
   );
@@ -206,7 +206,7 @@ Safe transaction proposed
   }
   console.log(`
 Sale deployed
-  FOLD:    ${fold}
+  LOX:    ${fold}
   auction: ${auction}
   Uniswap: ${deployment.uniswapAuctionUrl}
   mode:    LiquidityLauncher / LBPStrategy
@@ -239,7 +239,7 @@ export async function actionAcceptOwnership(): Promise<void> {
   const fold = await ethers.getContractAt("LoxleyToken", deployment.fold);
   const tx = await fold.acceptOwnership();
   await tx.wait();
-  console.log(`Accepted FOLD ownership: ${deployment.fold}`);
+  console.log(`Accepted LOX ownership: ${deployment.fold}`);
 }
 
 export async function actionProposeSafe(): Promise<void> {

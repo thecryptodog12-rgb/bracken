@@ -760,7 +760,7 @@ _executeSlash(proposalId):
 │     │  │     activeBalance = ticketToken.balanceOf(operator)   │
 │     │  │     slashFromActive = min(amount, activeBalance)      │
 │     │  │     ticketToken.burnTickets(operator, slashFromActive)│
-│     │  │     → Burns tFOLD, underlying stays as payableBalance │
+│     │  │     → Burns tLOX, underlying stays as payableBalance │
 │     │  │                                                       │
 │     │  │  2. Remaining from EXIT QUEUE:                        │
 │     │  │     remaining = amount - slashFromActive              │
@@ -788,13 +788,13 @@ _executeSlash(proposalId):
 │     │
 │     │  ┌─── BondingRegistry.slashCiphernodeBond() ─────────────────────┐
 │     │  │                                                               │
-│     │  │  1. Compute active + pending FOLD total                       │
+│     │  │  1. Compute active + pending LOX total                       │
 │     │  │                                                               │
 │     │  │  2. Slash active bond first, then pending exits               │
 │     │  │     → Active slash decrements operators[op].ciphernodeBond    │
 │     │  │     → Pending slash decrements pending ciphernode bond totals │
 │     │  │     → totalBonded(bondOwner) drops immediately; if            │
-│     │  │       the owner has token locks, wallet FOLD may become       │
+│     │  │       the owner has token locks, wallet LOX may become       │
 │     │  │       encumbered until the locked floor decays/top-up         │
 │     │  │                                                               │
 │     │  │  3. slashedCiphernodeBond += totalSlashed                     │
@@ -1080,7 +1080,7 @@ Case 4: E3 completes successfully with escrowed slashed funds
 ```text
 SlashPolicy {
   ticketPenalty:    uint256   // tickets to slash (in base units)
-  ciphernodeBondPenalty:   uint256   // FOLD to slash
+  ciphernodeBondPenalty:   uint256   // LOX to slash
   requiresProof:   bool      // Lane A (true) or Lane B (false)
   proofVerifier:    address   // verifier address (Lane A: used in policy lookup)
   banNode:          bool      // permanently ban operator
@@ -1227,7 +1227,7 @@ FALLBACK: RETRY, NOT OWNER RELABELING
   protected slash liability after base refunds and treasury claims, and it
   reverts unless each claimant receives the complete recorded amount.
 
-Ciphernode bond slashes always go to treasury (no escrow routing for FOLD).
+Ciphernode bond slashes always go to treasury (no escrow routing for LOX).
 ```
 
 ---

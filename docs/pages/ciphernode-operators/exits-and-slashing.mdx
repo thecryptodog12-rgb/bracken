@@ -58,7 +58,7 @@ Each slash reason has an associated policy:
 ```solidity
 struct SlashPolicy {
   uint256 ticketPenalty; // Tickets to burn
-  uint256 ciphernodeBondPenalty; // FOLD to confiscate
+  uint256 ciphernodeBondPenalty; // LOX to confiscate
   bool requiresProof; // Whether on-chain proof verification is needed
   address proofVerifier; // ISlashVerifier contract for proof validation
   bool banNode; // Whether to permanently ban the node
@@ -86,8 +86,8 @@ struct SlashPolicy {
 
 | Penalty Type            | Effect                                           |
 | ----------------------- | ------------------------------------------------ |
-| Ticket penalty          | Burns tFOLD from your balance                    |
-| Ciphernode bond penalty | Confiscates FOLD from your bond                  |
+| Ticket penalty          | Burns tLOX from your balance                    |
+| Ciphernode bond penalty | Confiscates LOX from your bond                  |
 | Ban                     | Prevents re-registration until governance clears |
 
 > Some policies have an `appealWindow` of 0, meaning execution is immediate with no appeal. Always
@@ -112,7 +112,7 @@ Assets enter a queue with a delay period (7 days on Sepolia):
 | Asset           | Behavior                                           |
 | --------------- | -------------------------------------------------- |
 | Tickets         | Burned immediately, ticket collateral enters queue |
-| Ciphernode bond | FOLD enters exit queue                             |
+| Ciphernode bond | LOX enters exit queue                             |
 
 Check your exit status:
 
@@ -131,7 +131,7 @@ loxley --config /path/to/owner.yaml ciphernode bond \
   --operator 0xOPERATOR claim
 ```
 
-The ticket collateral and FOLD are paid to the bond owner, while the exit queue and any slashing
+The ticket collateral and LOX are paid to the bond owner, while the exit queue and any slashing
 remain keyed to the operator.
 
 ### Re-register
@@ -150,7 +150,7 @@ bondingRegistry.registerOperatorFor(operator);
 | `loxley ciphernode status`                           | Operator       | Check registration and exit status                    |
 | `deregisterOperatorFor(operator)`                       | Owner/operator | Start the full exit process                           |
 | `removeTicketBalanceFor(operator, amount)`              | Bond owner     | Queue ticket collateral for exit                      |
-| `unbondCiphernodeFor(operator, amount)`                 | Bond owner     | Queue FOLD for exit                                   |
+| `unbondCiphernodeFor(operator, amount)`                 | Bond owner     | Queue LOX for exit                                   |
 | `claimExitsFor(operator, maxTicket, 0)`                 | Anyone         | Settle unlocked tickets to the bond owner             |
 | `claimExitsFor(operator, maxTicket, maxCiphernodeBond)` | Bond owner     | Claim unlocked tickets and ciphernode bond collateral |
 

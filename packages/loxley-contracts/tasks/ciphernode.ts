@@ -53,7 +53,7 @@ export const ciphernodeAdd = task(
   .addOption({
     name: "ciphernodeBondAmount",
     description:
-      "amount of FOLD to bond (in wei, e.g., 1000000000000000000000 for 1000 FOLD)",
+      "amount of LOX to bond (in wei, e.g., 1000000000000000000000 for 1000 LOX)",
     defaultValue: "1000000000000000000000",
   })
   .addOption({
@@ -102,7 +102,7 @@ export const ciphernodeAdd = task(
         );
         const usdcBalance = await usdcToken.balanceOf(bondOwner.address);
 
-        console.log(`FOLD balance: ${ethers.formatEther(foldBalance)}`);
+        console.log(`LOX balance: ${ethers.formatEther(foldBalance)}`);
         console.log(`USDC balance: ${ethers.formatUnits(usdcBalance, 6)}`);
 
         const ciphernodeBondAmountBigInt = BigInt(ciphernodeBondAmount);
@@ -110,7 +110,7 @@ export const ciphernodeAdd = task(
 
         if (foldBalance < ciphernodeBondAmountBigInt) {
           throw new Error(
-            `Insufficient FOLD balance. Need: ${ethers.formatEther(ciphernodeBondAmountBigInt)}, Have: ${ethers.formatEther(foldBalance)}`,
+            `Insufficient LOX balance. Need: ${ethers.formatEther(ciphernodeBondAmountBigInt)}, Have: ${ethers.formatEther(foldBalance)}`,
           );
         }
 
@@ -120,13 +120,13 @@ export const ciphernodeAdd = task(
           );
         }
 
-        console.log("Step 2: Approving FOLD for ciphernode bond...");
+        console.log("Step 2: Approving LOX for ciphernode bond...");
         const approveTx = await ciphernodeBondToken.approve(
           await bondingRegistry.getAddress(),
           ciphernodeBondAmountBigInt,
         );
         await approveTx.wait();
-        console.log("FOLD approved");
+        console.log("LOX approved");
 
         console.log("Step 3: Bonding ciphernodeBond...");
         await (
@@ -140,7 +140,7 @@ export const ciphernodeAdd = task(
         );
         await bondTx.wait();
         console.log(
-          `Ciphernode bonded: ${ethers.formatEther(ciphernodeBondAmountBigInt)} FOLD`,
+          `Ciphernode bonded: ${ethers.formatEther(ciphernodeBondAmountBigInt)} LOX`,
         );
 
         console.log("Step 4: Registering as operator...");
@@ -190,7 +190,7 @@ export const ciphernodeAdd = task(
         console.log(`Registered: ${isRegistered}`);
         console.log(`Active: ${isActive}`);
         console.log(
-          `Ciphernode Bond: ${ethers.formatEther(ciphernodeBond)} FOLD`,
+          `Ciphernode Bond: ${ethers.formatEther(ciphernodeBond)} LOX`,
         );
         console.log(
           `Ticket Balance: ${ethers.formatUnits(ticketBalance, 6)} USDC worth`,
@@ -245,7 +245,7 @@ export const ciphernodeRemove = task(
 
 export const ciphernodeMintTokens = task(
   "ciphernode:mint-tokens",
-  "Mint FOLD and USDC tokens for a ciphernode (for testing)",
+  "Mint LOX and USDC tokens for a ciphernode (for testing)",
 )
   .addOption({
     name: "ciphernodeAddress",
@@ -255,7 +255,7 @@ export const ciphernodeMintTokens = task(
   .addOption({
     name: "foldAmount",
     description:
-      "amount of FOLD to mint (in ether units, e.g., 2000 for 2000 FOLD)",
+      "amount of LOX to mint (in ether units, e.g., 2000 for 2000 LOX)",
     defaultValue: "2000",
   })
   .addOption({
@@ -294,14 +294,14 @@ export const ciphernodeMintTokens = task(
       try {
         console.log(`Minting tokens for: ${ciphernodeAddress}`);
 
-        console.log(`Minting ${foldAmount} FOLD...`);
+        console.log(`Minting ${foldAmount} LOX...`);
         const foldTx = await loxleyTokenContract.mint(
           ciphernodeAddress,
           ethers.parseEther(foldAmount),
           ethers.encodeBytes32String("cn-alloc"),
         );
         await foldTx.wait();
-        console.log(`${foldAmount} FOLD minted`);
+        console.log(`${foldAmount} LOX minted`);
 
         console.log(`Minting ${usdcAmount} USDC...`);
         const usdcTx = await mockUSDCContract.mint(
@@ -316,7 +316,7 @@ export const ciphernodeMintTokens = task(
         const usdcBalance = await mockUSDCContract.balanceOf(ciphernodeAddress);
 
         console.log("\n=== Token Balances ===");
-        console.log(`FOLD: ${ethers.formatEther(foldBalance)}`);
+        console.log(`LOX: ${ethers.formatEther(foldBalance)}`);
         console.log(`USDC: ${ethers.formatUnits(usdcBalance, 6)}`);
 
         const tgeTs = await loxleyTokenContract.tgeTimestamp();
@@ -358,7 +358,7 @@ export const ciphernodeAdminAdd = task(
   .addOption({
     name: "ciphernodeBondAmount",
     description:
-      "amount of FOLD to bond (in ether units, e.g., 1000 for 1000 FOLD)",
+      "amount of LOX to bond (in ether units, e.g., 1000 for 1000 LOX)",
     defaultValue: "1000",
   })
   .addOption({
@@ -441,7 +441,7 @@ export const ciphernodeAdminAdd = task(
         const ciphernodeBondWei = ethers.parseEther(ciphernodeBondAmount);
         const ticketAmountWei = ethers.parseUnits(ticketAmount, 6);
 
-        console.log("Step 1: Minting FOLD to the bond owner...");
+        console.log("Step 1: Minting LOX to the bond owner...");
 
         const foldTx = await loxleyTokenConnected.mint(
           adminWallet.address,
@@ -495,7 +495,7 @@ export const ciphernodeAdminAdd = task(
           ciphernodeBondWei,
         );
         await bondTx.wait();
-        console.log(`Ciphernode bonded: ${ciphernodeBondAmount} FOLD`);
+        console.log(`Ciphernode bonded: ${ciphernodeBondAmount} LOX`);
 
         const registerTx =
           await bondingRegistryAsOwner.registerOperatorFor(ciphernodeAddress);
@@ -538,7 +538,7 @@ export const ciphernodeAdminAdd = task(
         console.log(`Registered: ${isRegistered}`);
         console.log(`Active: ${isActive}`);
         console.log(
-          `Ciphernode Bond: ${ethers.formatEther(ciphernodeBond)} FOLD`,
+          `Ciphernode Bond: ${ethers.formatEther(ciphernodeBond)} LOX`,
         );
         console.log(
           `Ticket Balance: ${ethers.formatUnits(ticketBalance, 6)} USDC worth`,

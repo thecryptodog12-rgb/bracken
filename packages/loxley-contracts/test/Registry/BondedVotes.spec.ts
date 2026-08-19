@@ -15,7 +15,7 @@ import {
 
 const { loadFixture, time } = networkHelpers;
 
-/// Bonded FOLD is transferred to `BondingRegistry`, which never delegates it. Under ERC20Votes an
+/// Bonded LOX is transferred to `BondingRegistry`, which never delegates it. Under ERC20Votes an
 /// undelegated balance carries no voting power, so an operator forfeits that weight entirely —
 /// while the bonded tokens still count in `getPastTotalSupply` and so raise the quorum
 /// denominator they cannot help meet.
@@ -68,7 +68,7 @@ describe("BondedVotes", function () {
 
     const bondedVotes = await ethers.deployContract("BondedVotes", [
       await ciphernodeBondToken.getAddress(),
-      // Votes source == the token: wallet-held FOLD votes, the original behaviour.
+      // Votes source == the token: wallet-held LOX votes, the original behaviour.
       await ciphernodeBondToken.getAddress(),
       await checkpoints.getAddress(),
     ]);
@@ -137,7 +137,7 @@ describe("BondedVotes", function () {
   }
 
   describe("holders who never bond", function () {
-    it("counts wallet FOLD exactly as the token does", async function () {
+    it("counts wallet LOX exactly as the token does", async function () {
       const { ciphernodeBondToken, otherHolderAddress, settledVotes } =
         await loadFixture(setup);
 
@@ -183,7 +183,7 @@ describe("BondedVotes", function () {
       );
     });
 
-    it("counts an owner whose FOLD is entirely bonded", async function () {
+    it("counts an owner whose LOX is entirely bonded", async function () {
       const { ciphernodeBondToken, bondOwnerAddress, bond, settledVotes } =
         await loadFixture(setup);
 
@@ -210,8 +210,8 @@ describe("BondedVotes", function () {
   });
 
   describe("unbonding and exit", function () {
-    /// Unbonding queues the bond for exit. The FOLD is still held by the registry, so the weight
-    /// stays with the owner — counting it as wallet FOLD as well would double it.
+    /// Unbonding queues the bond for exit. The LOX is still held by the registry, so the weight
+    /// stays with the owner — counting it as wallet LOX as well would double it.
     it("keeps power while the bond sits in the exit queue", async function () {
       const { checkpoints, bondOwnerAddress, bond, unbond, settledVotes } =
         await loadFixture(setup);
@@ -244,7 +244,7 @@ describe("BondedVotes", function () {
       await time.increase(SEVEN_DAYS + 1);
       await claim(BOND);
 
-      // Unchanged throughout: the FOLD only ever moved between wallet and registry.
+      // Unchanged throughout: the LOX only ever moved between wallet and registry.
       expect(await settledVotes(bondOwnerAddress)).to.equal(MINTED);
 
       const at = (await time.latest()) - 1;
@@ -266,7 +266,7 @@ describe("BondedVotes", function () {
       const slashAmount = BOND / 4n;
       await slash(slashAmount);
 
-      // Slashed FOLD is gone from the owner's control, so its weight goes with it.
+      // Slashed LOX is gone from the owner's control, so its weight goes with it.
       expect(await settledVotes(bondOwnerAddress)).to.equal(
         MINTED - slashAmount,
       );
@@ -281,7 +281,7 @@ describe("BondedVotes", function () {
 
   describe("history", function () {
     /// A vote reads power at a snapshot. Bonding after that snapshot must not change the answer,
-    /// or an owner could hold FOLD at the snapshot, bond it afterwards, and be counted twice.
+    /// or an owner could hold LOX at the snapshot, bond it afterwards, and be counted twice.
     it("does not let a later bond change an earlier answer", async function () {
       const { bondedVotes, bondOwnerAddress, bond } = await loadFixture(setup);
 
@@ -421,7 +421,7 @@ describe("BondedVotes", function () {
   });
 
   describe("delegation", function () {
-    /// Wallet FOLD follows the token's delegation. Bonded FOLD cannot be delegated — the registry
+    /// Wallet LOX follows the token's delegation. Bonded LOX cannot be delegated — the registry
     /// holds it — so it stays with the bond owner regardless.
     it("sends wallet weight to the delegate but keeps bonded weight", async function () {
       const {
@@ -470,7 +470,7 @@ describe("BondedVotes", function () {
   });
 
   describe("total supply", function () {
-    /// Bonded FOLD was transferred, not burned, so it is already in the supply. Adding it again
+    /// Bonded LOX was transferred, not burned, so it is already in the supply. Adding it again
     /// would inflate every quorum denominator — the opposite of the problem being fixed.
     it("passes total supply through unchanged while bonded", async function () {
       const { bondedVotes, ciphernodeBondToken, bond } =
@@ -488,7 +488,7 @@ describe("BondedVotes", function () {
     });
 
     /// Quorum is a fraction of supply, so summed power must never exceed it — counting the same
-    /// FOLD twice is the failure this whole design exists to avoid.
+    /// LOX twice is the failure this whole design exists to avoid.
     it("never lets summed power exceed total supply", async function () {
       const {
         bondedVotes,
@@ -698,7 +698,7 @@ describe("BondedVotes", function () {
       );
     });
 
-    it("counts wallet and bonded FOLD in the balance, ignoring delegation", async function () {
+    it("counts wallet and bonded LOX in the balance, ignoring delegation", async function () {
       const { bondedVotes, ciphernodeBondToken, bondOwnerAddress, bond } =
         await loadFixture(setup);
 
@@ -710,14 +710,14 @@ describe("BondedVotes", function () {
       );
     });
 
-    it("keeps total supply a pass-through so bonded FOLD is never counted twice", async function () {
+    it("keeps total supply a pass-through so bonded LOX is never counted twice", async function () {
       const { bondedVotes, ciphernodeBondToken, bond } =
         await loadFixture(setup);
 
       const before = await ciphernodeBondToken.totalSupply();
       await bond(BOND);
 
-      // Bonding moves FOLD to the registry; it is not burned, so supply is unchanged.
+      // Bonding moves LOX to the registry; it is not burned, so supply is unchanged.
       expect(await bondedVotes.totalSupply()).to.equal(before);
     });
 
@@ -749,7 +749,7 @@ describe("BondedVotes", function () {
       const { ciphernodeBondToken } = await loadFixture(setup);
       const [signer] = await ethers.getSigners();
 
-      // Registry is an EOA here — it custodies no FOLD and cannot answer for a ciphernode bond token.
+      // Registry is an EOA here — it custodies no LOX and cannot answer for a ciphernode bond token.
       const foreign = await ethers.deployContract("BondedCheckpoints", [
         await signer.getAddress(),
       ]);
@@ -770,7 +770,7 @@ describe("BondedVotes", function () {
     });
 
     /// The registry holds every operator's bond while this contract attributes it to the owner.
-    /// Counting it at both addresses put the same FOLD in two places, so summed balances exceeded
+    /// Counting it at both addresses put the same LOX in two places, so summed balances exceeded
     /// total supply — the denominator every holder-percentage view divides by.
     it("nets the registry down by what it only custodies", async function () {
       const {
@@ -1006,7 +1006,7 @@ describe("BondedVotes", function () {
 
   /// The history counts ciphernode-bond-token units, but `BondedVotes` adds them to the voting power of
   /// one fixed token chosen at construction. A replacement ciphernode bond token would otherwise write
-  /// into the same history and be counted as FOLD, so an operator could hold voting power the
+  /// into the same history and be counted as LOX, so an operator could hold voting power the
   /// token's total supply does not back.
   describe("ciphernode-bond-token rotation", function () {
     async function newCiphernodeBondToken() {
@@ -1064,9 +1064,9 @@ describe("BondedVotes", function () {
         .connect(bondOwner)
         .bondCiphernodeFor(operatorAddress, BOND);
 
-      // Bonded in a different token, so it must not add to FOLD voting power. Before the
-      // detachment this bond entered the FOLD history and pushed the owner's votes above what
-      // FOLD's own supply backs.
+      // Bonded in a different token, so it must not add to LOX voting power. Before the
+      // detachment this bond entered the LOX history and pushed the owner's votes above what
+      // LOX's own supply backs.
       expect(await settledVotes(bondOwnerAddress)).to.equal(walletVotes);
     });
 
@@ -1120,12 +1120,12 @@ describe("BondedVotes", function () {
       );
     });
   });
-  /// Lock-to-vote. `votesSource` is an escrow adapter instead of the token, so idle wallet FOLD
+  /// Lock-to-vote. `votesSource` is an escrow adapter instead of the token, so idle wallet LOX
   /// carries no weight and a holder must lock to participate — while an operator keeps its weight
   /// by bonding, without locking anything.
   ///
-  /// The property that makes this sound is that the DENOMINATOR stays on FOLD. Locked and bonded
-  /// FOLD were both transferred rather than burned, so both are still inside FOLD's total supply
+  /// The property that makes this sound is that the DENOMINATOR stays on LOX. Locked and bonded
+  /// LOX were both transferred rather than burned, so both are still inside LOX's total supply
   /// and summed votes can never exceed it. Reading the denominator off the escrow instead would
   /// omit the bonded half entirely and let participation exceed 100%.
   describe("escrow votes source", function () {
@@ -1152,7 +1152,7 @@ describe("BondedVotes", function () {
       return { ...base, escrow, adapter, veBondedVotes, foldAddress };
     }
 
-    it("counts locked FOLD and bonded FOLD, but not idle wallet FOLD", async function () {
+    it("counts locked LOX and bonded LOX, but not idle wallet LOX", async function () {
       const { veBondedVotes, adapter, bond, bondOwnerAddress } =
         await loadFixture(veSetup);
 
@@ -1175,7 +1175,7 @@ describe("BondedVotes", function () {
     it("gives a holder who locked nothing and bonded nothing no voting power", async function () {
       const { veBondedVotes, otherHolderAddress } = await loadFixture(veSetup);
 
-      // Holds MINTED FOLD and has self-delegated on the token. Under lock-to-vote that is
+      // Holds MINTED LOX and has self-delegated on the token. Under lock-to-vote that is
       // deliberately worth nothing.
       await time.increase(1);
       const timepoint = (await time.latest()) - 1;
@@ -1200,7 +1200,7 @@ describe("BondedVotes", function () {
     });
 
     /// The whole reason the token reference is kept separate from the votes source.
-    it("measures quorum against FOLD's supply, not the escrow's", async function () {
+    it("measures quorum against LOX's supply, not the escrow's", async function () {
       const {
         veBondedVotes,
         adapter,
@@ -1234,7 +1234,7 @@ describe("BondedVotes", function () {
     /// The escrow adapter has no `decimals`, `name`, `symbol` or `totalSupply`. Routing metadata
     /// through it would revert — and `decimals` reverting is the dangerous one, because CRISP's
     /// tally scaling catches the failure and silently falls back to a scale of 1.
-    it("reads metadata from FOLD, which the escrow adapter cannot answer for", async function () {
+    it("reads metadata from LOX, which the escrow adapter cannot answer for", async function () {
       const { veBondedVotes, adapter, ciphernodeBondToken } =
         await loadFixture(veSetup);
 
@@ -1259,7 +1259,7 @@ describe("BondedVotes", function () {
       await expect(adapterAsToken.decimals()).to.be.revert(ethers);
     });
 
-    it("attributes locked FOLD to the locker in balanceOf", async function () {
+    it("attributes locked LOX to the locker in balanceOf", async function () {
       const {
         veBondedVotes,
         adapter,
@@ -1281,7 +1281,7 @@ describe("BondedVotes", function () {
       );
     });
 
-    /// The mirror of the registry netting. The escrow custodies real FOLD and every unit of it is
+    /// The mirror of the registry netting. The escrow custodies real LOX and every unit of it is
     /// already attributed above to the account that locked it, so leaving it at the escrow's own
     /// address as well would place the same tokens twice and push summed balances past total
     /// supply — the denominator every holder-percentage view divides by.
@@ -1292,7 +1292,7 @@ describe("BondedVotes", function () {
       const escrowAddress = await escrow.getAddress();
       const custodied = ethers.parseEther("9000");
 
-      // Stands in for FOLD deposited by lockers: the escrow holds it, and it is attributed to the
+      // Stands in for LOX deposited by lockers: the escrow holds it, and it is attributed to the
       // lockers rather than to the escrow.
       await ciphernodeBondToken.mint(
         escrowAddress,
@@ -1323,7 +1323,7 @@ describe("BondedVotes", function () {
     });
 
     /// Same argument as `TokenMismatch`, applied to the other half of the numerator: an escrow
-    /// over a different token would mint voting power FOLD's supply does not back, and the
+    /// over a different token would mint voting power LOX's supply does not back, and the
     /// denominator would never reveal it.
     it("rejects an escrow that custodies a different token", async function () {
       const { checkpoints, foldAddress } = await loadFixture(veSetup);
@@ -1364,12 +1364,12 @@ describe("BondedVotes", function () {
       ).to.be.revert(ethers);
     });
 
-    /// FOLD's own vesting locks, the third source under an escrow votes source.
+    /// LOX's own vesting locks, the third source under an escrow votes source.
     ///
-    /// Lock-encumbered FOLD sits in the holder's wallet and the token's transfer hook refuses to
+    /// Lock-encumbered LOX sits in the holder's wallet and the token's transfer hook refuses to
     /// move it, so it can never reach the escrow. Without counting it here a locked holder would
     /// be barred from governance for the whole vesting schedule by a rule they cannot act on.
-    describe("vesting-locked FOLD", function () {
+    describe("vesting-locked LOX", function () {
       const ALLOCATION = ethers.parseEther("6000");
 
       /// Tge-anchored, and the fixture never fires TGE, so the allocation stays fully locked for
@@ -1401,7 +1401,7 @@ describe("BondedVotes", function () {
         return policyId;
       }
 
-      it("counts locked FOLD for a holder who escrowed and bonded nothing", async function () {
+      it("counts locked LOX for a holder who escrowed and bonded nothing", async function () {
         const { veBondedVotes, ciphernodeBondToken, otherHolderAddress } =
           await loadFixture(veSetup);
 
@@ -1421,7 +1421,7 @@ describe("BondedVotes", function () {
         );
       });
 
-      it("adds locked FOLD to escrowed and bonded FOLD", async function () {
+      it("adds locked LOX to escrowed and bonded LOX", async function () {
         const {
           veBondedVotes,
           ciphernodeBondToken,
@@ -1438,7 +1438,7 @@ describe("BondedVotes", function () {
         const timepoint = (await time.latest()) - 1;
 
         // The bond is smaller than the lock, so it covers only part of the obligation: the rest
-        // is FOLD the wallet is still holding and still cannot escrow.
+        // is LOX the wallet is still holding and still cannot escrow.
         expect(
           await veBondedVotes.getPastVotes(bondOwnerAddress, timepoint),
         ).to.equal(LOCKED + ALLOCATION);
@@ -1446,9 +1446,9 @@ describe("BondedVotes", function () {
 
       /// The one place a naive `locked + escrowed + bonded` sum goes wrong. A bond SATISFIES a
       /// lock — {LoxleyToken.transferableBalanceOf} nets the bond against the obligation — so
-      /// bonded FOLD is reported by both `lockedBalanceAt` and the bonded history while existing
+      /// bonded LOX is reported by both `lockedBalanceAt` and the bonded history while existing
       /// exactly once. Summing both would let an operator vote twice with the same token.
-      it("does not count FOLD twice when the bond covers the lock", async function () {
+      it("does not count LOX twice when the bond covers the lock", async function () {
         const { veBondedVotes, ciphernodeBondToken, bond, bondOwnerAddress } =
           await loadFixture(veSetup);
 
@@ -1541,7 +1541,7 @@ describe("BondedVotes", function () {
           "LockedBalancesUnsupported",
         );
 
-        // Control: the same wiring over FOLD, which does answer, constructs. Without this the
+        // Control: the same wiring over LOX, which does answer, constructs. Without this the
         // test would pass just as well if the stub were what rejected the deployment.
         await expect(
           ethers.deployContract("BondedVotes", [
@@ -1578,11 +1578,11 @@ describe("BondedVotes", function () {
 
       /// Netting the bond off the lock is only sound while the token's own transfer rule holds:
       /// `balance >= locked - bonded`, checked on every transfer. SLASHING breaks it — it takes
-      /// the bond without touching the lock — so an operator that had already moved locked FOLD
+      /// the bond without touching the lock — so an operator that had already moved locked LOX
       /// out on the strength of that bond is left owing more than it holds. Uncapped, the locked
-      /// term would vote with FOLD that is now in the slash recipient's hands and countable
+      /// term would vote with LOX that is now in the slash recipient's hands and countable
       /// there too.
-      it("stops counting locked FOLD a slash left unbacked", async function () {
+      it("stops counting locked LOX a slash left unbacked", async function () {
         const { veBondedVotes, bondingRegistry, ciphernodeBondToken } =
           await loadFixture(veSetup);
 
@@ -1593,7 +1593,7 @@ describe("BondedVotes", function () {
         const sinkAddress = await sink.getAddress();
         const registryAddress = await bondingRegistry.getAddress();
 
-        // A wallet holding exactly one lock and an equal amount of free FOLD.
+        // A wallet holding exactly one lock and an equal amount of free LOX.
         await allocate(ciphernodeBondToken, lockerAddress, BOND, "SLASH_LOCK");
         await ciphernodeBondToken.mint(
           lockerAddress,
@@ -1641,7 +1641,7 @@ describe("BondedVotes", function () {
         const timepoint = (await time.latest()) - 1;
 
         // The lock outlives the bond that covered it, so `locked - bonded` is the whole
-        // allocation — but the wallet holds none of it, and the slashed FOLD votes elsewhere.
+        // allocation — but the wallet holds none of it, and the slashed LOX votes elsewhere.
         expect(
           await ciphernodeBondToken.lockedBalanceOf(lockerAddress),
         ).to.equal(BOND);
@@ -1652,7 +1652,7 @@ describe("BondedVotes", function () {
       });
 
       /// The cap is a bound, not a source: it never lets an account vote with more than the
-      /// unbonded part of its lock, and never reaches into FOLD the lock does not encumber.
+      /// unbonded part of its lock, and never reaches into LOX the lock does not encumber.
       it("caps at the lock, not at the wallet balance", async function () {
         const { veBondedVotes, ciphernodeBondToken, otherHolderAddress } =
           await loadFixture(veSetup);
@@ -1671,7 +1671,7 @@ describe("BondedVotes", function () {
         ).to.equal(ALLOCATION);
       });
 
-      /// When the token votes for itself, locked FOLD is wallet FOLD and the token's own
+      /// When the token votes for itself, locked LOX is wallet LOX and the token's own
       /// checkpoints already carry it. Adding the lock schedule there would double every locked
       /// holder's weight.
       it("is ignored when the votes source is the token itself", async function () {

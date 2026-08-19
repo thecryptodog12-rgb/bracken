@@ -238,7 +238,7 @@ describe("Protocol deployment", function () {
     await feeToken.waitForDeployment();
     const ticketUnderlyingToken = await tokenFactory.deploy(0);
     await ticketUnderlyingToken.waitForDeployment();
-    // FOLD has to be a real votes token: the deployment builds `BondedVotes` against it, and that
+    // LOX has to be a real votes token: the deployment builds `BondedVotes` against it, and that
     // constructor compares the token's ERC-6372 clock with the bonded history's.
     const foldFactory = await ethers.getContractFactory("MockVotesToken");
     const fold = await foldFactory.deploy();

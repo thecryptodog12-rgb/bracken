@@ -115,9 +115,9 @@
   "internals": {
     "title": "Technical Deep Dives"
   },
-  "-- FOLD Token": {
+  "-- LOX Token": {
     "type": "separator",
-    "title": "FOLD Token"
+    "title": "LOX Token"
   },
   "tokenomics": {
     "title": "Tokenomics"

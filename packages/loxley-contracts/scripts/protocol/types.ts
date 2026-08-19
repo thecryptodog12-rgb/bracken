@@ -39,9 +39,9 @@ export interface ProtocolConfigFile {
   };
   fold: string;
   /**
-   * Optional escrow IVotes adapter. When set, only FOLD locked in that escrow carries voting
-   * power and idle wallet FOLD carries none — operators keep their weight by bonding instead.
-   * Omit to count wallet-held FOLD, which is the original behaviour.
+   * Optional escrow IVotes adapter. When set, only LOX locked in that escrow carries voting
+   * power and idle wallet LOX carries none — operators keep their weight by bonding instead.
+   * Omit to count wallet-held LOX, which is the original behaviour.
    */
   escrowVotesAdapter?: string;
   bondingRegistryProxy: string;

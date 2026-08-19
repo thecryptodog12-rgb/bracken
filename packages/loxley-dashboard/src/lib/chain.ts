@@ -68,7 +68,7 @@ export const CONTRACTS = {
   // needs hardcoded — the ciphernode bond token, ticket wrapper, and ticket underlying
   // are all read back from it at runtime so they cannot drift.
   BondingRegistry: envStr('VITE_BONDING_REGISTRY_ADDRESS', '0x77384A924C18FfE00A9325815723121534105Abd') as Address,
-  // Testnet-only convenience faucet (FOLD + fee token). The zero address or an
+  // Testnet-only convenience faucet (LOX + fee token). The zero address or an
   // empty string disables the faucet card in the operator guide.
   Faucet: faucetAddress() as Address,
 }

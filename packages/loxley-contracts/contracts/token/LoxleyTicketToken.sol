@@ -25,7 +25,7 @@ import {
 } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
- * @title LoxleyTicketToken (tFOLD)
+ * @title LoxleyTicketToken (tLOX)
  * @notice Non-transferable, non-delegatable ERC20Votes wrapper over a stablecoin for operator
  *         staking in the Loxley protocol.
  * @dev SECURITY NOTES
@@ -168,7 +168,7 @@ contract LoxleyTicketToken is
     }
 
     /**
-     * @notice Initializes the Loxley Ticket Token with name "Loxley Ticket Token" and symbol "tFOLD"
+     * @notice Initializes the Loxley Ticket Token with name "Loxley Ticket Token" and symbol "tLOX"
      * @dev Sets the registry pointer directly so deployment never depends on the deployer also
      *      being {initialOwner_}. The registry can be re-pointed instantly until
      *      {lockRegistry} is called.
@@ -181,7 +181,7 @@ contract LoxleyTicketToken is
         address registry_,
         address initialOwner_
     )
-        ERC20("Loxley Ticket Token", "tFOLD")
+        ERC20("Loxley Ticket Token", "tLOX")
         EIP712("Loxley Ticket Token", "1")
         ERC20Wrapper(baseToken)
         Ownable(initialOwner_)

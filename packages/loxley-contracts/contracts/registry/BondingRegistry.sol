@@ -78,10 +78,10 @@ contract BondingRegistry is
     // Storage
     // ======================
 
-    /// @notice Ticket token (tFOLD with underlying USDC) used for collateral
+    /// @notice Ticket token (tLOX with underlying USDC) used for collateral
     LoxleyTicketToken public ticketToken;
 
-    /// @notice Ciphernode bond token (FOLD) required for operator registration
+    /// @notice Ciphernode bond token (LOX) required for operator registration
     IERC20 public ciphernodeBondToken;
 
     /// @notice Registry contract for managing committee membership

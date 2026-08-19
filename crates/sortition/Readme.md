@@ -37,7 +37,7 @@ sequenceDiagram
 
     Operator->>BondingRegistry: setBondOwner(owner)
     Operator->>BondingRegistry: bondCiphernodeFor(operator, amount)
-    BondingRegistry->>BondingRegistry: Transfer FOLD tokens
+    BondingRegistry->>BondingRegistry: Transfer LOX tokens
     BondingRegistry->>EventBus: CiphernodeBondUpdated
 
     Operator->>BondingRegistry: registerOperatorFor(operator)

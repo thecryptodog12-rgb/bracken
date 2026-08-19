@@ -564,7 +564,7 @@ impl EtherscanClient {
     /// Fetch the addresses named as `bondOwner` by a `BondingRegistry`, and by the
     /// `BondedCheckpoints` it writes to.
     ///
-    /// Bonded FOLD carries voting power through a `BondedVotes` adapter, which is a pure view:
+    /// Bonded LOX carries voting power through a `BondedVotes` adapter, which is a pure view:
     /// it emits nothing. Its power comes from two places the adapter merely reads, so an address
     /// can hold bonded weight while appearing in no `Transfer` and no `DelegateVotesChanged` log
     /// at all — scanning only the token would miss every operator.

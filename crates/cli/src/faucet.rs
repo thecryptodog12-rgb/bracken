@@ -55,7 +55,7 @@ mod erc20 {
 use erc20::IERC20;
 use faucet_contract::FaucetContract;
 
-/// Calls `faucet()` on the configured Faucet contract, sending FOLD + fee
+/// Calls `faucet()` on the configured Faucet contract, sending LOX + fee
 /// tokens to the operator's signing address. Testnet only.
 pub async fn execute(out: Console, config: &AppConfig, selection: Option<&str>) -> Result<()> {
     let chain = select_chain(config, selection)?;
@@ -99,7 +99,7 @@ pub async fn execute(out: Console, config: &AppConfig, selection: Option<&str>) 
     if !needs_fold && !needs_fee_token {
         log!(
             out,
-            "Nothing to claim: {:#x} already holds at least {} FOLD and {} fee tokens.",
+            "Nothing to claim: {:#x} already holds at least {} LOX and {} fee tokens.",
             recipient,
             format_units(amount_fold, 18),
             format_units(amount_fee_token, 6)
@@ -112,7 +112,7 @@ pub async fn execute(out: Console, config: &AppConfig, selection: Option<&str>) 
         let faucet_fold = fold.balanceOf(faucet_address).call().await?;
         if faucet_fold < amount_fold {
             bail!(
-                "Faucet is out of FOLD (has {}, needs {}). Ask an admin to refund it.",
+                "Faucet is out of LOX (has {}, needs {}). Ask an admin to refund it.",
                 format_units(faucet_fold, 18),
                 format_units(amount_fold, 18)
             );
@@ -147,7 +147,7 @@ pub async fn execute(out: Console, config: &AppConfig, selection: Option<&str>) 
         out,
         "Faucet sent {}{}{} to {:#x} (tx: {:#x})",
         if needs_fold {
-            format!("{} FOLD", format_units(amount_fold, 18))
+            format!("{} LOX", format_units(amount_fold, 18))
         } else {
             String::new()
         },

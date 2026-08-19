@@ -10,7 +10,7 @@ interface ILockAwareCiphernodeBondToken {
     function lockedBalanceOf(address account) external view returns (uint256);
 
     /// @dev The same schedule as {lockedBalanceOf}, evaluated against an arbitrary timestamp
-    /// rather than the present. `BondedVotes` reads it so a governance snapshot counts the FOLD a
+    /// rather than the present. `BondedVotes` reads it so a governance snapshot counts the LOX a
     /// holder had encumbered at the snapshot, not what it has encumbered now.
     function lockedBalanceAt(
         address account,

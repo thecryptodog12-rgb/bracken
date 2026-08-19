@@ -16,7 +16,7 @@ import { IBondedCheckpoints } from "../interfaces/IBondedCheckpoints.sol";
  * @title BondedCheckpoints
  * @notice Historical bonded-collateral totals for `BondingRegistry`.
  *
- * @dev Bonded FOLD is transferred to the registry, which never delegates it. Under ERC20Votes an
+ * @dev Bonded LOX is transferred to the registry, which never delegates it. Under ERC20Votes an
  * undelegated balance carries no voting power, so an operator forfeits that weight entirely —
  * while the bonded tokens still count in the token's total supply and so raise the quorum
  * denominator they cannot help meet.

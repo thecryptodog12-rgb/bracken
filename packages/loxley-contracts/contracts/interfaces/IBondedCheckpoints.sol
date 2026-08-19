@@ -7,7 +7,7 @@ pragma solidity 0.8.28;
 
 /**
  * @title IBondedCheckpoints
- * @notice Historical bonded-collateral totals, so bonded FOLD can carry voting power.
+ * @notice Historical bonded-collateral totals, so bonded LOX can carry voting power.
  */
 interface IBondedCheckpoints {
     /// @notice Thrown when a caller other than the registry tries to write history.

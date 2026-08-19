@@ -22,8 +22,8 @@ const FORTY_DAYS = 40n * DAY;
 const FOUR_YEARS = 4n * 365n * DAY;
 const ONE_MONTH = 30n * DAY;
 const LOCK_SUNSET_DELAY = FOUR_YEARS + ONE_MONTH;
-const SALE_AMOUNT = ethers.parseEther("120000000"); // 120M FOLD
-const LP_RESERVE = ethers.parseEther("1000000"); // 1M FOLD
+const SALE_AMOUNT = ethers.parseEther("120000000"); // 120M LOX
+const LP_RESERVE = ethers.parseEther("1000000"); // 1M LOX
 
 const AUCTION_PARAMETERS_TUPLE =
   "tuple(" +
@@ -317,7 +317,7 @@ describe("LoxleyTokenSaleDeployer", function () {
     ).to.equal(false);
   });
 
-  it("deploys FOLD + CCA through LiquidityLauncher/LBPStrategy without a predicted auction", async function () {
+  it("deploys LOX + CCA through LiquidityLauncher/LBPStrategy without a predicted auction", async function () {
     const ctx = await setup();
     const plan = await buildLbpSaleConfig(ctx);
     const digest = await ctx.saleDeployer.hashLbpConfig(plan.lbpSaleConfig);
@@ -345,7 +345,7 @@ describe("LoxleyTokenSaleDeployer", function () {
     expect(initializer.reservedTokenAmountForLP).to.equal(LP_RESERVE);
   });
 
-  it("hands FOLD ownership to the Safe, which sets CLAIM_SOURCE once", async function () {
+  it("hands LOX ownership to the Safe, which sets CLAIM_SOURCE once", async function () {
     const ctx = await setup();
     const plan = await buildLbpSaleConfig(ctx);
     const { foldAddress, auctionAddress } = await deploySale(ctx, plan);
