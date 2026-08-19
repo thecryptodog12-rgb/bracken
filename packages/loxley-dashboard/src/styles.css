@@ -11,23 +11,35 @@
    Calm, modern, readable. Avoids Inter/system tropes. */
 
 :root {
-  --ink: #14201b; /* deep, slightly warm */
-  --ink-2: #2c3833;
-  --ink-3: #5b6864;
-  --ink-4: #8b9893;
-  --rule: #e3e7e2;
-  --rule-soft: #eef1ec;
-  --paper: #f7f5ee; /* warm off-white */
-  --paper-2: #ffffff;
-  --paper-3: #f0ede4;
+  /* ---- Loxley ---------------------------------------------------------
+     Perkament, greenwood, messing. Donkere inkt op warm papier; groen voor
+     alles wat op de keten leeft, messing voor het handjevol dingen die geld
+     of risico betekenen (bonds, tickets, slashing).
+     ------------------------------------------------------------------ */
+  --ink: #15211b;
+  --ink-2: #2b3a33;
+  --ink-3: #57665e;
+  --ink-4: #8a978f;
+  --rule: #e2e6dd;
+  --rule-soft: #edf0e8;
+  --paper: #f6f3e9;
+  --paper-2: #fffdf7;
+  --paper-3: #ece7d9;
 
-  /* Accent set via JS (--accent-*). Defaults: mint. */
-  --accent-bg: #e8faf0;
-  --accent-soft: #cdeede;
-  --accent-deep: #1f6b4a;
-  --accent-ink: #163d2c;
+  --accent-bg: #e7f1e8;
+  --accent-soft: #c3ddc9;
+  --accent-deep: #1c5c3f;
+  --accent-ink: #10301f;
 
-  --serif: Georgia, 'Times New Roman', serif;
+  --brass: #9a7328;
+  --brass-bg: #f7efdd;
+
+  /* De footer is een volle balk en moet in BEIDE thema's donker blijven --
+     hij mag niet meekantelen zoals --ink/--paper dat doen. */
+  --foot-bg: #15211b;
+  --foot-ink: #f6f3e9;
+
+  --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
   --sans: 'Geist', 'Söhne', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   --mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', 'Menlo', monospace;
 
@@ -36,6 +48,51 @@
   --radius-lg: 22px;
   --maxw: 1180px;
 }
+
+/* Dark: dezelfde rollen, omgekeerd. Puur tokens -- geen enkele regel verderop
+   in dit bestand hoeft ervan te weten. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --ink: #e8eee6;
+    --ink-2: #c4cfc6;
+    --ink-3: #94a29a;
+    --ink-4: #6d7c74;
+    --rule: #263029;
+    --rule-soft: #1d2620;
+    --paper: #10160f;
+    --paper-2: #161e17;
+    --paper-3: #1c251d;
+    --accent-bg: #14291d;
+    --accent-soft: #234c36;
+    --accent-deep: #6fcb9a;
+    --accent-ink: #d3f0de;
+    --brass: #d8a548;
+    --brass-bg: #2a2113;
+    --foot-bg: #0b100a;
+    --foot-ink: #e8eee6;
+  }
+}
+
+:root[data-theme='dark'] {
+  --ink: #e8eee6;
+  --ink-2: #c4cfc6;
+  --ink-3: #94a29a;
+  --ink-4: #6d7c74;
+  --rule: #263029;
+  --rule-soft: #1d2620;
+  --paper: #10160f;
+  --paper-2: #161e17;
+  --paper-3: #1c251d;
+  --accent-bg: #14291d;
+  --accent-soft: #234c36;
+  --accent-deep: #6fcb9a;
+  --accent-ink: #d3f0de;
+  --brass: #d8a548;
+  --brass-bg: #2a2113;
+  --foot-bg: #0b100a;
+  --foot-ink: #e8eee6;
+}
+
 
 * {
   box-sizing: border-box;
@@ -90,24 +147,37 @@ button {
 .wordmark {
   display: flex;
   align-items: center;
-  gap: 9px;
-  font-weight: 540;
-  font-size: 17px;
-  letter-spacing: -0.012em;
+  gap: 10px;
   color: var(--ink);
+  text-decoration: none;
 }
-/* Official Loxley wordmark (src/assets/loxley.svg), masked so it inherits
-   a theme color and stays legible on the light chrome. */
-.wordmark__logo {
-  display: inline-block;
-  height: 20px;
-  aspect-ratio: 259 / 37;
-  background-color: var(--ink);
-  -webkit-mask: url('./assets/loxley.svg') no-repeat center / contain;
-  mask: url('./assets/loxley.svg') no-repeat center / contain;
+/* Hood-merk + de naam als echte tekst. Geen image-mask meer: tekst erft de
+   serif-token, blijft selecteerbaar en schaalt zonder tweede bestand. */
+.wordmark .mark {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  color: var(--accent-deep);
 }
-.wordmark--foot .wordmark__logo {
-  height: 18px;
+.wordmark__name {
+  font-family: var(--serif);
+  font-size: 21px;
+  line-height: 1;
+  letter-spacing: -0.014em;
+  font-weight: 500;
+}
+/* Dit dashboard praat met precies een keten, dus dat hoort in het wordmark
+   en niet in een instelling die niemand opzoekt. */
+.wordmark__chain {
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  padding: 4px 6px;
+  border-radius: 5px;
+  color: var(--accent-deep);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-soft);
 }
 .site-nav {
   display: flex;
@@ -1212,8 +1282,8 @@ button {
 
 /* ── Footer ─────────────────────────────────────────────────────────────── */
 .site-foot {
-  background: var(--ink);
-  color: color-mix(in oklab, var(--paper) 90%, transparent);
+  background: var(--foot-bg);
+  color: color-mix(in oklab, var(--foot-ink) 90%, transparent);
 }
 .site-foot__inner {
   max-width: var(--maxw);
@@ -1223,15 +1293,15 @@ button {
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr);
   gap: 56px;
 }
-.wordmark--foot {
-  color: var(--paper);
+.wordmark--foot .wordmark__name {
+  color: var(--foot-ink);
 }
-.wordmark--foot .wordmark__logo {
-  background-color: #d9fce8;
+.wordmark--foot .mark {
+  color: var(--accent-deep);
 }
 .site-foot__tag {
   font-size: 14px;
-  color: color-mix(in oklab, var(--paper) 70%, transparent);
+  color: color-mix(in oklab, var(--foot-ink) 70%, transparent);
   max-width: 380px;
   margin: 14px 0 0;
   line-height: 1.55;
@@ -1246,29 +1316,29 @@ button {
   display: block;
   padding: 4px 0;
   font-size: 13.5px;
-  color: color-mix(in oklab, var(--paper) 70%, transparent);
+  color: color-mix(in oklab, var(--foot-ink) 70%, transparent);
   transition: color 120ms;
 }
 .site-foot__cols a:hover {
-  color: var(--paper);
+  color: var(--foot-ink);
 }
 .site-foot__col-head {
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--paper) 55%, transparent);
+  color: color-mix(in oklab, var(--foot-ink) 55%, transparent);
   margin-bottom: 10px;
 }
 .site-foot__rule {
   max-width: var(--maxw);
   margin: 0 auto;
   padding: 18px 32px 28px;
-  border-top: 1px solid color-mix(in oklab, var(--paper) 12%, transparent);
+  border-top: 1px solid color-mix(in oklab, var(--foot-ink) 12%, transparent);
   display: flex;
   justify-content: space-between;
   gap: 16px;
   font-size: 12px;
-  color: color-mix(in oklab, var(--paper) 55%, transparent);
+  color: color-mix(in oklab, var(--foot-ink) 55%, transparent);
 }
 
 /* ── Compact density tweaks ─────────────────────────────────────────────── */

@@ -20,6 +20,7 @@ import { formatE3Id } from './lib/pollMeta'
 import { LINKS, explorerAddress } from './lib/links'
 import { CONTRACTS } from './lib/chain'
 import { isE3Active, solidityStageToUiIdx, type E3FullDetails, type E3Summary } from './lib/e3'
+import { Wordmark } from './Wordmark'
 
 function Header({ density, view, onNav }: { density: string; view: string; onNav: (id: string) => void }) {
   const link = (id: string, label: string) => (
@@ -46,7 +47,7 @@ function Header({ density, view, onNav }: { density: string; view: string; onNav
           }}
           aria-label='Loxley home'
         >
-          <span className='wordmark__logo' aria-hidden='true' />
+          <Wordmark />
         </a>
         <nav className='site-nav' aria-label='Primary'>
           {link('inspector', 'E3 inspector')}
@@ -90,7 +91,7 @@ function SiteFooter() {
       <div className='site-foot__inner'>
         <div className='site-foot__brand'>
           <div className='wordmark wordmark--foot'>
-            <span className='wordmark__logo' aria-label='Loxley' role='img' />
+            <Wordmark variant='foot' />
           </div>
           <p className='site-foot__tag'>
             Infrastructure for confidential coordination between independent parties. CRISP is one of the example applications running on
