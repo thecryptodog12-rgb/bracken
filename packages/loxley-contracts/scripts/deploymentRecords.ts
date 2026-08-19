@@ -239,29 +239,24 @@ export function syncProtocolDeploymentRecords(
     );
   }
 
-  const loxleyInitData = interfaces.loxley.encodeFunctionData(
-    "initialize",
-    [
-      config.protocolOwner,
-      deployment.ciphernodeRegistry,
-      config.bondingRegistryProxy,
-      ADDRESS_ONE,
-      {
-        token: config.feeToken,
-        expectedDecimals: config.feeTokenDecimals,
-        pricing: pricingConfig(config.loxley.pricing),
-      },
-      BigInt(config.loxley.maxDuration),
-      {
-        dkgWindow: BigInt(config.loxley.timeoutConfig.dkgWindow),
-        computeWindow: BigInt(config.loxley.timeoutConfig.computeWindow),
-        decryptionWindow: BigInt(
-          config.loxley.timeoutConfig.decryptionWindow,
-        ),
-      },
-      deployment.initialE3Program,
-    ],
-  );
+  const loxleyInitData = interfaces.loxley.encodeFunctionData("initialize", [
+    config.protocolOwner,
+    deployment.ciphernodeRegistry,
+    config.bondingRegistryProxy,
+    ADDRESS_ONE,
+    {
+      token: config.feeToken,
+      expectedDecimals: config.feeTokenDecimals,
+      pricing: pricingConfig(config.loxley.pricing),
+    },
+    BigInt(config.loxley.maxDuration),
+    {
+      dkgWindow: BigInt(config.loxley.timeoutConfig.dkgWindow),
+      computeWindow: BigInt(config.loxley.timeoutConfig.computeWindow),
+      decryptionWindow: BigInt(config.loxley.timeoutConfig.decryptionWindow),
+    },
+    deployment.initialE3Program,
+  ]);
   storeDeploymentArgs(
     {
       address: deployment.loxley,

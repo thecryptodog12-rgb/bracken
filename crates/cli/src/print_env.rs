@@ -16,10 +16,7 @@ pub fn extract_env_vars_vite(config: &AppConfig, chain: &str) -> String {
         let loxley_addr = &chain.contracts.loxley;
         let registry_addr = &chain.contracts.ciphernode_registry;
         let bonding_registry_addr = &chain.contracts.bonding_registry;
-        env_vars.push(format!(
-            "VITE_LOXLEY_ADDRESS={}",
-            loxley_addr.address_str()
-        ));
+        env_vars.push(format!("VITE_LOXLEY_ADDRESS={}", loxley_addr.address_str()));
         env_vars.push(format!(
             "VITE_REGISTRY_ADDRESS={}",
             registry_addr.address_str()
@@ -54,10 +51,7 @@ pub fn extract_env_vars(config: &AppConfig, chain: &str) -> String {
         let loxley_addr = &chain.contracts.loxley;
         let registry_addr = &chain.contracts.ciphernode_registry;
         let bonding_registry_addr = &chain.contracts.bonding_registry;
-        env_vars.push(format!(
-            "LOXLEY_ADDRESS={}",
-            loxley_addr.address_str()
-        ));
+        env_vars.push(format!("LOXLEY_ADDRESS={}", loxley_addr.address_str()));
         env_vars.push(format!("RPC_URL={}", chain.rpc_url));
         env_vars.push(format!("REGISTRY_ADDRESS={}", registry_addr.address_str()));
         env_vars.push(format!(

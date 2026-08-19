@@ -276,10 +276,10 @@ This circuit runs once, executed by the aggregator.
 ## P3: User Encryption
 
 With the threshold public key published, users encrypt their private inputs using a specialisation
-of the [GRECO](https://blog.theloxley.com/enclave-cryptography-greco-fhe-zk/) circuit. This
-proves each ciphertext was formed correctly under the threshold public key without revealing the
-plaintext or encryption randomness. The circuit verifies `commit(pk_threshold)` from C5 before
-validating the encryption.
+of the [GRECO](https://blog.theloxley.com/enclave-cryptography-greco-fhe-zk/) circuit. This proves
+each ciphertext was formed correctly under the threshold public key without revealing the plaintext
+or encryption randomness. The circuit verifies `commit(pk_threshold)` from C5 before validating the
+encryption.
 
 The resulting ciphertexts are collected and passed to the compute provider, which executes the E3
 program homomorphically over the encrypted data (e.g. a private vote tally). Only the encrypted
@@ -458,8 +458,8 @@ change a chain's vote-validity window, restart the node so the per-chain fetch r
 
 The two on-chain Honk verifiers consumed by `publishCommittee` and the decryption flow
 (`DkgAggregatorVerifier.sol`, `DecryptionAggregatorVerifier.sol`, both under
-`packages/loxley-contracts/contracts/verifiers/bfv/honk/`) are **generated** from the recursive
-VKs of `recursive_aggregation/dkg_aggregator` and `recursive_aggregation/decryption_aggregator` via
+`packages/loxley-contracts/contracts/verifiers/bfv/honk/`) are **generated** from the recursive VKs
+of `recursive_aggregation/dkg_aggregator` and `recursive_aggregation/decryption_aggregator` via
 `bb write_solidity_verifier`. They are committed to git so production deploys are reproducible, but
 they must stay in lockstep with the circuits' recursive VKs — a verifier whose baked-in VK doesn't
 match the circuit will silently reject every proof.
@@ -484,8 +484,8 @@ The repo enforces sync with two modes of `pnpm generate:verifiers`:
   you intentionally bump the canonical-preset circuits or the Noir/bb toolchain, then commit the
   diff.
 
-The version pinning lives in `crates/zk-prover/versions.json` (consumed by `loxley noir setup`
-and by the integration test prebuild). If `--check` fails after a clean
+The version pinning lives in `crates/zk-prover/versions.json` (consumed by `loxley noir setup` and
+by the integration test prebuild). If `--check` fails after a clean
 `pnpm build:circuits --preset insecure-512`, your local toolchain is out of sync with that pin. See
 [`scripts/README.md`](https://github.com/theloxley/loxley/blob/main/scripts/README.md#verifier-generator)
 for the full contract.

@@ -423,8 +423,8 @@ export default function Inspector({
             ]}
           />
           <p className='isection__lede'>
-            Fee escrowed is the amount currently held by the Loxley contract for this E3; it is released to the committee and any refund
-            on settlement, so a completed E3 reads 0. Committee reward shows the total paid out once rewards are distributed.
+            Fee escrowed is the amount currently held by the Loxley contract for this E3; it is released to the committee and any refund on
+            settlement, so a completed E3 reads 0. Committee reward shows the total paid out once rewards are distributed.
           </p>
         </div>
       </SectionCard>

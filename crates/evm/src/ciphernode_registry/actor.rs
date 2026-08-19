@@ -32,8 +32,8 @@ use anyhow::{Context as _, Result};
 use e3_events::{
     prelude::*, AggregatorChanged, BusHandle, CommitteeFinalizeRequested,
     DkgFoldAttestationContextEstablished, E3RequestComplete, E3id, EType, EffectsEnabled,
-    EventSubscriber, EventType, LoxleyEvent, LoxleyEventData, Proof, PublicKeyAggregated,
-    Shutdown, TicketGenerated, TicketId, DKG_FOLD_ATTESTATION_CONTEXT_SCHEMA_VERSION,
+    EventSubscriber, EventType, LoxleyEvent, LoxleyEventData, Proof, PublicKeyAggregated, Shutdown,
+    TicketGenerated, TicketId, DKG_FOLD_ATTESTATION_CONTEXT_SCHEMA_VERSION,
 };
 use e3_utils::{require_successful_receipt, ArcBytes, NotifySync, MAILBOX_LIMIT};
 use std::collections::{HashMap, HashSet};

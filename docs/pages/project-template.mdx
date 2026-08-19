@@ -37,13 +37,13 @@ Each workspace shares the same `pnpm` root so dependencies stay in sync.
 | `pnpm dev:program`      | Starts the RISC Zero guest runner. Pass `--dev` to skip real proving.                                                       |
 | `pnpm dev:server`       | Boots the TypeScript coordination server with hot reload.                                                                   |
 | `pnpm dev:frontend`     | Launches the Vite client on `http://localhost:3000`.                                                                        |
-| `pnpm dev:ciphernodes`  | Calls the Loxley CLI to launch the nodes defined in `loxley.config.yaml`.                                             |
+| `pnpm dev:ciphernodes`  | Calls the Loxley CLI to launch the nodes defined in `loxley.config.yaml`.                                                   |
 | `pnpm compile`          | Compiles Solidity contracts.                                                                                                |
 | `pnpm test`             | Runs Hardhat tests.                                                                                                         |
 | `pnpm test:integration` | Executes the end-to-end flow in `tests/`.                                                                                   |
 
-Before `dev:all` runs, the `predev:all` hook calls `loxley program compile` so the latest zkVM
-image is ready; skip this by exporting `SKIP_PROGRAM_COMPILE=1`.
+Before `dev:all` runs, the `predev:all` hook calls `loxley program compile` so the latest zkVM image
+is ready; skip this by exporting `SKIP_PROGRAM_COMPILE=1`.
 
 ## Environment files
 

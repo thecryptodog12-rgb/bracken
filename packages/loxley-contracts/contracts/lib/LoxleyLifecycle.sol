@@ -161,15 +161,10 @@ library LoxleyLifecycle {
         uint8 current,
         uint256 dkgWindow
     ) external returns (uint256 dkgDeadline) {
-        if (caller != registryAddress)
-            revert ILoxley.OnlyCiphernodeRegistry();
+        if (caller != registryAddress) revert ILoxley.OnlyCiphernodeRegistry();
         ILoxley.E3Stage stage = ILoxley.E3Stage(current);
         if (stage != ILoxley.E3Stage.Requested)
-            revert ILoxley.InvalidStage(
-                e3Id,
-                ILoxley.E3Stage.Requested,
-                stage
-            );
+            revert ILoxley.InvalidStage(e3Id, ILoxley.E3Stage.Requested, stage);
         dkgDeadline =
             ICiphernodeRegistry(registryAddress).getCommitteeDeadline(e3Id) +
             dkgWindow;
@@ -406,11 +401,7 @@ library LoxleyLifecycle {
     ) external pure {
         ILoxley.E3Stage stage = ILoxley.E3Stage(current);
         if (stage == ILoxley.E3Stage.None)
-            revert ILoxley.InvalidStage(
-                e3Id,
-                ILoxley.E3Stage.Requested,
-                stage
-            );
+            revert ILoxley.InvalidStage(e3Id, ILoxley.E3Stage.Requested, stage);
         if (stage == ILoxley.E3Stage.Complete)
             revert ILoxley.E3AlreadyComplete(e3Id);
         if (stage == ILoxley.E3Stage.Failed)
@@ -611,8 +602,7 @@ library LoxleyLifecycle {
         if (caller != requester) revert ILoxley.NotRequester(e3Id, caller);
         ILoxley.E3Stage stage = stages[e3Id];
         if (
-            stage == ILoxley.E3Stage.None ||
-            stage >= ILoxley.E3Stage.Complete
+            stage == ILoxley.E3Stage.None || stage >= ILoxley.E3Stage.Complete
         ) {
             revert ILoxley.E3NotCancellable(e3Id, stage);
         }

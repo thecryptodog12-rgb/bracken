@@ -206,11 +206,7 @@ describe("Standards & upgradeability hygiene", function () {
       );
       const bytecode = await ethers.provider.getCode(implementation);
 
-      expectLibraryLinks(
-        bytecode,
-        all.loxleyLifecycle,
-        all.loxleyPricing,
-      );
+      expectLibraryLinks(bytecode, all.loxleyLifecycle, all.loxleyPricing);
     });
 
     it("upgrade links new lifecycle and pricing library addresses", async function () {

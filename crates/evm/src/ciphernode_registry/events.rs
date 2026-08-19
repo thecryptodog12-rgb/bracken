@@ -316,11 +316,7 @@ impl From<CommitteeViabilityUpdatedWithChainId> for LoxleyEventData {
     }
 }
 
-pub(crate) fn extractor(
-    data: &LogData,
-    topics: &[B256],
-    chain_id: u64,
-) -> Option<LoxleyEventData> {
+pub(crate) fn extractor(data: &LogData, topics: &[B256], chain_id: u64) -> Option<LoxleyEventData> {
     match topics.first() {
         Some(&ICiphernodeRegistry::CiphernodeAdded::SIGNATURE_HASH) => {
             let Ok(event) = ICiphernodeRegistry::CiphernodeAdded::decode_log_data(data) else {
@@ -396,9 +392,9 @@ pub(crate) fn extractor(
                 "CommitteeMemberExpelled event received: e3_id={}, node={}, reason={:?}, active_count_after={}",
                 event.e3Id, event.node, event.reason, event.activeCountAfter
             );
-            Some(LoxleyEventData::from(
-                CommitteeMemberExpelledWithChainId(event, chain_id),
-            ))
+            Some(LoxleyEventData::from(CommitteeMemberExpelledWithChainId(
+                event, chain_id,
+            )))
         }
         Some(&ICiphernodeRegistry::CommitteePublished::SIGNATURE_HASH) => {
             let Ok(mut event) = ICiphernodeRegistry::CommitteePublished::decode_log_data(data)

@@ -2,9 +2,9 @@
 
 ## Overview
 
-An E3 (Encrypted Execution Environment) is the core unit of work in the Loxley protocol. A
-requester pays a fee, a committee of ciphernodes is selected via sortition, and the committee
-collectively generates encryption keys through DKG.
+An E3 (Encrypted Execution Environment) is the core unit of work in the Loxley protocol. A requester
+pays a fee, a committee of ciphernodes is selected via sortition, and the committee collectively
+generates encryption keys through DKG.
 
 ---
 
@@ -36,8 +36,8 @@ Loxley starts with requests paused. Deployment wires and validates one complete 
 generation before it enables requests. Governance must pause requests and drain the current
 generation before it replaces a registry, bonding registry, slashing manager, or refund manager.
 
-An E3 Program can deploy before its Loxley controller. Loxley must register the deployed
-program before the program owner binds that controller one time. This order removes the constructor
+An E3 Program can deploy before its Loxley controller. Loxley must register the deployed program
+before the program owner binds that controller one time. This order removes the constructor
 dependency between Loxley and applications such as CRISP.
 
 ---
@@ -455,9 +455,9 @@ collateral obligation, and the same transaction releases a displaced candidate. 
 finalization grants membership and `Active` status to the final address-sorted members. Failed
 formation grants neither and releases all remaining candidate obligations. Finalization also freezes
 each member's current bond owner as its reward recipient for this E3. Later bond-owner transfers
-apply to later committees, not to payments earned by this committee. Once Loxley reports
-`Complete` or `Failed`, anyone can call `releaseCommittee(e3Id)` on the request-time registry to
-release all member obligations atomically.
+apply to later committees, not to payments earned by this committee. Once Loxley reports `Complete`
+or `Failed`, anyone can call `releaseCommittee(e3Id)` on the request-time registry to release all
+member obligations atomically.
 
 ### 3c. SortitionCommitteeFinalized Event Processing (Rust-Side)
 
@@ -571,11 +571,11 @@ A ready committee must finalize at or before its absolute DKG deadline.
    committee membership, and party IDs never use the bond-owner address.
 
 10. **E3 program bootstrap and governance**: The production deploy requires one deployed E3 program.
-    `Loxley.initialize` registers it before it transfers ownership to `protocolOwner`. For
-    DAO-owned deployments, `protocolOwner` is the DAO, not a Safe. Every registration rejects an
-    address without runtime code. After initialization, only the owner can append another program.
-    The deployment can create `MockE3Program` as the initial program. This stateless program accepts
-    the active BFV scheme and applies no application rules. It has no owner, controller, or mutable
+    `Loxley.initialize` registers it before it transfers ownership to `protocolOwner`. For DAO-owned
+    deployments, `protocolOwner` is the DAO, not a Safe. Every registration rejects an address
+    without runtime code. After initialization, only the owner can append another program. The
+    deployment can create `MockE3Program` as the initial program. This stateless program accepts the
+    active BFV scheme and applies no application rules. It has no owner, controller, or mutable
     configuration. The request-time ciphertext verifier and decryption verifier still verify the
     protocol proofs.
 
@@ -627,16 +627,16 @@ requested after the upgrade need no backfill.
 
 ### M-33 — `markE3Failed` grace period
 
-When `markFailedGracePeriod > 0` (set via `Loxley.setMarkFailedGracePeriod`), calling
-`markE3Failed` within `deadline … deadline + markFailedGracePeriod` is restricted to
+When `markFailedGracePeriod > 0` (set via `Loxley.setMarkFailedGracePeriod`), calling `markE3Failed`
+within `deadline … deadline + markFailedGracePeriod` is restricted to
 `{ original requester, contract owner, active finalized committee member }`. After that window, any
 caller can finalize the failure. The default value of `0` preserves the permissionless flow.
 
 ### H-26 — timestamp-clock `requestBlock`
 
 `Committee.requestBlock` stores `block.timestamp` (EIP-6372 timestamp mode) so that `getPastVotes`
-lookups against the `LoxleyTicketToken` resolve consistently across L1 and L2 clocks. The field
-name is preserved for storage and event ABI compatibility.
+lookups against the `LoxleyTicketToken` resolve consistently across L1 and L2 clocks. The field name
+is preserved for storage and event ABI compatibility.
 
 ### Committee observability events
 

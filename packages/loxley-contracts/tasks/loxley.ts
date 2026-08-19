@@ -73,11 +73,7 @@ async function getLoxleyConnection(hre: any) {
 
   return {
     ethers,
-    loxley: await ethers.getContractAt(
-      "Loxley",
-      deployment.address,
-      signer,
-    ),
+    loxley: await ethers.getContractAt("Loxley", deployment.address, signer),
   };
 }
 
@@ -155,9 +151,8 @@ export const requestCommittee = task(
       const connection = await hre.network.connect();
       const { ethers } = connection;
 
-      const { deployAndSaveMockStableToken } = await import(
-        "../scripts/deployAndSave/mockStableToken"
-      );
+      const { deployAndSaveMockStableToken } =
+        await import("../scripts/deployAndSave/mockStableToken");
 
       const { loxley } = await getLoxleyConnection(hre);
 
@@ -265,9 +260,7 @@ export const requestCommittee = task(
         throw new Error("Committee request transaction was not mined");
       }
 
-      const loxleyAddress = (
-        await loxleyContract.getAddress()
-      ).toLowerCase();
+      const loxleyAddress = (await loxleyContract.getAddress()).toLowerCase();
       const requestedTopic =
         loxleyContract.interface.getEvent("E3Requested").topicHash;
       const requestedLog = receipt.logs.find(
@@ -325,9 +318,7 @@ export const enableE3 = task("loxley:enableE3", "Enable an E3 program")
         );
       }
 
-      const tx = await loxley
-        .connect(ownerSigner)
-        .registerE3Program(e3Address);
+      const tx = await loxley.connect(ownerSigner).registerE3Program(e3Address);
 
       console.log("Enabling E3 program... ", tx.hash);
       await tx.wait();
@@ -384,13 +375,11 @@ export const publishCommittee = task(
       { e3Id, nodes, publicKey, pkCommitment, proof, dkgAttestationBundle },
       hre,
     ) => {
-      const { deployAndSaveCiphernodeRegistryOwnable } = await import(
-        "../scripts/deployAndSave/ciphernodeRegistryOwnable"
-      );
+      const { deployAndSaveCiphernodeRegistryOwnable } =
+        await import("../scripts/deployAndSave/ciphernodeRegistryOwnable");
 
-      const { deployAndSavePoseidonT3 } = await import(
-        "../scripts/deployAndSave/poseidonT3"
-      );
+      const { deployAndSavePoseidonT3 } =
+        await import("../scripts/deployAndSave/poseidonT3");
       const poseidonT3 = await deployAndSavePoseidonT3({ hre });
 
       const { ciphernodeRegistry } =

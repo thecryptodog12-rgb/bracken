@@ -17,8 +17,7 @@ use e3_bfv_client::validate_pk_commitment;
 use e3_evm_helpers::{
     block_listener::BlockListener,
     contracts::{
-        LoxleyContract, LoxleyContractFactory, LoxleyRead, ProviderType, ReadOnly,
-        ReadWrite,
+        LoxleyContract, LoxleyContractFactory, LoxleyRead, ProviderType, ReadOnly, ReadWrite,
     },
     event_listener::EventListener,
     events::{CiphertextOutputPublished, CommitteePublished, PlaintextOutputPublished},

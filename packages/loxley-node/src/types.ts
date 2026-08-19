@@ -2,14 +2,7 @@
 
 export type ViewId = 'overview' | 'e3' | 'flow' | 'events' | 'logs' | 'updates'
 export type E3PhaseId =
-  | 'request'
-  | 'committee'
-  | 'dkg_setup'
-  | 'dkg_shares'
-  | 'key_publication'
-  | 'computation'
-  | 'decryption'
-  | 'settlement'
+  'request' | 'committee' | 'dkg_setup' | 'dkg_shares' | 'key_publication' | 'computation' | 'decryption' | 'settlement'
 export type EventSeverity = 'debug' | 'info' | 'warn' | 'error'
 export type EventSource = 'local' | 'network' | 'evm'
 

@@ -83,10 +83,10 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   answer. Tolerating the failure at read time would return zero and disenfranchise exactly the
   locked holders the third source exists to enfranchise. — `BondedVotes.sol`
 - **Every summed source must share the token's clock.** `BondedCheckpoints` keys by
-  `block.timestamp` to match `LoxleyToken`'s ERC-6372 `mode=timestamp`, and `BondedVotes`
-  compares the history's clock **and** a non-token votes source's clock against the token's at
-  construction. Summing a timestamp-keyed history with a block-numbered source answers for two
-  unrelated points in time and is undetectable downstream. — `BondedVotes.sol`; `flow-trace/02`
+  `block.timestamp` to match `LoxleyToken`'s ERC-6372 `mode=timestamp`, and `BondedVotes` compares
+  the history's clock **and** a non-token votes source's clock against the token's at construction.
+  Summing a timestamp-keyed history with a block-numbered source answers for two unrelated points in
+  time and is undetectable downstream. — `BondedVotes.sol`; `flow-trace/02`
 - **`BondedVotes` binds token, votes source, registry and history as one unit.** The constructor
   reads `checkpoints.registry()` and requires that registry's `getCiphernodeBondToken()` to equal
   the token. A non-token votes source is bound the same way: `_bindVotesSource` resolves its
@@ -151,8 +151,8 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   ciphernode bond token must transfer exact amounts and must not rebase account balances. Every
   custody deposit checks the custody increase. Every outbound transfer checks the recipient increase
   and custody decrease. A mismatch reverts the complete accounting transaction and preserves all
-  other pooled liabilities. — `LoxleyPricing.sol`; `LoxleyTicketToken.sol`;
-  `BondingAssetLib.sol`; `E3RefundManager.sol`; `flow-trace/02`, `03`, `05`
+  other pooled liabilities. — `LoxleyPricing.sol`; `LoxleyTicketToken.sol`; `BondingAssetLib.sol`;
+  `E3RefundManager.sol`; `flow-trace/02`, `03`, `05`
 
 ### Activation (auto-evaluated in `_updateOperatorStatus`, never a standalone call)
 
@@ -199,11 +199,10 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   `CiphernodeRegistryOwnable.sortitionSubmissionWindow`. Both value setters and registry-pointer
   setters enforce the relationship; equality is invalid because ticket submission includes the
   deadline. — `BondingRegistry.sol`; `CiphernodeRegistryOwnable.sol`; `flow-trace/02`, `03`
-- **One coherent dependency generation:** each request validates and snapshots the complete
-  Loxley, registry, bonding, slashing, refund, treasury, and policy graph. Governance must pause
-  requests and drain all E3s, committees, operators, bans, and slash routes before it replaces any
-  graph member. Old and new generations never serve requests at the same time. — `flow-trace/03`,
-  `05`
+- **One coherent dependency generation:** each request validates and snapshots the complete Loxley,
+  registry, bonding, slashing, refund, treasury, and policy graph. Governance must pause requests
+  and drain all E3s, committees, operators, bans, and slash routes before it replaces any graph
+  member. Old and new generations never serve requests at the same time. — `flow-trace/03`, `05`
 - **Candidate and member collateral remains slashable:** committee requests assign their
   request-time registry in `BondingRegistry`. A top-N ticket submission locks its candidate, and a
   better ticket releases the displaced candidate. Finalization retains each winner's obligation.
@@ -218,8 +217,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   owner-only. Every registered address must contain runtime code. `MockE3Program` is the stateless
   launch option. It has no administrative controls and applies no application rules. The
   request-time BFV ciphertext verifier and decryption verifier remain mandatory. Its mutable failure
-  controls live only in `MockE3ProgramHarness`. — `Loxley.sol`; `MockE3Program.sol`;
-  `flow-trace/03`
+  controls live only in `MockE3ProgramHarness`. — `Loxley.sol`; `MockE3Program.sol`; `flow-trace/03`
 
 ### Deadlines
 
@@ -297,10 +295,10 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   `circuits/lib/src/configs/committee/active.nr`, `circuits/bin/.active-preset.json`,
   `packages/loxley-contracts/scripts/utils.ts` (`BFV_DKG_H`/`BFV_THRESHOLD_T`), and
   `crates/zk-helpers/src/ciphernodes_committee.rs`, plus
-  `packages/loxley-contracts/contracts/lib/ActiveCryptoConfig.sol`. The Solidity file also binds
-  the active BFV parameter-set hash. Drift means the next build silently produces verifiers or
-  proofs for the wrong configuration. Switch only with `pnpm build:circuits --committee <name>`;
-  enforced by `scripts/check-committee.sh`.
+  `packages/loxley-contracts/contracts/lib/ActiveCryptoConfig.sol`. The Solidity file also binds the
+  active BFV parameter-set hash. Drift means the next build silently produces verifiers or proofs
+  for the wrong configuration. Switch only with `pnpm build:circuits --committee <name>`; enforced
+  by `scripts/check-committee.sh`.
 - Canonical sizes: `minimum` (3,1,2) · `micro` (9,4,5) · `small` (19,9,10) — must mirror `mod.nr`
   and `CiphernodesCommitteeSize::values()`. — `scripts/circuit-constants.ts`
 - Wrapper Solidity verifiers (`BfvPkVerifier`, `BfvDecryptionVerifier`) have an `(H, T)`-specific
@@ -542,16 +540,16 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 - CLI secrets are passed over **stdin only** — never argv or environment; private keys are never
   stored in plaintext. — `flow-trace/00`, `01`
 - **Deployment writes must be mined, not only sent.** Every configuration transaction in
-  `scripts/deployLoxley.ts` goes through the `send()` helper in `scripts/utils.ts`, which awaits
-  the receipt and fails on a missing receipt or a non-success status. `send()` also labels a
-  rejection from the send or the mining stage and keeps the original error as its `cause`. A bare
+  `scripts/deployLoxley.ts` goes through the `send()` helper in `scripts/utils.ts`, which awaits the
+  receipt and fails on a missing receipt or a non-success status. `send()` also labels a rejection
+  from the send or the mining stage and keeps the original error as its `cause`. A bare
   `await contract.setX(...)` resolves when the transaction is dispatched, so on a real network a
   dropped write leaves the reference at `address(0)` while the script still exits zero.
 - **A deployment must end with a verified wiring graph.** After configuration, `deployLoxley.ts`
   reads back every cross-contract reference (Loxley, CiphernodeRegistry, BondingRegistry,
-  LoxleyTicketToken, SlashingManager, E3RefundManager, LOX as the BondingRegistry ciphernode
-  bond token) plus the BondingRegistry reward-distributor authorization for Loxley, and throws
-  with the full list of mismatches. Add a read-back for each new cross-contract setter.
+  LoxleyTicketToken, SlashingManager, E3RefundManager, LOX as the BondingRegistry ciphernode bond
+  token) plus the BondingRegistry reward-distributor authorization for Loxley, and throws with the
+  full list of mismatches. Add a read-back for each new cross-contract setter.
 - **A deployment must also enable bonded voting.** `protocol/deployContracts` deploys
   `BondedCheckpoints` (bound to the BondingRegistry **proxy**, not the implementation) and the
   governance batch calls `setBondedCheckpoints` after `initialize`. `BondedVotes` comes later, from

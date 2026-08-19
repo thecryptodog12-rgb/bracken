@@ -108,9 +108,9 @@ produces. Install options and CLI flags are on the
 
 ## Related documentation
 
-| Topic                                                                  | Location                                                                                                                                |
-| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Cryptographic model (PV-TBFV, phases P1–P4, circuit identifiers C0–C7) | [Cryptography](https://docs.theloxley.com/cryptography) · [source](../docs/pages/cryptography.mdx)                                   |
-| Toolchain, repository layout, `loxley noir`, compilation            | [Noir Circuits](https://docs.theloxley.com/noir-circuits) · [source](../docs/pages/noir-circuits.mdx)                                |
+| Topic                                                                  | Location                                                                                                                          |
+| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Cryptographic model (PV-TBFV, phases P1–P4, circuit identifiers C0–C7) | [Cryptography](https://docs.theloxley.com/cryptography) · [source](../docs/pages/cryptography.mdx)                                |
+| Toolchain, repository layout, `loxley noir`, compilation               | [Noir Circuits](https://docs.theloxley.com/noir-circuits) · [source](../docs/pages/noir-circuits.mdx)                             |
 | Rust types (`ProofType`, `CircuitName`)                                | [`signed_proof.rs`](../crates/events/src/loxley_event/signed_proof.rs) · [`proof.rs`](../crates/events/src/loxley_event/proof.rs) |
-| Protocol execution (actors, events, proof ordering)                    | [`agent/flow-trace/04_DKG_AND_COMPUTATION.md`](../agent/flow-trace/04_DKG_AND_COMPUTATION.md)                                           |
+| Protocol execution (actors, events, proof ordering)                    | [`agent/flow-trace/04_DKG_AND_COMPUTATION.md`](../agent/flow-trace/04_DKG_AND_COMPUTATION.md)                                     |

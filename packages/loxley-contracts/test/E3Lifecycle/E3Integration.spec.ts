@@ -426,9 +426,7 @@ describe("E3 Integration - Refund/Timeout Mechanism", function () {
           }
         }
 
-        expect(await ctx.loxley.getE3Stage(firstE3Id)).to.equal(
-          scenario.stage,
-        );
+        expect(await ctx.loxley.getE3Stage(firstE3Id)).to.equal(scenario.stage);
         await ctx.loxley.connect(ctx.requester).cancelE3(firstE3Id);
         await ctx.loxley.processE3Failure(firstE3Id);
 
@@ -460,8 +458,7 @@ describe("E3 Integration - Refund/Timeout Mechanism", function () {
     });
 
     it("rejects invalid failure reasons from an authorized dependency", async function () {
-      const { loxley, registry, makeReadyRequest } =
-        await loadFixture(setup);
+      const { loxley, registry, makeReadyRequest } = await loadFixture(setup);
       await makeReadyRequest();
 
       const registryAddress = await registry.getAddress();
@@ -643,10 +640,7 @@ describe("E3 Integration - Refund/Timeout Mechanism", function () {
       await loxley.connect(owner).setRequestsPaused(true);
       await expect(
         loxley.connect(owner).setCiphernodeRegistry(rotatedRegistry),
-      ).to.be.revertedWithCustomError(
-        loxley,
-        "DependencyGenerationNotDrained",
-      );
+      ).to.be.revertedWithCustomError(loxley, "DependencyGenerationNotDrained");
       expect(await loxley.activeE3Count()).to.equal(1);
       expect(await registry.unreleasedCommitteeCount()).to.equal(1);
     });
@@ -812,9 +806,7 @@ describe("E3 Integration - Refund/Timeout Mechanism", function () {
 
       // Calling processE3Failure with a placeholder lifecycle should revert
       // (it will try to call getE3Stage on an EOA which will fail)
-      await expect(newLoxley.processE3Failure(firstE3Id)).to.be.revert(
-        ethers,
-      );
+      await expect(newLoxley.processE3Failure(firstE3Id)).to.be.revert(ethers);
     });
 
     it("reverts if E3 not in failed state", async function () {
@@ -882,13 +874,8 @@ describe("E3 Integration - Refund/Timeout Mechanism", function () {
     });
 
     it("processes failure after an incomplete provisional committee", async function () {
-      const {
-        loxley,
-        e3RefundManager,
-        registry,
-        operator1,
-        makeReadyRequest,
-      } = await loadFixture(setup);
+      const { loxley, e3RefundManager, registry, operator1, makeReadyRequest } =
+        await loadFixture(setup);
 
       await makeReadyRequest();
       await registry.connect(operator1).submitTicket(firstE3Id, 1);
@@ -2056,9 +2043,9 @@ describe("E3 Integration - Refund/Timeout Mechanism", function () {
       );
 
       const targetRecipient = await requester.getAddress();
-      expect(
-        await loxley.pendingReward(firstE3Id, targetRecipient),
-      ).to.equal(0);
+      expect(await loxley.pendingReward(firstE3Id, targetRecipient)).to.equal(
+        0,
+      );
       expect(
         await e3RefundManager.pendingHeldSuccessReward(
           firstE3Id,
@@ -2447,8 +2434,7 @@ describe("E3 Integration - Refund/Timeout Mechanism", function () {
       await time.increase(defaultTimeoutConfig.dkgWindow + 1);
 
       // 4. Check failure condition and mark as failed
-      const [canFail, reason] =
-        await loxley.checkFailureCondition(firstE3Id);
+      const [canFail, reason] = await loxley.checkFailureCondition(firstE3Id);
       expect(canFail).to.be.true;
       expect(reason).to.equal(3); // DKGTimeout
 
@@ -2533,8 +2519,7 @@ describe("E3 Integration - Refund/Timeout Mechanism", function () {
       await time.increaseTo(computeDeadline + 1);
 
       // 4. Check failure condition and mark as failed
-      const [canFail, reason] =
-        await loxley.checkFailureCondition(firstE3Id);
+      const [canFail, reason] = await loxley.checkFailureCondition(firstE3Id);
       expect(canFail).to.be.true;
       expect(reason).to.equal(6); // ComputeTimeout
 
@@ -2637,8 +2622,7 @@ describe("E3 Integration - Refund/Timeout Mechanism", function () {
       await time.increase(defaultTimeoutConfig.decryptionWindow + 1);
 
       // 5. Check failure condition and mark as failed
-      const [canFail, reason] =
-        await loxley.checkFailureCondition(firstE3Id);
+      const [canFail, reason] = await loxley.checkFailureCondition(firstE3Id);
       expect(canFail).to.be.true;
       expect(reason).to.equal(10); // DecryptionTimeout
 

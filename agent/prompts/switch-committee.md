@@ -12,8 +12,8 @@ Rules — read `agent/INVARIANTS.md` §Committee config sync first:
    `circuits/bin/.active-preset.json`, `packages/loxley-contracts/scripts/utils.ts`, parity
    matrices). The only legal mechanism is the build script.
 2. Run `pnpm build:circuits --committee <name> [--preset <preset>]`. This requires `nargo` and `bb`
-   on PATH (`loxley noir setup` installs a matching toolchain) — if they're missing, stop and
-   tell the user rather than improvising.
+   on PATH (`loxley noir setup` installs a matching toolchain) — if they're missing, stop and tell
+   the user rather than improvising.
 3. Verify with `pnpm check:committee` and report its output.
 4. Remind the user of the operational consequences: wrapper Solidity verifiers (`BfvPkVerifier`,
    `BfvDecryptionVerifier`) have an `(H, T)`-specific public-input layout and must be redeployed;

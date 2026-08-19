@@ -335,11 +335,7 @@ contract LoxleyToken is
         uint64 ccaEnd_,
         uint64 noMoreLocks_,
         IBondingRegistry bondingRegistry_
-    )
-        ERC20("Loxley", "LOX")
-        ERC20Permit("Loxley")
-        Ownable(initialOwner_)
-    {
+    ) ERC20("Loxley", "LOX") ERC20Permit("Loxley") Ownable(initialOwner_) {
         if (ccaStart_ <= block.timestamp) {
             revert InvalidCcaWindow(ccaStart_, ccaEnd_);
         }

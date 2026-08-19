@@ -199,13 +199,8 @@ describe("SlashingManager — lanes, roles, EIP-712 & admin handover", function 
     async function registerOperatorForExit(
       ctx: Awaited<ReturnType<typeof setup>>,
     ) {
-      const {
-        bondingRegistry,
-        loxleyToken,
-        operator,
-        operatorAddress,
-        owner,
-      } = ctx;
+      const { bondingRegistry, loxleyToken, operator, operatorAddress, owner } =
+        ctx;
       // Bond the ciphernode bond required to register.
       const ciphernodeBondAmount = ethers.parseEther("1000");
       await bondingRegistry

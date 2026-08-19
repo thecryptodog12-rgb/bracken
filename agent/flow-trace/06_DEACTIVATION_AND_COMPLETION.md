@@ -306,10 +306,10 @@ contains asynchronous edges, so this does not claim that every downstream actor 
 durable at each replay step.
 
 `loxley node validate` detects a recoverable uncommitted event-log tail without changing it. With
-the node stopped, `loxley node validate --repair` applies the same boundary-checked tail recovery
-as startup and refuses to remove indexed records. Runtime EventStore query failures are returned to
-the correlated caller rather than panicking the actor; committed corruption remains a
-startup/integrity failure.
+the node stopped, `loxley node validate --repair` applies the same boundary-checked tail recovery as
+startup and refuses to remove indexed records. Runtime EventStore query failures are returned to the
+correlated caller rather than panicking the actor; committed corruption remains a startup/integrity
+failure.
 
 For DAppNode installations, package v0.2.3 is the mandatory bridge from the shipped v0.1.8 state. It
 atomically moves the legacy `.enclave` custom-config root to `.loxley`, preserves the encrypted
@@ -380,9 +380,9 @@ protocol execution.
 
 `CiphernodeSelector` also emits every persisted `AggregatorChanged` entry before EventStore replay.
 If a prior snapshot failed to persist the selector's completion cleanup, the request router may log
-that emission as unexpected for an already-completed E3. The router converts it to an
-`LoxleyError`; it does not abort EventBus replay. Treat the warning as evidence of stale snapshot
-state rather than suppressing it unconditionally.
+that emission as unexpected for an already-completed E3. The router converts it to an `LoxleyError`;
+it does not abort EventBus replay. Treat the warning as evidence of stale snapshot state rather than
+suppressing it unconditionally.
 
 For crashes after key publication but before ciphertext publication, the recovered active aggregator
 may not have a `ThresholdPlaintextAggregator` actor yet when the persisted `AggregatorChanged` event

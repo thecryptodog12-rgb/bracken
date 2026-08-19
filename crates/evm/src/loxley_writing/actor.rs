@@ -20,8 +20,8 @@ use alloy::{
 use anyhow::Result;
 use e3_events::{
     prelude::*, AggregatorChanged, BusHandle, E3RequestComplete, E3Stage, E3StageChanged, E3id,
-    EType, EffectsEnabled, EventType, LoxleyEvent, LoxleyEventData, PlaintextAggregated,
-    Proof, Shutdown,
+    EType, EffectsEnabled, EventType, LoxleyEvent, LoxleyEventData, PlaintextAggregated, Proof,
+    Shutdown,
 };
 use e3_utils::{require_successful_receipt, NotifySync, MAILBOX_LIMIT};
 use std::collections::{HashMap, HashSet};

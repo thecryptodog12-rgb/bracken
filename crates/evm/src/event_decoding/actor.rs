@@ -207,10 +207,7 @@ mod tests {
         let malformed = log(Some(7), Some(3));
         let expected_id = malformed.id;
 
-        parser
-            .send(LoxleyEvmEvent::Log(malformed))
-            .await
-            .unwrap();
+        parser.send(LoxleyEvmEvent::Log(malformed)).await.unwrap();
 
         let rejected = rx.recv().await.expect("parser rejection");
         assert!(matches!(
@@ -227,10 +224,7 @@ mod tests {
         let unsupported = log(Some(7), Some(3));
         let expected_id = unsupported.id;
 
-        parser
-            .send(LoxleyEvmEvent::Log(unsupported))
-            .await
-            .unwrap();
+        parser.send(LoxleyEvmEvent::Log(unsupported)).await.unwrap();
 
         assert_eq!(
             rx.recv().await.expect("processed marker"),

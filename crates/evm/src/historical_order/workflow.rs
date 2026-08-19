@@ -130,8 +130,7 @@ mod tests {
         let log = LoxleyEvmEvent::Log(EvmLog::test_log(Address::ZERO, 9, 9));
         let id = log.get_id();
 
-        let sync =
-            LoxleyEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete::new(1, Some(id)));
+        let sync = LoxleyEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete::new(1, Some(id)));
         // Buffer the sync first
         assert!(fixer.process(sync.clone()).is_empty());
         // A Processed marker for the referenced id releases the sync but is not forwarded

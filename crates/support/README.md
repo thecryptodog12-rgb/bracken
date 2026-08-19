@@ -243,9 +243,9 @@ The callback server (e.g., CRISP) receives the webhook and calls:
 loxley.publishCiphertextOutput(e3Id, ciphertextOutput, ciphertextCommitment, proof);
 ```
 
-The proof binds the chain, Loxley contract, E3, encryption scheme, committee key, output, and
-SAFE commitment. The protocol verifier checks these fields before the application verifier. Both
-checks must pass before the E3 can remain in `CiphertextReady`.
+The proof binds the chain, Loxley contract, E3, encryption scheme, committee key, output, and SAFE
+commitment. The protocol verifier checks these fields before the application verifier. Both checks
+must pass before the E3 can remain in `CiphertextReady`.
 
 ### Step 9: Decryption & Completion
 

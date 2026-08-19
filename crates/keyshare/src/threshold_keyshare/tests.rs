@@ -111,9 +111,7 @@ async fn next_events(
     history: &Addr<HistoryCollector<LoxleyEvent>>,
     count: usize,
 ) -> Result<Vec<LoxleyEvent>> {
-    let result = history
-        .send(TakeEvents::<LoxleyEvent>::new(count))
-        .await?;
+    let result = history.send(TakeEvents::<LoxleyEvent>::new(count)).await?;
     assert!(!result.timed_out, "timed out waiting for events");
     assert_eq!(result.events.len(), count, "expected {count} events");
     Ok(result.events)

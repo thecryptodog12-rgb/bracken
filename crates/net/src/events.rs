@@ -471,8 +471,7 @@ pub fn estimate_hashmap_size<K, V>(map: &HashMap<K, V>) -> usize {
 #[cfg(test)]
 mod tests {
     use e3_events::{
-        EventConstructorWithTimestamp, EventSource, LoxleyEvent, Sequenced, TestEvent,
-        Unsequenced,
+        EventConstructorWithTimestamp, EventSource, LoxleyEvent, Sequenced, TestEvent, Unsequenced,
     };
 
     use super::GossipData;

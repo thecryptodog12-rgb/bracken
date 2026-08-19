@@ -821,10 +821,7 @@ describe("Committee Expulsion & Fault Tolerance", function () {
 
       await expect(
         slashingManager.executeSlash(proposalId),
-      ).to.be.revertedWithCustomError(
-        failingLoxley,
-        "FailureCallbackRejected",
-      );
+      ).to.be.revertedWithCustomError(failingLoxley, "FailureCallbackRejected");
 
       expect(
         (await registry.getCommitteeViability(firstE3Id)).activeCount,

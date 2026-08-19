@@ -19,8 +19,7 @@ use e3_crypto::Cipher;
 use e3_data::{InMemStore, RepositoriesFactory};
 use e3_events::DkgFoldAttestationContext;
 use e3_events::{
-    AggregateConfig, AggregateId, BusHandle, EventBus, EventBusConfig, EvmEventConfig,
-    LoxleyEvent,
+    AggregateConfig, AggregateId, BusHandle, EventBus, EventBusConfig, EvmEventConfig, LoxleyEvent,
 };
 use e3_evm::{
     fetch_accusation_vote_validity, BondingRegistrySolReader, CiphernodeRegistrySol,

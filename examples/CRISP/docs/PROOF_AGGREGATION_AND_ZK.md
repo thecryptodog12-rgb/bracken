@@ -127,8 +127,8 @@ proving).
 `pnpm dev:up` runs deploy then automatically updates:
 
 - `loxley.config.yaml` (ciphernode contract watches)
-- `server/.env` (`LOXLEY_ADDRESS`, `E3_PROGRAM_ADDRESS`, `CRISP_VOTING_TOKEN`, registry, fee
-  token, and mock references)
+- `server/.env` (`LOXLEY_ADDRESS`, `E3_PROGRAM_ADDRESS`, `CRISP_VOTING_TOKEN`, registry, fee token,
+  and mock references)
 - `client/.env` (`VITE_CRISP_TOKEN`)
 
 No manual copy from `deployed_contracts.json` is required. Stale addresses only happen if you skip

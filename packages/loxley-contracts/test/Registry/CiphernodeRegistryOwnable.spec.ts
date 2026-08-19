@@ -486,12 +486,7 @@ describe("CiphernodeRegistryOwnable", function () {
       expect(await bondingRegistry.numActiveOperators()).to.equal(0);
 
       await expect(
-        makeRequest(
-          loxley,
-          usdcToken,
-          mockE3Program,
-          mockDecryptionVerifier,
-        ),
+        makeRequest(loxley, usdcToken, mockE3Program, mockDecryptionVerifier),
       )
         .to.be.revertedWithCustomError(registry, "InsufficientCiphernodes")
         .withArgs(3, 0);

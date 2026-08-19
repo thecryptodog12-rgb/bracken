@@ -56,8 +56,8 @@ interface IE3Program {
 
 ## Step 1: validate — Initialise the Round
 
-When a new E3 is requested, the Loxley contract calls `validate` on your program. This is where
-you parse parameters, set up state, and decide whether the request is valid.
+When a new E3 is requested, the Loxley contract calls `validate` on your program. This is where you
+parse parameters, set up state, and decide whether the request is valid.
 
 CRISP's implementation (`CRISPProgram.sol`):
 
@@ -95,15 +95,15 @@ Key points:
 - Only the Loxley contract (or the program owner) can call `validate`
 - `customParams` carries application-specific configuration — CRISP uses it for voting options and
   credit mode
-- The function returns an encryption scheme identifier so the Loxley contract knows which scheme
-  the ciphernodes should use
+- The function returns an encryption scheme identifier so the Loxley contract knows which scheme the
+  ciphernodes should use
 
 ---
 
 ## Step 2: publishInput — Validate User Inputs
 
-Each time a user submits encrypted data to the E3, the Loxley contract calls `publishInput`. This
-is where you enforce application-specific rules.
+Each time a user submits encrypted data to the E3, the Loxley contract calls `publishInput`. This is
+where you enforce application-specific rules.
 
 CRISP's `publishInput` does several things:
 
@@ -197,8 +197,8 @@ were deployed using full mock mode, otherwise a real proof will be needed.
 
 ## Step 4: verify — Confirm the Result
 
-After the compute provider publishes its result, the Loxley contract calls `verify` on your
-program. CRISP's implementation checks the RISC Zero proof:
+After the compute provider publishes its result, the Loxley contract calls `verify` on your program.
+CRISP's implementation checks the RISC Zero proof:
 
 ```solidity
 function verify(

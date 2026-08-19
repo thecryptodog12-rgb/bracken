@@ -824,8 +824,8 @@ comparison an E3 program performs against its own on-chain root (`CRISPProgram.v
 `MyProgram.verify`). If the guest accepted the leaves as an independent input, that comparison would
 pass for a tally computed over ciphertexts that were never submitted: a prover would replay the
 genuine on-chain leaves while processing its own ciphertexts. Publication is unpermissioned
-(`Loxley.publishCiphertextOutput` has no authorization modifier) and one-shot, so any party could
-do this, and no dispute path exists.
+(`Loxley.publishCiphertextOutput` has no authorization modifier) and one-shot, so any party could do
+this, and no dispute path exists.
 
 Two rules follow for anyone changing this path:
 

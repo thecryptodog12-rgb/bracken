@@ -143,10 +143,10 @@ cherry-pick the smaller changes into separate branches for pull requesting.
 
 ### Reviews
 
-For any repository in the Loxley repo, we require code review & approval by **one** contributor
-with edit access before the changes are merged, as enforced by GitHub branch protection.
-Non-breaking pull requests may be merged at any time. Breaking pull requests will only be merged
-alongside a breaking release.
+For any repository in the Loxley repo, we require code review & approval by **one** contributor with
+edit access before the changes are merged, as enforced by GitHub branch protection. Non-breaking
+pull requests may be merged at any time. Breaking pull requests will only be merged alongside a
+breaking release.
 
 If your Pull Request involves changes in the docs folder, please add the `documentation` flag.
 
@@ -180,8 +180,8 @@ commit if the change was done by multiple authors. If "Co-authored-by:" lines ap
 PR suggestions, it's good to delete them so the author gets full credit for the change.
 
 Our overall approach to squashing is to be mindful of the impact of each commit. The commits
-populate our Changelog, so it's important to properly convey to Loxley consumers what changes
-have happened. It is also a record that we and others will review in the future. Thus, we want to
+populate our Changelog, so it's important to properly convey to Loxley consumers what changes have
+happened. It is also a record that we and others will review in the future. Thus, we want to
 attribute the change to its correct authors and provide useful information that future contributors
 need.
 

@@ -41,10 +41,7 @@ export async function actionValidate(): Promise<void> {
     "CiphernodeRegistryOwnable",
     deployment.ciphernodeRegistry,
   );
-  const loxley = await ethers.getContractAt(
-    "Loxley",
-    deployment.loxley,
-  );
+  const loxley = await ethers.getContractAt("Loxley", deployment.loxley);
   const refund = await ethers.getContractAt(
     "E3RefundManager",
     deployment.e3RefundManager,
@@ -166,11 +163,7 @@ export async function actionValidate(): Promise<void> {
       registry.sortitionSubmissionWindow(),
       config.registry.sortitionSubmissionWindow,
     ],
-    [
-      "loxley.maxDuration",
-      loxley.maxDuration(),
-      config.loxley.maxDuration,
-    ],
+    ["loxley.maxDuration", loxley.maxDuration(), config.loxley.maxDuration],
     [
       "loxley.markFailedGracePeriod",
       loxley.markFailedGracePeriod(),

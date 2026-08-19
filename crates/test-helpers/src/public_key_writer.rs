@@ -8,9 +8,7 @@ use std::path::PathBuf;
 
 use super::write_file_with_dirs;
 use actix::{Actor, Addr, Context, Handler};
-use e3_events::{
-    prelude::*, BusHandle, EventSubscriber, EventType, LoxleyEvent, LoxleyEventData,
-};
+use e3_events::{prelude::*, BusHandle, EventSubscriber, EventType, LoxleyEvent, LoxleyEventData};
 use e3_utils::MAILBOX_LIMIT;
 use tracing::info;
 

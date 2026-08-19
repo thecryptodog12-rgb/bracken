@@ -164,7 +164,9 @@ const config: HardhatUserConfig = {
         ? [privateKey]
         : { count: 10, mnemonic, path: "m/44'/60'/0'/0" },
       chainId: chainIds.robinhood,
-      url: process.env.ROBINHOOD_RPC_URL ?? "https://rpc.mainnet.chain.robinhood.com",
+      url:
+        process.env.ROBINHOOD_RPC_URL ??
+        "https://rpc.mainnet.chain.robinhood.com",
       type: "http" as const,
       chainType: "l1" as const,
       blockExplorers: {

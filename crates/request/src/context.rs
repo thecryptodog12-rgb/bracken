@@ -112,10 +112,7 @@ impl E3Context {
         self.checkpoint();
     }
 
-    pub fn get_event_recipient(
-        &self,
-        key: impl Into<String>,
-    ) -> Option<&Recipient<LoxleyEvent>> {
+    pub fn get_event_recipient(&self, key: impl Into<String>) -> Option<&Recipient<LoxleyEvent>> {
         self.recipients
             .get(&key.into())
             .and_then(|opt| opt.as_ref())

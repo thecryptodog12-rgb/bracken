@@ -247,8 +247,8 @@ key, any event log without a marker, upgrades, and downgrades fail closed. This 
 required because autowallet atomically creates the two bootstrap identities before the builder can
 stamp the schema; it does not let protocol state bypass compatibility checks. The DAppNode v0.2.3
 package is the explicit bridge for the previously shipped v0.1.8 state: its entrypoint atomically
-moves `/data/.enclave` to `/data/.loxley`, and the v0.2.3 release stamps schema version 1 before
-a later fail-closed binary is installed. If both namespace roots exist, the bridge refuses to choose
+moves `/data/.enclave` to `/data/.loxley`, and the v0.2.3 release stamps schema version 1 before a
+later fail-closed binary is installed. If both namespace roots exist, the bridge refuses to choose
 between them.
 
 ## Actor and message topology
@@ -305,17 +305,17 @@ becomes a subdirectory only when it has several independent concerns, and those 
 semantic operation names rather than circuit-stage labels. No `src/actors/`, `src/domain/`,
 `src/workflow/`, `src/adapters/`, or `src/runtime/` layer directory remains in these crates.
 
-| Crate           | Capability directories                                                                                                     | Boundary after refactor                                                                                                                                    |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `e3-aggregator` | `committee_finalization`, `public_key_aggregation`, `plaintext_aggregation`                                                | Request-local actor shells own timing and routing; workflows own aggregation decisions and semantic effect files own proof/publication work.               |
-| `e3-keyshare`   | `threshold_keyshare`                                                                                                       | One request-local mailbox coordinates DKG; collectors, state, pure key/share calculations, handlers, and effect operations are co-located by capability.   |
-| `e3-zk-prover`  | `proof_request`, `proof_verification`, `share_verification`, `node_proof_aggregation`, `commitment_links`                  | Proof mailboxes dispatch work; workflows and commitment-link modules own pure decisions, while semantic effect files own circuit requests and publication. |
-| `e3-slashing`   | `accusation_voting`, `commitment_consistency`                                                                              | Actors own timers and message routing; workflow files own admission, verification, voting, quorum, and commitment decisions.                               |
-| `e3-sortition`  | `sortition`, `ciphernode_selection`                                                                                        | Actors own chain/request routing and cache lifecycle; selection backends, ticket rules, and registry decisions sit beside them.                            |
-| `e3-net`        | `event_buffer`, `event_conversion`, `event_translation`, `network_sync`, `document_publishing`                             | Mailboxes own transport ordering and lifecycle; workflow/model files own decisions and effects own DHT, gossip, and history I/O.                           |
+| Crate           | Capability directories                                                                                                  | Boundary after refactor                                                                                                                                    |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `e3-aggregator` | `committee_finalization`, `public_key_aggregation`, `plaintext_aggregation`                                             | Request-local actor shells own timing and routing; workflows own aggregation decisions and semantic effect files own proof/publication work.               |
+| `e3-keyshare`   | `threshold_keyshare`                                                                                                    | One request-local mailbox coordinates DKG; collectors, state, pure key/share calculations, handlers, and effect operations are co-located by capability.   |
+| `e3-zk-prover`  | `proof_request`, `proof_verification`, `share_verification`, `node_proof_aggregation`, `commitment_links`               | Proof mailboxes dispatch work; workflows and commitment-link modules own pure decisions, while semantic effect files own circuit requests and publication. |
+| `e3-slashing`   | `accusation_voting`, `commitment_consistency`                                                                           | Actors own timers and message routing; workflow files own admission, verification, voting, quorum, and commitment decisions.                               |
+| `e3-sortition`  | `sortition`, `ciphernode_selection`                                                                                     | Actors own chain/request routing and cache lifecycle; selection backends, ticket rules, and registry decisions sit beside them.                            |
+| `e3-net`        | `event_buffer`, `event_conversion`, `event_translation`, `network_sync`, `document_publishing`                          | Mailboxes own transport ordering and lifecycle; workflow/model files own decisions and effects own DHT, gossip, and history I/O.                           |
 | `e3-evm`        | `chain_gateway`, `chain_reader`, `event_decoding`, registry/loxley/slashing read and write capabilities, `log_fetching` | Per-chain mailboxes own concurrency; provider recovery, log fetching, transaction preflight, and submission live with the chain capability they serve.     |
-| `e3-request`    | `routing`, `lifecycle`                                                                                                     | Context routing and lifecycle mailboxes call deterministic workflows; snapshot/context construction is co-located with routing.                            |
-| `e3-sync`       | `sync`                                                                                                                     | No Actix actor: an acknowledged startup/replay service contains its state, plan, preflight, history collection, and tests in one capability.               |
+| `e3-request`    | `routing`, `lifecycle`                                                                                                  | Context routing and lifecycle mailboxes call deterministic workflows; snapshot/context construction is co-located with routing.                            |
+| `e3-sync`       | `sync`                                                                                                                  | No Actix actor: an acknowledged startup/replay service contains its state, plan, preflight, history collection, and tests in one capability.               |
 
 The remaining large non-actor files are not automatically actor violations. Generated contract
 bindings and cohesive circuit/FHE algorithms are reviewed by their own complexity and test
@@ -703,10 +703,10 @@ sequenceDiagram
 
 The whole barrier is time-bounded. Failure to drain or flush is returned to the CLI and produces a
 non-zero exit. On restart, the process fence prevents two local writers from sharing one database.
-Schema preflight rejects unsupported upgrades or downgrades. `loxley node validate` provides
-offline integrity and loose-end diagnostics without mutation by default.
-`loxley node validate --repair` is narrowly allowed to perform the same safe uncommitted-tail
-recovery used at normal startup; it never removes an indexed record.
+Schema preflight rejects unsupported upgrades or downgrades. `loxley node validate` provides offline
+integrity and loose-end diagnostics without mutation by default. `loxley node validate --repair` is
+narrowly allowed to perform the same safe uncommitted-tail recovery used at normal startup; it never
+removes an indexed record.
 
 The implemented restart and operator-controlled recovery boundary is:
 

@@ -4,11 +4,11 @@
 
 | Contract                        | Description                                                                                      |
 | ------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `Loxley.sol`                 | Main protocol coordinator — handles E3 requests, param sets, fee routing, and output publication |
+| `Loxley.sol`                    | Main protocol coordinator — handles E3 requests, param sets, fee routing, and output publication |
 | `CiphernodeRegistryOwnable.sol` | Ciphernode registration and committee selection                                                  |
-| `BondingRegistry.sol`           | LOX token bonding for ciphernodes; tracks bond amounts and manages bond lifecycle               |
-| `LoxleyToken.sol`            | LOX governance/utility token                                                                    |
-| `LoxleyTicketToken.sol`      | Collateral-backed tickets used by ciphernodes for sortition entry                                |
+| `BondingRegistry.sol`           | LOX token bonding for ciphernodes; tracks bond amounts and manages bond lifecycle                |
+| `LoxleyToken.sol`               | LOX governance/utility token                                                                     |
+| `LoxleyTicketToken.sol`         | Collateral-backed tickets used by ciphernodes for sortition entry                                |
 | `SlashingManager.sol`           | Fault attribution and slashing for dishonest ciphernodes (accusation → quorum → slash)           |
 | `E3RefundManager.sol`           | Issues refunds to requesters when an E3 fails                                                    |
 | `test/MockE3Program.sol`        | Stateless BFV program for protocol tests without application-specific rules                      |
@@ -22,7 +22,7 @@ Contract audit reports are kept in [`audits/`](./audits/).
 | Interface          | Description                                                                   |
 | ------------------ | ----------------------------------------------------------------------------- |
 | `IE3Program`       | Implement this to write a custom E3 program (defines `validate` and `verify`) |
-| `ILoxley`       | External interface to the main Loxley contract                             |
+| `ILoxley`          | External interface to the main Loxley contract                                |
 | `IBondingRegistry` | Interface for bonding queries and management                                  |
 | `ISlashingManager` | Interface for accusation and slashing                                         |
 | `IE3RefundManager` | Interface for the refund manager                                              |

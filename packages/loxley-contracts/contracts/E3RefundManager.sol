@@ -232,9 +232,7 @@ contract E3RefundManager is IE3RefundManager, Ownable2StepUpgradeable {
         // Attribute the failure before touching requester escrow. Supplier-side
         // failures return the entire fee payment; requester-side failures pay
         // completed work according to the request-time policy.
-        ILoxley.FailureReason reason = _loxleyFor(e3Id).getFailureReason(
-            e3Id
-        );
+        ILoxley.FailureReason reason = _loxleyFor(e3Id).getFailureReason(e3Id);
         (
             uint256 honestNodeAmount,
             uint256 requesterAmount,
@@ -391,8 +389,9 @@ contract E3RefundManager is IE3RefundManager, Ownable2StepUpgradeable {
     function _getCancellationStage(
         uint256 e3Id
     ) internal view returns (ILoxley.E3Stage) {
-        ILoxley.E3Deadlines memory deadlines = _loxleyFor(e3Id)
-            .getDeadlines(e3Id);
+        ILoxley.E3Deadlines memory deadlines = _loxleyFor(e3Id).getDeadlines(
+            e3Id
+        );
         if (deadlines.decryptionDeadline != 0) {
             return ILoxley.E3Stage.CiphertextReady;
         }
@@ -417,8 +416,7 @@ contract E3RefundManager is IE3RefundManager, Ownable2StepUpgradeable {
         WorkValueAllocation memory alloc
     ) internal pure returns (uint16 workCompletedBps, uint16 workRemainingBps) {
         if (
-            stage == ILoxley.E3Stage.Requested ||
-            stage == ILoxley.E3Stage.None
+            stage == ILoxley.E3Stage.Requested || stage == ILoxley.E3Stage.None
         ) {
             // Failed at Requested = no work done
             workCompletedBps = 0;

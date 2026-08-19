@@ -83,15 +83,12 @@ async fn install_loxley(cwd: &PathBuf, template: Option<String>, verbose: bool) 
         .await?;
 
     let react_version = spinner
-        .run(
-            "Getting workspace version of loxley-react...",
-            || async {
-                package_json::get_version_from_package_json(
-                    &PathBuf::from(TEMP_DIR).join("packages/loxley-react/package.json"),
-                )
-                .await
-            },
-        )
+        .run("Getting workspace version of loxley-react...", || async {
+            package_json::get_version_from_package_json(
+                &PathBuf::from(TEMP_DIR).join("packages/loxley-react/package.json"),
+            )
+            .await
+        })
         .await?;
 
     let sdk_version = spinner
@@ -324,8 +321,7 @@ pub async fn execute(
     "
     );
 
-    let mut task_spinner =
-        TaskSpinner::new("Setting up a new Loxley project".to_string(), verbose);
+    let mut task_spinner = TaskSpinner::new("Setting up a new Loxley project".to_string(), verbose);
 
     task_spinner.update("Preparing paths...".to_string()).await;
 

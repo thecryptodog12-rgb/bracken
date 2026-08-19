@@ -31,8 +31,8 @@ and refund settlement use the same payer classifier.
 During the failure grace period, only active finalized committee members have committee authority.
 Expelled members and provisional candidates do not.
 
-Loxley rejects `None`, the enum sentinel, and larger failure reason values before it changes the
-E3 stage.
+Loxley rejects `None`, the enum sentinel, and larger failure reason values before it changes the E3
+stage.
 
 Committee key publication is valid through the DKG deadline. Later publication is rejected as a
 supplier-side timeout.
@@ -130,8 +130,8 @@ No decryption allocation is paid unless the E3 completes normally.
 
 ### Step 1: Process Failure
 
-Runtime note: `processE3Failure()` is a permissionless cleanup path. The Rust `LoxleySolWriter`
-may auto-submit it from any effects-enabled node on the same chain, and it must not depend on
+Runtime note: `processE3Failure()` is a permissionless cleanup path. The Rust `LoxleySolWriter` may
+auto-submit it from any effects-enabled node on the same chain, and it must not depend on
 active-aggregator designation because failures can happen before committee finalization or while the
 current aggregator is offline.
 

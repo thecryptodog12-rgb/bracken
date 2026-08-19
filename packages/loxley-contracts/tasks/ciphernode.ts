@@ -71,18 +71,14 @@ export const ciphernodeAdd = task(
       console.log(`Bond owner: ${bondOwner.address}`);
       console.log(`Registering ciphernode: ${operator.address}`);
 
-      const { deployAndSaveBondingRegistry } = await import(
-        "../scripts/deployAndSave/bondingRegistry"
-      );
-      const { deployAndSaveLoxleyTicketToken } = await import(
-        "../scripts/deployAndSave/loxleyTicketToken"
-      );
-      const { deployAndSaveLoxleyToken } = await import(
-        "../scripts/deployAndSave/loxleyToken"
-      );
-      const { deployAndSaveMockStableToken } = await import(
-        "../scripts/deployAndSave/mockStableToken"
-      );
+      const { deployAndSaveBondingRegistry } =
+        await import("../scripts/deployAndSave/bondingRegistry");
+      const { deployAndSaveLoxleyTicketToken } =
+        await import("../scripts/deployAndSave/loxleyTicketToken");
+      const { deployAndSaveLoxleyToken } =
+        await import("../scripts/deployAndSave/loxleyToken");
+      const { deployAndSaveMockStableToken } =
+        await import("../scripts/deployAndSave/mockStableToken");
       const { bondingRegistry } = await deployAndSaveBondingRegistry({ hre });
       const { loxleyToken } = await deployAndSaveLoxleyToken({ hre });
       const { loxleyTicketToken } = await deployAndSaveLoxleyTicketToken({
@@ -215,9 +211,8 @@ export const ciphernodeRemove = task(
       const [bondOwner, operator] = await ethers.getSigners();
       console.log(`Deregistering ciphernode: ${operator.address}`);
 
-      const { deployAndSaveBondingRegistry } = await import(
-        "../scripts/deployAndSave/bondingRegistry"
-      );
+      const { deployAndSaveBondingRegistry } =
+        await import("../scripts/deployAndSave/bondingRegistry");
       const { bondingRegistry } = await deployAndSaveBondingRegistry({ hre });
 
       const bondingRegistryConnected = bondingRegistry.connect(bondOwner);
@@ -275,14 +270,12 @@ export const ciphernodeMintTokens = task(
         );
       }
 
-      const { deployAndSaveLoxleyToken } = await import(
-        "../scripts/deployAndSave/loxleyToken"
-      );
+      const { deployAndSaveLoxleyToken } =
+        await import("../scripts/deployAndSave/loxleyToken");
       const { loxleyToken } = await deployAndSaveLoxleyToken({ hre });
 
-      const { deployAndSaveMockStableToken } = await import(
-        "../scripts/deployAndSave/mockStableToken"
-      );
+      const { deployAndSaveMockStableToken } =
+        await import("../scripts/deployAndSave/mockStableToken");
       const { mockStableToken } = await deployAndSaveMockStableToken({
         hre,
       });
@@ -401,18 +394,14 @@ export const ciphernodeAdminAdd = task(
       console.log(`Admin wallet: ${adminWallet.address}`);
       console.log(`Registering ciphernode: ${ciphernodeAddress}`);
 
-      const { deployAndSaveBondingRegistry } = await import(
-        "../scripts/deployAndSave/bondingRegistry"
-      );
-      const { deployAndSaveLoxleyTicketToken } = await import(
-        "../scripts/deployAndSave/loxleyTicketToken"
-      );
-      const { deployAndSaveLoxleyToken } = await import(
-        "../scripts/deployAndSave/loxleyToken"
-      );
-      const { deployAndSaveMockStableToken } = await import(
-        "../scripts/deployAndSave/mockStableToken"
-      );
+      const { deployAndSaveBondingRegistry } =
+        await import("../scripts/deployAndSave/bondingRegistry");
+      const { deployAndSaveLoxleyTicketToken } =
+        await import("../scripts/deployAndSave/loxleyTicketToken");
+      const { deployAndSaveLoxleyToken } =
+        await import("../scripts/deployAndSave/loxleyToken");
+      const { deployAndSaveMockStableToken } =
+        await import("../scripts/deployAndSave/mockStableToken");
       const { bondingRegistry } = await deployAndSaveBondingRegistry({ hre });
       const { loxleyToken } = await deployAndSaveLoxleyToken({ hre });
       const { loxleyTicketToken } = await deployAndSaveLoxleyTicketToken({
@@ -563,13 +552,11 @@ export const updateSubmissionWindow = task(
   })
   .setAction(async () => ({
     default: async ({ newWindow }, hre) => {
-      const { deployAndSaveCiphernodeRegistryOwnable } = await import(
-        "../scripts/deployAndSave/ciphernodeRegistryOwnable"
-      );
+      const { deployAndSaveCiphernodeRegistryOwnable } =
+        await import("../scripts/deployAndSave/ciphernodeRegistryOwnable");
 
-      const { deployAndSavePoseidonT3 } = await import(
-        "../scripts/deployAndSave/poseidonT3"
-      );
+      const { deployAndSavePoseidonT3 } =
+        await import("../scripts/deployAndSave/poseidonT3");
       const poseidonT3 = await deployAndSavePoseidonT3({ hre });
 
       const { ciphernodeRegistry } =

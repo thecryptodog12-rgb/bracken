@@ -41,16 +41,15 @@ This is the main logic of CRISP - an loxley program for secure voting.
 
 It exposes two main functions:
 
-- `validate` - that is called when a new E3 instance is requested on Loxley
-  (`Loxley.request`).
+- `validate` - that is called when a new E3 instance is requested on Loxley (`Loxley.request`).
 - `verify` - that is called when the ciphertext output is published on Loxley
   (`Loxley.publishCiphertextOutput`). This function ensures that the ciphertext output is valid.
   CRISP uses Risc0 as the compute provider for running the FHE program, thus the proof will be a
   Risc0 proof.
 - `validateInput` - validate the input data that is submitted to the E3 instance. It is called by
-  the Loxley contract when a new input is published (`Loxley.publishInput`). In CRISP, the
-  data providers (the ones submitting the inputs) are the voters, and the input submitted is the
-  vote itself. The logic checks that gating conditions are satisfied and that the ciphertext is
+  the Loxley contract when a new input is published (`Loxley.publishInput`). In CRISP, the data
+  providers (the ones submitting the inputs) are the voters, and the input submitted is the vote
+  itself. The logic checks that gating conditions are satisfied and that the ciphertext is
   constructed correctly using
-  [Greco](https://github.com/gnosisguild/loxley/tree/main/circuits/crates/libs/greco). See the
-  Greco [paper](https://eprint.iacr.org/2024/594).
+  [Greco](https://github.com/gnosisguild/loxley/tree/main/circuits/crates/libs/greco). See the Greco
+  [paper](https://eprint.iacr.org/2024/594).

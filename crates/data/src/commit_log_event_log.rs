@@ -160,13 +160,12 @@ impl CommitLogEventLog {
                          log is corrupt"
                     );
                 }
-                let event = LoxleyEvent::<Unsequenced>::from_bytes(msg.payload()).with_context(
-                    || {
+                let event =
+                    LoxleyEvent::<Unsequenced>::from_bytes(msg.payload()).with_context(|| {
                         format!(
                             "commit log event at sequence {seq} failed to decode; log is corrupt"
                         )
-                    },
-                )?;
+                    })?;
                 events.push((seq, event));
                 current_offset = msg.offset() + 1;
                 count += 1;

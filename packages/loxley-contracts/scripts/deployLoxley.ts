@@ -612,8 +612,7 @@ export const deployLoxley = async (
     }
 
     if (!shouldHaveZKVerification && mockPkVerifierAddress) {
-      const deployedPkVerifier =
-        await loxley.pkVerifiers(encryptionSchemeId);
+      const deployedPkVerifier = await loxley.pkVerifiers(encryptionSchemeId);
       if (deployedPkVerifier === mockPkVerifierAddress) {
         console.log(`PkVerifier already set in Loxley contract`);
       } else {
@@ -691,9 +690,7 @@ export const deployLoxley = async (
         bfvDecryptionVerifierAddress,
       );
       await tx.wait();
-      console.log(
-        "Successfully set BfvDecryptionVerifier in Loxley contract",
-      );
+      console.log("Successfully set BfvDecryptionVerifier in Loxley contract");
     }
   }
 
@@ -787,11 +784,7 @@ export const deployLoxley = async (
       loxley.slashingManager(),
       slashingManagerAddress,
     ],
-    [
-      "ciphernodeRegistry.loxley",
-      ciphernodeRegistry.loxley(),
-      loxleyAddress,
-    ],
+    ["ciphernodeRegistry.loxley", ciphernodeRegistry.loxley(), loxleyAddress],
     [
       "ciphernodeRegistry.bondingRegistry",
       ciphernodeRegistry.bondingRegistry(),
@@ -838,11 +831,7 @@ export const deployLoxley = async (
       bondedVotes.checkpoints(),
       bondedCheckpointsAddress,
     ],
-    [
-      "slashingManager.loxley",
-      slashingManager.loxley(),
-      loxleyAddress,
-    ],
+    ["slashingManager.loxley", slashingManager.loxley(), loxleyAddress],
     [
       "slashingManager.bondingRegistry",
       slashingManager.bondingRegistry(),

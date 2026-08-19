@@ -57,8 +57,8 @@ defines `N`, `L`, `QIS`, bounds, `PARITY_MATRIX`, per-circuit `Configs`, and
 
 ## Related documentation
 
-| Topic                                          | Location                                                                                                       |
-| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Binary packages, `CircuitName`, build and test | [`circuits/README.md`](../../README.md)                                                                        |
+| Topic                                          | Location                                                                                                    |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Binary packages, `CircuitName`, build and test | [`circuits/README.md`](../../README.md)                                                                     |
 | Phases, PV-TBFV, circuit identifiers           | [Cryptography](https://docs.theloxley.com/cryptography) · [source](../../../docs/pages/cryptography.mdx)    |
-| Toolchain, `loxley noir`, compile scripts   | [Noir Circuits](https://docs.theloxley.com/noir-circuits) · [source](../../../docs/pages/noir-circuits.mdx) |
+| Toolchain, `loxley noir`, compile scripts      | [Noir Circuits](https://docs.theloxley.com/noir-circuits) · [source](../../../docs/pages/noir-circuits.mdx) |

@@ -73,8 +73,7 @@ data_dir: "~/.local/share/loxley"
 
 > Note if you set `config_dir` it will change the default location for both the config file and the
 > `key_file` and if you specify `data_dir` it will change the default location for the `db_file` for
-> example: If I run `loxley start --config ./some-config.yaml` where `./some-config.yaml`
-> contains:
+> example: If I run `loxley start --config ./some-config.yaml` where `./some-config.yaml` contains:
 >
 > ```
 > # some-config.yaml
@@ -137,13 +136,12 @@ Enter your password again to confirm it.
 Password sucessfully set.
 ```
 
-Assuming default settings you should now be able to find your keyfile under
-`~/.config/loxley/key`
+Assuming default settings you should now be able to find your keyfile under `~/.config/loxley/key`
 
 ## Provide your password using a key file
 
-You can use a keyfile to provide your password by creating a file under `~/.config/loxley/key`
-and setting the file permissions to `400`
+You can use a keyfile to provide your password by creating a file under `~/.config/loxley/key` and
+setting the file permissions to `400`
 
 ```
 mkdir -p ~/.config/loxley && read -s password && echo -n "$password" > ~/.config/loxley/key && chmod 400 ~/.config/loxley/key

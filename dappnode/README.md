@@ -128,8 +128,8 @@ Non-secret runtime configuration is provided through environment variables:
 - **`NETWORK`** Logical network name written into the Loxley config (e.g. `sepolia`, `mainnet`,
   `localhost`).
 
-- **`NODE_ADDRESS`** Optional Ethereum address to bind the node to. Leave empty to let Loxley
-  handle it.
+- **`NODE_ADDRESS`** Optional Ethereum address to bind the node to. Leave empty to let Loxley handle
+  it.
 
 - **`QUIC_PORT`** Internal UDP port used for QUIC [Quick UDP Internet Connections] P2P networking.
   Default in this package: `37173`.
@@ -252,8 +252,7 @@ status before treating the node as protocol-ready.
 
 ## Data & Ports
 
-- **Data volume**: `ciphernode_data` → `/data` This is where Loxley stores its databases and
-  state.
+- **Data volume**: `ciphernode_data` → `/data` This is where Loxley stores its databases and state.
 
 - **Ports**:
   - **UDP 37173** – QUIC P2P networking (host and container).

@@ -148,11 +148,7 @@ impl From<BondOwnerSetWithChainId> for LoxleyEventData {
     }
 }
 
-pub(crate) fn extractor(
-    data: &LogData,
-    topics: &[B256],
-    chain_id: u64,
-) -> Option<LoxleyEventData> {
+pub(crate) fn extractor(data: &LogData, topics: &[B256], chain_id: u64) -> Option<LoxleyEventData> {
     match topics.first() {
         Some(&IBondingRegistry::TicketBalanceUpdated::SIGNATURE_HASH) => {
             let Ok(event) = IBondingRegistry::TicketBalanceUpdated::decode_log_data(data) else {
@@ -169,9 +165,9 @@ pub(crate) fn extractor(
                 error!("Error parsing event OperatorActivationChanged after topic was matched!");
                 return None;
             };
-            Some(LoxleyEventData::from(
-                OperatorActivationChangedWithChainId(event, chain_id),
-            ))
+            Some(LoxleyEventData::from(OperatorActivationChangedWithChainId(
+                event, chain_id,
+            )))
         }
         Some(&IBondingRegistry::CiphernodeBondUpdated::SIGNATURE_HASH) => {
             let Ok(event) = IBondingRegistry::CiphernodeBondUpdated::decode_log_data(data) else {

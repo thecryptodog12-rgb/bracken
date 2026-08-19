@@ -1,8 +1,8 @@
 # Sortition and E3 Complete Flow
 
-This document describes the complete flow of the Loxley system, from operator registration
-through E3 computation request, sortition, committee selection, keyshare generation, public key
-aggregation, encryption, and decryption.
+This document describes the complete flow of the Loxley system, from operator registration through
+E3 computation request, sortition, committee selection, keyshare generation, public key aggregation,
+encryption, and decryption.
 
 ## Overview
 

@@ -647,10 +647,7 @@ nodes:
                 PathBuf::from("/default/config/loxley.config.yaml")
             );
             assert_eq!(config.db_file(), PathBuf::from("/mydata/loxley/ag/db"));
-            assert_eq!(
-                config.key_file(),
-                PathBuf::from("/myconfig/loxley/ag/key")
-            );
+            assert_eq!(config.key_file(), PathBuf::from("/myconfig/loxley/ag/key"));
         };
         Ok(())
     }

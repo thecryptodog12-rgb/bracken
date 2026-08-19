@@ -30,8 +30,8 @@ use crate::{
         EventFactory, EventPublisher, EventSubscriber,
     },
     EType, ErrorEvent, EventBus, EventBusBarrier, EventContextManager, EventSource, EventType,
-    FlushEventStores, HistoryCollector, LoxleyEvent, LoxleyEventData, Sequenced,
-    SequencerBarrier, Shutdown, Subscribe, Unsequenced, Unsubscribe,
+    FlushEventStores, HistoryCollector, LoxleyEvent, LoxleyEventData, Sequenced, SequencerBarrier,
+    Shutdown, Subscribe, Unsequenced, Unsubscribe,
 };
 
 /// Typestate marker indicating the BusHandle has not yet been enabled with an HLC clock.

@@ -515,11 +515,7 @@ const SLASHING_MANAGER: &[EvmEventDefinition] = &[
     ),
     EvmEventDefinition::new("EIP712DomainChanged", "EIP712DomainChanged()", None),
     EvmEventDefinition::new("LoxleySet", "LoxleySet(address)", None),
-    EvmEventDefinition::new(
-        "LoxleyUpdated",
-        "LoxleyUpdated(address,address)",
-        None,
-    ),
+    EvmEventDefinition::new("LoxleyUpdated", "LoxleyUpdated(address,address)", None),
     EvmEventDefinition::new(
         "NodeBanUpdated",
         "NodeBanUpdated(address,bool,bytes32,address)",

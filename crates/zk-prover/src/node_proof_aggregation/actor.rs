@@ -16,8 +16,8 @@ use e3_events::{
     CorrelationId, DKGInnerProofReady, DKGRecursiveAggregationComplete, DkgFoldAttestationContext,
     DkgFoldAttestationContextEstablished, DkgFoldAttestationPayload, E3Failed, E3Stage, E3id,
     EventContext, EventPublisher, EventSubscriber, EventType, FailureReason, LoxleyEvent,
-    LoxleyEventData, Proof, Sequenced, SignedDkgFoldAttestation, ThresholdSharePending,
-    TypedEvent, ZkRequest, ZkResponse, DKG_FOLD_ATTESTATION_CONTEXT_SCHEMA_VERSION,
+    LoxleyEventData, Proof, Sequenced, SignedDkgFoldAttestation, ThresholdSharePending, TypedEvent,
+    ZkRequest, ZkResponse, DKG_FOLD_ATTESTATION_CONTEXT_SCHEMA_VERSION,
 };
 use e3_fhe_params::build_pair_for_preset;
 use tracing::{error, info, warn};
@@ -120,9 +120,7 @@ mod tests {
         )
     }
 
-    async fn next_event(
-        history: &Addr<HistoryCollector<LoxleyEvent>>,
-    ) -> Result<LoxleyEvent> {
+    async fn next_event(history: &Addr<HistoryCollector<LoxleyEvent>>) -> Result<LoxleyEvent> {
         let mut result = history.send(TakeEvents::<LoxleyEvent>::new(1)).await?;
         assert!(!result.timed_out, "timed out waiting for an event");
         Ok(result.events.pop().expect("expected one event"))

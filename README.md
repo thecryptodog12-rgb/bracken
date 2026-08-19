@@ -206,9 +206,8 @@ This workspace's minimum supported rustc version is 1.91.1.
 
 ## Architecture
 
-The Loxley employs a modular architecture involving numerous actors and participants. The
-sequence diagram below offers a high-level overview of the protocol, but necessarily omits most
-detail.
+The Loxley employs a modular architecture involving numerous actors and participants. The sequence
+diagram below offers a high-level overview of the protocol, but necessarily omits most detail.
 
 ```mermaid
 sequenceDiagram
@@ -473,8 +472,8 @@ If a release has issues:
 
 ## 📊 Version History
 
-Check our [Releases page](https://github.com/gnosisguild/loxley/releases) for full version
-history and changelogs.
+Check our [Releases page](https://github.com/gnosisguild/loxley/releases) for full version history
+and changelogs.
 
 ## Security and Liability
 

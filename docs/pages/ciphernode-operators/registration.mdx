@@ -26,7 +26,7 @@ single-wallet setup. Ensure the selected bond-owner wallet has:
 
 | Token     | Amount Required                          | Purpose                      |
 | --------- | ---------------------------------------- | ---------------------------- |
-| **LOX**  | Mainnet: `32,000 LOX`                   | Ciphernode bond collateral   |
+| **LOX**   | Mainnet: `32,000 LOX`                    | Ciphernode bond collateral   |
 | **sUSDS** | Mainnet: `1,000 sUSDS` shares per ticket | Ticket balance for sortition |
 | **ETH**   | Sufficient for gas                       | Transaction fees             |
 
@@ -91,9 +91,9 @@ loxley --config /path/to/owner.yaml ciphernode tickets \
 The CLI submits any required token approval first. Safe owners can submit the same
 `bondCiphernodeFor`, `registerOperatorFor`, and `addTicketBalanceFor` calls through the Safe
 interface. The owner supplies the assets, while the operator address is added to the registry Merkle
-tree and receives non-transferable tLOX. With the recommended separate-owner setup, the hot
-operator key does not control LOX or ticket collateral withdrawals, and protocol rewards are
-credited to the bond owner.
+tree and receives non-transferable tLOX. With the recommended separate-owner setup, the hot operator
+key does not control LOX or ticket collateral withdrawals, and protocol rewards are credited to the
+bond owner.
 
 The number of usable tickets is calculated as:
 
@@ -208,7 +208,7 @@ Current Ethereum Mainnet launch values (verify on-chain before depositing):
 | Parameter                | Value                | Description                         |
 | ------------------------ | -------------------- | ----------------------------------- |
 | `ticketPrice`            | 1,000 sUSDS shares   | Ticket collateral needed per ticket |
-| `requiredCiphernodeBond` | 32,000 LOX          | Minimum LOX needed to register     |
+| `requiredCiphernodeBond` | 32,000 LOX           | Minimum LOX needed to register      |
 | `minTicketBalance`       | 1 ticket             | Minimum tickets to be active        |
 | `exitDelay`              | 2,592,000s (30 days) | Wait time before claiming exits     |
 
@@ -249,7 +249,7 @@ status changes due to balance or bond updates.
 
 | Issue                     | Cause                                          | Solution                                                |
 | ------------------------- | ---------------------------------------------- | ------------------------------------------------------- |
-| `isActive` is false       | Below minimum ciphernode bond (80%) or tickets | Add more LOX or tickets                                |
+| `isActive` is false       | Below minimum ciphernode bond (80%) or tickets | Add more LOX or tickets                                 |
 | Registration fails        | Already registered, banned, or unbonded        | Check `isRegistered()`, ban status, and ciphernode bond |
 | Ticket purchase fails     | Insufficient stablecoin or allowance           | Ensure balance and approve spending                     |
 | "NodeNotEligible" in logs | Not registered before E3 request               | Register before requests are made                       |

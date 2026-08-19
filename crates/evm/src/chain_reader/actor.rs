@@ -18,9 +18,7 @@ use alloy::providers::Provider;
 use alloy::rpc::types::Filter;
 use alloy_primitives::Address;
 use anyhow::anyhow;
-use e3_events::{
-    BusHandle, EType, ErrorDispatcher, Event, EventId, LoxleyEvent, LoxleyEventData,
-};
+use e3_events::{BusHandle, EType, ErrorDispatcher, Event, EventId, LoxleyEvent, LoxleyEventData};
 use e3_events::{EventSubscriber, EventType};
 use e3_utils::{retry_with_backoff, RetryError, MAILBOX_LIMIT};
 use futures_util::stream::StreamExt;

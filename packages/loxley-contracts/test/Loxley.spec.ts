@@ -75,8 +75,7 @@ describe("Loxley", function () {
     });
 
     it("correctly sets ciphernodeRegistry address", async function () {
-      const { loxley, ciphernodeRegistryContract } =
-        await loadFixture(setup);
+      const { loxley, ciphernodeRegistryContract } = await loadFixture(setup);
       expect(await loxley.ciphernodeRegistry()).to.equal(
         await ciphernodeRegistryContract.getAddress(),
       );
@@ -106,8 +105,7 @@ describe("Loxley", function () {
         loxley,
         mocks: { e3Program },
       } = await loadFixture(setup);
-      expect(await loxley.e3Programs(await e3Program.getAddress())).to.be
-        .true;
+      expect(await loxley.e3Programs(await e3Program.getAddress())).to.be.true;
     });
   });
 
@@ -155,8 +153,7 @@ describe("Loxley", function () {
     });
 
     it("reverts if given address is the same as the current ciphernodeRegistry", async function () {
-      const { loxley, ciphernodeRegistryContract } =
-        await loadFixture(setup);
+      const { loxley, ciphernodeRegistryContract } = await loadFixture(setup);
       await expect(
         loxley.setCiphernodeRegistry(
           await ciphernodeRegistryContract.getAddress(),
@@ -185,10 +182,7 @@ describe("Loxley", function () {
 
       await expect(
         loxley.setCiphernodeRegistry(await replacement.getAddress()),
-      ).to.be.revertedWithCustomError(
-        loxley,
-        "DependencyGenerationNotDrained",
-      );
+      ).to.be.revertedWithCustomError(loxley, "DependencyGenerationNotDrained");
     });
 
     it("emits CiphernodeRegistrySet event", async function () {
@@ -234,9 +228,10 @@ describe("Loxley", function () {
     it("rejects parameter bytes that do not match the active circuit", async function () {
       const { loxley } = await loadFixture(setup);
 
-      await expect(
-        loxley.setParamSet(1, "0x"),
-      ).to.be.revertedWithCustomError(loxley, "UnsupportedCryptoConfig");
+      await expect(loxley.setParamSet(1, "0x")).to.be.revertedWithCustomError(
+        loxley,
+        "UnsupportedCryptoConfig",
+      );
     });
   });
 
@@ -283,9 +278,9 @@ describe("Loxley", function () {
   describe("getDecryptionVerifier()", function () {
     it("returns true if encryption scheme is enabled", async function () {
       const { loxley, mocks } = await loadFixture(setup);
-      expect(
-        await loxley.getDecryptionVerifier(encryptionSchemeId),
-      ).to.equal(await mocks.decryptionVerifier.getAddress());
+      expect(await loxley.getDecryptionVerifier(encryptionSchemeId)).to.equal(
+        await mocks.decryptionVerifier.getAddress(),
+      );
     });
 
     it("returns false if encryption scheme is not enabled", async function () {
@@ -666,12 +661,7 @@ describe("Loxley", function () {
         proof,
       );
       await expect(
-        loxley.publishCiphertextOutput(
-          e3Id,
-          data,
-          ciphertextCommitment,
-          proof,
-        ),
+        loxley.publishCiphertextOutput(e3Id, data, ciphertextCommitment, proof),
       )
         .to.be.revertedWithCustomError(loxley, "InvalidStage")
         .withArgs(e3Id, 3, 4);
@@ -702,12 +692,7 @@ describe("Loxley", function () {
         interval: inputWindowDuration + timeoutConfig.computeWindow,
       });
       await expect(
-        loxley.publishCiphertextOutput(
-          e3Id,
-          data,
-          ciphertextCommitment,
-          proof,
-        ),
+        loxley.publishCiphertextOutput(e3Id, data, ciphertextCommitment, proof),
       ).to.be.revertedWithCustomError(loxley, "CommitteeDutiesCompleted");
     });
     it("reverts if output is not valid", async function () {
@@ -767,12 +752,7 @@ describe("Loxley", function () {
       await mocks.ciphertextVerifier.setResult(false);
 
       await expect(
-        loxley.publishCiphertextOutput(
-          e3Id,
-          data,
-          ciphertextCommitment,
-          proof,
-        ),
+        loxley.publishCiphertextOutput(e3Id, data, ciphertextCommitment, proof),
       ).to.be.revertedWithCustomError(loxley, "InvalidOutput");
       expect(await loxley.getE3Stage(e3Id)).to.equal(3);
       const e3 = await loxley.getE3(e3Id);
@@ -810,23 +790,13 @@ describe("Loxley", function () {
       await mine(2, { interval: inputWindowDuration });
 
       await expect(
-        loxley.publishCiphertextOutput(
-          e3Id,
-          data,
-          ciphertextCommitment,
-          proof,
-        ),
+        loxley.publishCiphertextOutput(e3Id, data, ciphertextCommitment, proof),
       ).to.be.revertedWithCustomError(loxley, "InvalidOutput");
 
       await mocks.ciphertextVerifier.setResult(true);
       await replacement.setResult(false);
       await expect(
-        loxley.publishCiphertextOutput(
-          e3Id,
-          data,
-          ciphertextCommitment,
-          proof,
-        ),
+        loxley.publishCiphertextOutput(e3Id, data, ciphertextCommitment, proof),
       ).to.emit(loxley, "CiphertextOutputPublished");
     });
     it("sets ciphertextOutput correctly", async function () {
@@ -932,12 +902,7 @@ describe("Loxley", function () {
       ]);
       await mine(2, { interval: inputWindowDuration });
       await expect(
-        loxley.publishCiphertextOutput(
-          e3Id,
-          data,
-          ciphertextCommitment,
-          proof,
-        ),
+        loxley.publishCiphertextOutput(e3Id, data, ciphertextCommitment, proof),
       )
         .to.emit(loxley, "CiphertextOutputPublished")
         .withArgs(e3Id, data, ciphertextCommitment);
@@ -969,16 +934,8 @@ describe("Loxley", function () {
       await mocks.e3Program.setReentrantPlaintextPublication(data, proof);
 
       await expect(
-        loxley.publishCiphertextOutput(
-          e3Id,
-          data,
-          ciphertextCommitment,
-          proof,
-        ),
-      ).to.be.revertedWithCustomError(
-        loxley,
-        "ReentrancyGuardReentrantCall",
-      );
+        loxley.publishCiphertextOutput(e3Id, data, ciphertextCommitment, proof),
+      ).to.be.revertedWithCustomError(loxley, "ReentrancyGuardReentrantCall");
       expect(await loxley.getE3Stage(e3Id)).to.equal(3);
     });
   });

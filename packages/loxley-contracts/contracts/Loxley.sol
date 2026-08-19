@@ -613,9 +613,7 @@ contract Loxley is
         bytes32 encryptionSchemeId,
         IDecryptionVerifier decryptionVerifier
     ) external onlyOwner {
-        LoxleyLifecycle.validateDecryptionVerifier(
-            address(decryptionVerifier)
-        );
+        LoxleyLifecycle.validateDecryptionVerifier(address(decryptionVerifier));
         require(
             decryptionVerifier != IDecryptionVerifier(address(0)) &&
                 decryptionVerifiers[encryptionSchemeId] != decryptionVerifier,

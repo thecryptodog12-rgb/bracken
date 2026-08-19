@@ -164,8 +164,7 @@ mod tests {
 
     fn ec() -> EventContext<Sequenced> {
         use e3_events::{LoxleyEventData, TestEvent, Unsequenced};
-        EventContext::<Unsequenced>::from(LoxleyEventData::from(TestEvent::new("x", 0)))
-            .sequence(0)
+        EventContext::<Unsequenced>::from(LoxleyEventData::from(TestEvent::new("x", 0))).sequence(0)
     }
 
     #[test]

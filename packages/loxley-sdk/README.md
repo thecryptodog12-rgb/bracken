@@ -1,7 +1,7 @@
 # Loxley TypeScript SDK
 
-A powerful, type-safe TypeScript SDK for interacting with Loxley smart contracts. This SDK
-provides real-time event listening, contract interaction methods, and comprehensive error handling.
+A powerful, type-safe TypeScript SDK for interacting with Loxley smart contracts. This SDK provides
+real-time event listening, contract interaction methods, and comprehensive error handling.
 
 ## Features
 
@@ -296,8 +296,7 @@ import type { ContractAddresses, E3 } from '@loxley/sdk/contracts'
 import { EventListener, LoxleyEventType, RegistryEventType } from '@loxley/sdk/events'
 ```
 
-All sub-module exports are also re-exported from the main `@loxley/sdk` entry point for
-convenience.
+All sub-module exports are also re-exported from the main `@loxley/sdk` entry point for convenience.
 
 ## API Reference
 

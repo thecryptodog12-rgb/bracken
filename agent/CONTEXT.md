@@ -18,33 +18,33 @@ output — every step backed by ZK proofs verified on-chain.
 
 ## Terminology
 
-| Term         | Meaning                                                                                                                         |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| E3           | Encrypted Execution Environment — one confidential computation instance (`e3Id`)                                                |
-| Ciphernode   | Node operator running keyshare/DKG/decryption actors in a committee                                                             |
-| Committee    | Ciphernodes serving an E3. Sizes `(N, T, H)`: `minimum` (3,1,2), `micro` (9,4,5), `small` (19,9,10)                             |
-| DKG          | Distributed key generation — joint threshold public key, no party holds the full secret                                         |
-| BFV / TrBFV  | Brakerski–Fan–Vercauteren FHE scheme / its threshold (publicly verifiable) variant                                              |
-| Preset       | BFV parameter set: `insecure-512` (dev/CI default) or `secure-8192`                                                             |
-| C0–C7        | ZK circuit IDs across the DKG/decryption pipeline (map below)                                                                   |
-| Sortition    | Random committee selection (`crates/sortition`)                                                                                 |
-| Slashing     | Fault attribution, accusation quorum, commitment consistency (`crates/slashing`)                                                |
-| Aggregator   | Role that recursively aggregates DKG/decryption proofs (`crates/aggregator`)                                                    |
-| LOX / tLOX | `LoxleyToken` (ciphernode bonding) / `LoxleyTicketToken` (non-transferable collateral-backed tickets) — see flow-trace 02 |
-| IMT          | Incremental Merkle Tree used for on-chain node registration — see flow-trace 01                                                 |
-| CRT          | Chinese Remainder Theorem moduli used by BFV presets and share aggregation (C7)                                                 |
+| Term        | Meaning                                                                                                                   |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------- |
+| E3          | Encrypted Execution Environment — one confidential computation instance (`e3Id`)                                          |
+| Ciphernode  | Node operator running keyshare/DKG/decryption actors in a committee                                                       |
+| Committee   | Ciphernodes serving an E3. Sizes `(N, T, H)`: `minimum` (3,1,2), `micro` (9,4,5), `small` (19,9,10)                       |
+| DKG         | Distributed key generation — joint threshold public key, no party holds the full secret                                   |
+| BFV / TrBFV | Brakerski–Fan–Vercauteren FHE scheme / its threshold (publicly verifiable) variant                                        |
+| Preset      | BFV parameter set: `insecure-512` (dev/CI default) or `secure-8192`                                                       |
+| C0–C7       | ZK circuit IDs across the DKG/decryption pipeline (map below)                                                             |
+| Sortition   | Random committee selection (`crates/sortition`)                                                                           |
+| Slashing    | Fault attribution, accusation quorum, commitment consistency (`crates/slashing`)                                          |
+| Aggregator  | Role that recursively aggregates DKG/decryption proofs (`crates/aggregator`)                                              |
+| LOX / tLOX  | `LoxleyToken` (ciphernode bonding) / `LoxleyTicketToken` (non-transferable collateral-backed tickets) — see flow-trace 02 |
+| IMT         | Incremental Merkle Tree used for on-chain node registration — see flow-trace 01                                           |
+| CRT         | Chinese Remainder Theorem moduli used by BFV presets and share aggregation (C7)                                           |
 
 ## Monorepo map
 
-| Path                 | Contents                                                                                                                                                                            |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `crates/`            | Rust workspace (~46 crates, prefix `e3-`): CLI, actors, crypto, TrBFV, networking (libp2p), EVM, ZK proving, persistence                                                            |
+| Path                 | Contents                                                                                                                                                          |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `crates/`            | Rust workspace (~46 crates, prefix `e3-`): CLI, actors, crypto, TrBFV, networking (libp2p), EVM, ZK proving, persistence                                          |
 | `packages/`          | npm packages (prefix `@loxley/`): `loxley-contracts` (Hardhat Solidity + Honk verifiers), `loxley-sdk`, `loxley-react`, `loxley-mcp`, `loxley-config`, dashboards |
-| `circuits/`          | Noir circuits: `lib/` (shared package), `bin/dkg/`, `bin/threshold/`, `bin/recursive_aggregation/`                                                                                  |
-| `scripts/`           | Build/check tooling (`build-circuits.ts`, `check-committee.sh`, verifier generation, release bump)                                                                                  |
-| `tests/integration/` | End-to-end integration tests (`pnpm test:integration [name]`)                                                                                                                       |
-| `agent/`             | This harness: rules, context, invariants, architecture, flow-trace                                                                                                                  |
-| `docs/`              | Nextra docs site; `deploy/`, `dappnode/` deployment; `examples/`, `templates/` scaffolding                                                                                          |
+| `circuits/`          | Noir circuits: `lib/` (shared package), `bin/dkg/`, `bin/threshold/`, `bin/recursive_aggregation/`                                                                |
+| `scripts/`           | Build/check tooling (`build-circuits.ts`, `check-committee.sh`, verifier generation, release bump)                                                                |
+| `tests/integration/` | End-to-end integration tests (`pnpm test:integration [name]`)                                                                                                     |
+| `agent/`             | This harness: rules, context, invariants, architecture, flow-trace                                                                                                |
+| `docs/`              | Nextra docs site; `deploy/`, `dappnode/` deployment; `examples/`, `templates/` scaffolding                                                                        |
 
 Notable crates: `events` (event taxonomy, `CircuitName`, `ProofType`), `zk-prover` (`versions.json`
 pins nargo/bb), `zk-helpers`, `trbfv`, `keyshare`, `aggregator`, `sortition`, `slashing`, `evm`,
@@ -62,7 +62,7 @@ Run from repo root via pnpm scripts — not raw cargo/nargo/hardhat.
 | Test one layer              | `pnpm evm:test` · `pnpm rust:test` · `pnpm sdk:test` · `pnpm noir:test`                                            |
 | Integration tests           | `pnpm test:integration [name]` (`--no-prebuild` to skip binary build)                                              |
 | Lint / format               | `pnpm lint` · `pnpm format` / `pnpm format:check`                                                                  |
-| Build circuits              | `pnpm build:circuits [--preset …] [--committee …]` (needs `nargo` + `bb`; `loxley noir setup` installs them)    |
+| Build circuits              | `pnpm build:circuits [--preset …] [--committee …]` (needs `nargo` + `bb`; `loxley noir setup` installs them)       |
 | Generate Solidity verifiers | `pnpm generate:verifiers [--check\|--write]`                                                                       |
 | Circuit artifact cache      | `pnpm store:circuits push\|pull` (orphan branch `circuit-artifacts`)                                               |
 | Consistency checks          | `pnpm check:committee` · `check:docs` · `check:invariants` · `check:ciphernode bond` · `check:pnpm` · `check:size` |
@@ -80,10 +80,9 @@ Run from repo root via pnpm scripts — not raw cargo/nargo/hardhat.
   `check:docs` (harness-doc drift gate — escape with `[skip-doc-sync]` in a commit message when no
   documented behavior changed), `check:invariants` (grep-enforced invariants: `do_send` ratchet,
   skip-proof feature containment — baselines in `scripts/invariant-baselines.env`).
-- **Docs MCP server:** `.mcp.json`, `.codex/config.toml`, and `opencode.json` expose
-  `@loxley/mcp` (`loxley-docs`) to their respective agents. The launch configs run the
-  TypeScript source through the workspace toolchain; `pnpm mcp:build` builds the publishable
-  package.
+- **Docs MCP server:** `.mcp.json`, `.codex/config.toml`, and `opencode.json` expose `@loxley/mcp`
+  (`loxley-docs`) to their respective agents. The launch configs run the TypeScript source through
+  the workspace toolchain; `pnpm mcp:build` builds the publishable package.
 - **License headers:** every `.rs`/`.sol`/`.ts` file needs the SPDX `LGPL-3.0-only` header
   (CI-enforced).
 

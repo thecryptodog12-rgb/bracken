@@ -74,14 +74,10 @@ impl KeyshareCreatedFilterBuffer {
                     {
                         Self::forward(&self.dest, event);
                     }
-                    LoxleyEventData::CommitteeMemberExpelled(data)
-                        if data.party_id.is_none() =>
-                    {
+                    LoxleyEventData::CommitteeMemberExpelled(data) if data.party_id.is_none() => {
                         Self::forward(&self.dest, event);
                     }
-                    LoxleyEventData::CommitteeMemberExcluded(data)
-                        if data.party_id.is_none() =>
-                    {
+                    LoxleyEventData::CommitteeMemberExcluded(data) if data.party_id.is_none() => {
                         Self::forward(&self.dest, event);
                     }
                     LoxleyEventData::E3RequestComplete(_) | LoxleyEventData::Shutdown(_) => {

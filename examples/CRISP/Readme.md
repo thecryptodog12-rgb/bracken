@@ -5,13 +5,13 @@ decision-making, leveraging fully homomorphic encryption (FHE) and distributed t
 cryptography (DTC) to enable verifiable secret ballots. Built with Loxley, CRISP safeguards
 democratic systems and decision-making applications against coercion, manipulation, and other
 vulnerabilities. To learn more about CRISP, you can read our
-[blog post](https://blog.theloxley.com/crisp-private-voting-secret-ballot-fhe-zkp-mpc/) or visit
-the [documentation](https://docs.theloxley.com/CRISP/introduction).
+[blog post](https://blog.theloxley.com/crisp-private-voting-secret-ballot-fhe-zkp-mpc/) or visit the
+[documentation](https://docs.theloxley.com/CRISP/introduction).
 
 ## Project Structure
 
-CRISP follows a modern structure with clear separation of concerns, consistent with the Loxley
-root structure.
+CRISP follows a modern structure with clear separation of concerns, consistent with the Loxley root
+structure.
 
 ```bash
 CRISP/
@@ -87,8 +87,7 @@ from production and untrusted networks.
 `dev:up` runs `scripts/dev.sh`, which:
 
 1. Starts the Hardhat node in `packages/crisp-contracts`
-2. Deploys all contracts (Loxley, CRISPProgram, verifiers, registries) via
-   `scripts/crisp_deploy.sh`
+2. Deploys all contracts (Loxley, CRISPProgram, verifiers, registries) via `scripts/crisp_deploy.sh`
 3. Starts ciphernodes using `loxley.config.yaml` via `scripts/dev_cipher.sh`
 4. Launches the program server via `scripts/dev_program.sh`
 5. Starts the coordination server (Rust) via `scripts/dev_server.sh` on port `4000`
@@ -182,8 +181,8 @@ program URL:
    loxley program upload
    ```
 
-3. The command will output an IPFS hash like `QmXxx...`. Update your `loxley.config.yaml` with
-   the full URL:
+3. The command will output an IPFS hash like `QmXxx...`. Update your `loxley.config.yaml` with the
+   full URL:
 
    ```yaml
    program_url: 'https://gateway.pinata.cloud/ipfs/QmXxx...'
@@ -218,8 +217,8 @@ honoured by an `loxley` binary built with the matching `test-only-skip-proof-agg
 feature, so `dev:setup` selects that feature from the profile and reinstalls the CLI. Running
 `dev:up` against a binary from the other profile makes every ciphernode exit at startup;
 `dev_cipher.sh` now aborts with the node status table instead of continuing. Note that
-`~/.cargo/bin/loxley` is shared — a `dev:setup` in `templates/default` or another example
-overwrites the binary this profile installed.
+`~/.cargo/bin/loxley` is shared — a `dev:setup` in `templates/default` or another example overwrites
+the binary this profile installed.
 
 See **[docs/PROOF_AGGREGATION_AND_ZK.md](./docs/PROOF_AGGREGATION_AND_ZK.md)** for modes, address
 sync, and troubleshooting (`VkHashMismatch`, etc.).

@@ -514,9 +514,7 @@ fn project_event(event: &LoxleyEvent, local_address: &str) -> EventView {
     };
     let producer = match (event.source(), event.get_data()) {
         (EventSource::Local, _) => local_address.to_owned(),
-        (EventSource::Evm, LoxleyEventData::EvmLogObserved(observed)) => {
-            observed.contract.clone()
-        }
+        (EventSource::Evm, LoxleyEventData::EvmLogObserved(observed)) => observed.contract.clone(),
         (EventSource::Evm, _) => "on-chain contract".to_owned(),
         (EventSource::Net, _) => format!("node:{:08x}", timestamp.node),
     };

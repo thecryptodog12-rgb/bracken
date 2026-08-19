@@ -25,10 +25,7 @@ import {
 } from "../protocol/values";
 
 export type UpgradeTarget =
-  | "bondingRegistry"
-  | "ciphernodeRegistry"
-  | "loxley"
-  | "e3RefundManager";
+  "bondingRegistry" | "ciphernodeRegistry" | "loxley" | "e3RefundManager";
 
 interface BondedVotingDeployment {
   bondedCheckpoints: string;
@@ -272,8 +269,7 @@ async function deployImplementation(
     await pricing.waitForDeployment();
     const pricingLibrary = await deployedAddress(pricing);
 
-    const lifecycleFactory =
-      await ethers.getContractFactory("LoxleyLifecycle");
+    const lifecycleFactory = await ethers.getContractFactory("LoxleyLifecycle");
     const lifecycle = await lifecycleFactory.deploy();
     await lifecycle.waitForDeployment();
     const lifecycleLibrary = await deployedAddress(lifecycle);

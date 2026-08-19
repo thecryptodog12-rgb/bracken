@@ -16,8 +16,8 @@ pnpm add @loxley/react @loxley/contracts
 
 ### useLoxleySDK
 
-A React hook for interacting with the Loxley SDK. This hook provides a clean interface for
-managing SDK state, handling contract interactions, and listening to events.
+A React hook for interacting with the Loxley SDK. This hook provides a clean interface for managing
+SDK state, handling contract interactions, and listening to events.
 
 ```tsx
 import { useLoxleySDK } from '@loxley/react'

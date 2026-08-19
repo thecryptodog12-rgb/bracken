@@ -9,9 +9,7 @@ impl Handler<LoxleyEvent> for CiphernodeSelector {
     fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            LoxleyEventData::E3Requested(data) => {
-                self.notify_sync(ctx, TypedEvent::new(data, ec))
-            }
+            LoxleyEventData::E3Requested(data) => self.notify_sync(ctx, TypedEvent::new(data, ec)),
             LoxleyEventData::E3RequestComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }

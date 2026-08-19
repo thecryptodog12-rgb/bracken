@@ -185,10 +185,7 @@ async fn publish_reconciled_history(
 }
 
 #[cfg(test)]
-async fn replay_eventstore_events(
-    bus: &BusHandle,
-    mut events: Vec<LoxleyEvent>,
-) -> Result<usize> {
+async fn replay_eventstore_events(bus: &BusHandle, mut events: Vec<LoxleyEvent>) -> Result<usize> {
     let total_events = events.len();
     let mut replayed = 0usize;
 

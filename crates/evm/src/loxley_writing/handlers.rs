@@ -5,9 +5,7 @@
 use super::effects::*;
 use super::*;
 
-impl<P: Provider + WalletProvider + Clone + 'static> Handler<LoxleyEvent>
-    for LoxleySolWriter<P>
-{
+impl<P: Provider + WalletProvider + Clone + 'static> Handler<LoxleyEvent> for LoxleySolWriter<P> {
     type Result = ();
 
     fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {

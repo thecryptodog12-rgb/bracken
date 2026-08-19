@@ -139,10 +139,7 @@ impl UpdateService {
         let release = self
             .client
             .get(LATEST_RELEASE)
-            .header(
-                reqwest::header::USER_AGENT,
-                "loxley-ciphernode-dashboard",
-            )
+            .header(reqwest::header::USER_AGENT, "loxley-ciphernode-dashboard")
             .header(reqwest::header::ACCEPT, "application/vnd.github+json")
             .header("X-GitHub-Api-Version", "2022-11-28")
             .send()

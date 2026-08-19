@@ -47,8 +47,8 @@ mod encryption_key_pending;
 mod encryption_key_received;
 mod evm_log_observed;
 mod input_published;
-mod loxley_error;
 mod keyshare_created;
+mod loxley_error;
 mod net_ready;
 mod operator_activation_changed;
 mod outgoing_sync_requested;
@@ -128,8 +128,8 @@ pub use encryption_key_pending::*;
 pub use encryption_key_received::*;
 pub use evm_log_observed::*;
 pub use input_published::*;
-pub use loxley_error::*;
 pub use keyshare_created::*;
+pub use loxley_error::*;
 pub use net_ready::*;
 pub use operator_activation_changed::*;
 pub use outgoing_sync_requested::*;
@@ -512,14 +512,8 @@ mod serialization_tests {
 impl LoxleyEvent<Sequenced> {
     /// test-helpers only utility function to create a new sequenced event
     pub fn new_stored_event(data: LoxleyEventData, time: u128, seq: u64) -> Self {
-        LoxleyEvent::<Unsequenced>::new_with_timestamp(
-            data,
-            None,
-            time,
-            None,
-            EventSource::Local,
-        )
-        .into_sequenced(seq)
+        LoxleyEvent::<Unsequenced>::new_with_timestamp(data, None, time, None, EventSource::Local)
+            .into_sequenced(seq)
     }
 
     /// test-helpers only utility function to create a new sequenced event
@@ -651,9 +645,7 @@ impl LoxleyEventData {
             LoxleyEventData::PkAggregationProofSigned(ref data) => Some(data.e3_id.clone()),
             LoxleyEventData::AggregationProofPending(ref data) => Some(data.e3_id.clone()),
             LoxleyEventData::AggregationProofSigned(ref data) => Some(data.e3_id.clone()),
-            LoxleyEventData::DKGRecursiveAggregationComplete(ref data) => {
-                Some(data.e3_id.clone())
-            }
+            LoxleyEventData::DKGRecursiveAggregationComplete(ref data) => Some(data.e3_id.clone()),
             LoxleyEventData::DKGInnerProofReady(ref data) => Some(data.e3_id.clone()),
             LoxleyEventData::CommitmentConsistencyCheckRequested(ref data) => {
                 Some(data.e3_id.clone())
@@ -661,9 +653,7 @@ impl LoxleyEventData {
             LoxleyEventData::CommitmentConsistencyCheckComplete(ref data) => {
                 Some(data.e3_id.clone())
             }
-            LoxleyEventData::CommitmentConsistencyViolation(ref data) => {
-                Some(data.e3_id.clone())
-            }
+            LoxleyEventData::CommitmentConsistencyViolation(ref data) => Some(data.e3_id.clone()),
             LoxleyEventData::InputPublished(ref data) => Some(data.e3_id.clone()),
             LoxleyEventData::RewardsDistributed(ref data) => Some(data.e3_id.clone()),
             LoxleyEventData::RewardCredited(ref data) => Some(data.e3_id.clone()),

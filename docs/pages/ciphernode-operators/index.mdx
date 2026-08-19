@@ -5,9 +5,9 @@ description: 'Overview of ciphernode operations, contracts, and lifecycle'
 
 # Ciphernode Operators
 
-Ciphernodes are the distributed workers that power the Loxley network. They participate in
-threshold cryptography to enable encrypted execution environments (E3s) while ensuring no single
-party can access the underlying plaintext data.
+Ciphernodes are the distributed workers that power the Loxley network. They participate in threshold
+cryptography to enable encrypted execution environments (E3s) while ensuring no single party can
+access the underlying plaintext data.
 
 > **Interactive setup:** the dashboard has a step-by-step operator guide. It reads the live bonding
 > registry and sends each on-chain step from your wallet. Open
@@ -31,47 +31,47 @@ malicious behavior.
 
 The Loxley protocol uses several contracts that work together:
 
-| Contract                 | Purpose                                                             |
-| ------------------------ | ------------------------------------------------------------------- |
-| **Loxley**            | Core coordinator that manages E3 requests and computation lifecycle |
-| **CiphernodeRegistry**   | Tracks registered operators and manages committee formation         |
-| **BondingRegistry**      | Handles ciphernode bonds (LOX) and ticket balances (tLOX)         |
-| **SlashingManager**      | Processes slashing proposals, appeals, and ban enforcement          |
-| **E3RefundManager**      | Calculates and distributes refunds when an E3 fails                 |
-| **LoxleyToken**       | LOX token used for ciphernode bonding                              |
-| **LoxleyTicketToken** | Non-transferable tLOX token representing ticket balances           |
+| Contract               | Purpose                                                             |
+| ---------------------- | ------------------------------------------------------------------- |
+| **Loxley**             | Core coordinator that manages E3 requests and computation lifecycle |
+| **CiphernodeRegistry** | Tracks registered operators and manages committee formation         |
+| **BondingRegistry**    | Handles ciphernode bonds (LOX) and ticket balances (tLOX)           |
+| **SlashingManager**    | Processes slashing proposals, appeals, and ban enforcement          |
+| **E3RefundManager**    | Calculates and distributes refunds when an E3 fails                 |
+| **LoxleyToken**        | LOX token used for ciphernode bonding                               |
+| **LoxleyTicketToken**  | Non-transferable tLOX token representing ticket balances            |
 
 ### Mainnet Contract Addresses
 
 | Contract                  | Address                                      | Deploy block |
 | ------------------------- | -------------------------------------------- | ------------ |
-| Loxley                 | `0x28cF63B459e6218C69EA97ea7D90541cf648c715` | 25786382     |
+| Loxley                    | `0x28cF63B459e6218C69EA97ea7D90541cf648c715` | 25786382     |
 | CiphernodeRegistry        | `0xC927A5B2d8F68697bC28C0670df05178c93df2d7` | 25786378     |
 | BondingRegistry           | `0x0ec90465095C21830BEcED07e032809A2Bd2915F` | 25473398     |
 | SlashingManager           | `0x974E865B1BB24AF2a9ef8204AdEA9251Cc7C5FD9` | 25786375     |
 | E3RefundManager           | `0x1940eF168f4E0B3dA24BEca539856684793B0F6e` | 25786384     |
-| LoxleyTicketToken      | `0xC0B5b49a3949eC4B520eF21BaCFE16e3695F3B5D` | 25786372     |
-| LoxleyToken (LOX)     | `0xE172e9B6cfBeeB5593bDcE3f077356FDb33af904` | 25473449     |
+| LoxleyTicketToken         | `0xC0B5b49a3949eC4B520eF21BaCFE16e3695F3B5D` | 25786372     |
+| LoxleyToken (LOX)         | `0xE172e9B6cfBeeB5593bDcE3f077356FDb33af904` | 25473449     |
 | USDS (fee token)          | `0xdC035D45d973E3EC169d2276DDab16f1e407384F` | 20663730     |
 | sUSDS (ticket collateral) | `0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD` | 20677434     |
 
 Mainnet E3 requests can remain paused during operator onboarding. Check `requestsPaused()` on the
-Loxley contract before you ask requesters to submit E3s. Ciphernodes can still bond, register,
-and add ticket collateral while requests are paused.
+Loxley contract before you ask requesters to submit E3s. Ciphernodes can still bond, register, and
+add ticket collateral while requests are paused.
 
 ### Sepolia Contract Addresses
 
-| Contract              | Address                                      | Deploy block |
-| --------------------- | -------------------------------------------- | ------------ |
-| Loxley             | `0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7` | 11459000     |
-| CiphernodeRegistry    | `0xCD571e311c11a6259ad95b7F95C1f2AF2b60ae6A` | 11458978     |
-| BondingRegistry       | `0x77384A924C18FfE00A9325815723121534105Abd` | 11458979     |
-| SlashingManager       | `0x4CE0107239719003ad07F65e0ae18a09aD2dcfDE` | 11458977     |
-| E3RefundManager       | `0x5967Ef0390760013Cc0A42e1ACf85DBb86619D17` | 11459002     |
-| LoxleyTicketToken  | `0x9e271C60139fA951EFb8954Dd0454B524630d767` | 11458976     |
-| LoxleyToken (LOX) | `0x7ffCCe335EEd0f3e3CbaD491ac68BF72a223606B` | 11458986     |
-| MockUSDC (fee token)  | `0xD4B8e32C718B87f81d8e58fB3a3f061D92CcBb27` | 11458975     |
-| Faucet                | `0x2797A03F78a4237D6ba97170589BBD1Dca382207` | 11458989     |
+| Contract             | Address                                      | Deploy block |
+| -------------------- | -------------------------------------------- | ------------ |
+| Loxley               | `0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7` | 11459000     |
+| CiphernodeRegistry   | `0xCD571e311c11a6259ad95b7F95C1f2AF2b60ae6A` | 11458978     |
+| BondingRegistry      | `0x77384A924C18FfE00A9325815723121534105Abd` | 11458979     |
+| SlashingManager      | `0x4CE0107239719003ad07F65e0ae18a09aD2dcfDE` | 11458977     |
+| E3RefundManager      | `0x5967Ef0390760013Cc0A42e1ACf85DBb86619D17` | 11459002     |
+| LoxleyTicketToken    | `0x9e271C60139fA951EFb8954Dd0454B524630d767` | 11458976     |
+| LoxleyToken (LOX)    | `0x7ffCCe335EEd0f3e3CbaD491ac68BF72a223606B` | 11458986     |
+| MockUSDC (fee token) | `0xD4B8e32C718B87f81d8e58fB3a3f061D92CcBb27` | 11458975     |
+| Faucet               | `0x2797A03F78a4237D6ba97170589BBD1Dca382207` | 11458989     |
 
 ### Proof Verification
 
@@ -119,9 +119,9 @@ against `BondingRegistry`.
 | ------------------------------------------------------- | ---------------------- | -------------------------------------------------------- |
 | `setBondOwner(bondOwner)`                               | Operator key           | Authorize the wallet that controls this position         |
 | `proposeBondOwner(operator, newOwner)`                  | Bond owner             | Nominate a replacement owner                             |
-| `acceptBondOwner(operator)`                             | Nominated owner        | Accept the position and move the LOX accounting         |
-| `bondCiphernodeFor(operator, amount)`                   | Bond owner             | Bond LOX from the caller's wallet                       |
-| `unbondCiphernodeFor(operator, amount)`                 | Bond owner             | Queue bonded LOX for exit                               |
+| `acceptBondOwner(operator)`                             | Nominated owner        | Accept the position and move the LOX accounting          |
+| `bondCiphernodeFor(operator, amount)`                   | Bond owner             | Bond LOX from the caller's wallet                        |
+| `unbondCiphernodeFor(operator, amount)`                 | Bond owner             | Queue bonded LOX for exit                                |
 | `registerOperatorFor(operator)`                         | Bond owner             | Add the operator key to the ciphernode registry          |
 | `deregisterOperatorFor(operator)`                       | Bond owner or operator | Request deregistration and queue all collateral          |
 | `addTicketBalanceFor(operator, amount)`                 | Bond owner             | Deposit the fee token and mint tickets                   |
@@ -142,7 +142,7 @@ Read the current state with these view functions:
 | `isRegistered(operator)`       | Whether the key is in the registry                                |
 | `isActive(operator)`           | Whether the operator is eligible for sortition                    |
 | `availableTickets(operator)`   | `floor(ticketBalance / ticketPrice)`                              |
-| `totalBonded(account)`         | LOX that counts toward the locked-floor collateral of an owner   |
+| `totalBonded(account)`         | LOX that counts toward the locked-floor collateral of an owner    |
 | `hasExitInProgress(operator)`  | Whether an exit is queued                                         |
 
 > `isCiphernodeBonded` and registration use different thresholds. `isCiphernodeBonded` tests the
@@ -183,7 +183,7 @@ stateDiagram-v2
 | State           | Description                                                                        |
 | --------------- | ---------------------------------------------------------------------------------- |
 | **Unbonded**    | No ciphernode bond deposited; cannot register                                      |
-| **Bonded**      | LOX bonded but not yet registered in the registry                                 |
+| **Bonded**      | LOX bonded but not yet registered in the registry                                  |
 | **Registered**  | In the registry but lacking minimum ticket balance                                 |
 | **Active**      | Fully operational; eligible for committee selection via sortition                  |
 | **Inactive**    | Registered but below minimum requirements (tickets or ciphernode bond)             |
@@ -195,11 +195,11 @@ Before operating a ciphernode, ensure you have:
 
 | Requirement           | Details                                                                                    |
 | --------------------- | ------------------------------------------------------------------------------------------ |
-| **LOX Tokens**       | Mainnet requires at least `32,000 LOX` for the ciphernode bond                            |
+| **LOX Tokens**        | Mainnet requires at least `32,000 LOX` for the ciphernode bond                             |
 | **Ticket collateral** | Mainnet requires at least `1,000 sUSDS` shares for one ticket                              |
 | **ETH**               | Gas for transactions on your target network                                                |
 | **Hardware**          | Linux/macOS, 8+ cores, 32GB+ DDR5 RAM, 500GB+ NVMe SSD, stable internet with open UDP port |
-| **Software**          | Loxley CLI installed, WebSocket RPC endpoint                                            |
+| **Software**          | Loxley CLI installed, WebSocket RPC endpoint                                               |
 
 ## Getting Started
 

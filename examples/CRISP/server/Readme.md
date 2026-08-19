@@ -1,7 +1,7 @@
 # CRISP Server
 
-This is a Rust-based server implementation for CRISP, which is built on top of the Loxley
-Protocol, which handles E3 (Encrypted Execution Environment) rounds and voting processes.
+This is a Rust-based server implementation for CRISP, which is built on top of the Loxley Protocol,
+which handles E3 (Encrypted Execution Environment) rounds and voting processes.
 
 ## Features
 

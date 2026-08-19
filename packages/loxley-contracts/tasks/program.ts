@@ -52,9 +52,8 @@ export const publishInput = task(
       { e3Id, data, dataFile, programAddress, ciphertextCommitmentFile },
       hre,
     ) => {
-      const { deployAndSaveMockProgram } = await import(
-        "../scripts/deployAndSave/mockProgram"
-      );
+      const { deployAndSaveMockProgram } =
+        await import("../scripts/deployAndSave/mockProgram");
       const { MockE3ProgramHarness__factory } = await import("../types");
 
       const { ethers } = await hre.network.connect();

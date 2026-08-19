@@ -139,9 +139,7 @@ library LoxleyPricing {
         if (config.protocolShareBps > maxProtocolShareBps)
             revert ILoxley.BpsExceedsMax(config.protocolShareBps);
         if (config.dkgUtilizationBps > BPS_BASE)
-            revert ILoxley.UtilizationBpsExceedsMax(
-                config.dkgUtilizationBps
-            );
+            revert ILoxley.UtilizationBpsExceedsMax(config.dkgUtilizationBps);
         if (config.computeUtilizationBps > BPS_BASE)
             revert ILoxley.UtilizationBpsExceedsMax(
                 config.computeUtilizationBps
@@ -340,8 +338,7 @@ library LoxleyPricing {
         if (paramSet != ActiveCryptoConfig.PARAM_SET)
             revert ILoxley.UnsupportedCryptoConfig();
         ILoxley.CommitteeSize size = ILoxley.CommitteeSize(committeeSize);
-        if (threshold[1] == 0)
-            revert ILoxley.CommitteeSizeNotConfigured(size);
+        if (threshold[1] == 0) revert ILoxley.CommitteeSizeNotConfigured(size);
         if (pc.minCommitteeSize > 0 && threshold[1] < pc.minCommitteeSize)
             revert ILoxley.CommitteeSizeTooSmall(size);
         if (pc.minThreshold > 0 && threshold[0] < pc.minThreshold)

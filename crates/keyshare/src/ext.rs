@@ -59,8 +59,7 @@ impl E3Extension for ThresholdKeyshareExtension {
         }
 
         let e3_id = data.clone().e3_id;
-        let Some(loxley_address) = self.loxley_addresses.get(&e3_id.chain_id()).copied()
-        else {
+        let Some(loxley_address) = self.loxley_addresses.get(&e3_id.chain_id()).copied() else {
             self.bus.err(
                 EType::KeyGeneration,
                 anyhow!(

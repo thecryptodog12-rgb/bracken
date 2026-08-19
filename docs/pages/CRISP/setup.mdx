@@ -40,8 +40,7 @@ pnpm dev:up
 `dev:up` runs `scripts/dev.sh`, which:
 
 1. Starts the Hardhat node in `packages/crisp-contracts`
-2. Deploys all contracts (Loxley, CRISPProgram, verifiers, registries) via
-   `scripts/crisp_deploy.sh`
+2. Deploys all contracts (Loxley, CRISPProgram, verifiers, registries) via `scripts/crisp_deploy.sh`
 3. Starts Ciphernodes using `loxley.config.yaml` via `scripts/dev_cipher.sh`
 4. Launches the program server via `scripts/dev_program.sh`
 5. Starts the coordination server (Rust) via `scripts/dev_server.sh` on port `4000`
@@ -133,8 +132,8 @@ program URL:
    loxley program upload
    ```
 
-3. The command will output an IPFS hash like `QmXxx...`. Update your `loxley.config.yaml` with
-   the full URL:
+3. The command will output an IPFS hash like `QmXxx...`. Update your `loxley.config.yaml` with the
+   full URL:
 
    ```yaml
    program_url: 'https://gateway.pinata.cloud/ipfs/QmXxx...'

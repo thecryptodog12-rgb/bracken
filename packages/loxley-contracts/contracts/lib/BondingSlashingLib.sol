@@ -162,8 +162,7 @@ library BondingSlashingLib {
 
         ILoxley.E3Stage stage = ILoxley(loxley).getE3Stage(e3Id);
         if (
-            stage != ILoxley.E3Stage.Complete &&
-            stage != ILoxley.E3Stage.Failed
+            stage != ILoxley.E3Stage.Complete && stage != ILoxley.E3Stage.Failed
         ) revert IBondingRegistry.E3AssignmentNotTerminal(e3Id);
 
         delete destinations[manager][e3Id];

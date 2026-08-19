@@ -10,8 +10,7 @@ use actix::{Message, Recipient};
 use alloy::rpc::types::Log;
 use anyhow::Result;
 use e3_events::{
-    BusHandle, CorrelationId, EventFactory, EventSource, LoxleyEvent, LoxleyEventData,
-    Unsequenced,
+    BusHandle, CorrelationId, EventFactory, EventSource, LoxleyEvent, LoxleyEventData, Unsequenced,
 };
 use serde::{Deserialize, Serialize};
 

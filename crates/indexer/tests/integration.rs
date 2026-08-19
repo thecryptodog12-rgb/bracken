@@ -48,22 +48,13 @@ async fn test_indexer() -> Result<()> {
     let param_set = DEFAULT_BFV_PRESET.into();
     let params = build_bfv_params_from_set_arc(param_set);
 
-    let (
-        loxley_contract,
-        loxley_address,
-        emit_logs_contract,
-        emit_logs_address,
-        endpoint,
-        _anvil,
-    ) = setup_two_contracts().await?;
+    let (loxley_contract, loxley_address, emit_logs_contract, emit_logs_address, endpoint, _anvil) =
+        setup_two_contracts().await?;
 
     let indexer = Arc::new(
         LoxleyIndexer::<InMemoryStore, ReadOnly>::from_endpoint_address_in_mem(
             &endpoint.to_string(),
-            &[
-                &loxley_address.to_string(),
-                &emit_logs_address.to_string(),
-            ],
+            &[&loxley_address.to_string(), &emit_logs_address.to_string()],
         )
         .await?,
     );

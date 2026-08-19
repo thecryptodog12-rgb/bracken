@@ -64,9 +64,8 @@ export const deployAndSaveLoxleyTicketToken = async ({
     return { loxleyTicketToken: loxleyTicketTokenContract };
   }
 
-  const loxleyTicketTokenFactory = await ethers.getContractFactory(
-    "LoxleyTicketToken",
-  );
+  const loxleyTicketTokenFactory =
+    await ethers.getContractFactory("LoxleyTicketToken");
   const loxleyTicketToken = await loxleyTicketTokenFactory.deploy(
     baseToken,
     registry,

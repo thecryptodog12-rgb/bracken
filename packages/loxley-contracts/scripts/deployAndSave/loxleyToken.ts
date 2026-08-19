@@ -96,8 +96,7 @@ export const deployAndSaveLoxleyToken = async ({
     return { loxleyToken: loxleyTokenContract };
   }
 
-  const loxleyTokenFactory =
-    await ethers.getContractFactory("LoxleyToken");
+  const loxleyTokenFactory = await ethers.getContractFactory("LoxleyToken");
   const loxleyToken = await loxleyTokenFactory.deploy(
     owner,
     ccaStart,

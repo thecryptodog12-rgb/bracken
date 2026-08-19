@@ -5,8 +5,7 @@
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
 use e3_events::{
-    AggregateId, E3id, Event, EventContextAccessors, LoxleyEvent, LoxleyEventData,
-    Unsequenced,
+    AggregateId, E3id, Event, EventContextAccessors, LoxleyEvent, LoxleyEventData, Unsequenced,
 };
 use std::collections::BTreeMap;
 
@@ -217,12 +216,8 @@ mod tests {
                 .ts(6000)
                 .build(),
             // no e3_id -> aggregate 0, always kept
-            LoxleyEvent::<Unsequenced>::test_event("e")
-                .ts(7000)
-                .build(),
-            LoxleyEvent::<Unsequenced>::test_event("e")
-                .ts(8000)
-                .build(),
+            LoxleyEvent::<Unsequenced>::test_event("e").ts(7000).build(),
+            LoxleyEvent::<Unsequenced>::test_event("e").ts(8000).build(),
         ];
 
         let result = SyncPlanner::find_net_hlc(&events);
@@ -249,9 +244,7 @@ mod tests {
                 .e3_id(open.clone())
                 .ts(5000)
                 .build(),
-            LoxleyEvent::<Unsequenced>::test_event("e")
-                .ts(8000)
-                .build(),
+            LoxleyEvent::<Unsequenced>::test_event("e").ts(8000).build(),
         ];
 
         let mut snapshot_net_config = BTreeMap::new();
@@ -269,15 +262,9 @@ mod tests {
     #[test]
     fn sort_by_timestamp_orders_ascending() {
         let mut events = vec![
-            LoxleyEvent::<Unsequenced>::test_event("c")
-                .ts(5000)
-                .build(),
-            LoxleyEvent::<Unsequenced>::test_event("a")
-                .ts(1000)
-                .build(),
-            LoxleyEvent::<Unsequenced>::test_event("b")
-                .ts(3000)
-                .build(),
+            LoxleyEvent::<Unsequenced>::test_event("c").ts(5000).build(),
+            LoxleyEvent::<Unsequenced>::test_event("a").ts(1000).build(),
+            LoxleyEvent::<Unsequenced>::test_event("b").ts(3000).build(),
         ];
 
         SyncPlanner::sort_by_timestamp(&mut events);

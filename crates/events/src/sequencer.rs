@@ -58,11 +58,7 @@ impl Actor for Sequencer {
 
 impl Handler<LoxleyEvent<Unsequenced>> for Sequencer {
     type Result = ();
-    fn handle(
-        &mut self,
-        msg: LoxleyEvent<Unsequenced>,
-        ctx: &mut Self::Context,
-    ) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent<Unsequenced>, ctx: &mut Self::Context) -> Self::Result {
         self.eventstore
             .do_send(StoreEventRequested::new(msg, ctx.address()));
     }

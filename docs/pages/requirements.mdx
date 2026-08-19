@@ -46,15 +46,15 @@ proofs. The workload is CPU and memory intensive, especially during DKG and proo
 
 | Dependency        | Minimum Version | Purpose                                |
 | ----------------- | --------------- | -------------------------------------- |
-| **Loxley CLI** | Latest release  | Node management and CLI operations     |
+| **Loxley CLI**    | Latest release  | Node management and CLI operations     |
 | **Rust**          | 1.91.1+         | Building from source                   |
 | **WebSocket RPC** | —               | Real-time event listening (wss:// URL) |
 
 ### Network Requirements
 
 - **QUIC port**: UDP must be unfiltered. Default QUIC port is set in your config
-  (`loxley.config.yaml`). Cloud firewalls (AWS Security Groups, GCP firewall rules) must allow
-  UDP inbound on this port.
+  (`loxley.config.yaml`). Cloud firewalls (AWS Security Groups, GCP firewall rules) must allow UDP
+  inbound on this port.
 - **WebSocket RPC**: The node subscribes to on-chain events via WebSocket. An HTTP-only RPC endpoint
   will fall back to polling and may miss events. Always use a `wss://` URL.
 - **NAT**: If behind NAT, configure port forwarding for the QUIC UDP port.

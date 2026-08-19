@@ -11,9 +11,7 @@ import { fetchE3Details, fetchE3List, fetchRecentBallotCount, type E3FullDetails
 const POLL_MS = 15_000
 
 export type LoadState<T> =
-  | { status: 'loading'; data: null; error: null }
-  | { status: 'ready'; data: T; error: null }
-  | { status: 'error'; data: null; error: Error }
+  { status: 'loading'; data: null; error: null } | { status: 'ready'; data: T; error: null } | { status: 'error'; data: null; error: Error }
 
 function useE3List(crispOnly: boolean): LoadState<E3Summary[]> {
   const [state, setState] = useState<LoadState<E3Summary[]>>({

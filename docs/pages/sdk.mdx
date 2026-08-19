@@ -5,10 +5,10 @@ description: 'Use the TypeScript + React SDKs to drive E3 programs from clients 
 
 # Loxley SDK Overview
 
-The Loxley SDK (`@loxley/sdk`) and React helpers (`@loxley/react`) provide a
-batteries-included client stack for requesting E3 computations, subscribing to protocol events, and
-coordinating custom frontends or backend services. Both packages ship in this repository (see
-`packages/loxley-sdk` and `packages/loxley-react`).
+The Loxley SDK (`@loxley/sdk`) and React helpers (`@loxley/react`) provide a batteries-included
+client stack for requesting E3 computations, subscribing to protocol events, and coordinating custom
+frontends or backend services. Both packages ship in this repository (see `packages/loxley-sdk` and
+`packages/loxley-react`).
 
 ## Installation
 
@@ -259,7 +259,7 @@ The SDK provides two event type enums for subscribing to on-chain events:
 | `COMMITTEE_REQUESTED`   | `CommitteeRequested`   |
 | `COMMITTEE_PUBLISHED`   | `CommitteePublished`   |
 | `COMMITTEE_FINALIZED`   | `CommitteeFinalized`   |
-| `LOXLEY_SET`         | `LoxleySet`         |
+| `LOXLEY_SET`            | `LoxleySet`            |
 | `OWNERSHIP_TRANSFERRED` | `OwnershipTransferred` |
 | `INITIALIZED`           | `Initialized`          |
 
@@ -328,13 +328,12 @@ import {
 ## Configuration contract map
 
 Provide the Loxley, CiphernodeRegistry, and FeeToken addresses. The template exposes these via
-`.env` / `loxley.config.yaml`. For multi-chain apps, instantiate separate SDK instances per
-chain.
+`.env` / `loxley.config.yaml`. For multi-chain apps, instantiate separate SDK instances per chain.
 
 ## Working with the template
 
-`loxley init` generates the default template (see [Project Template](/project-template)). The
-client already wires `@loxley/sdk` and `@loxley/react`:
+`loxley init` generates the default template (see [Project Template](/project-template)). The client
+already wires `@loxley/sdk` and `@loxley/react`:
 
 - `client/src/sdk.ts` builds the shared SDK instance
 - `client/src/hooks/useE3.ts` uses `useLoxleySDK` to expose helper hooks throughout the UI
@@ -348,8 +347,8 @@ addresses, then restart the dev server so the SDK reconnects.
 
 For complex E3 programs with specialized requirements, you may want to build an application-specific
 SDK on top of or alongside the Loxley SDK. For example,
-[CRISP](https://github.com/theloxley/loxley/tree/main/examples/CRISP) uses `@crisp-e3/sdk`,
-which provides:
+[CRISP](https://github.com/theloxley/loxley/tree/main/examples/CRISP) uses `@crisp-e3/sdk`, which
+provides:
 
 - Zero-knowledge proof generation for votes using Noir circuits
 - Merkle tree utilities for voter eligibility verification

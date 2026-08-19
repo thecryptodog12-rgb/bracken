@@ -5,8 +5,8 @@
 Before a node can register, it must stake two types of collateral:
 
 1. **LOX tokens** (ciphernode bond) — governance/utility token, staked directly
-2. **Collateral via tLOX tickets** (ticket collateral) — the configured ERC-20 asset is wrapped
-   into non-transferable LoxleyTicketToken. The planned launch asset is sUSDS.
+2. **Collateral via tLOX tickets** (ticket collateral) — the configured ERC-20 asset is wrapped into
+   non-transferable LoxleyTicketToken. The planned launch asset is sUSDS.
 
 Collateral ownership and operator identity are separate namespaces:
 
@@ -233,8 +233,7 @@ A completed ban or unban refreshes the affected registered operator immediately.
 ## Step 2: Fund Tickets
 
 The owner calls `addTicketBalanceFor(operator, amount)`: ticket collateral is pulled from the owner,
-but non-transferable tLOX is minted to the operator so committee snapshots remain keyed to the
-node.
+but non-transferable tLOX is minted to the operator so committee snapshots remain keyed to the node.
 
 These steps are token operations, not an onboarding order. The operator must already be registered:
 `addTicketBalanceFor` reverts with `NotRegistered()` otherwise. Onboarding runs bond, register, then
@@ -448,14 +447,14 @@ and burns until governance activates or cancels it.
 
 Bonding transfers LOX to `BondingRegistry`, which never delegates it. Under ERC20Votes an
 undelegated balance carries no voting power, so those votes are not moved to the registry — they
-cease to exist. Bonded LOX nonetheless still counts in `getPastTotalSupply`, so it raises the
-quorum denominator while being unable to help meet it.
+cease to exist. Bonded LOX nonetheless still counts in `getPastTotalSupply`, so it raises the quorum
+denominator while being unable to help meet it.
 
 Two contracts restore that weight:
 
-| Contract                     | Role                                                                                 |
-| ---------------------------- | ------------------------------------------------------------------------------------ |
-| `registry/BondedCheckpoints` | Records `totalBonded(owner)` over time. Only `BondingRegistry` may write.            |
+| Contract                     | Role                                                                                |
+| ---------------------------- | ----------------------------------------------------------------------------------- |
+| `registry/BondedCheckpoints` | Records `totalBonded(owner)` over time. Only `BondingRegistry` may write.           |
 | `registry/BondedVotes`       | `IERC5805` view summing a primary vote source and bonded LOX at the same timepoint. |
 
 ```text
@@ -473,23 +472,23 @@ BondedVotes.getPastTotalSupply(t)                 ← the DENOMINATOR
 ```
 
 `votesSource` is fixed at construction. Passing the token itself gives the original behaviour:
-wallet-held LOX votes through the token's own ERC20Votes delegation. Passing an escrow adapter
-means only LOX locked in the escrow votes, so holders must lock to participate while operators keep
-their weight by bonding instead.
+wallet-held LOX votes through the token's own ERC20Votes delegation. Passing an escrow adapter means
+only LOX locked in the escrow votes, so holders must lock to participate while operators keep their
+weight by bonding instead.
 
 Total supply is **not** adjusted, and is always read from the **token** rather than the votes
-source. Bonded and locked LOX were both transferred, not burned, so both are already in the supply
-— adding either again would inflate every quorum denominator, which is the distortion this is meant
-to remove, and reading the escrow's supply instead would omit the bonded half entirely and let
+source. Bonded and locked LOX were both transferred, not burned, so both are already in the supply —
+adding either again would inflate every quorum denominator, which is the distortion this is meant to
+remove, and reading the escrow's supply instead would omit the bonded half entirely and let
 participation exceed 100%. Escrowed and bonded LOX cannot overlap, because escrowing custodies the
 token in the escrow and bonding custodies it in the registry.
 
 ### Vesting-locked LOX
 
 Under an escrow votes source there is a third numerator: LOX still encumbered by the token's own
-vesting locks. That LOX sits in the holder's own wallet and `LoxleyToken._update` refuses to
-move it, so it can never be deposited into the escrow — without counting it, a locked holder would
-be barred from governance for the whole vesting schedule by a rule they cannot act on.
+vesting locks. That LOX sits in the holder's own wallet and `LoxleyToken._update` refuses to move
+it, so it can never be deposited into the escrow — without counting it, a locked holder would be
+barred from governance for the whole vesting schedule by a rule they cannot act on.
 
 Unlike the escrowed and bonded halves, this one **overlaps** the bond. A bond satisfies a lock:
 `transferableBalanceOf` lets a wallet move locked LOX to the extent the bond already covers the
@@ -609,7 +608,7 @@ doing nothing.
 
 | Requirement               | Default             | Description                                |
 | ------------------------- | ------------------- | ------------------------------------------ |
-| `requiredCiphernodeBond`  | Configured by owner | Min LOX to register                       |
+| `requiredCiphernodeBond`  | Configured by owner | Min LOX to register                        |
 | `ciphernodeBondActiveBps` | 8000 (80%)          | % of required bond to stay active          |
 | `minTicketBalance`        | Configured by owner | Min tickets for active status              |
 | `ticketPrice`             | Configured by owner | Stablecoin cost per ticket (in base units) |

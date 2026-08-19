@@ -35,8 +35,7 @@
 use actix::{Actor, Addr, Context, Handler};
 use e3_events::{
     BusHandle, CommitmentConsistencyCheckRequested, CommitmentLink, E3id, EventPublisher,
-    EventSubscriber, EventType, LoxleyEvent, LoxleyEventData, ProofVerificationPassed,
-    TypedEvent,
+    EventSubscriber, EventType, LoxleyEvent, LoxleyEventData, ProofVerificationPassed, TypedEvent,
 };
 use e3_utils::NotifySync;
 use tracing::{error, info};

@@ -30,8 +30,8 @@ Addresses are **not** repeated here — they go stale. The live values are the d
 `src/lib/chain.ts` (`CONTRACTS`), each overridable by its `VITE_*` variable. Cross-check them
 against `packages/loxley-contracts/deployed_contracts.json` for the target network.
 
-- `Loxley` proxy — `E3Requested`, `PlaintextOutputPublished`, `RewardsDistributed`, plus `getE3`
-  / `getE3Stage` / `e3Payments` view functions.
+- `Loxley` proxy — `E3Requested`, `PlaintextOutputPublished`, `RewardsDistributed`, plus `getE3` /
+  `getE3Stage` / `e3Payments` view functions.
 - `CiphernodeRegistryOwnable` — `CommitteeRequested` (threshold + seed), `CommitteeFinalized`
   (members), `CommitteePublished` (joint PK).
 - `BondingRegistry` — operator collateral and the write path behind the operator guide (see below).

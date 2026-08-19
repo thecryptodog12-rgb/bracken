@@ -21,10 +21,9 @@ use e3_events::{
     CommitteeMemberExcluded, CommitteeMemberExpelled, ComputeRequest, ComputeRequestError,
     ComputeRequestErrorKind, ComputeResponse, ComputeResponseKind, CorrelationId,
     DecryptedSharesAggregationProofRequest, DecryptionAggregationRequest, DecryptionshareCreated,
-    Die, E3Failed, E3Stage, E3id, EType, EventContext, FailureReason, LoxleyEvent,
-    LoxleyEventData, PlaintextAggregated, Proof, Sequenced, ShareVerificationComplete,
-    ShareVerificationDispatched, SignedProofPayload, TypedEvent, VerificationKind, ZkRequest,
-    ZkResponse,
+    Die, E3Failed, E3Stage, E3id, EType, EventContext, FailureReason, LoxleyEvent, LoxleyEventData,
+    PlaintextAggregated, Proof, Sequenced, ShareVerificationComplete, ShareVerificationDispatched,
+    SignedProofPayload, TypedEvent, VerificationKind, ZkRequest, ZkResponse,
 };
 use e3_fhe_params::BfvPreset;
 use e3_sortition::{E3CommitteeContainsRequest, E3CommitteeContainsResponse, Sortition};

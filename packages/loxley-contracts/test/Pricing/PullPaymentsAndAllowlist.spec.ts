@@ -263,10 +263,7 @@ describe("Loxley — pull payments + fee-token allow-list", function () {
 
       // After unblacklisting, treasury can claim what it accrued.
       await blacklistToken.unblacklist(treasuryAddr);
-      const credit = await loxley.pendingTreasuryClaim(
-        treasuryAddr,
-        tokenAddr,
-      );
+      const credit = await loxley.pendingTreasuryClaim(treasuryAddr, tokenAddr);
       const before = await feeToken.balanceOf(treasuryAddr);
       await loxley.connect(treasury).treasuryClaim(tokenAddr);
       expect((await feeToken.balanceOf(treasuryAddr)) - before).to.equal(
@@ -287,9 +284,9 @@ describe("Loxley — pull payments + fee-token allow-list", function () {
 
       // Disable current fee token via allow-list (token still set on Loxley).
       await loxley.setFeeTokenAllowed(await feeToken.getAddress(), false);
-      expect(
-        await loxley.isFeeTokenAllowed(await feeToken.getAddress()),
-      ).to.eq(false);
+      expect(await loxley.isFeeTokenAllowed(await feeToken.getAddress())).to.eq(
+        false,
+      );
 
       const now = await time.latest();
       const fresh = {

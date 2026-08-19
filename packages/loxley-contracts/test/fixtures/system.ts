@@ -273,18 +273,15 @@ export async function deployLoxleySystem(
   // Deferred: LoxleyToken is deployed after BondingRegistry so the
   // immutable BONDING_REGISTRY reference can be set. See below.
 
-  const { loxleyTicketToken } = await ignition.deploy(
-    LoxleyTicketTokenModule,
-    {
-      parameters: {
-        LoxleyTicketToken: {
-          baseToken: await usdcToken.getAddress(),
-          registry: ADDRESS_ONE,
-          owner: ownerAddress,
-        },
+  const { loxleyTicketToken } = await ignition.deploy(LoxleyTicketTokenModule, {
+    parameters: {
+      LoxleyTicketToken: {
+        baseToken: await usdcToken.getAddress(),
+        registry: ADDRESS_ONE,
+        owner: ownerAddress,
       },
     },
-  );
+  });
   const ticketToken = LoxleyTicketTokenFactory.connect(
     await loxleyTicketToken.getAddress(),
     owner,

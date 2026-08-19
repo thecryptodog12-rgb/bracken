@@ -950,11 +950,7 @@ fn count_projected_events(projected: &[&str], event_type: &str) -> usize {
 /// Scan a node history for slashing, accusation, and protocol-fault signals that must not
 /// appear on an all-honest benchmark run. Catches regressions such as spurious C2→C4
 /// commitment mismatches when N > H that completion-only assertions would miss.
-fn collect_honest_run_faults(
-    history: &[LoxleyEvent],
-    e3_id: &E3id,
-    context: &str,
-) -> Vec<String> {
+fn collect_honest_run_faults(history: &[LoxleyEvent], e3_id: &E3id, context: &str) -> Vec<String> {
     let mut faults = Vec::new();
 
     for event in history {
@@ -1065,14 +1061,10 @@ fn publickey_aggregator_marker(data: &LoxleyEventData, e3_id: &E3id) -> Option<&
         LoxleyEventData::CiphernodeSelected(data) if data.e3_id == *e3_id => {
             Some("CiphernodeSelected")
         }
-        LoxleyEventData::AggregatorChanged(data)
-            if data.e3_id == *e3_id && data.is_aggregator =>
-        {
+        LoxleyEventData::AggregatorChanged(data) if data.e3_id == *e3_id && data.is_aggregator => {
             Some("AggregatorChanged")
         }
-        LoxleyEventData::KeyshareCreated(data) if data.e3_id == *e3_id => {
-            Some("KeyshareCreated")
-        }
+        LoxleyEventData::KeyshareCreated(data) if data.e3_id == *e3_id => Some("KeyshareCreated"),
         LoxleyEventData::ShareVerificationDispatched(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::PkGenerationProofs =>
         {
@@ -2597,8 +2589,7 @@ async fn test_stopped_keyshares_retain_state() -> Result<()> {
 
     let bus = EventSystem::in_mem()
         .with_event_bus(
-            EventBus::<e3_events::LoxleyEvent>::new(EventBusConfig { deduplicate: true })
-                .start(),
+            EventBus::<e3_events::LoxleyEvent>::new(EventBusConfig { deduplicate: true }).start(),
         )
         .handle()?
         .enable("cn2");

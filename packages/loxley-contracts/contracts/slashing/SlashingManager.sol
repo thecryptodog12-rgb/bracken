@@ -416,9 +416,7 @@ contract SlashingManager is
             policy.failureReason == 0 ||
                 (policy.affectsCommittee &&
                     policy.failureReason ==
-                    uint8(
-                        ILoxley.FailureReason.InsufficientCommitteeMembers
-                    )),
+                    uint8(ILoxley.FailureReason.InsufficientCommitteeMembers)),
             InvalidPolicy()
         );
 
@@ -821,9 +819,9 @@ contract SlashingManager is
                 .expelCommitteeMember(p.e3Id, p.operator, p.reason);
 
             if (activeCount < thresholdM) {
-                ILoxley.E3Stage stage = dependencies
-                    .loxleyContract
-                    .getE3Stage(p.e3Id);
+                ILoxley.E3Stage stage = dependencies.loxleyContract.getE3Stage(
+                    p.e3Id
+                );
                 if (
                     stage != ILoxley.E3Stage.Complete &&
                     stage != ILoxley.E3Stage.Failed
@@ -833,9 +831,7 @@ contract SlashingManager is
                     dependencies.loxleyContract.onE3Failed(
                         p.e3Id,
                         uint8(
-                            ILoxley
-                                .FailureReason
-                                .InsufficientCommitteeMembers
+                            ILoxley.FailureReason.InsufficientCommitteeMembers
                         )
                     );
                 }

@@ -107,9 +107,7 @@ async function deployStack() {
     minThreshold: 0,
   });
 
-  await feeToken
-    .connect(requester)
-    .approve(loxleyAddress, ethers.MaxUint256);
+  await feeToken.connect(requester).approve(loxleyAddress, ethers.MaxUint256);
 
   const makeRequest = async () => {
     const now = await time.latest();

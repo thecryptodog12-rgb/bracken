@@ -389,8 +389,8 @@ fallback delay in a way that suppresses the only remaining submitter.
 
 ## Choreography and Local Orchestration
 
-Loxley remains choreographed across nodes and contracts: no node is the global coordinator.
-Inside one node, a per-E3 workflow is explicitly orchestrated so its durable state answers:
+Loxley remains choreographed across nodes and contracts: no node is the global coordinator. Inside
+one node, a per-E3 workflow is explicitly orchestrated so its durable state answers:
 
 - what facts have been accepted;
 - which stage and canonical participants apply;

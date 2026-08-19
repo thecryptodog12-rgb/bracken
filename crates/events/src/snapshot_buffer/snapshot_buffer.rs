@@ -493,10 +493,7 @@ mod tests {
 
         // Shutdown arrives: every open batch must be force-flushed.
         buffer
-            .send(LoxleyEvent::from_data_ec(
-                Shutdown.into(),
-                create_ec(7, 3),
-            ))
+            .send(LoxleyEvent::from_data_ec(Shutdown.into(), create_ec(7, 3)))
             .await?;
         buffer.send(FlushPendingSnapshots).await??;
 

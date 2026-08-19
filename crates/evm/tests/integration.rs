@@ -17,8 +17,8 @@ use anyhow::Result;
 use e3_ciphernode_builder::{EventSystem, EvmSystemChainBuilder};
 use e3_events::{
     prelude::*, trap, BusHandle, EType, EvmEventConfig, EvmEventConfigChain, GetEvents,
-    HistoricalEvmEventsReceived, HistoricalEvmSyncStart, LoxleyEvent, LoxleyEventData,
-    SyncEnded, TestEvent,
+    HistoricalEvmEventsReceived, HistoricalEvmSyncStart, LoxleyEvent, LoxleyEventData, SyncEnded,
+    TestEvent,
 };
 use e3_evm::{helpers::EthProvider, EvmEventProcessor, EvmParser};
 use std::{sync::Arc, time::Duration};

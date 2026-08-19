@@ -126,10 +126,7 @@ fn make_test_log(block_number: u64) -> Log {
     }
 }
 
-fn setup_collector() -> (
-    EvmEventProcessor,
-    mpsc::UnboundedReceiver<LoxleyEvmEvent>,
-) {
+fn setup_collector() -> (EvmEventProcessor, mpsc::UnboundedReceiver<LoxleyEvmEvent>) {
     let (tx, rx) = mpsc::unbounded_channel();
     let addr = TestCollector { tx }.start();
     (addr.recipient(), rx)

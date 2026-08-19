@@ -23,11 +23,7 @@ fn safe_u256_to_u128(val: U256) -> Option<u128> {
     }
 }
 
-pub(crate) fn extractor(
-    data: &LogData,
-    topics: &[B256],
-    chain_id: u64,
-) -> Option<LoxleyEventData> {
+pub(crate) fn extractor(data: &LogData, topics: &[B256], chain_id: u64) -> Option<LoxleyEventData> {
     match topics.first() {
         Some(&ISlashingManager::SlashExecuted::SIGNATURE_HASH) => {
             let Ok(event) = ISlashingManager::SlashExecuted::decode_log_data(data) else {

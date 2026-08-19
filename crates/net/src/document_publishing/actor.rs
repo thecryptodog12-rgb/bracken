@@ -15,8 +15,8 @@ use actix::prelude::*;
 use anyhow::{Context, Result};
 use e3_events::{
     prelude::*, trap, trap_fut, BusHandle, CiphernodeSelected, CorrelationId, DocumentReceived,
-    E3RequestComplete, E3id, EType, EventSource, EventType, LoxleyEvent, LoxleyEventData,
-    PartyId, PublishDocumentRequested, TypedEvent,
+    E3RequestComplete, E3id, EType, EventSource, EventType, LoxleyEvent, LoxleyEventData, PartyId,
+    PublishDocumentRequested, TypedEvent,
 };
 use e3_utils::ArcBytes;
 use e3_utils::NotifySync;

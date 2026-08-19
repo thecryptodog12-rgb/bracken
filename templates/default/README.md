@@ -2,8 +2,8 @@
 
 The Loxley Protocol Template provides a complete development environment for building and testing
 applications with Fully Homomorphic Encryption (FHE). This template enables local deployment and
-interaction with the Loxley protocol without requiring the core contracts to be copied and
-avoiding complexities of specific programs (as zk circuits for CRISP).
+interaction with the Loxley protocol without requiring the core contracts to be copied and avoiding
+complexities of specific programs (as zk circuits for CRISP).
 
 ## Prerequisites
 
@@ -56,8 +56,8 @@ The easiest way to install the Loxley CLI is using our installer script:
 Or if you prefer wget:
 `wget -qO- https://raw.githubusercontent.com/gnosisguild/loxley/main/install | bash`
 
-This script will download and install loxleyup, which is the standalone installer for the
-Loxley CLI.
+This script will download and install loxleyup, which is the standalone installer for the Loxley
+CLI.
 
 Once you have `loxleyup` installed, you can manage your Loxley CLI installation:
 

@@ -103,10 +103,9 @@ accomplish this. To do this in typical Rust fashion we created a set of traits:
 
 - [`Snapshot`](https://github.com/theloxley/loxley/blob/main/crates/data/src/snapshot.rs) for
   defining how an object can create a snapshot of it's state
-- [`Checkpoint`](https://github.com/theloxley/loxley/blob/main/crates/data/src/snapshot.rs)
-  for defining how to save that snapshot to a repository
-- [`FromSnapshot`](https://github.com/theloxley/loxley/blob/main/crates/data/src/snapshot.rs)
-  and
+- [`Checkpoint`](https://github.com/theloxley/loxley/blob/main/crates/data/src/snapshot.rs) for
+  defining how to save that snapshot to a repository
+- [`FromSnapshot`](https://github.com/theloxley/loxley/blob/main/crates/data/src/snapshot.rs) and
   [`FromSnapshotWithParams`](https://github.com/theloxley/loxley/blob/main/crates/data/src/snapshot.rs)
   for defining how an object could be reconstituted from a snapshot
 
@@ -170,6 +169,6 @@ struct MyActor {
 ```
 
 We have also extracted the key calculation mechanism to a
-[`StoreKeys`](https://github.com/theloxley/loxley/blob/main/crates/events/src/store_keys.rs)
-struct. This is used in various places when creating repsitory factories for example
+[`StoreKeys`](https://github.com/theloxley/loxley/blob/main/crates/events/src/store_keys.rs) struct.
+This is used in various places when creating repsitory factories for example
 [here](https://github.com/theloxley/loxley/blob/main/crates/aggregator/src/repo.rs)

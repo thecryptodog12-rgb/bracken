@@ -50,9 +50,7 @@ fn effects_enabled_broadcasts() {
 
 #[test]
 fn event_without_e3_id_is_ignored() {
-    let msg = LoxleyEvent::<Sequenced>::test_event("no-id")
-        .seq(1)
-        .build();
+    let msg = LoxleyEvent::<Sequenced>::test_event("no-id").seq(1).build();
     assert_eq!(
         RequestRouter::route(&msg, &HashSet::new()),
         RoutingDecision::Ignore

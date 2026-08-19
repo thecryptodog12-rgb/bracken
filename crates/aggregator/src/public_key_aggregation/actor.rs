@@ -16,12 +16,11 @@ use e3_events::DkgFoldAttestationContext;
 use e3_events::{
     prelude::*, BusHandle, ComputeRequest, ComputeRequestError, ComputeResponse,
     ComputeResponseKind, CorrelationId, DKGRecursiveAggregationComplete, Die,
-    DkgAggregationRequest, E3Failed, E3Stage, E3id, EventContext, FailureReason, LoxleyEvent,
-    LoxleyEventData, KeyshareCreated, NodesFoldStepRequest, OrderedSet,
-    PkAggregationProofPending, PkAggregationProofRequest, PkAggregationProofSigned, Proof,
-    ProofType, PublicKeyAggregated, Sequenced, ShareVerificationComplete,
-    ShareVerificationDispatched, SignedProofFailed, SignedProofPayload, TypedEvent,
-    VerificationKind, ZkRequest, ZkResponse,
+    DkgAggregationRequest, E3Failed, E3Stage, E3id, EventContext, FailureReason, KeyshareCreated,
+    LoxleyEvent, LoxleyEventData, NodesFoldStepRequest, OrderedSet, PkAggregationProofPending,
+    PkAggregationProofRequest, PkAggregationProofSigned, Proof, ProofType, PublicKeyAggregated,
+    Sequenced, ShareVerificationComplete, ShareVerificationDispatched, SignedProofFailed,
+    SignedProofPayload, TypedEvent, VerificationKind, ZkRequest, ZkResponse,
 };
 use e3_events::{trap, EType};
 use e3_fhe::{Fhe, GetAggregatePublicKey};

@@ -771,8 +771,7 @@ contract CiphernodeRegistryOwnable is
 
         ILoxley.E3Stage stage = _loxleyFor(e3Id).getE3Stage(e3Id);
         if (
-            stage != ILoxley.E3Stage.Complete &&
-            stage != ILoxley.E3Stage.Failed
+            stage != ILoxley.E3Stage.Complete && stage != ILoxley.E3Stage.Failed
         ) revert E3NotTerminal(e3Id);
 
         c.obligationsReleased = true;
@@ -1294,9 +1293,7 @@ contract CiphernodeRegistryOwnable is
         return _committeeDependencies[e3Id].bonding;
     }
 
-    function _loxleyFor(
-        uint256 e3Id
-    ) internal view returns (ILoxley e3Loxley) {
+    function _loxleyFor(uint256 e3Id) internal view returns (ILoxley e3Loxley) {
         return _committeeDependencies[e3Id].loxleyContract;
     }
 

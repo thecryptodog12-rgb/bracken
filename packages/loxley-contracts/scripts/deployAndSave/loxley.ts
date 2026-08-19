@@ -226,9 +226,7 @@ export const upgradeAndSaveLoxley = async ({
 
   const preDeployedArgs = readDeploymentArgs("Loxley", chain);
   if (!preDeployedArgs?.address) {
-    throw new Error(
-      "Loxley proxy not found. Deploy first before upgrading.",
-    );
+    throw new Error("Loxley proxy not found. Deploy first before upgrading.");
   }
 
   const proxyAddress = preDeployedArgs.address;

@@ -72,16 +72,12 @@ fn implied(event: &LoxleyEventData) -> Option<(E3id, E3Stage)> {
         LoxleyEventData::CommitteeFinalized(d) => {
             Some((d.e3_id.clone(), E3Stage::CommitteeFinalized))
         }
-        LoxleyEventData::PublicKeyAggregated(d) => {
-            Some((d.e3_id.clone(), E3Stage::KeyPublished))
-        }
+        LoxleyEventData::PublicKeyAggregated(d) => Some((d.e3_id.clone(), E3Stage::KeyPublished)),
         LoxleyEventData::CiphertextOutputPublished(d) => {
             Some((d.e3_id.clone(), E3Stage::CiphertextReady))
         }
         LoxleyEventData::PlaintextAggregated(d) => Some((d.e3_id.clone(), E3Stage::Complete)),
-        LoxleyEventData::PlaintextOutputPublished(d) => {
-            Some((d.e3_id.clone(), E3Stage::Complete))
-        }
+        LoxleyEventData::PlaintextOutputPublished(d) => Some((d.e3_id.clone(), E3Stage::Complete)),
         LoxleyEventData::E3RequestComplete(d) => Some((d.e3_id.clone(), E3Stage::Complete)),
         LoxleyEventData::E3Failed(d) => Some((d.e3_id.clone(), E3Stage::Failed)),
         // `E3StageChanged` carries the authoritative stage directly.

@@ -133,8 +133,7 @@ export function normalizeSaleConfig(
   const auctionGenerated = auction.generated ?? {};
   const lbp = raw.lbp ?? {};
   const lbpAliases = raw.lbp as
-    | (Partial<LbpConfig> & { reservedTokenAmountForLPWei?: string })
-    | undefined;
+    (Partial<LbpConfig> & { reservedTokenAmountForLPWei?: string }) | undefined;
   const lbpUniswap = lbp?.uniswap ?? {};
   const lbpRecipients = lbp?.recipients ?? {};
   const lbpAdvanced = lbp?.advanced ?? {};
@@ -163,7 +162,7 @@ export function normalizeSaleConfig(
     (predicateRegistry !== ZERO && Boolean(predicatePolicyID)) ||
     Boolean(
       raw.predicateHook?.address ??
-        (useInfraPredicate ? infra?.validationHook : undefined),
+      (useInfraPredicate ? infra?.validationHook : undefined),
     );
 
   return {

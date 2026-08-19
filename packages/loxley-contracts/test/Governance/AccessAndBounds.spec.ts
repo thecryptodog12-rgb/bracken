@@ -137,12 +137,8 @@ describe("Governance — access control, bounds & events", function () {
 
     it("exposes MAX_TIMEOUT_WINDOW / MAX_COMMITTEE_SIZE / MAX_*_BPS", async function () {
       const { loxley } = await deployAll();
-      expect(await loxley.MAX_DURATION_CAP()).to.equal(
-        365n * 24n * 60n * 60n,
-      );
-      expect(await loxley.MAX_TIMEOUT_WINDOW()).to.equal(
-        30n * 24n * 60n * 60n,
-      );
+      expect(await loxley.MAX_DURATION_CAP()).to.equal(365n * 24n * 60n * 60n);
+      expect(await loxley.MAX_TIMEOUT_WINDOW()).to.equal(30n * 24n * 60n * 60n);
       expect(await loxley.MAX_COMMITTEE_SIZE()).to.equal(3n);
       expect(await loxley.MAX_MARGIN_BPS()).to.equal(5_000n);
       expect(await loxley.MAX_PROTOCOL_SHARE_BPS()).to.equal(5_000n);

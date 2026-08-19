@@ -78,9 +78,7 @@ impl Handler<LoxleyEvent> for ThresholdPlaintextAggregator {
     fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            LoxleyEventData::DecryptionshareCreated(data) => {
-                ctx.notify(TypedEvent::new(data, ec))
-            }
+            LoxleyEventData::DecryptionshareCreated(data) => ctx.notify(TypedEvent::new(data, ec)),
             LoxleyEventData::E3RequestComplete(_) => self.notify_sync(ctx, Die),
             LoxleyEventData::ComputeResponse(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))

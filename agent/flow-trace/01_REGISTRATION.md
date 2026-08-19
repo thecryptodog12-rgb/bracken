@@ -29,8 +29,8 @@ The operator may correct the address while the position is empty. Every collater
 action requires the configured owner; after funding or registration, rotation is two-step:
 `proposeBondOwner(operator, newOwner)` from the current owner, followed by
 `acceptBondOwner(operator)` from the proposed owner. Acceptance is blocked if moving the operator's
-LOX credit would leave the previous owner's wallet-plus-remaining-bonds below its current locked
-LOX balance.
+LOX credit would leave the previous owner's wallet-plus-remaining-bonds below its current locked LOX
+balance.
 
 Only that owner can call the financial/lifecycle `...For(operator)` entry points:
 `bondCiphernodeFor`, `addTicketBalanceFor`, `registerOperatorFor`, `removeTicketBalanceFor`,
@@ -119,10 +119,10 @@ owner-authorized position calls fail.
 The current owner can later call `proposeBondOwner(operator, newOwner)`. Acceptance by `newOwner`
 moves the operator's active plus pending LOX credit between `_bondedByOwner` accounts atomically
 only when the previous owner's wallet balance plus its remaining bonds still covers
-`lockedBalanceOf(previousOwner)`. This prevents ownership rotation from converting bonded locked
-LOX into an unlocked exit payout. A position backed entirely by locked LOX can be rotated after
-the old owner exits and reclaims it, or after equivalent LOX is returned to that owner's wallet.
-Successful acceptance emits a new `BondOwnerSet`, so the event projection follows rotations.
+`lockedBalanceOf(previousOwner)`. This prevents ownership rotation from converting bonded locked LOX
+into an unlocked exit payout. A position backed entirely by locked LOX can be rotated after the old
+owner exits and reclaims it, or after equivalent LOX is returned to that owner's wallet. Successful
+acceptance emits a new `BondOwnerSet`, so the event projection follows rotations.
 
 ---
 
@@ -163,8 +163,8 @@ ciphernode bond is the reverse: `registerOperatorFor` requires
 `ciphernodeBond >= requiredCiphernodeBond`, so the bond must already be in place. The only valid
 order is bond, register, tickets.
 
-The node's address—not the bond owner's—is inserted into the IMT, owns the tLOX balance, and
-remains the committee and slashing identity.
+The node's address—not the bond owner's—is inserted into the IMT, owns the tLOX balance, and remains
+the committee and slashing identity.
 
 ---
 

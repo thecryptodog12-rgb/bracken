@@ -452,10 +452,7 @@ pub(crate) fn extractor(
                 "Preserving event without a typed Loxley.sol decoder"
             );
             Ok(Some(crate::domain::evm_log_observation::observe(
-                "Loxley",
-                data,
-                topics,
-                chain_id,
+                "Loxley", data, topics, chain_id,
             )))
         }
     }
