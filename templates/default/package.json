@@ -32,7 +32,7 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@loxley/config": "^0",
+    "@loxley/config": "workspace:*",
     "eslint": "^9.39.1",
     "@nomicfoundation/hardhat-ethers": "4.0.3",
     "@nomicfoundation/hardhat-ethers-chai-matchers": "3.0.1",
