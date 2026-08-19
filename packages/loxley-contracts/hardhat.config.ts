@@ -81,6 +81,33 @@ function getChainConfig(chain: keyof typeof chainIds, apiUrl: string) {
   };
 }
 
+// Robinhood Chain draait Blockscout i.p.v. Etherscan en heeft een eigen RPC, dus
+// niet via getChainConfig(). Zelfde vorm -- teruggeven vanuit een functie, zodat
+// TypeScript's excess-property-check (die alleen op directe object-literals slaat)
+// niet afgaat op blockExplorers.
+function getRobinhoodConfig() {
+  let accounts: [string] | { count: number; mnemonic: string; path: string };
+  if (privateKey) {
+    accounts = [privateKey];
+  } else {
+    accounts = { count: 10, mnemonic, path: "m/44'/60'/0'/0" };
+  }
+
+  return {
+    accounts,
+    chainId: chainIds.robinhood,
+    url:
+      process.env.ROBINHOOD_RPC_URL ?? "https://rpc.mainnet.chain.robinhood.com",
+    type: "http" as const,
+    chainType: "l1" as const,
+    blockExplorers: {
+      etherscan: {
+        apiUrl: "https://robinhoodchain.blockscout.com/api",
+      },
+    },
+  };
+}
+
 const config: HardhatUserConfig = {
   plugins: [
     hardhatToolboxMochaEthersPlugin,
@@ -159,22 +186,7 @@ const config: HardhatUserConfig = {
     ),
     sepolia: getChainConfig("sepolia", process.env.ETHERSCAN_API_KEY || ""),
     goerli: getChainConfig("goerli", process.env.ETHERSCAN_API_KEY || ""),
-    robinhood: {
-      accounts: privateKey
-        ? [privateKey]
-        : { count: 10, mnemonic, path: "m/44'/60'/0'/0" },
-      chainId: chainIds.robinhood,
-      url:
-        process.env.ROBINHOOD_RPC_URL ??
-        "https://rpc.mainnet.chain.robinhood.com",
-      type: "http" as const,
-      chainType: "l1" as const,
-      blockExplorers: {
-        etherscan: {
-          apiUrl: "https://robinhoodchain.blockscout.com/api",
-        },
-      },
-    },
+    robinhood: getRobinhoodConfig(),
   },
   verify: {
     etherscan: {
