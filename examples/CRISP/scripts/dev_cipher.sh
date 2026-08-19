@@ -7,8 +7,8 @@ source "${SCRIPT_DIR}/lib/dev_config.sh"
 READYFILE=$1
 
 # nuke past installations as we are adding these nodes to the contract
-rm -rf ./.interfold/data
-rm -rf ./.interfold/config
+rm -rf ./.loxley/data
+rm -rf ./.loxley/config
 rm -rf $READYFILE
 
 PRIVATE_KEY_CN1="0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
@@ -17,25 +17,25 @@ PRIVATE_KEY_CN3="0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b00
 PRIVATE_KEY_CN4="0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a"
 PRIVATE_KEY_CN5="0x8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba"
 
-interfold wallet set --name cn1 --private-key "$PRIVATE_KEY_CN1"
-interfold wallet set --name cn2 --private-key "$PRIVATE_KEY_CN2"
-interfold wallet set --name cn3 --private-key "$PRIVATE_KEY_CN3"
-interfold wallet set --name cn4 --private-key "$PRIVATE_KEY_CN4"
-interfold wallet set --name cn5 --private-key "$PRIVATE_KEY_CN5"
+loxley wallet set --name cn1 --private-key "$PRIVATE_KEY_CN1"
+loxley wallet set --name cn2 --private-key "$PRIVATE_KEY_CN2"
+loxley wallet set --name cn3 --private-key "$PRIVATE_KEY_CN3"
+loxley wallet set --name cn4 --private-key "$PRIVATE_KEY_CN4"
+loxley wallet set --name cn5 --private-key "$PRIVATE_KEY_CN5"
 
 load_crisp_dev_config
 
 echo "Setting up ZK prover..."
-interfold noir setup
+loxley noir setup
 
-sync_interfold_circuit_artifacts
+sync_loxley_circuit_artifacts
 
 # using & instead of -d so that wait works below
-interfold nodes up -v &
+loxley nodes up -v &
 SWARM_PID=$!
 
 # `nodes up` keeps running even when every node it supervises has exited, so leaving it behind on
-# an early exit would orphan it - and the next run wipes .interfold/data out from under it.
+# an early exit would orphan it - and the next run wipes .loxley/data out from under it.
 cleanup_swarm() {
   kill -TERM "$SWARM_PID" 2>/dev/null || true
 }
@@ -50,7 +50,7 @@ on_signal() {
   exit "$1"
 }
 # INT/TERM as well as EXIT: an untrapped SIGTERM kills the shell without running the EXIT trap, and
-# the `pkill -f "interfold start"` in dev.sh only matches the child nodes, not this supervisor - left
+# the `pkill -f "loxley start"` in dev.sh only matches the child nodes, not this supervisor - left
 # behind it holds 127.0.0.1:13415 and the next `nodes up` bails as already running.
 trap cleanup_swarm EXIT
 trap 'on_signal 130' INT
@@ -61,11 +61,11 @@ trap 'on_signal 143' TERM
 # the full count to hold across consecutive samples instead.
 # Match the STATUS column exactly: node names come from this config, so a substring match over
 # the whole line could be satisfied by a node name rather than by a real status.
-EXPECTED_NODES=$(yq -r '.nodes | length' ./interfold.config.yaml)
+EXPECTED_NODES=$(yq -r '.nodes | length' ./loxley.config.yaml)
 # A missing `nodes:` key yields `null`, which bash would evaluate as 0 in the -eq below and make
 # "no nodes started" look like success.
 if ! [[ "$EXPECTED_NODES" =~ ^[1-9][0-9]*$ ]]; then
-  echo "ERROR: could not read a node count from ./interfold.config.yaml (got '${EXPECTED_NODES}')" >&2
+  echo "ERROR: could not read a node count from ./loxley.config.yaml (got '${EXPECTED_NODES}')" >&2
   exit 1
 fi
 REQUIRED_STABLE_SAMPLES=3
@@ -75,7 +75,7 @@ STARTED_NODES=0
 for _ in $(seq 1 60); do
   # `|| true`: this is a poll, so a failing `nodes ps` has to cost a sample rather than abort the
   # script through `set -e`. Captured first so `set -o pipefail` cannot do the same via the pipe.
-  PS_OUTPUT=$(interfold nodes ps 2>/dev/null || true)
+  PS_OUTPUT=$(loxley nodes ps 2>/dev/null || true)
   STARTED_NODES=$(printf '%s\n' "$PS_OUTPUT" | awk 'NR > 1 && $2 == "Started" { c++ } END { print c + 0 }')
   if [[ "$STARTED_NODES" -eq "$EXPECTED_NODES" ]]; then
     STABLE_SAMPLES=$((STABLE_SAMPLES + 1))
@@ -90,17 +90,17 @@ done
 
 if [[ "$STABLE_SAMPLES" -lt "$REQUIRED_STABLE_SAMPLES" ]]; then
   echo "ERROR: only ${STARTED_NODES}/${EXPECTED_NODES} ciphernodes stayed up. Current status:" >&2
-  interfold nodes ps >&2 || true
+  loxley nodes ps >&2 || true
   echo "See the node output above for the cause. If it mentions a missing Cargo feature, the" >&2
-  echo "installed interfold binary does not match this dev profile - re-run 'pnpm dev:setup'." >&2
+  echo "installed loxley binary does not match this dev profile - re-run 'pnpm dev:setup'." >&2
   exit 1
 fi
 
-CN1=$(cat ./interfold.config.yaml | yq -r '.nodes.cn1.address')
-CN2=$(cat ./interfold.config.yaml | yq -r '.nodes.cn2.address')
-CN3=$(cat ./interfold.config.yaml | yq -r '.nodes.cn3.address')
-CN4=$(cat ./interfold.config.yaml | yq -r '.nodes.cn4.address')
-CN5=$(cat ./interfold.config.yaml | yq -r '.nodes.cn5.address')
+CN1=$(cat ./loxley.config.yaml | yq -r '.nodes.cn1.address')
+CN2=$(cat ./loxley.config.yaml | yq -r '.nodes.cn2.address')
+CN3=$(cat ./loxley.config.yaml | yq -r '.nodes.cn3.address')
+CN4=$(cat ./loxley.config.yaml | yq -r '.nodes.cn4.address')
+CN5=$(cat ./loxley.config.yaml | yq -r '.nodes.cn5.address')
 
 # Add ciphernodes using variables from config.sh
 pnpm ciphernode:add --ciphernode-address "$CN1" --network "localhost"

@@ -155,7 +155,7 @@ async fn test_get_document_fails_with_exponential_backoff() -> Result<()> {
 
     // wait for events to settle
     let errors = errors.send(TakeEvents::new(1)).await?;
-    let error: InterfoldError = errors.events.first().unwrap().try_into()?;
+    let error: LoxleyError = errors.events.first().unwrap().try_into()?;
     assert_eq!(
             error.message,
             "Operation failed after 4 attempts. Last error: DHT get record failed: Timeout { key: Key(b\"\\xda-\\xe1\\xc0T\\x11$X\\x05\\xd1\\xd4\\xa6C\\x86\\x96\\xb7e\\xd9j\\x96\\x1bD\\xc8P#\\x0f\\\"\\xea A@b\") }"
@@ -201,7 +201,7 @@ async fn test_publishes_document_fails_with_exponential_backoff() -> Result<()> 
 
     // Expect error to exist
     let errors = errors.send(TakeEvents::new(1)).await?;
-    let error: InterfoldError = errors.events.first().unwrap().try_into()?;
+    let error: LoxleyError = errors.events.first().unwrap().try_into()?;
     assert_eq!(
             error.message,
             "Operation failed after 4 attempts. Last error: DHT put record failed: PutRecordError(QuorumFailed { key: Key(b\"I got the secret\"), success: [], quorum: 1 })"

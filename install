@@ -2,8 +2,8 @@
 
 set -e
 
-GITHUB_REPO="gnosisguild/interfold"
-BINARY_NAME="interfoldup"
+GITHUB_REPO="gnosisguild/loxley"
+BINARY_NAME="loxleyup"
 INSTALL_DIR="$HOME/.local/bin"
 
 log_info() {
@@ -133,7 +133,7 @@ get_download_url() {
 }
 
 main() {
-    log_info "Interfold Installer"
+    log_info "Loxley Installer"
     local platform
     platform=$(detect_platform)
     log_info "Detected platform: $platform"
@@ -191,11 +191,11 @@ main() {
     echo ""
     log_success "Installation complete!"
     echo ""
-    echo "You can now use $BINARY_NAME to install the Interfold CLI:"
+    echo "You can now use $BINARY_NAME to install the Loxley CLI:"
     echo ""
-    echo "  $BINARY_NAME install    # Install the latest interfold CLI"
+    echo "  $BINARY_NAME install    # Install the latest loxley CLI"
     echo "  $BINARY_NAME update     # Update to the latest version"
-    echo "  $BINARY_NAME uninstall  # Remove the interfold CLI"
+    echo "  $BINARY_NAME uninstall  # Remove the loxley CLI"
     echo "  $BINARY_NAME --help     # Show help"
     echo ""
 }

@@ -6,7 +6,7 @@
 
 use super::*;
 use e3_events::{
-    E3Failed, E3RequestComplete, E3Stage, E3StageChanged, FailureReason, InterfoldEvent,
+    E3Failed, E3RequestComplete, E3Stage, E3StageChanged, FailureReason, LoxleyEvent,
     PlaintextAggregated, RewardCredited, Sequenced, Shutdown,
 };
 
@@ -14,15 +14,15 @@ fn e3id() -> E3id {
     E3id::new("1", 1)
 }
 
-fn with_e3_id(label: &str, id: E3id) -> InterfoldEvent {
-    InterfoldEvent::<Sequenced>::test_event(label)
+fn with_e3_id(label: &str, id: E3id) -> LoxleyEvent {
+    LoxleyEvent::<Sequenced>::test_event(label)
         .e3_id(id)
         .seq(1)
         .build()
 }
 
-fn from_data(data: impl Into<InterfoldEventData>) -> InterfoldEvent {
-    InterfoldEvent::<Sequenced>::test_event("x")
+fn from_data(data: impl Into<LoxleyEventData>) -> LoxleyEvent {
+    LoxleyEvent::<Sequenced>::test_event("x")
         .data(data)
         .seq(1)
         .build()
@@ -50,7 +50,7 @@ fn effects_enabled_broadcasts() {
 
 #[test]
 fn event_without_e3_id_is_ignored() {
-    let msg = InterfoldEvent::<Sequenced>::test_event("no-id")
+    let msg = LoxleyEvent::<Sequenced>::test_event("no-id")
         .seq(1)
         .build();
     assert_eq!(
@@ -179,7 +179,7 @@ fn stage_changed_to_failed_does_not_complete() {
 
 #[test]
 fn e3_request_complete_triggers_teardown() {
-    // InterfoldEventData::get_e3_id() now returns Some(e3_id) for E3RequestComplete,
+    // LoxleyEventData::get_e3_id() now returns Some(e3_id) for E3RequestComplete,
     // so the event reaches the Teardown arm of the router.
     let id = e3id();
     let msg = from_data(E3RequestComplete { e3_id: id.clone() });
@@ -207,7 +207,7 @@ fn generic_event_with_e3_id_has_no_completion() {
 
 // --- timeout-triggered E3Failed tests ---
 
-fn e3_failed(id: E3id, reason: FailureReason) -> InterfoldEvent {
+fn e3_failed(id: E3id, reason: FailureReason) -> LoxleyEvent {
     from_data(E3Failed {
         e3_id: id,
         failed_at_stage: E3Stage::CommitteeFinalized,

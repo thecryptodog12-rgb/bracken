@@ -5,7 +5,7 @@
       "chain_id": 11155111,
       "mocks": true,
       "contracts": {
-        "interfold": {
+        "loxley": {
           "address": "0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7",
           "deploy_block": 11459000
         },
@@ -31,11 +31,11 @@
         }
       },
       "reference": {
-        "InterfoldToken": {
+        "LoxleyToken": {
           "address": "0x7ffCCe335EEd0f3e3CbaD491ac68BF72a223606B",
           "deploy_block": 11458986
         },
-        "InterfoldTicketToken": {
+        "LoxleyTicketToken": {
           "address": "0x9e271C60139fA951EFb8954Dd0454B524630d767",
           "deploy_block": 11458976
         },

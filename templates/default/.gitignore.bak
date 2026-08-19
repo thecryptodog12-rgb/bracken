@@ -3,7 +3,7 @@ node_modules
 
 .direnv
 
-/.interfold
+/.loxley
 
 # Hardhat files
 /cache

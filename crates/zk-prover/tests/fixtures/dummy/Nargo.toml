@@ -1,6 +1,6 @@
 [package]
 name = "dummy"
 type = "bin"
-authors = ["Gnosis Guild / Interfold"]
+authors = ["Gnosis Guild / Loxley"]
 
 [dependencies]

@@ -3,7 +3,7 @@
 // This file is provided WITHOUT ANY WARRANTY;
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
-import { deployInterfold, getDeploymentChain, readDeploymentArgs, updateE3Config } from '@interfold/contracts/scripts'
+import { deployLoxley, getDeploymentChain, readDeploymentArgs, updateE3Config } from '@loxley/contracts/scripts'
 import { deployCRISPContracts } from './crisp'
 import { syncCrispEnvFromDeployments } from './syncCrispEnv'
 import path from 'path'
@@ -14,7 +14,7 @@ import { fileURLToPath } from 'url'
 // Map contract names to config keys
 const contractMapping: Record<string, string> = {
   CRISPProgram: 'e3_program',
-  Interfold: 'interfold',
+  Loxley: 'loxley',
   CiphernodeRegistryOwnable: 'ciphernode_registry',
   BondingRegistry: 'bonding_registry',
   SlashingManager: 'slashing_manager',
@@ -26,20 +26,20 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 /**
- * Deploys the Interfold and CRISP contracts
+ * Deploys the Loxley and CRISP contracts
  */
 export const deploy = async () => {
   const chain = getDeploymentChain(hre)
 
-  const shouldDeployInterfold = Boolean(process.env.DEPLOY_INTERFOLD)
+  const shouldDeployLoxley = Boolean(process.env.DEPLOY_LOXLEY)
   const withZkVerification = process.env.ENABLE_ZK_VERIFICATION === 'true'
 
-  if (shouldDeployInterfold) {
-    await deployInterfold(true, withZkVerification)
+  if (shouldDeployLoxley) {
+    await deployLoxley(true, withZkVerification)
   }
   const { governanceComplete } = await deployCRISPContracts()
 
-  if (!readDeploymentArgs('Interfold', chain)?.address) {
+  if (!readDeploymentArgs('Loxley', chain)?.address) {
     console.log('CRISP prerequisites deployed. Bind the program during protocol governance wiring.')
     return
   }
@@ -48,8 +48,8 @@ export const deploy = async () => {
     return
   }
 
-  const interfoldConfigPath = path.join(__dirname, '..', '..', '..', 'interfold.config.yaml')
-  updateE3Config(chain, interfoldConfigPath, contractMapping)
+  const loxleyConfigPath = path.join(__dirname, '..', '..', '..', 'loxley.config.yaml')
+  updateE3Config(chain, loxleyConfigPath, contractMapping)
 
   syncCrispEnvFromDeployments(chain)
 }

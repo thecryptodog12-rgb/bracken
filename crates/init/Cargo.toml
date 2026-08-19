@@ -3,7 +3,7 @@ name = "e3-init"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "E3 - Interfold Init Function"
+description = "E3 - Loxley Init Function"
 repository.workspace = true
 
 [dependencies]

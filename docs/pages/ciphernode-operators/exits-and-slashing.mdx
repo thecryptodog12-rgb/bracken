@@ -25,7 +25,7 @@ Watch for reward events and ensure your wallet can receive the reward token:
 
 ```bash
 # Check your status including any pending rewards
-interfold ciphernode status
+loxley ciphernode status
 ```
 
 > Keep the bond-owner wallet funded with ETH for gas when it claims rewards or exits. Keep the
@@ -102,7 +102,7 @@ To safely exit the ciphernode registry:
 The bond owner or operator emergency key can request deregistration:
 
 ```bash
-interfold ciphernode deregister --operator 0xOPERATOR
+loxley ciphernode deregister --operator 0xOPERATOR
 ```
 
 ### Step 2: Wait for Exit Delay
@@ -117,7 +117,7 @@ Assets enter a queue with a delay period (7 days on Sepolia):
 Check your exit status:
 
 ```bash
-interfold ciphernode status
+loxley ciphernode status
 ```
 
 Look for "Exit pending" and "Pending exits" fields.
@@ -127,7 +127,7 @@ Look for "Exit pending" and "Pending exits" fields.
 After the delay period, the bond owner claims both assets:
 
 ```bash
-interfold --config /path/to/owner.yaml ciphernode bond \
+loxley --config /path/to/owner.yaml ciphernode bond \
   --operator 0xOPERATOR claim
 ```
 
@@ -147,7 +147,7 @@ bondingRegistry.registerOperatorFor(operator);
 
 | Action                                                  | Signer         | Description                                           |
 | ------------------------------------------------------- | -------------- | ----------------------------------------------------- |
-| `interfold ciphernode status`                           | Operator       | Check registration and exit status                    |
+| `loxley ciphernode status`                           | Operator       | Check registration and exit status                    |
 | `deregisterOperatorFor(operator)`                       | Owner/operator | Start the full exit process                           |
 | `removeTicketBalanceFor(operator, amount)`              | Bond owner     | Queue ticket collateral for exit                      |
 | `unbondCiphernodeFor(operator, amount)`                 | Bond owner     | Queue FOLD for exit                                   |
@@ -158,7 +158,7 @@ bondingRegistry.registerOperatorFor(operator);
 
 | Check                 | Command / Event                                 |
 | --------------------- | ----------------------------------------------- |
-| Exit queue status     | `interfold ciphernode status`                   |
+| Exit queue status     | `loxley ciphernode status`                   |
 | Pending exits amounts | `pendingExits(address)` on BondingRegistry      |
 | Exit in progress      | `hasExitInProgress(address)` on BondingRegistry |
 | Claimable amounts     | `previewClaimable(address)` on BondingRegistry  |
@@ -181,7 +181,7 @@ After successfully claiming exits:
 1. **Wipe local secrets**:
 
    ```bash
-   interfold purge-all
+   loxley purge-all
    ```
 
 2. **Revoke access**:

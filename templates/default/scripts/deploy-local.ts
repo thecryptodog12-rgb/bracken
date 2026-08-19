@@ -4,13 +4,13 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-import { deployInterfold } from '@interfold/contracts/scripts'
+import { deployLoxley } from '@loxley/contracts/scripts'
 import { deployTemplate } from '../deploy/default'
 import { ensureTemplateCwd } from './template-paths'
 
 async function main() {
   ensureTemplateCwd()
-  console.log('🚀 Deploying Interfold protocol locally...')
+  console.log('🚀 Deploying Loxley protocol locally...')
 
   // Get hardhat runtime environment
   const hre = await import('hardhat')
@@ -23,7 +23,7 @@ async function main() {
   console.log('Account balance:', ethers.formatEther(await ethers.provider.getBalance(deployer.address)))
 
   // Mocks for local dev; skip on-chain ZK verifiers (needs pnpm compile:circuits).
-  await deployInterfold(true, false)
+  await deployLoxley(true, false)
   await deployTemplate()
 }
 

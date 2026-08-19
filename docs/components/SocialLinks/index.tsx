@@ -17,7 +17,7 @@ export const socialLinks: SocialLinksProps[] = [
   {
     name: 'twitter',
     icon: <XLogo size={24} />,
-    url: 'https://x.com/theinterfold',
+    url: 'https://x.com/theloxley',
   },
   {
     name: 'telegram',

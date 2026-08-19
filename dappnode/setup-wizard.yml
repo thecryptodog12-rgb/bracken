@@ -1,4 +1,4 @@
-# DAppNode Setup Wizard - Interfold Ciphernode
+# DAppNode Setup Wizard - Loxley Ciphernode
 version: '2'
 fields:
   - id: NETWORK
@@ -43,13 +43,13 @@ fields:
     patternErrorMessage: 'Must be a valid 20-byte hex address (0x...)'
 
   # Contracts
-  - id: INTERFOLD_CONTRACT
+  - id: LOXLEY_CONTRACT
     target:
       type: environment
-      name: INTERFOLD_CONTRACT
+      name: LOXLEY_CONTRACT
       service: ciphernode
-    title: 'Interfold Contract Address'
-    description: 'Address of the Interfold contract on the selected network.'
+    title: 'Loxley Contract Address'
+    description: 'Address of the Loxley contract on the selected network.'
     required: true
     pattern: '^0x[a-fA-F0-9]{40}$'
     patternErrorMessage: 'Must be a valid Ethereum address (0x...)'
@@ -76,13 +76,13 @@ fields:
     pattern: '^0x[a-fA-F0-9]{40}$'
     patternErrorMessage: 'Must be a valid Ethereum address (0x...)'
 
-  - id: INTERFOLD_DEPLOY_BLOCK
+  - id: LOXLEY_DEPLOY_BLOCK
     target:
       type: environment
-      name: INTERFOLD_DEPLOY_BLOCK
+      name: LOXLEY_DEPLOY_BLOCK
       service: ciphernode
-    title: 'Interfold Deploy Block'
-    description: 'Block number where the Interfold contract was deployed.'
+    title: 'Loxley Deploy Block'
+    description: 'Block number where the Loxley contract was deployed.'
     required: true
     pattern: '^[0-9]+$'
     patternErrorMessage: 'Must be a block number (integer).'
@@ -164,5 +164,5 @@ fields:
       name: EXTRA_OPTS
       service: ciphernode
     title: 'Extra Options'
-    description: 'Additional CLI arguments passed to `interfold start`.'
+    description: 'Additional CLI arguments passed to `loxley start`.'
     required: false

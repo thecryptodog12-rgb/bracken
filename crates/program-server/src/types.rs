@@ -19,7 +19,7 @@ pub struct ComputeResponse {
 pub struct ComputeRequest {
     pub e3_id: Option<String>,
     pub chain_id: u64,
-    pub interfold_address: String,
+    pub loxley_address: String,
     #[serde(deserialize_with = "deserialize_hex_string")]
     pub encryption_scheme_id: Vec<u8>,
     #[serde(deserialize_with = "deserialize_hex_string")]
@@ -66,7 +66,7 @@ pub enum WebhookPayload {
         #[derivative(Debug = "ignore")]
         proof: Vec<u8>,
         /// Circuit-compatible SAFE commitment to the decrypted ciphertext.
-        /// Required by `Interfold.publishCiphertextOutput` since the
+        /// Required by `Loxley.publishCiphertextOutput` since the
         /// ciphertext-binding remediation. Serialized as a 0x-prefixed
         /// hex string for direct forwarding to the template server.
         #[serde(serialize_with = "serialize_bytes32_as_hex")]
@@ -129,7 +129,7 @@ mod tests {
         {
             "e3_id": "12345",
             "chain_id": 31337,
-            "interfold_address": "0x1111111111111111111111111111111111111111",
+            "loxley_address": "0x1111111111111111111111111111111111111111",
             "encryption_scheme_id": "0x2222222222222222222222222222222222222222222222222222222222222222",
             "committee_public_key_hash": "0x3333333333333333333333333333333333333333333333333333333333333333",
             "params": "0x12345ffa",
@@ -146,7 +146,7 @@ mod tests {
         assert_eq!(payload.e3_id, Some("12345".to_string()));
         assert_eq!(payload.chain_id, 31337);
         assert_eq!(
-            payload.interfold_address,
+            payload.loxley_address,
             "0x1111111111111111111111111111111111111111"
         );
         assert_eq!(payload.encryption_scheme_id, vec![0x22; 32]);
@@ -173,7 +173,7 @@ mod tests {
         {
             "e3_id": "12345",
             "chain_id": 31337,
-            "interfold_address": "0x1111111111111111111111111111111111111111",
+            "loxley_address": "0x1111111111111111111111111111111111111111",
             "encryption_scheme_id": "2222222222222222222222222222222222222222222222222222222222222222",
             "committee_public_key_hash": "3333333333333333333333333333333333333333333333333333333333333333",
             "params": "12345ffa",
@@ -248,7 +248,7 @@ mod tests {
         request.insert("e3_id".into(), "0".into());
         request.insert("chain_id".into(), 31337.into());
         request.insert(
-            "interfold_address".into(),
+            "loxley_address".into(),
             "0x1111111111111111111111111111111111111111".into(),
         );
         request.insert(

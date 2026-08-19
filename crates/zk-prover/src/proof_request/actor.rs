@@ -17,7 +17,7 @@ use e3_events::{
     CorrelationId, DKGInnerProofReady, DecryptionKeyShared, DecryptionShareProofSigned,
     DecryptionShareProofsPending, DecryptionshareCreated, DkgProofSigned, E3Failed, E3Stage, E3id,
     EncryptionKeyCreated, EncryptionKeyPending, EventContext, EventPublisher, EventSubscriber,
-    EventType, FailureReason, InterfoldEvent, InterfoldEventData, PkAggregationProofPending,
+    EventType, FailureReason, LoxleyEvent, LoxleyEventData, PkAggregationProofPending,
     PkAggregationProofSigned, PkBfvProofRequest, PkGenerationProofSigned, Proof, ProofPayload,
     ProofType, ProofVerificationPassed, Sequenced, ShareDecryptionProofPending, SignedProofPayload,
     ThresholdShareCreated, ThresholdSharePending, TypedEvent, ZkRequest, ZkResponse,

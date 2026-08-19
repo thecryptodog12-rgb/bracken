@@ -5,12 +5,12 @@ set -euo pipefail
 export CARGO_INCREMENTAL=1
 
 # nuke past installations as we are adding these nodes to the contract
-rm -rf ./.interfold/data
-rm -rf ./.interfold/config
+rm -rf ./.loxley/data
+rm -rf ./.loxley/config
 
 cleanup() {
   echo "Cleaning up processes..."
-  pkill -9 -f "interfold start"
+  pkill -9 -f "loxley start"
   sleep 1
   
   # Kill any remaining background jobs from this script
@@ -42,22 +42,22 @@ if [ -z "$PRIVATE_KEY_ADMIN" ]; then
   exit 1
 fi
 
-interfold wallet set --name cn1 --private-key "$PRIVATE_KEY_CN1"
-interfold wallet set --name cn2 --private-key "$PRIVATE_KEY_CN2"
-interfold wallet set --name cn3 --private-key "$PRIVATE_KEY_CN3"
-interfold wallet set --name cn4 --private-key "$PRIVATE_KEY_CN4"
-interfold wallet set --name cn5 --private-key "$PRIVATE_KEY_CN5"
+loxley wallet set --name cn1 --private-key "$PRIVATE_KEY_CN1"
+loxley wallet set --name cn2 --private-key "$PRIVATE_KEY_CN2"
+loxley wallet set --name cn3 --private-key "$PRIVATE_KEY_CN3"
+loxley wallet set --name cn4 --private-key "$PRIVATE_KEY_CN4"
+loxley wallet set --name cn5 --private-key "$PRIVATE_KEY_CN5"
 
 # using & instead of -d so that wait works below
-interfold nodes up -v &
+loxley nodes up -v &
 
 sleep 2
 
-CN1=$(yq -r '.nodes.cn1.address' ./interfold.config.yaml)
-CN2=$(yq -r '.nodes.cn2.address' ./interfold.config.yaml)
-CN3=$(yq -r '.nodes.cn3.address' ./interfold.config.yaml)
-CN4=$(yq -r '.nodes.cn4.address' ./interfold.config.yaml)
-CN5=$(yq -r '.nodes.cn5.address' ./interfold.config.yaml)
+CN1=$(yq -r '.nodes.cn1.address' ./loxley.config.yaml)
+CN2=$(yq -r '.nodes.cn2.address' ./loxley.config.yaml)
+CN3=$(yq -r '.nodes.cn3.address' ./loxley.config.yaml)
+CN4=$(yq -r '.nodes.cn4.address' ./loxley.config.yaml)
+CN5=$(yq -r '.nodes.cn5.address' ./loxley.config.yaml)
 
 echo "Minting tokens" 
 

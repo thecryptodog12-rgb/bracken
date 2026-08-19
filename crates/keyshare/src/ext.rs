@@ -14,7 +14,7 @@ use anyhow::{anyhow, Result};
 use async_trait::async_trait;
 use e3_crypto::Cipher;
 use e3_data::{AutoPersist, RepositoriesFactory};
-use e3_events::{prelude::*, BusHandle, EType, InterfoldEvent, InterfoldEventData};
+use e3_events::{prelude::*, BusHandle, EType, LoxleyEvent, LoxleyEventData};
 use e3_request::{E3Context, E3ContextSnapshot, E3Extension, META_KEY};
 
 use crate::KeyshareState;
@@ -24,7 +24,7 @@ pub struct ThresholdKeyshareExtension {
     bus: BusHandle,
     cipher: Arc<Cipher>,
     address: String,
-    interfold_addresses: HashMap<u64, Address>,
+    loxley_addresses: HashMap<u64, Address>,
 }
 
 impl ThresholdKeyshareExtension {
@@ -32,13 +32,13 @@ impl ThresholdKeyshareExtension {
         bus: &BusHandle,
         cipher: &Arc<Cipher>,
         address: &str,
-        interfold_addresses: HashMap<u64, Address>,
+        loxley_addresses: HashMap<u64, Address>,
     ) -> Box<Self> {
         Box::new(Self {
             bus: bus.clone(),
             cipher: cipher.to_owned(),
             address: address.to_owned(),
-            interfold_addresses,
+            loxley_addresses,
         })
     }
 }
@@ -48,9 +48,9 @@ const ERROR_KEYSHARE_META_MISSING: &str =
 
 #[async_trait]
 impl E3Extension for ThresholdKeyshareExtension {
-    fn on_event(&self, ctx: &mut E3Context, evt: &InterfoldEvent) {
+    fn on_event(&self, ctx: &mut E3Context, evt: &LoxleyEvent) {
         // if this is NOT a CiphernodeSelected event then ignore
-        let InterfoldEventData::CiphernodeSelected(data) = evt.get_data() else {
+        let LoxleyEventData::CiphernodeSelected(data) = evt.get_data() else {
             return;
         };
 
@@ -59,12 +59,12 @@ impl E3Extension for ThresholdKeyshareExtension {
         }
 
         let e3_id = data.clone().e3_id;
-        let Some(interfold_address) = self.interfold_addresses.get(&e3_id.chain_id()).copied()
+        let Some(loxley_address) = self.loxley_addresses.get(&e3_id.chain_id()).copied()
         else {
             self.bus.err(
                 EType::KeyGeneration,
                 anyhow!(
-                    "Interfold address not configured for chain {}",
+                    "Loxley address not configured for chain {}",
                     e3_id.chain_id()
                 ),
             );
@@ -99,7 +99,7 @@ impl E3Extension for ThresholdKeyshareExtension {
                         .params_preset
                         .dkg_counterpart()
                         .unwrap_or(meta.params_preset),
-                    interfold_address,
+                    loxley_address,
                 })
                 .start()
                 .into(),
@@ -132,13 +132,13 @@ impl E3Extension for ThresholdKeyshareExtension {
             .params_preset
             .dkg_counterpart()
             .unwrap_or(meta.params_preset);
-        let interfold_address = self
-            .interfold_addresses
+        let loxley_address = self
+            .loxley_addresses
             .get(&snapshot.e3_id.chain_id())
             .copied()
             .ok_or_else(|| {
                 anyhow!(
-                    "Interfold address not configured for chain {}",
+                    "Loxley address not configured for chain {}",
                     snapshot.e3_id.chain_id()
                 )
             })?;
@@ -149,7 +149,7 @@ impl E3Extension for ThresholdKeyshareExtension {
             cipher: self.cipher.clone(),
             state,
             share_enc_preset,
-            interfold_address,
+            loxley_address,
         })
         .start()
         .into();

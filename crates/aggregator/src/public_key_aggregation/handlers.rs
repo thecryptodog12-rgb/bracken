@@ -11,36 +11,36 @@ impl Actor for PublicKeyAggregator {
     }
 }
 
-impl Handler<InterfoldEvent> for PublicKeyAggregator {
+impl Handler<LoxleyEvent> for PublicKeyAggregator {
     type Result = ();
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            InterfoldEventData::KeyshareCreated(data) => {
+            LoxleyEventData::KeyshareCreated(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ShareVerificationComplete(data) => {
+            LoxleyEventData::ShareVerificationComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::PkAggregationProofSigned(data) => {
+            LoxleyEventData::PkAggregationProofSigned(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::DKGRecursiveAggregationComplete(data) => {
+            LoxleyEventData::DKGRecursiveAggregationComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ComputeResponse(data) => {
+            LoxleyEventData::ComputeResponse(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ComputeRequestError(data) => {
+            LoxleyEventData::ComputeRequestError(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::DkgFoldAttestationContextEstablished(data) => {
+            LoxleyEventData::DkgFoldAttestationContextEstablished(data) => {
                 if data.e3_id == self.e3_id {
                     self.dkg_fold_attestation_context = Some(data.context);
                 }
             }
-            InterfoldEventData::E3RequestComplete(_) => self.notify_sync(ctx, Die),
-            InterfoldEventData::CommitteeMemberExpelled(data) => {
+            LoxleyEventData::E3RequestComplete(_) => self.notify_sync(ctx, Die),
+            LoxleyEventData::CommitteeMemberExpelled(data) => {
                 // Only process raw events from chain (party_id not yet resolved).
                 if data.party_id.is_some() {
                     return;
@@ -85,7 +85,7 @@ impl Handler<InterfoldEvent> for PublicKeyAggregator {
                     Ok(())
                 });
             }
-            InterfoldEventData::CommitteeMemberExcluded(data) => {
+            LoxleyEventData::CommitteeMemberExcluded(data) => {
                 // Sortition republishes this event with a party ID. The public-key collector uses
                 // the raw event because it filters by the node address before that enrichment.
                 if data.party_id.is_some() {

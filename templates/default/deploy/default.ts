@@ -4,16 +4,16 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-import { getDeploymentChain, readDeploymentArgs, storeDeploymentArgs, updateE3Config } from '@interfold/contracts/scripts'
-import { Interfold__factory as InterfoldFactory } from '@interfold/contracts/types'
-import { ensureTemplateCwd, INTERFOLD_CONFIG_FILE } from '../scripts/template-paths'
+import { getDeploymentChain, readDeploymentArgs, storeDeploymentArgs, updateE3Config } from '@loxley/contracts/scripts'
+import { Loxley__factory as LoxleyFactory } from '@loxley/contracts/types'
+import { ensureTemplateCwd, LOXLEY_CONFIG_FILE } from '../scripts/template-paths'
 import { MyProgram__factory as MyProgramFactory } from '../types/factories/contracts'
 import hre from 'hardhat'
 
 // Map contract names to config keys
 const contractMapping: Record<string, string> = {
   MyProgram: 'e3_program',
-  Interfold: 'interfold',
+  Loxley: 'loxley',
   CiphernodeRegistryOwnable: 'ciphernode_registry',
   BondingRegistry: 'bonding_registry',
   MockUSDC: 'fee_token',
@@ -27,11 +27,11 @@ export const deployTemplate = async () => {
 
   const chain = getDeploymentChain(hre)
 
-  const interfoldAddress = readDeploymentArgs('Interfold', chain)?.address
-  if (!interfoldAddress) {
-    throw new Error('Interfold address not found, it must be deployed first')
+  const loxleyAddress = readDeploymentArgs('Loxley', chain)?.address
+  if (!loxleyAddress) {
+    throw new Error('Loxley address not found, it must be deployed first')
   }
-  const interfold = InterfoldFactory.connect(interfoldAddress, owner)
+  const loxley = LoxleyFactory.connect(loxleyAddress, owner)
 
   const poseidonT3Address = readDeploymentArgs('PoseidonT3', chain)?.address
   if (!poseidonT3Address) {
@@ -57,7 +57,7 @@ export const deployTemplate = async () => {
   const ciphertextVerifier = await ethers.deployContract('Risc0BfvCiphertextVerifier', [await verifier.getAddress(), programId])
   await ciphertextVerifier.waitForDeployment()
   const encryptionSchemeId = ethers.keccak256(ethers.toUtf8Bytes('fhe.rs:BFV'))
-  await (await interfold.setCiphertextVerifier(encryptionSchemeId, await ciphertextVerifier.getAddress())).wait()
+  await (await loxley.setCiphertextVerifier(encryptionSchemeId, await ciphertextVerifier.getAddress())).wait()
 
   const e3ProgramFactory = await ethers.getContractFactory(
     MyProgramFactory.abi,
@@ -66,19 +66,19 @@ export const deployTemplate = async () => {
     }),
     owner,
   )
-  const e3Program = await e3ProgramFactory.deploy(await interfold.getAddress(), await verifier.getAddress(), programId)
+  const e3Program = await e3ProgramFactory.deploy(await loxley.getAddress(), await verifier.getAddress(), programId)
   await e3Program.waitForDeployment()
 
   const programAddress = await e3Program.getAddress()
-  const tx = await interfold.registerE3Program(programAddress)
+  const tx = await loxley.registerE3Program(programAddress)
   await tx.wait()
 
-  const allowed = await interfold.e3Programs(programAddress)
+  const allowed = await loxley.e3Programs(programAddress)
   if (!allowed) {
-    throw new Error(`MyProgram ${programAddress} was not enabled on Interfold ${interfoldAddress}`)
+    throw new Error(`MyProgram ${programAddress} was not enabled on Loxley ${loxleyAddress}`)
   }
 
-  console.log("E3 Program enabled for Interfold's template")
+  console.log("E3 Program enabled for Loxley's template")
 
   console.log(
     `
@@ -96,5 +96,5 @@ export const deployTemplate = async () => {
     chain,
   )
 
-  updateE3Config(chain, INTERFOLD_CONFIG_FILE, contractMapping)
+  updateE3Config(chain, LOXLEY_CONFIG_FILE, contractMapping)
 }

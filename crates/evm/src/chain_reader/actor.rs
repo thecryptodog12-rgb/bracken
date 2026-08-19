@@ -10,7 +10,7 @@ use crate::adapters::log_fetcher::{
 use crate::domain::backoff::Backoff;
 use crate::helpers::{EthProvider, ProviderFactory};
 use crate::messages::HistoricalSyncComplete;
-use crate::messages::{EvmEventProcessor, InterfoldEvmEvent};
+use crate::messages::{EvmEventProcessor, LoxleyEvmEvent};
 use actix::prelude::*;
 use alloy::eips::BlockNumberOrTag;
 use alloy::primitives::B256;
@@ -19,7 +19,7 @@ use alloy::rpc::types::Filter;
 use alloy_primitives::Address;
 use anyhow::anyhow;
 use e3_events::{
-    BusHandle, EType, ErrorDispatcher, Event, EventId, InterfoldEvent, InterfoldEventData,
+    BusHandle, EType, ErrorDispatcher, Event, EventId, LoxleyEvent, LoxleyEventData,
 };
 use e3_events::{EventSubscriber, EventType};
 use e3_utils::{retry_with_backoff, RetryError, MAILBOX_LIMIT};
@@ -100,7 +100,7 @@ impl Filters {
     }
 }
 
-/// Connects to Interfold.sol converting EVM events to InterfoldEvents
+/// Connects to Loxley.sol converting EVM events to LoxleyEvents
 pub struct EvmReadInterface<P> {
     /// The alloy provider
     provider: Option<EthProvider<P>>,

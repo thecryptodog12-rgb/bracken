@@ -9,7 +9,7 @@ import { VoteManagementContextType, VoteManagementProviderProps, VoteStatus } fr
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { VoteStateLite, VotingRound } from '@/model/vote.model'
-import { useInterfoldServer } from '@/hooks/interfold/useInterfoldServer'
+import { useLoxleyServer } from '@/hooks/loxley/useLoxleyServer'
 import { convertPollData, convertTimestampToDate } from '@/utils/methods'
 import { Poll, PollResult } from '@/model/poll.model'
 import { generatePoll } from '@/utils/generate-random-poll'
@@ -67,14 +67,14 @@ const VoteManagementProvider = ({ children }: VoteManagementProviderProps) => {
    * Voting Management Methods
    **/
   const {
-    isLoading: interfoldLoading,
+    isLoading: loxleyLoading,
     getRoundStateLite: getRoundStateLiteRequest,
     getWebResultByRound,
     getWebResult,
     getCurrentRound,
     broadcastVote,
     getVoteStatus,
-  } = useInterfoldServer()
+  } = useLoxleyServer()
 
   const checkVoteStatus = useCallback(
     async (roundId: string, userAddress: string, forceRefresh: boolean = false): Promise<boolean> => {
@@ -172,7 +172,7 @@ const VoteManagementProvider = ({ children }: VoteManagementProviderProps) => {
 
     if (fetchedRoundState?.committee_public_key.length === 1 && fetchedRoundState.committee_public_key[0] === 0) {
       handleGenericError('getRoundStateLite', {
-        message: 'Interfold server failed generating the necessary pk bytes',
+        message: 'Loxley server failed generating the necessary pk bytes',
         name: 'getRoundStateLite',
       })
     }
@@ -227,7 +227,7 @@ const VoteManagementProvider = ({ children }: VoteManagementProviderProps) => {
   return (
     <VoteManagementContextProvider
       value={{
-        isLoading: interfoldLoading,
+        isLoading: loxleyLoading,
         user,
         votingRound,
         roundEndDate,

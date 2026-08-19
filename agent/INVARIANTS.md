@@ -1,4 +1,4 @@
-# Interfold — Invariants
+# Loxley — Invariants
 
 Things that must remain true. Breaking any of these is a protocol bug, a soundness bug, or a
 data-loss bug — not a style issue. Each entry cites where it is enforced or documented. When editing
@@ -63,7 +63,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   Escrowing custodies the token in the escrow and bonding custodies it in the registry, so no token
   can be in both. Both were transferred rather than burned, so both are still inside the token's
   total supply — which is what makes the ratio sound in either configuration. Under an escrow votes
-  source `BondedVotes` adds a third source, `InterfoldToken.lockedBalanceAt`, because vesting-locked
+  source `BondedVotes` adds a third source, `LoxleyToken.lockedBalanceAt`, because vesting-locked
   FOLD sits in the holder's own wallet and the transfer hook will not let it reach the escrow. That
   source **does** overlap the bond: a bond satisfies a lock (`transferableBalanceOf` nets the two),
   so bonded FOLD is reported by `lockedBalanceAt` and by the bonded history while existing once.
@@ -72,18 +72,18 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   because slashing takes the bond without taking the lock and would otherwise leave the account
   voting with FOLD the slash recipient now holds. The lock schedule is read **only** when the votes
   source is an escrow: when the token votes for itself, locked FOLD is wallet FOLD the token has
-  already counted. — `BondedVotes.sol`; `InterfoldToken.sol`; `flow-trace/02`
+  already counted. — `BondedVotes.sol`; `LoxleyToken.sol`; `flow-trace/02`
 - **The lock schedule is present-state, not history.** `lockedBalanceAt` walks an account's
   **current** locks and evaluates them against the timestamp given, so a lock created after a
   governance snapshot appears in that snapshot's answer — unlike the bonded history, which is
   checkpointed. Sound for vesting locks, which are minted or claimed rather than acquired at will;
-  it must not be treated as a general past balance. — `BondedVotes.sol`; `InterfoldToken.sol`
+  it must not be treated as a general past balance. — `BondedVotes.sol`; `LoxleyToken.sol`
 - **An escrow votes source requires a token with a lock schedule.** `_bindVotesSource` staticcalls
   `lockedBalanceAt` once at construction and reverts `LockedBalancesUnsupported` if it cannot
   answer. Tolerating the failure at read time would return zero and disenfranchise exactly the
   locked holders the third source exists to enfranchise. — `BondedVotes.sol`
 - **Every summed source must share the token's clock.** `BondedCheckpoints` keys by
-  `block.timestamp` to match `InterfoldToken`'s ERC-6372 `mode=timestamp`, and `BondedVotes`
+  `block.timestamp` to match `LoxleyToken`'s ERC-6372 `mode=timestamp`, and `BondedVotes`
   compares the history's clock **and** a non-token votes source's clock against the token's at
   construction. Summing a timestamp-keyed history with a block-numbered source answers for two
   unrelated points in time and is undetectable downstream. — `BondedVotes.sol`; `flow-trace/02`
@@ -112,7 +112,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 - **`setBondedCheckpoints` is one-shot per ciphernode bond token, and self-verifying.** It requires
   the checkpoint contract to name this registry **and** to accept a write from it, checked by
   syncing the zero address, whose bonded total is always zero. `registry()` alone is insufficient:
-  `InterfoldTicketToken` answers it with the registry address, so a mix-up would spend the slot on a
+  `LoxleyTicketToken` answers it with the registry address, so a mix-up would spend the slot on a
   contract with no `sync` and revert every later bond, slash, claim and owner transfer. Repointing
   while one is attached is refused: it would abandon recorded history and silently change every past
   answer. While unset the sync is a no-op, not a revert, so an upgrade cannot freeze bonding before
@@ -146,12 +146,12 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 - The fee token, expected decimals, and every raw-unit pricing term change as one configuration.
   Each request states its expected token and maximum fee. Each E3 snapshots its fee token at request
   time. Decimal validation checks the unit scale only; it does not establish the token's economic
-  value. — `Interfold.setFeeAssetConfig`; `flow-trace/03`
+  value. — `Loxley.setFeeAssetConfig`; `flow-trace/03`
 - **Custody assets use exact, non-rebasing accounting:** the fee token, ticket underlying, and
   ciphernode bond token must transfer exact amounts and must not rebase account balances. Every
   custody deposit checks the custody increase. Every outbound transfer checks the recipient increase
   and custody decrease. A mismatch reverts the complete accounting transaction and preserves all
-  other pooled liabilities. — `InterfoldPricing.sol`; `InterfoldTicketToken.sol`;
+  other pooled liabilities. — `LoxleyPricing.sol`; `LoxleyTicketToken.sol`;
   `BondingAssetLib.sol`; `E3RefundManager.sol`; `flow-trace/02`, `03`, `05`
 
 ### Activation (auto-evaluated in `_updateOperatorStatus`, never a standalone call)
@@ -169,9 +169,9 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 
 ### E3 request and committee selection
 
-- E3 IDs include the Interfold controller address in their high 160 bits. The low 96 bits form the
+- E3 IDs include the Loxley controller address in their high 160 bits. The low 96 bits form the
   controller-local sequence. On-chain snapshots, signed payloads, Rust persistence, and indexer keys
-  must preserve the complete `uint256`. — `Interfold.initialize`; `flow-trace/03`
+  must preserve the complete `uint256`. — `Loxley.initialize`; `flow-trace/03`
 - A request can select only the parameter set and committee shape in `ActiveCryptoConfig.sol`.
   `pnpm build:circuits` generates that binding from the active preset. Governance cannot enable a
   different parameter hash, `[H, N]`, or verifier threshold without rebuilding the circuits and
@@ -200,7 +200,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   setters enforce the relationship; equality is invalid because ticket submission includes the
   deadline. — `BondingRegistry.sol`; `CiphernodeRegistryOwnable.sol`; `flow-trace/02`, `03`
 - **One coherent dependency generation:** each request validates and snapshots the complete
-  Interfold, registry, bonding, slashing, refund, treasury, and policy graph. Governance must pause
+  Loxley, registry, bonding, slashing, refund, treasury, and policy graph. Governance must pause
   requests and drain all E3s, committees, operators, bans, and slash routes before it replaces any
   graph member. Old and new generations never serve requests at the same time. — `flow-trace/03`,
   `05`
@@ -214,11 +214,11 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   deadline watermark. The time-based floor decreases after old windows expire, and the
   BondingRegistry cannot clear its registry pointer. — `flow-trace/02`, `03`, `06`; INDEX Z-37
 - **E3 program allowlist:** production initialization registers one deployed E3 program and assigns
-  Interfold ownership to the configured protocol owner. Later registrations are append-only and
+  Loxley ownership to the configured protocol owner. Later registrations are append-only and
   owner-only. Every registered address must contain runtime code. `MockE3Program` is the stateless
   launch option. It has no administrative controls and applies no application rules. The
   request-time BFV ciphertext verifier and decryption verifier remain mandatory. Its mutable failure
-  controls live only in `MockE3ProgramHarness`. — `Interfold.sol`; `MockE3Program.sol`;
+  controls live only in `MockE3ProgramHarness`. — `Loxley.sol`; `MockE3Program.sol`;
   `flow-trace/03`
 
 ### Deadlines
@@ -229,7 +229,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   end of the input window. Request validation reserves the full worst-case sortition, DKG, compute,
   and decryption lifecycle. — `flow-trace/03`
 - Known open issue: `gracePeriod` is stored/validated but never applied in any deadline check (dead
-  code). — `Interfold.sol`; INDEX concern #3
+  code). — `Loxley.sol`; INDEX concern #3
 
 ### Slashing and failure settlement
 
@@ -295,9 +295,9 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 
 - Committee `(N, T, H)` must be identical across **five** files:
   `circuits/lib/src/configs/committee/active.nr`, `circuits/bin/.active-preset.json`,
-  `packages/interfold-contracts/scripts/utils.ts` (`BFV_DKG_H`/`BFV_THRESHOLD_T`), and
+  `packages/loxley-contracts/scripts/utils.ts` (`BFV_DKG_H`/`BFV_THRESHOLD_T`), and
   `crates/zk-helpers/src/ciphernodes_committee.rs`, plus
-  `packages/interfold-contracts/contracts/lib/ActiveCryptoConfig.sol`. The Solidity file also binds
+  `packages/loxley-contracts/contracts/lib/ActiveCryptoConfig.sol`. The Solidity file also binds
   the active BFV parameter-set hash. Drift means the next build silently produces verifiers or
   proofs for the wrong configuration. Switch only with `pnpm build:circuits --committee <name>`;
   enforced by `scripts/check-committee.sh`.
@@ -343,7 +343,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   `committeeHash = keccak256(abi.encodePacked(topNodes))` (as 128-bit limbs) against the proof's
   public inputs, binding the proof to the specific committee. — `flow-trace/04`
 - **Decryption-proof replay prevention (C-03):** every secret-bearing C6 proof commits to the domain
-  `(chainId, Interfold address, e3Id, committeeHash, ciphertextOutputHash, committeePublicKey)`;
+  `(chainId, Loxley address, e3Id, committeeHash, ciphertextOutputHash, committeePublicKey)`;
   folding requires one common domain; the wrapper rejects any domain differing from the contract's
   recomputed value and checks per-party SK/ESM commitments against registry-stored DKG anchors. —
   `flow-trace/04`; INDEX concern #34
@@ -353,7 +353,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   witnesses. — INDEX IF-004
 - **Ciphertext-duty proof (Zenith #15):** each E3 snapshots the protocol verifier for its encryption
   scheme at request time. Before `CiphertextReady`, this verifier checks a RISC Zero receipt that
-  binds the chain, Interfold address, E3 ID, scheme ID, BFV parameter hash, committee public key,
+  binds the chain, Loxley address, E3 ID, scheme ID, BFV parameter hash, committee public key,
   output hash, and SAFE commitment. The E3 program verifies application rules separately and cannot
   create a decryption duty by itself. — `flow-trace/04`; INDEX Z-15
 - **The compute path carries no external audit.** The 2026-08-17 Zenith audit covered six Solidity
@@ -361,7 +361,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   `Risc0BfvCiphertextVerifier.sol` were outside both the audit and its mitigation review, so a
   `Resolved` `Z-` row is this repository's remediation rather than a re-reviewed one. Treat changes
   in these areas as unaudited by default. — `flow-trace/00`;
-  `packages/interfold-contracts/audits/README.md`
+  `packages/loxley-contracts/audits/README.md`
 - **A Secure Process derives its input root; it never receives it.** `ComputeInput` holds only
   `fhe_inputs`, and `ComputeInput::process` derives the leaves from the ciphertexts it processed.
   The protocol verifier takes the input root from the proof envelope and does not constrain it, so
@@ -534,7 +534,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 - Upgradeable-contract storage baselines are committed and CI-gated (missing baselines, compiler
   drift, layout incompatibility, bad gap consumption all fail); baseline creation is an explicit
   maintainer command. — INDEX concern #27
-- Contracts CI fails a release if `Interfold` / aggregator-verifier runtime bytecode is within 256
+- Contracts CI fails a release if `Loxley` / aggregator-verifier runtime bytecode is within 256
   bytes of the EIP-170 limit. — INDEX concern #22
 - BFV circuit-verifier and RISC Zero receipt-verifier constructors require deployed verifier
   contracts. BFV circuit wrappers also require nonzero recursive VK hashes. — INDEX concerns #21,
@@ -542,15 +542,15 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 - CLI secrets are passed over **stdin only** — never argv or environment; private keys are never
   stored in plaintext. — `flow-trace/00`, `01`
 - **Deployment writes must be mined, not only sent.** Every configuration transaction in
-  `scripts/deployInterfold.ts` goes through the `send()` helper in `scripts/utils.ts`, which awaits
+  `scripts/deployLoxley.ts` goes through the `send()` helper in `scripts/utils.ts`, which awaits
   the receipt and fails on a missing receipt or a non-success status. `send()` also labels a
   rejection from the send or the mining stage and keeps the original error as its `cause`. A bare
   `await contract.setX(...)` resolves when the transaction is dispatched, so on a real network a
   dropped write leaves the reference at `address(0)` while the script still exits zero.
-- **A deployment must end with a verified wiring graph.** After configuration, `deployInterfold.ts`
-  reads back every cross-contract reference (Interfold, CiphernodeRegistry, BondingRegistry,
-  InterfoldTicketToken, SlashingManager, E3RefundManager, FOLD as the BondingRegistry ciphernode
-  bond token) plus the BondingRegistry reward-distributor authorization for Interfold, and throws
+- **A deployment must end with a verified wiring graph.** After configuration, `deployLoxley.ts`
+  reads back every cross-contract reference (Loxley, CiphernodeRegistry, BondingRegistry,
+  LoxleyTicketToken, SlashingManager, E3RefundManager, FOLD as the BondingRegistry ciphernode
+  bond token) plus the BondingRegistry reward-distributor authorization for Loxley, and throws
   with the full list of mismatches. Add a read-back for each new cross-contract setter.
 - **A deployment must also enable bonded voting.** `protocol/deployContracts` deploys
   `BondedCheckpoints` (bound to the BondingRegistry **proxy**, not the implementation) and the

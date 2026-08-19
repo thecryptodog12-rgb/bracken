@@ -14,7 +14,7 @@ import { publishInput } from '../../utils/input'
 import { getContractAddresses } from '../../utils/env-config'
 
 /**
- * EnterInputs component - Third step in the Interfold wizard flow
+ * EnterInputs component - Third step in the Loxley wizard flow
  *
  * This component handles the input of two numbers for a privacy-preserving addition
  * using fully homomorphic encryption (FHE). It provides feedback on the input process

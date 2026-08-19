@@ -2,7 +2,7 @@
 resolver = "3"
 members = [
   "program",
-  ".interfold/support/dev"
+  ".loxley/support/dev"
 ]
 
 [workspace.dependencies]

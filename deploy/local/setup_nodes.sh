@@ -9,7 +9,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 CRISP_ROOT="$REPO_ROOT/examples/CRISP"
 SIGNAL_FILE="/tmp/crisp-dev-daemon-ready"
-READYFILE="$CRISP_ROOT/.interfold/ready"
+READYFILE="$CRISP_ROOT/.loxley/ready"
 
 # ── Node config (must match start.sh) ──────────────────────────────────────
 NODE_IDS=(cn1 cn2 cn3 cn4 cn5)
@@ -30,7 +30,7 @@ NODE_ADDRS=(
 
 # ── Clean previous state ────────────────────────────────────────────────────
 echo "[deploy+setup] Cleaning previous state..."
-rm -rf "$CRISP_ROOT/.interfold/data" "$CRISP_ROOT/.interfold/config"
+rm -rf "$CRISP_ROOT/.loxley/data" "$CRISP_ROOT/.loxley/config"
 rm -rf "$CRISP_ROOT/server/database"
 rm -f "$READYFILE" "$SIGNAL_FILE"
 
@@ -44,11 +44,11 @@ bash scripts/crisp_deploy.sh
 
 echo "[deploy+setup] Importing wallets..."
 for i in "${!NODE_IDS[@]}"; do
-    interfold wallet set --name "${NODE_IDS[$i]}" --private-key "${NODE_KEYS[$i]}"
+    loxley wallet set --name "${NODE_IDS[$i]}" --private-key "${NODE_KEYS[$i]}"
 done
 
-echo "[deploy+setup] Running interfold noir setup..."
-interfold noir setup
+echo "[deploy+setup] Running loxley noir setup..."
+loxley noir setup
 
 echo "[deploy+setup] Registering ciphernodes..."
 for i in "${!NODE_IDS[@]}"; do

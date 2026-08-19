@@ -89,11 +89,11 @@ impl Handler<NetInputLagged> for NetEventBuffer {
     }
 }
 
-impl Handler<InterfoldEvent> for NetEventBuffer {
+impl Handler<LoxleyEvent> for NetEventBuffer {
     type Result = ();
 
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
-        if let Err(error) = self.handle_interfold_event(msg) {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+        if let Err(error) = self.handle_loxley_event(msg) {
             self.fail_closed(error, ctx);
         }
     }

@@ -16,7 +16,7 @@ use alloy::primitives::{keccak256, Address, Bytes};
 use alloy::sol_types::SolValue;
 use e3_events::{
     BusHandle, Committee, E3id, EncryptionKey, EncryptionKeyCreated, EncryptionKeyReceived,
-    EventContext, EventPublisher, EventSubscriber, EventType, InterfoldEvent, InterfoldEventData,
+    EventContext, EventPublisher, EventSubscriber, EventType, LoxleyEvent, LoxleyEventData,
     Proof, ProofType, ProofVerificationFailed, ProofVerificationPassed, Sequenced,
     SignedProofFailed, SignedProofPayload, TypedEvent,
 };

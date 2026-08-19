@@ -25,7 +25,7 @@ This guide covers the most frequent problems operators encounter and how to reso
 ### Check your status
 
 ```bash
-interfold ciphernode status
+loxley ciphernode status
 ```
 
 Look for:
@@ -44,7 +44,7 @@ Look for:
 total tickets and you hold 10, you'll be selected ~1% of the time. The bond owner can top up:
 
 ```bash
-interfold --config /path/to/owner.yaml ciphernode tickets \
+loxley --config /path/to/owner.yaml ciphernode tickets \
   --operator 0xOPERATOR buy --amount 100
 ```
 
@@ -52,7 +52,7 @@ interfold --config /path/to/owner.yaml ciphernode tickets \
 `requiredCiphernodeBond`. The bond owner can top it up:
 
 ```bash
-interfold --config /path/to/owner.yaml ciphernode bond \
+loxley --config /path/to/owner.yaml ciphernode bond \
   --operator 0xOPERATOR bond --amount 100
 ```
 
@@ -93,7 +93,7 @@ deadline.
 
 ### Check your networking
 
-The Interfold uses **QUIC** (UDP-based) for P2P networking.
+The Loxley uses **QUIC** (UDP-based) for P2P networking.
 
 1. **Firewall**: Ensure your QUIC port (default from config) is open for **UDP** traffic, not just
    TCP
@@ -108,7 +108,7 @@ Check your node logs for:
 - `"Listening on /ip4/0.0.0.0/udp/<port>/quic-v1"` — confirms the listener started
 - `"Peer connected: <peer_id>"` — confirms at least one peer is reachable
 
-If no peers connect, verify that your `quic_port` in `interfold.config.yaml` matches what's open in
+If no peers connect, verify that your `quic_port` in `loxley.config.yaml` matches what's open in
 your firewall.
 
 ---
@@ -127,7 +127,7 @@ miss events.
 **Fix:** Use a WebSocket RPC endpoint:
 
 ```yaml
-# interfold.config.yaml
+# loxley.config.yaml
 chains:
   - name: sepolia
     rpc_url: wss://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
@@ -156,7 +156,7 @@ The CLI uses `-v` flags, not `RUST_LOG`. Each additional `v` goes one level deep
 | `-q, --quiet` | `ERROR` | Only log errors                                                 |
 
 ```bash
-interfold start -vv
+loxley start -vv
 ```
 
 ### Log file location
@@ -164,14 +164,14 @@ interfold start -vv
 To find the current log file path:
 
 ```bash
-interfold config get log_file
+loxley config get log_file
 ```
 
-The default lives under your platform's state directory (e.g. `~/.local/state/interfold/` on Linux,
-`~/Library/Application Support/interfold/` on macOS). Tail it while reproducing an issue:
+The default lives under your platform's state directory (e.g. `~/.local/state/loxley/` on Linux,
+`~/Library/Application Support/loxley/` on macOS). Tail it while reproducing an issue:
 
 ```bash
-tail -f "$(interfold config get log_file)"
+tail -f "$(loxley config get log_file)"
 ```
 
 ---
@@ -212,7 +212,7 @@ a bigger instance.
 For real-time monitoring, enable the [node dashboard](./using-the-dashboard):
 
 ```yaml
-# interfold.config.yaml
+# loxley.config.yaml
 node:
   dashboard_port: 8080
 ```
@@ -227,4 +227,4 @@ details.
 - Check the [Tickets & Sortition](/ciphernode-operators/tickets-and-sortition) reference for
   parameter details
 - Join the community [Telegram group](https://t.me/enclave_e3) for help
-- If you suspect a bug, open an issue on [GitHub](https://github.com/theinterfold/interfold/issues)
+- If you suspect a bug, open an issue on [GitHub](https://github.com/theloxley/loxley/issues)

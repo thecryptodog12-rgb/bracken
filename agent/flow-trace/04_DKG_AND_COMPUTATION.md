@@ -51,7 +51,7 @@ CiphernodeSelected event arrives at ThresholdKeyshare
 │   │
 │   └─ Collector timeouts are derived from the DKG stage budget:
 │         ├─ shared base window from `E3_DKG_WINDOW_SECS` (default 7200s,
-│         │  matching current production `Interfold` deployment config)
+│         │  matching current production `Loxley` deployment config)
 │         ├─ EncryptionKeyCollector cutoff at 10% of the DKG window
 │         ├─ ThresholdShareCollector cutoff at 60% of the DKG window
 │         └─ per-collector env vars still override these derived defaults
@@ -657,7 +657,7 @@ phase.
 │   │     ├─ ComputeRequestError now emits
 │   │     │   E3Failed { failed_at_stage: CommitteeFinalized, reason: DKGInvalidShares }
 │   │     └─ A mixed Some/None honest NodeFold-proof set is treated as the same terminal DKG
-│   │         failure instead of only surfacing as InterfoldError telemetry
+│   │         failure instead of only surfacing as LoxleyError telemetry
 │   │
 │   └─ 6. Publish PublicKeyAggregated {
 │         e3_id, pubkey: aggregate_pk, pk_commitment, nodes,
@@ -710,9 +710,9 @@ phase.
         │  │       and verify/store per-node fold attestations   │
         │  │    6. c.publicKey = pkCommitment                    │
         │  │       publicKeyHashes[e3Id] = pkCommitment          │
-        │  │    7. interfold.onCommitteePublished(e3Id, pkCommitment) │
+        │  │    7. loxley.onCommitteePublished(e3Id, pkCommitment) │
         │  │       │                                             │
-        │  │       │  ┌─ Interfold.sol ────────────────────────┐  │
+        │  │       │  ┌─ Loxley.sol ────────────────────────┐  │
         │  │       │  │  onCommitteePublished(e3Id, pk) {   │  │
         │  │       │  │    require(stage==CommitteeFinalized) │  │
         │  │       │  │    require(now <= dkgDeadline)       │  │
@@ -754,7 +754,7 @@ candidates and remains usable after an invalid candidate, so a front-run transac
 the only transport slot. Before `e3-indexer` stores it in `E3.committee_public_key`, it decodes the
 BFV key, recomputes the circuit's public-key commitment using the request's parameter set, and
 requires equality with the event's on-chain `pkCommitment`. TypeScript event consumers receive the
-same `pkCommitment` and use `InterfoldSDK.validatePublicKeyCommitment()` before accepting the bytes;
+same `pkCommitment` and use `LoxleySDK.validatePublicKeyCommitment()` before accepting the bytes;
 the default application does this before advancing to encryption. Malformed bytes or bytes for a
 different key fail closed and never reach first-party encryption clients. Production verifies the
 C5-backed final DKG proof on-chain; the explicit test/CI skip mode works only with mock verifiers
@@ -774,8 +774,8 @@ that trust its placeholder.
 
 The decryption wrapper exposes
 `verify(e3Id, decryptionDomain, plaintextOutputHash, committeeHash, ciphertextCommitment, proof)`.
-`Interfold` recomputes `decryptionDomain` over
-`(chainId, Interfold address, e3Id, committeeHash, ciphertextOutputHash, committeePublicKey)`. The
+`Loxley` recomputes `decryptionDomain` over
+`(chainId, Loxley address, e3Id, committeeHash, ciphertextOutputHash, committeePublicKey)`. The
 wrapper checks the domain limbs and SAFE ciphertext commitment in the final proof, then uses the
 separate `e3Id` to resolve the registry's stored DKG anchors and compares every surfaced party ID,
 secret-key commitment, and smudging-noise commitment. The party IDs are circuit-side 1-indexed
@@ -799,7 +799,7 @@ Data providers submit encrypted inputs:
 
 ### Ciphertext Output Publication
 
-The RISC Zero guest commits nine 32-byte fields in this order: chain ID, Interfold address, E3 ID,
+The RISC Zero guest commits nine 32-byte fields in this order: chain ID, Loxley address, E3 ID,
 encryption scheme ID, committee public key, output hash, SAFE commitment, parameter hash, and input
 root. RISC Zero serializes these fields as a 1,188-byte journal. The support app returns the seal,
 parameter hash, and input root in one ABI-encoded proof.
@@ -824,7 +824,7 @@ comparison an E3 program performs against its own on-chain root (`CRISPProgram.v
 `MyProgram.verify`). If the guest accepted the leaves as an independent input, that comparison would
 pass for a tally computed over ciphertexts that were never submitted: a prover would replay the
 genuine on-chain leaves while processing its own ciphertexts. Publication is unpermissioned
-(`Interfold.publishCiphertextOutput` has no authorization modifier) and one-shot, so any party could
+(`Loxley.publishCiphertextOutput` has no authorization modifier) and one-shot, so any party could
 do this, and no dispute path exists.
 
 Two rules follow for anyone changing this path:
@@ -854,9 +854,9 @@ are unaffected: `TryConvertFrom` expands the seed into `c[1]` before the convert
 ```
 Compute provider runs computation on encrypted data:
 │
-└─ Interfold.publishCiphertextOutput(e3Id, ciphertextOutput, ciphertextCommitment, proof)
+└─ Loxley.publishCiphertextOutput(e3Id, ciphertextOutput, ciphertextCommitment, proof)
     │
-    │  ┌─── ON-CHAIN (Interfold.sol) ─────────────────────────────┐
+    │  ┌─── ON-CHAIN (Loxley.sol) ─────────────────────────────┐
     │  │                                                         │
 │  │  publishCiphertextOutput(e3Id, output, commitment, proof) { │
     │  │    0. enter the shared publication reentrancy guard      │
@@ -901,7 +901,7 @@ defense in depth because the wrapper does not store the BFV plaintext modulus fo
 set.
 
 ```
-InterfoldSolReader decodes CiphertextOutputPublished event
+LoxleySolReader decodes CiphertextOutputPublished event
 │
 └─ ThresholdKeyshare receives CiphertextOutputPublished:
     │
@@ -947,7 +947,7 @@ InterfoldSolReader decodes CiphertextOutputPublished event
     │   │     sk_poly_sum, es_poly_sum, and ciphertext
     │   │   → Publicly commits to the E3 decryption-domain limbs:
     │   │     keccak256(abi.encode(
-    │   │       chainId, Interfold address, e3Id, committeeHash,
+    │   │       chainId, Loxley address, e3Id, committeeHash,
     │   │       ciphertextOutputHash, committeePublicKey
     │   │     ))
     │   │   → Fiat-Shamir transcript absorbs full `d` (all coefficients per CRT limb)
@@ -1059,7 +1059,7 @@ InterfoldSolReader decodes CiphertextOutputPublished event
 │         e3_id, decrypted_output, decryption_aggregator_proofs
 │       }
 │
-└─ InterfoldSolWriter receives PlaintextAggregated:
+└─ LoxleySolWriter receives PlaintextAggregated:
   ├─ Requires EffectsEnabled
   ├─ Requires active_aggregators[e3_id] == true
   ├─ Reads chain state to confirm plaintextOutput is still empty
@@ -1069,7 +1069,7 @@ InterfoldSolReader decodes CiphertextOutputPublished event
   │  and every node in a test swarm must use the same flag value
   └─ Calls contract.publishPlaintextOutput(e3Id, output, proof)
         │
-        │  ┌─── ON-CHAIN (Interfold.sol) ─────────────────────────┐
+        │  ┌─── ON-CHAIN (Loxley.sol) ─────────────────────────┐
         │  │                                                     │
         │  │  publishPlaintextOutput(e3Id, output, proof) {      │
         │  │    1. require(stage == CiphertextReady)             │
@@ -1130,9 +1130,9 @@ InterfoldSolReader decodes CiphertextOutputPublished event
         │  │                                                     │
         │  │  // Funds are NOT pushed at publish-time.           │
         │  │  // Bond-owner recipients must call:                │
-        │  │  //   - interfold.claimReward(e3Id) or                │
-        │  │  //     interfold.claimRewards(e3Ids[])               │
-        │  │  //   - interfold.treasuryClaim(token)                │
+        │  │  //   - loxley.claimReward(e3Id) or                │
+        │  │  //     loxley.claimRewards(e3Ids[])               │
+        │  │  //   - loxley.treasuryClaim(token)                │
         │  │  // emitting RewardClaimed / TreasuryClaimed.       │
         │  └─────────────────────────────────────────────────────┘
 ```

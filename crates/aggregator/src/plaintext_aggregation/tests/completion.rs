@@ -26,7 +26,7 @@ async fn missing_c6_inner_proofs_emit_e3_failed() -> Result<()> {
     let event = next_event(&history).await?;
     assert!(matches!(
         event.into_data(),
-        InterfoldEventData::E3Failed(data)
+        LoxleyEventData::E3Failed(data)
             if data.e3_id == e3_id
                 && data.failed_at_stage == E3Stage::CiphertextReady
                 && data.reason == FailureReason::DecryptionInvalidShares

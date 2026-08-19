@@ -19,13 +19,13 @@ impl EthPrivateKeyRepositoryFactory for Repositories {
     }
 }
 
-pub trait InterfoldSolReaderRepositoryFactory {
-    fn interfold_sol_reader(&self, chain_id: u64) -> Repository<EvmReadInterfaceState>;
+pub trait LoxleySolReaderRepositoryFactory {
+    fn loxley_sol_reader(&self, chain_id: u64) -> Repository<EvmReadInterfaceState>;
 }
 
-impl InterfoldSolReaderRepositoryFactory for Repositories {
-    fn interfold_sol_reader(&self, chain_id: u64) -> Repository<EvmReadInterfaceState> {
-        Repository::new(self.store.scope(StoreKeys::interfold_sol_reader(chain_id)))
+impl LoxleySolReaderRepositoryFactory for Repositories {
+    fn loxley_sol_reader(&self, chain_id: u64) -> Repository<EvmReadInterfaceState> {
+        Repository::new(self.store.scope(StoreKeys::loxley_sol_reader(chain_id)))
     }
 }
 

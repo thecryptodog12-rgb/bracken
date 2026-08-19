@@ -1,6 +1,6 @@
 # CRISP Server
 
-This is a Rust-based server implementation for CRISP, which is built on top of the Interfold
+This is a Rust-based server implementation for CRISP, which is built on top of the Loxley
 Protocol, which handles E3 (Encrypted Execution Environment) rounds and voting processes.
 
 ## Features
@@ -31,7 +31,7 @@ Protocol, which handles E3 (Encrypted Execution Environment) rounds and voting p
    PRIVATE_KEY=your_private_key
    HTTP_RPC_URL=your_http_rpc_url
    WS_RPC_URL=your_websocket_rpc_url
-   INTERFOLD_ADDRESS=your_interfold_contract_address
+   LOXLEY_ADDRESS=your_loxley_contract_address
    E3_PROGRAM_ADDRESS=your_e3_program_address
    CIPHERNODE_REGISTRY_ADDRESS=your_ciphernode_registry_address
    FEE_TOKEN_ADDRESS=free_token_address

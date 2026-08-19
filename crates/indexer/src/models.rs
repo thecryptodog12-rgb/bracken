@@ -20,7 +20,7 @@ pub struct E3 {
     pub committee_public_key_hash: Vec<u8>,
     pub e3_params: Vec<u8>,
     pub custom_params: Vec<u8>,
-    pub interfold_address: String,
+    pub loxley_address: String,
     pub encryption_scheme_id: Vec<u8>,
     pub crypto_config_id: Vec<u8>,
     pub id: String,

@@ -16,9 +16,9 @@ importers:
 
   .:
     devDependencies:
-      '@interfold/config':
+      '@loxley/config':
         specifier: workspace:*
-        version: link:packages/interfold-config
+        version: link:packages/loxley-config
       '@trivago/prettier-plugin-sort-imports':
         specifier: ^4.3.0
         version: 4.3.0(prettier@3.6.2)
@@ -113,7 +113,7 @@ importers:
 
   examples/CRISP:
     devDependencies:
-      '@interfold/config':
+      '@loxley/config':
         specifier: ^0
         version: 0.9.0(eslint@9.39.1(jiti@1.21.7))(tsup@8.5.0(@microsoft/api-extractor@7.58.12(@types/node@22.7.5))(@swc/core@1.15.46)(jiti@1.21.7)(postcss@8.5.25)(tsx@4.20.6)(typescript@5.8.3)(yaml@2.8.2))(typescript@5.8.3)
       '@playwright/test':
@@ -255,9 +255,9 @@ importers:
       '@excubiae/contracts':
         specifier: ^0.4.0
         version: 0.4.0
-      '@interfold/contracts':
+      '@loxley/contracts':
         specifier: workspace:*
-        version: link:../../../../packages/interfold-contracts
+        version: link:../../../../packages/loxley-contracts
       '@zk-kit/lazy-imt.sol':
         specifier: 2.0.0-beta.12
         version: 2.0.0-beta.12
@@ -393,7 +393,7 @@ importers:
         specifier: ^0.15.0
         version: 0.15.0
 
-  packages/interfold-config:
+  packages/loxley-config:
     dependencies:
       '@eslint/eslintrc':
         specifier: ^3.3.1
@@ -426,7 +426,7 @@ importers:
         specifier: 8.5.0
         version: 8.5.0(@microsoft/api-extractor@7.58.12(@types/node@22.7.5))(@swc/core@1.15.46)(jiti@1.21.7)(postcss@8.5.25)(tsx@4.20.6)(typescript@5.8.3)(yaml@2.8.2)
 
-  packages/interfold-contracts:
+  packages/loxley-contracts:
     dependencies:
       '@openzeppelin/contracts-upgradeable':
         specifier: ^5.0.2
@@ -453,9 +453,9 @@ importers:
         specifier: 0.0.5
         version: 0.0.5
     devDependencies:
-      '@interfold/config':
+      '@loxley/config':
         specifier: workspace:*
-        version: link:../interfold-config
+        version: link:../loxley-config
       '@nomicfoundation/hardhat-ethers':
         specifier: '4'
         version: 4.0.3(bufferutil@4.1.0)(hardhat@3.0.11(bufferutil@4.1.0)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
@@ -580,11 +580,11 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  packages/interfold-dashboard:
+  packages/loxley-dashboard:
     dependencies:
-      '@interfold/contracts':
+      '@loxley/contracts':
         specifier: workspace:*
-        version: link:../interfold-contracts
+        version: link:../loxley-contracts
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -611,7 +611,7 @@ importers:
         specifier: ^5.4.0
         version: 5.4.21(@types/node@22.7.5)
 
-  packages/interfold-mcp:
+  packages/loxley-mcp:
     dependencies:
       '@modelcontextprotocol/sdk':
         specifier: ^1.10.2
@@ -630,7 +630,7 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  packages/interfold-node:
+  packages/loxley-node:
     dependencies:
       react:
         specifier: ^18.3.1
@@ -676,11 +676,11 @@ importers:
         specifier: ^5.4.0
         version: 5.4.21(@types/node@22.7.5)
 
-  packages/interfold-react:
+  packages/loxley-react:
     dependencies:
-      '@interfold/sdk':
+      '@loxley/sdk':
         specifier: workspace:*
-        version: link:../interfold-sdk
+        version: link:../loxley-sdk
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -691,9 +691,9 @@ importers:
         specifier: ^2.14.16
         version: 2.19.5(@tanstack/query-core@5.101.4)(@tanstack/react-query@5.101.4(react@18.3.1))(@types/react@18.3.31)(bufferutil@4.1.0)(immer@10.0.2)(react@18.3.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.38.6(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.4.3))(zod@4.4.3)
     devDependencies:
-      '@interfold/config':
+      '@loxley/config':
         specifier: workspace:*
-        version: link:../interfold-config
+        version: link:../loxley-config
       '@types/react':
         specifier: ^18.2.0
         version: 18.3.31
@@ -704,15 +704,15 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  packages/interfold-sdk:
+  packages/loxley-sdk:
     dependencies:
       '@aztec/bb.js':
         specifier: 5.1.0
         version: 5.1.0
-      '@interfold/contracts':
+      '@loxley/contracts':
         specifier: workspace:*
-        version: link:../interfold-contracts
-      '@interfold/wasm':
+        version: link:../loxley-contracts
+      '@loxley/wasm':
         specifier: workspace:*
         version: link:../../crates/wasm
       '@noir-lang/noir_js':
@@ -737,9 +737,9 @@ importers:
         specifier: ^1.5.0
         version: 1.5.0
     devDependencies:
-      '@interfold/config':
+      '@loxley/config':
         specifier: workspace:*
-        version: link:../interfold-config
+        version: link:../loxley-config
       concurrently:
         specifier: ^9.1.2
         version: 9.2.4
@@ -758,12 +758,12 @@ importers:
 
   templates/default:
     dependencies:
-      '@interfold/contracts':
+      '@loxley/contracts':
         specifier: workspace:*
-        version: link:../../packages/interfold-contracts
-      '@interfold/sdk':
+        version: link:../../packages/loxley-contracts
+      '@loxley/sdk':
         specifier: workspace:*
-        version: link:../../packages/interfold-sdk
+        version: link:../../packages/loxley-sdk
       '@types/yargs':
         specifier: ^17.0.33
         version: 17.0.35
@@ -780,7 +780,7 @@ importers:
         specifier: ^18.0.0
         version: 18.1.0
     devDependencies:
-      '@interfold/config':
+      '@loxley/config':
         specifier: ^0
         version: 0.9.0(eslint@9.39.1(jiti@1.21.7))(tsup@8.5.0(@microsoft/api-extractor@7.58.12(@types/node@22.7.5))(@swc/core@1.15.46)(jiti@1.21.7)(postcss@8.5.25)(tsx@4.20.6)(typescript@5.8.3)(yaml@2.8.2))(typescript@5.8.3)
       '@nomicfoundation/hardhat-ethers':
@@ -885,12 +885,12 @@ importers:
 
   templates/default/client:
     dependencies:
-      '@interfold/react':
+      '@loxley/react':
         specifier: workspace:*
-        version: link:../../../packages/interfold-react
-      '@interfold/sdk':
+        version: link:../../../packages/loxley-react
+      '@loxley/sdk':
         specifier: workspace:*
-        version: link:../../../packages/interfold-sdk
+        version: link:../../../packages/loxley-sdk
       '@phosphor-icons/react':
         specifier: ^2.1.4
         version: 2.1.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2540,7 +2540,7 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@interfold/config@0.9.0':
+  '@loxley/config@0.9.0':
     resolution: {integrity: sha512-lJfbdJDR1DWj17wm2CAZJjPx5Oo+u5AQhGY0vFDrX2tIHuU2uKJ+Y1GqK3OT/J8QMfbWXeI2w2oTcGSK3O0uPA==}
     peerDependencies:
       eslint: ^9.0.0
@@ -12457,7 +12457,7 @@ snapshots:
   '@img/sharp-win32-x64@0.34.5':
     optional: true
 
-  '@interfold/config@0.9.0(eslint@9.39.1(jiti@1.21.7))(tsup@8.5.0(@microsoft/api-extractor@7.58.12(@types/node@22.7.5))(@swc/core@1.15.46)(jiti@1.21.7)(postcss@8.5.25)(tsx@4.20.6)(typescript@5.8.3)(yaml@2.8.2))(typescript@5.8.3)':
+  '@loxley/config@0.9.0(eslint@9.39.1(jiti@1.21.7))(tsup@8.5.0(@microsoft/api-extractor@7.58.12(@types/node@22.7.5))(@swc/core@1.15.46)(jiti@1.21.7)(postcss@8.5.25)(tsx@4.20.6)(typescript@5.8.3)(yaml@2.8.2))(typescript@5.8.3)':
     dependencies:
       '@eslint/eslintrc': 3.3.1
       '@eslint/js': 9.39.1

@@ -22,7 +22,7 @@ FORCE_BUILD=false
 SKIP_BUILD=false
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
-INTERFOLD_CONTRACTS="${REPO_ROOT}/packages/interfold-contracts"
+LOXLEY_CONTRACTS="${REPO_ROOT}/packages/loxley-contracts"
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -109,7 +109,7 @@ fi
 
 echo "  [replay-gas] Running Hardhat benchmarkGasFromRaw.ts (folded proofs)..."
 (
-    cd "$INTERFOLD_CONTRACTS" && \
+    cd "$LOXLEY_CONTRACTS" && \
     BENCHMARK_RAW_DIR="$RAW_DIR" \
     BENCHMARK_GAS_OUTPUT="$TMP_GAS_PARTIAL" \
     BENCHMARK_FOLDED_JSON="$TMP_FOLDED" \

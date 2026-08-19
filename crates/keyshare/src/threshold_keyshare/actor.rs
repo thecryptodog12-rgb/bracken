@@ -15,8 +15,8 @@ use e3_events::{
     ComputeResponseKind, CorrelationId, DecryptionKeyShared, DecryptionShareProofSigned,
     DecryptionShareProofsPending, Die, DkgProofSigned, DkgShareDecryptionProofRequest, E3Failed,
     E3RequestComplete, E3Stage, EType, EncryptionKey, EncryptionKeyCollectionFailed,
-    EncryptionKeyCreated, EncryptionKeyPending, EventContext, FailureReason, InterfoldEvent,
-    InterfoldEventData, KeyshareCreated, PartyProofsToVerify, PartyShareDecryptionProofsToVerify,
+    EncryptionKeyCreated, EncryptionKeyPending, EventContext, FailureReason, LoxleyEvent,
+    LoxleyEventData, KeyshareCreated, PartyProofsToVerify, PartyShareDecryptionProofsToVerify,
     PkGenerationProofSigned, ProofType, Sequenced, ShareDecryptionProofPending,
     ShareVerificationComplete, ShareVerificationDispatched, SignedProofPayload, ThresholdShare,
     ThresholdShareCollectionFailed, ThresholdShareCreated, ThresholdShareDecryptionProofRequest,
@@ -113,7 +113,7 @@ pub struct ThresholdKeyshareParams {
     pub cipher: Arc<Cipher>,
     pub state: Persistable<ThresholdKeyshareState>,
     pub share_enc_preset: BfvPreset,
-    pub interfold_address: Address,
+    pub loxley_address: Address,
 }
 
 /// Ephemeral bridge data for operations already represented by the persisted keyshare phase.
@@ -146,7 +146,7 @@ pub struct ThresholdKeyshare {
     decryption_key_shared_collector: Option<Addr<DecryptionKeySharedCollector>>,
     state: Persistable<ThresholdKeyshareState>,
     share_enc_preset: BfvPreset,
-    interfold_address: Address,
+    loxley_address: Address,
     pending: PendingKeyshareWork,
 }
 
@@ -160,7 +160,7 @@ impl ThresholdKeyshare {
             decryption_key_shared_collector: None,
             state: params.state,
             share_enc_preset: params.share_enc_preset,
-            interfold_address: params.interfold_address,
+            loxley_address: params.loxley_address,
             pending: PendingKeyshareWork::default(),
         }
     }

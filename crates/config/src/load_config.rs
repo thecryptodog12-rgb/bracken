@@ -69,23 +69,23 @@ mod tests {
             None
         }
         fn found(_: &PathBuf, _: &str) -> Option<PathBuf> {
-            Some(PathBuf::from("/foo/interfold.config.yaml"))
+            Some(PathBuf::from("/foo/loxley.config.yaml"))
         }
         let path = resolve_config_path(
             not_found,
             PathBuf::from("/foo/bar"),
             PathBuf::from("/my/config"),
-            "interfold.config.yaml",
+            "loxley.config.yaml",
             None,
         );
 
-        assert_eq!(path, PathBuf::from("/my/config/interfold.config.yaml"));
+        assert_eq!(path, PathBuf::from("/my/config/loxley.config.yaml"));
 
         let path = resolve_config_path(
             found, // should be overridden by config attr
             PathBuf::from("/foo/bar"),
             PathBuf::from("/my/config"),
-            "interfold.config.yaml",
+            "loxley.config.yaml",
             Some(PathBuf::from("/my/absolute/conf.yaml")),
         );
 
@@ -95,11 +95,11 @@ mod tests {
             found, // should be overridden by config attr
             PathBuf::from("/foo/bar"),
             PathBuf::from("/my/config"),
-            "interfold.config.yaml",
+            "loxley.config.yaml",
             None,
         );
 
-        assert_eq!(path, PathBuf::from("/foo/interfold.config.yaml"));
+        assert_eq!(path, PathBuf::from("/foo/loxley.config.yaml"));
         Ok(())
     }
 }

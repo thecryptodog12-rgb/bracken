@@ -213,7 +213,7 @@ Split rows are deterministic:
 
 For `Π_DKG` and `Π_dec`, verifier gas is sourced from folded recursive-aggregation proofs exported
 by `cargo test -p e3-tests test_trbfv_actor` (via `BENCHMARK_FOLDED_OUTPUT`) and then replayed into
-EVM verifier `estimateGas` in `packages/interfold-contracts/scripts/benchmarkGasFromRaw.ts`.
+EVM verifier `estimateGas` in `packages/loxley-contracts/scripts/benchmarkGasFromRaw.ts`.
 
 `extract_crisp_verify_gas.sh` (and `replay_folded_verify_gas.sh --build <preset>`) call
 `ensure_circuit_preset_built.sh`, which runs

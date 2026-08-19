@@ -61,8 +61,8 @@ impl StoreKeys {
         String::from("//libp2p/keypair")
     }
 
-    pub fn interfold_sol_reader(chain_id: u64) -> String {
-        format!("//evm_readers/interfold/{chain_id}")
+    pub fn loxley_sol_reader(chain_id: u64) -> String {
+        format!("//evm_readers/loxley/{chain_id}")
     }
 
     pub fn ciphernode_registry_reader(chain_id: u64) -> String {

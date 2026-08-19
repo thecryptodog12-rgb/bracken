@@ -6,10 +6,10 @@
 pragma solidity 0.8.28;
 
 import { IRiscZeroVerifier } from "risc0/IRiscZeroVerifier.sol";
-import { IE3Program } from "@interfold/contracts/contracts/interfaces/IE3Program.sol";
-import { IInterfold } from "@interfold/contracts/contracts/interfaces/IInterfold.sol";
-import { E3 } from "@interfold/contracts/contracts/interfaces/IE3.sol";
-import { Risc0ComputeProof } from "@interfold/contracts/contracts/lib/Risc0ComputeProof.sol";
+import { IE3Program } from "@loxley/contracts/contracts/interfaces/IE3Program.sol";
+import { ILoxley } from "@loxley/contracts/contracts/interfaces/ILoxley.sol";
+import { E3 } from "@loxley/contracts/contracts/interfaces/IE3.sol";
+import { Risc0ComputeProof } from "@loxley/contracts/contracts/lib/Risc0ComputeProof.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { LazyIMTData, InternalLazyIMT } from "@zk-kit/lazy-imt.sol/InternalLazyIMT.sol";
 
@@ -21,7 +21,7 @@ contract MyProgram is IE3Program, Ownable {
   uint8 public constant TREE_DEPTH = 20;
 
   // State variables
-  IInterfold public interfold;
+  ILoxley public loxley;
   IRiscZeroVerifier public verifier;
   bytes32 public imageId;
 
@@ -43,16 +43,16 @@ contract MyProgram is IE3Program, Ownable {
   event InputPublished(uint256 indexed e3Id, bytes data, uint256 index);
 
   /// @notice Initialize the contract, binding it to a specified RISC Zero verifier.
-  /// @param _interfold The Interfold contract address
+  /// @param _loxley The Loxley contract address
   /// @param _verifier The RISC Zero verifier address
   /// @param _imageId The image ID for the guest program
-  constructor(IInterfold _interfold, IRiscZeroVerifier _verifier, bytes32 _imageId) Ownable(msg.sender) {
+  constructor(ILoxley _loxley, IRiscZeroVerifier _verifier, bytes32 _imageId) Ownable(msg.sender) {
     require(address(_verifier) != address(0), VerifierAddressZero());
 
-    interfold = _interfold;
+    loxley = _loxley;
     verifier = _verifier;
     imageId = _imageId;
-    authorizedContracts[address(_interfold)] = true;
+    authorizedContracts[address(_loxley)] = true;
   }
 
   /// @inheritdoc IE3Program
@@ -70,7 +70,7 @@ contract MyProgram is IE3Program, Ownable {
   /// @param e3Id The e3 id for which to publish input
   /// @param data The ABI-encoded ciphertext and its SAFE commitment.
   function publishInput(uint256 e3Id, bytes memory data) external override {
-    E3 memory e3 = interfold.getE3(e3Id);
+    E3 memory e3 = loxley.getE3(e3Id);
 
     if (block.timestamp > e3.inputWindow[1]) {
       revert InputDeadlineReached();
@@ -82,7 +82,7 @@ contract MyProgram is IE3Program, Ownable {
     // This minimal template does not prove that the serialized ciphertext matches its SAFE
     // commitment. Production programs must verify that binding before insertion. Otherwise, an
     // invalid input can prevent the E3 from completing.
-    // EXAMPLE: https://github.com/gnosisguild/interfold/blob/main/examples/CRISP/packages/crisp-contracts/contracts/CRISPProgram.sol
+    // EXAMPLE: https://github.com/gnosisguild/loxley/blob/main/examples/CRISP/packages/crisp-contracts/contracts/CRISPProgram.sol
 
     uint256 index = inputs[e3Id].numberOfLeaves;
     inputs[e3Id]._insert(uint256(ciphertextCommitment));
@@ -102,14 +102,14 @@ contract MyProgram is IE3Program, Ownable {
     bytes memory proof
   ) external view override returns (bool) {
     require(paramsHashes[e3Id] != bytes32(0), E3DoesNotExist());
-    E3 memory e3 = interfold.getE3(e3Id);
+    E3 memory e3 = loxley.getE3(e3Id);
     bytes32 paramsHash = paramsHashes[e3Id];
     bytes32 inputRoot = bytes32(inputs[e3Id]._root());
     Risc0ComputeProof.Proof memory computeProof = Risc0ComputeProof.decode(proof);
     if (computeProof.paramsHash != paramsHash || computeProof.inputRoot != inputRoot) revert InvalidComputeContext();
     bytes memory journal = Risc0ComputeProof.journal(
       bytes32(block.chainid),
-      bytes32(uint256(uint160(address(interfold)))),
+      bytes32(uint256(uint160(address(loxley)))),
       bytes32(e3Id),
       e3.encryptionSchemeId,
       e3.committeePublicKey,

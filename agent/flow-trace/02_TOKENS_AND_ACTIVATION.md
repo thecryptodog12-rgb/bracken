@@ -6,7 +6,7 @@ Before a node can register, it must stake two types of collateral:
 
 1. **FOLD tokens** (ciphernode bond) — governance/utility token, staked directly
 2. **Collateral via tFOLD tickets** (ticket collateral) — the configured ERC-20 asset is wrapped
-   into non-transferable InterfoldTicketToken. The planned launch asset is sUSDS.
+   into non-transferable LoxleyTicketToken. The planned launch asset is sUSDS.
 
 Collateral ownership and operator identity are separate namespaces:
 
@@ -28,7 +28,7 @@ Collateral ownership and operator identity are separate namespaces:
 
 ```text
 ┌───────────────────────────────────────────────────────────┐
-│                    InterfoldToken (FOLD)                   │
+│                    LoxleyToken (FOLD)                   │
 │  ERC20 + ERC20Permit + ERC20Votes + AccessControl          │
 │  + Ownable2Step                                            │
 │                                                            │
@@ -88,7 +88,7 @@ Collateral ownership and operator identity are separate namespaces:
 └───────────────────────────────────────────────────────────┘
 
 ┌───────────────────────────────────────────────────────────┐
-│              InterfoldTicketToken (tFOLD)                 │
+│              LoxleyTicketToken (tFOLD)                 │
 │  ERC20Wrapper over the configured collateral asset        │
 │                                                           │
 │  NON-TRANSFERABLE: _update() reverts on transfer          │
@@ -148,7 +148,7 @@ pulls from the owner, credits the operator's ciphernode bond position, and credi
 Bond owner submits bondCiphernodeFor(operator, 50000)
 │
 ├─ 1. Approve FOLD spend:
-│     └─ InterfoldToken.approve(bondingRegistry, 50000)
+│     └─ LoxleyToken.approve(bondingRegistry, 50000)
 │        → Allows BondingRegistry to pull FOLD tokens
 │
 ├─ 2. BondingRegistry.bondCiphernodeFor(operator, 50000)
@@ -183,7 +183,7 @@ Bond owner submits bondCiphernodeFor(operator, 50000)
 ### Locked FOLD bonding
 
 `BondingRegistry.totalBonded(account)` returns FOLD owned by that account across every operator
-position it funds, including pending exits that remain slashable/not returned. `InterfoldToken` uses
+position it funds, including pending exits that remain slashable/not returned. `LoxleyToken` uses
 this view for pooled wallet-level locks, so locked FOLD can be bonded without becoming transferable.
 A claim or ciphernode bond slash removes the exact amount from the owner's aggregate credit.
 Bond-owner acceptance checks that the previous owner's wallet balance plus its remaining aggregate
@@ -268,7 +268,7 @@ Bond owner submits addTicketBalanceFor(operator, amount)
 │     │  │         amount       // raw underlying units         │
 │     │  │       )              // NO ticketPrice multiplication│
 │     │  │       │                                              │
-│     │  │       │  ┌─ InterfoldTicketToken.depositFrom() ────┐ │
+│     │  │       │  ┌─ LoxleyTicketToken.depositFrom() ────┐ │
 │     │  │       │  │  1. underlying.transferFrom(           │  │
 │     │  │       │  │       from, address(this), amount)     │  │
 │     │  │       │  │     → collateral moves: owner → tFOLD    │  │
@@ -354,7 +354,7 @@ Bond owner submits removeTicketBalanceFor(operator, rawAmount)
 │     │  │    5. ticketToken.burnTickets(operator, amount)       │
 │     │  │       │  (NO ticketPrice multiplication — raw units)  │
 │     │  │       │                                               │
-│     │  │       │  ┌─ InterfoldTicketToken ───────────────────┐ │
+│     │  │       │  ┌─ LoxleyTicketToken ───────────────────┐ │
 │     │  │       │  │  burnTickets(operator, amount):        │   │
 │     │  │       │  │    payableBalance += amount             │  │
 │     │  │       │  │    _burn(operator, amount)             │   │
@@ -415,7 +415,7 @@ Caller submits claimExitsFor(operator, maxTicket, maxCiphernodeBond)
 │     │  │    5. if ticketAmount > 0:                                          │
 │     │  │       ticketToken.payout(recipient, ticketAmount)                   │
 │     │  │       │                                                             │
-│     │  │       │  ┌─ InterfoldTicketToken.payout() ──────────┐               │
+│     │  │       │  ┌─ LoxleyTicketToken.payout() ──────────┐               │
 │     │  │       │  │  Transfers collateral from             │                 │
 │     │  │       │  │  payableBalance to bond owner           │                │
 │     │  │       │  │  payableBalance -= amount               │                │
@@ -465,11 +465,11 @@ BondedVotes.getPastVotes(account, t)              ← the NUMERATOR
 │    ├─ votesSource == token   → wallet-held FOLD (needs delegation)
 │    └─ votesSource == escrow  → only escrowed FOLD; idle wallet FOLD carries no weight
 ├─ BondedCheckpoints.getPastBonded(account, t)    ← FOLD bonded as an operator
-└─ InterfoldToken.lockedBalanceAt(account, t)     ← vesting-locked FOLD, escrow source ONLY
+└─ LoxleyToken.lockedBalanceAt(account, t)     ← vesting-locked FOLD, escrow source ONLY
      minus the bonded total (saturating), because a bond satisfies a lock
 
 BondedVotes.getPastTotalSupply(t)                 ← the DENOMINATOR
-└─ InterfoldToken.getPastTotalSupply(t)           ← the TOKEN's supply, passed through unchanged
+└─ LoxleyToken.getPastTotalSupply(t)           ← the TOKEN's supply, passed through unchanged
 ```
 
 `votesSource` is fixed at construction. Passing the token itself gives the original behaviour:
@@ -487,7 +487,7 @@ token in the escrow and bonding custodies it in the registry.
 ### Vesting-locked FOLD
 
 Under an escrow votes source there is a third numerator: FOLD still encumbered by the token's own
-vesting locks. That FOLD sits in the holder's own wallet and `InterfoldToken._update` refuses to
+vesting locks. That FOLD sits in the holder's own wallet and `LoxleyToken._update` refuses to
 move it, so it can never be deposited into the escrow — without counting it, a locked holder would
 be barred from governance for the whole vesting schedule by a rule they cannot act on.
 
@@ -540,7 +540,7 @@ slashed. Voting power therefore stays with the owner for the duration of the exi
 
 ### Timepoints and configuration
 
-`BondedCheckpoints` keys history by `block.timestamp`, matching `InterfoldToken`'s ERC-6372
+`BondedCheckpoints` keys history by `block.timestamp`, matching `LoxleyToken`'s ERC-6372
 `mode=timestamp` clock. `BondedVotes` compares the clocks at construction and reverts on a mismatch:
 summing a timestamp-keyed history with a block-numbered source would answer for two unrelated points
 in time, and nothing downstream could detect it. A votes source that is not the token is checked the
@@ -575,7 +575,7 @@ the escrow but belongs to the locker. That function is used rather than the adap
 before the slot is spent. It must name this registry, and it must accept a write from it, which the
 setter checks by synchronizing the zero address — whose bonded total is always zero, so a successful
 probe leaves no readable state. Both checks are needed: `registry()` is not unique to a checkpoint
-contract, and `InterfoldTicketToken` answers it with this same address, so an address mix-up would
+contract, and `LoxleyTicketToken` answers it with this same address, so an address mix-up would
 otherwise consume the slot on a contract that cannot record anything and revert every later bond,
 slash, exit claim and owner transfer with no way to correct it. While unset, `_syncBondedCheckpoint`
 is a no-op rather than a revert: the registry is upgradeable, so the upgrade lands before the
@@ -631,7 +631,7 @@ active = registered
                 BOND FOLD                                     BUY TICKETS
                 ─────────                                     ───────────
   Bond owner                               Bond owner
-  FOLD wallet ──→ BondingRegistry          collateral wallet ──→ InterfoldTicketToken
+  FOLD wallet ──→ BondingRegistry          collateral wallet ──→ LoxleyTicketToken
                   (operator ciphernodeBond++)                        (wraps asset → mints tFOLD)
                                                            tFOLD → Operator balance
 
@@ -653,9 +653,9 @@ active = registered
 ## Audit Cluster 2 Changes (Tokens)
 
 The token contracts were hardened against the following audit findings. All changes are covered by
-`packages/interfold-contracts/test/Token/` and have no runtime impact outside the touched contracts.
+`packages/loxley-contracts/test/Token/` and have no runtime impact outside the touched contracts.
 
-### InterfoldTicketToken (tFOLD)
+### LoxleyTicketToken (tFOLD)
 
 - **Registry binding.** The initial circular deployment can use a placeholder registry only until
   the token is wired. Governance then repeats the atomic bonding-asset configuration check. Ticket
@@ -683,7 +683,7 @@ The token contracts were hardened against the following audit findings. All chan
 - **M-29 — EIP-6372 timestamp clock.** `clock() = uint48(block.timestamp)`,
   `CLOCK_MODE() = "mode=timestamp"`.
 
-### InterfoldToken (FOLD) — Complete Rewrite
+### LoxleyToken (FOLD) — Complete Rewrite
 
 The FOLD token was rewritten to implement a CCA-auction-aligned lifecycle with wallet-level lock
 enforcement based on immutable policy curves. Key changes:

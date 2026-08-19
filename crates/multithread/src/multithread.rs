@@ -29,7 +29,7 @@ use e3_events::{
     DecryptedSharesAggregationProofResponse, DecryptionAggregationRequest,
     DecryptionAggregationResponse, DkgAggregationRequest, DkgAggregationResponse,
     DkgShareDecryptionProofRequest, DkgShareDecryptionProofResponse, EventPublisher,
-    EventSubscriber, EventType, InterfoldEvent, InterfoldEventData, NodeDkgFoldRequest,
+    EventSubscriber, EventType, LoxleyEvent, LoxleyEventData, NodeDkgFoldRequest,
     NodeDkgFoldResponse, NodesFoldStepRequest, NodesFoldStepResponse, PartyVerificationResult,
     PkAggregationProofRequest, PkAggregationProofResponse, PkBfvProofRequest, PkBfvProofResponse,
     PkGenerationProofRequest, PkGenerationProofResponse, Proof, ShareComputationProofRequest,
@@ -185,11 +185,11 @@ impl Actor for Multithread {
     }
 }
 
-impl Handler<InterfoldEvent> for Multithread {
+impl Handler<LoxleyEvent> for Multithread {
     type Result = ();
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (data, ec) = msg.into_components();
-        if let InterfoldEventData::ComputeRequest(data) = data {
+        if let LoxleyEventData::ComputeRequest(data) = data {
             ctx.notify(TypedEvent::new(data, ec))
         }
     }

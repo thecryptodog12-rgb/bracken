@@ -22,18 +22,18 @@ mod bonding_registry_contract {
     sol!(
         #[sol(rpc)]
         BondingRegistryContract,
-        "../../packages/interfold-contracts/artifacts/contracts/interfaces/IBondingRegistry.sol/IBondingRegistry.json"
+        "../../packages/loxley-contracts/artifacts/contracts/interfaces/IBondingRegistry.sol/IBondingRegistry.json"
     );
 }
 
 #[allow(clippy::too_many_arguments)]
-mod interfold_ticket_token_contract {
+mod loxley_ticket_token_contract {
     use super::sol;
 
     sol!(
         #[sol(rpc)]
-        InterfoldTicketTokenContract,
-        "../../packages/interfold-contracts/artifacts/contracts/token/InterfoldTicketToken.sol/InterfoldTicketToken.json"
+        LoxleyTicketTokenContract,
+        "../../packages/loxley-contracts/artifacts/contracts/token/LoxleyTicketToken.sol/LoxleyTicketToken.json"
     );
 }
 
@@ -55,7 +55,7 @@ mod erc20_metadata_interface {
 
 use bonding_registry_contract::BondingRegistryContract;
 use erc20_metadata_interface::IERC20Metadata;
-use interfold_ticket_token_contract::InterfoldTicketTokenContract;
+use loxley_ticket_token_contract::LoxleyTicketTokenContract;
 
 pub(crate) struct ChainContext {
     chain_label: String,
@@ -125,7 +125,7 @@ impl ChainContext {
     }
 
     pub(crate) async fn ticket_underlying_address(&self) -> Result<Address> {
-        Ok(InterfoldTicketTokenContract::new(
+        Ok(LoxleyTicketTokenContract::new(
             self.ticket_token_address().await?,
             self.provider_client(),
         )
@@ -150,7 +150,7 @@ fn select_chain<'a>(config: &'a AppConfig, name: Option<&str>) -> Result<&'a Cha
             .find(|c| c.name == desired)
             .ok_or_else(|| anyhow!("Chain '{}' not found in configuration", desired)),
         None => config.chains().first().ok_or_else(|| {
-            anyhow!("No chains configured. Run `interfold ciphernode setup` first.")
+            anyhow!("No chains configured. Run `loxley ciphernode setup` first.")
         }),
     }
 }

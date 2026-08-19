@@ -10,7 +10,7 @@ import CardContent from '../components/CardContent'
 import { useWizard } from '../../context/WizardContext'
 
 /**
- * Results component - Fifth step in the Interfold wizard flow
+ * Results component - Fifth step in the Loxley wizard flow
  *
  * This component displays the results of the computation, including the encrypted
  * computation, the E3 ID, the transaction hash, and the raw output.

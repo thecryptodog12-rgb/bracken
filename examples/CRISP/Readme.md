@@ -2,15 +2,15 @@
 
 CRISP (Coercion-Resistant Impartial Selection Protocol) is a secure protocol for digital
 decision-making, leveraging fully homomorphic encryption (FHE) and distributed threshold
-cryptography (DTC) to enable verifiable secret ballots. Built with Interfold, CRISP safeguards
+cryptography (DTC) to enable verifiable secret ballots. Built with Loxley, CRISP safeguards
 democratic systems and decision-making applications against coercion, manipulation, and other
 vulnerabilities. To learn more about CRISP, you can read our
-[blog post](https://blog.theinterfold.com/crisp-private-voting-secret-ballot-fhe-zkp-mpc/) or visit
-the [documentation](https://docs.theinterfold.com/CRISP/introduction).
+[blog post](https://blog.theloxley.com/crisp-private-voting-secret-ballot-fhe-zkp-mpc/) or visit
+the [documentation](https://docs.theloxley.com/CRISP/introduction).
 
 ## Project Structure
 
-CRISP follows a modern structure with clear separation of concerns, consistent with the Interfold
+CRISP follows a modern structure with clear separation of concerns, consistent with the Loxley
 root structure.
 
 ```bash
@@ -24,12 +24,12 @@ CRISP/
 ├── crates/                  # Rust libraries used by the server
 ├── circuits/                # Noir zero-knowledge circuits
 ├── scripts/                 # Development scripts for running, testing, and deployment
-├── interfold.config.yaml      # Local ciphernode network config
+├── loxley.config.yaml      # Local ciphernode network config
 └── docker-compose.yaml      # Optional multi-node deployment
 ```
 
 You can have an extended explanation of the single folders in the dedicated
-[documentation](https://docs.theinterfold.com/CRISP/introduction#project-structure).
+[documentation](https://docs.theloxley.com/CRISP/introduction#project-structure).
 
 ## Prerequisites
 
@@ -51,7 +51,7 @@ Before getting started, ensure you have installed:
 
 [RiscZero](https://dev.risczero.com/api/zkvm/install) is **not** required for local development.
 `scripts/dev_program.sh` starts the program server with `--dev true`, so `pnpm dev:up` runs without
-a proving backend no matter what `program.dev` says in `interfold.config.yaml`. Real proving runs
+a proving backend no matter what `program.dev` says in `loxley.config.yaml`. Real proving runs
 inside a container image that already ships RiscZero, so what that path needs locally is **Docker**,
 not a RiscZero install.
 
@@ -87,9 +87,9 @@ from production and untrusted networks.
 `dev:up` runs `scripts/dev.sh`, which:
 
 1. Starts the Hardhat node in `packages/crisp-contracts`
-2. Deploys all contracts (Interfold, CRISPProgram, verifiers, registries) via
+2. Deploys all contracts (Loxley, CRISPProgram, verifiers, registries) via
    `scripts/crisp_deploy.sh`
-3. Starts ciphernodes using `interfold.config.yaml` via `scripts/dev_cipher.sh`
+3. Starts ciphernodes using `loxley.config.yaml` via `scripts/dev_cipher.sh`
 4. Launches the program server via `scripts/dev_program.sh`
 5. Starts the coordination server (Rust) via `scripts/dev_server.sh` on port `4000`
 6. Starts the React client via `scripts/dev_client.sh` on port `3000`
@@ -106,7 +106,7 @@ cd packages/crisp-contracts && pnpm hardhat node
 
 # Start only the ciphernodes (requires Hardhat running).
 # The argument is the ready-file the script creates once the nodes are registered.
-./scripts/dev_cipher.sh ./.interfold/ready
+./scripts/dev_cipher.sh ./.loxley/ready
 
 # Start only the program server (requires ciphernodes)
 ./scripts/dev_program.sh
@@ -135,7 +135,7 @@ pnpm test:e2e
 
 ### Ciphernode Configuration
 
-The `interfold.config.yaml` file in the CRISP root directory configures the ciphernode network. By
+The `loxley.config.yaml` file in the CRISP root directory configures the ciphernode network. By
 default, it runs in development mode with fake proofs for fast local development:
 
 ```yaml
@@ -146,7 +146,7 @@ program:
 ### Boundless Configuration
 
 For production-grade zero-knowledge proofs with [Boundless](https://docs.boundless.network/), update
-`interfold.config.yaml`:
+`loxley.config.yaml`:
 
 ```yaml
 program:
@@ -173,16 +173,16 @@ program:
 When you make changes to the guest program in `program/`, you need to upload it to IPFS to get a
 program URL:
 
-1. First, configure your Pinata JWT in `interfold.config.yaml` (as shown above)
+1. First, configure your Pinata JWT in `loxley.config.yaml` (as shown above)
 
 2. Build and upload your program:
 
    ```bash
    # This compiles the guest program and uploads it to IPFS via Pinata
-   interfold program upload
+   loxley program upload
    ```
 
-3. The command will output an IPFS hash like `QmXxx...`. Update your `interfold.config.yaml` with
+3. The command will output an IPFS hash like `QmXxx...`. Update your `loxley.config.yaml` with
    the full URL:
 
    ```yaml
@@ -198,7 +198,7 @@ program URL:
 The `pnpm dev:setup` command automatically creates `.env` files for the server and client from the
 `.env.example` templates (if they don't already exist).
 
-After `pnpm dev:up`, contract addresses are written automatically to `interfold.config.yaml`,
+After `pnpm dev:up`, contract addresses are written automatically to `loxley.config.yaml`,
 `server/.env`, and `client/.env` (no manual copy from `deployed_contracts.json`).
 
 ### DKG proof aggregation and on-chain ZK
@@ -214,11 +214,11 @@ Edit **`crisp.dev.env`** (created from `crisp.dev.env.example` on first `pnpm de
 deploys contracts using the same flags.
 
 **Re-run `pnpm dev:setup` after changing `CRISP_SKIP_PROOF_AGGREGATION`.** The setting is only
-honoured by an `interfold` binary built with the matching `test-only-skip-proof-aggregation` Cargo
+honoured by an `loxley` binary built with the matching `test-only-skip-proof-aggregation` Cargo
 feature, so `dev:setup` selects that feature from the profile and reinstalls the CLI. Running
 `dev:up` against a binary from the other profile makes every ciphernode exit at startup;
 `dev_cipher.sh` now aborts with the node status table instead of continuing. Note that
-`~/.cargo/bin/interfold` is shared — a `dev:setup` in `templates/default` or another example
+`~/.cargo/bin/loxley` is shared — a `dev:setup` in `templates/default` or another example
 overwrites the binary this profile installed.
 
 See **[docs/PROOF_AGGREGATION_AND_ZK.md](./docs/PROOF_AGGREGATION_AND_ZK.md)** for modes, address

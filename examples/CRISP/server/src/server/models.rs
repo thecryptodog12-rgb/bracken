@@ -181,7 +181,7 @@ pub struct WebResultRequest {
 pub struct E3StateLite {
     pub id: String,
     pub chain_id: u64,
-    pub interfold_address: String,
+    pub loxley_address: String,
 
     pub status: String,
     pub vote_count: u64,
@@ -216,7 +216,7 @@ pub struct E3 {
     // Identifiers
     pub id: String,
     pub chain_id: u64,
-    pub interfold_address: String,
+    pub loxley_address: String,
 
     // Status-related
     pub status: String,

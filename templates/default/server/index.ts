@@ -5,8 +5,8 @@
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
 import express, { Request, Response } from 'express'
-import { InterfoldSDK } from '@interfold/sdk'
-import { RegistryEventType, type CommitteePublishedData } from '@interfold/sdk/events'
+import { LoxleySDK } from '@loxley/sdk'
+import { RegistryEventType, type CommitteePublishedData } from '@loxley/sdk/events'
 import { hardhat } from 'viem/chains'
 import { handleTestInteraction } from './testHandler'
 import { getCheckedEnvVars } from './utils'
@@ -23,18 +23,18 @@ import { MyProgram__factory } from '../types/factories/contracts'
 // chain on demand at run time rather than accumulated in memory, so there is no
 // per-E3 session state or input-buffering to maintain.
 
-let sdkInstance: InterfoldSDK | null = null
+let sdkInstance: LoxleySDK | null = null
 
-async function createPrivateSDK(): Promise<InterfoldSDK> {
+async function createPrivateSDK(): Promise<LoxleySDK> {
   if (sdkInstance) return sdkInstance
 
-  const { PRIVATE_KEY, CIPHERNODE_REGISTRY_CONTRACT, INTERFOLD_CONTRACT, FEE_TOKEN_CONTRACT, RPC_URL } = getCheckedEnvVars()
+  const { PRIVATE_KEY, CIPHERNODE_REGISTRY_CONTRACT, LOXLEY_CONTRACT, FEE_TOKEN_CONTRACT, RPC_URL } = getCheckedEnvVars()
 
-  sdkInstance = InterfoldSDK.create({
+  sdkInstance = LoxleySDK.create({
     rpcUrl: RPC_URL,
     privateKey: PRIVATE_KEY as `0x${string}`,
     contracts: {
-      interfold: INTERFOLD_CONTRACT as `0x${string}`,
+      loxley: LOXLEY_CONTRACT as `0x${string}`,
       ciphernodeRegistry: CIPHERNODE_REGISTRY_CONTRACT as `0x${string}`,
       feeToken: FEE_TOKEN_CONTRACT as `0x${string}`,
     },
@@ -65,12 +65,12 @@ async function runProgram(e3Id: bigint): Promise<void> {
 
   const sdk = await createPrivateSDK()
   const publicClient = sdk.getPublicClient()
-  const { INTERFOLD_CONTRACT, E3_PROGRAM_ADDRESS } = getCheckedEnvVars()
+  const { LOXLEY_CONTRACT, E3_PROGRAM_ADDRESS } = getCheckedEnvVars()
 
   // Look up the encoded params from the on-chain paramSetRegistry.
   const e3 = await sdk.getE3(e3Id)
   const e3ProgramParams = (await publicClient.readContract({
-    address: INTERFOLD_CONTRACT as `0x${string}`,
+    address: LOXLEY_CONTRACT as `0x${string}`,
     abi: [
       {
         name: 'paramSetRegistry',
@@ -113,7 +113,7 @@ async function runProgram(e3Id: bigint): Promise<void> {
       e3Id,
       {
         chainId: await publicClient.getChainId(),
-        interfoldAddress: INTERFOLD_CONTRACT,
+        loxleyAddress: LOXLEY_CONTRACT,
         encryptionSchemeId: e3.encryptionSchemeId,
         committeePublicKeyHash: e3.committeePublicKey,
       },
@@ -171,7 +171,7 @@ async function setupEventListeners() {
 
   // Listen to CommitteePublished to know when an E3 is ready and when its input
   // window closes; inputs themselves are read on demand at run time.
-  await sdk.onInterfoldEvent(RegistryEventType.COMMITTEE_PUBLISHED, handleCommitteePublishedEvent)
+  await sdk.onLoxleyEvent(RegistryEventType.COMMITTEE_PUBLISHED, handleCommitteePublishedEvent)
 
   console.log('✅ Event listeners set up successfully')
 }
@@ -229,7 +229,7 @@ async function startServer() {
 
     const PORT = process.env.PORT ? parseInt(process.env.PORT) : 8080
     app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Interfold coordination server listening on port ${PORT}`)
+      console.log(`🚀 Loxley coordination server listening on port ${PORT}`)
       console.log(`📡 Event listeners active`)
     })
   } catch (error) {

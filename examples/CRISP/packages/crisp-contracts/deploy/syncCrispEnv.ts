@@ -8,7 +8,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-import { readDeploymentArgs } from '@interfold/contracts/scripts'
+import { readDeploymentArgs } from '@loxley/contracts/scripts'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -49,14 +49,14 @@ function deploymentAddress(contractName: string, chain: string): string | undefi
 
 /** Writes localhost deployment addresses into server/.env and client/.env. */
 export function syncCrispEnvFromDeployments(chain: string): void {
-  const interfoldAddress = deploymentAddress('Interfold', chain)
+  const loxleyAddress = deploymentAddress('Loxley', chain)
   const feeTokenAddress = deploymentAddress('MockUSDC', chain)
   const programAddress = deploymentAddress('CRISPProgram', chain)
   const registryAddress = deploymentAddress('CiphernodeRegistryOwnable', chain)
   const votingTokenAddress = deploymentAddress('MockVotingToken', chain)
 
   const missing: string[] = []
-  if (!interfoldAddress) missing.push('Interfold')
+  if (!loxleyAddress) missing.push('Loxley')
   if (!feeTokenAddress) missing.push('MockUSDC')
   if (!programAddress) missing.push('CRISPProgram')
   if (!registryAddress) missing.push('CiphernodeRegistryOwnable')
@@ -73,7 +73,7 @@ export function syncCrispEnvFromDeployments(chain: string): void {
   ensureEnvFile(clientEnv, path.join(CRISP_ROOT, 'client', '.env.example'))
 
   const serverUpdates: Record<string, string> = {
-    INTERFOLD_ADDRESS: interfoldAddress!,
+    LOXLEY_ADDRESS: loxleyAddress!,
     FEE_TOKEN_ADDRESS: feeTokenAddress!,
     E3_PROGRAM_ADDRESS: programAddress!,
     CIPHERNODE_REGISTRY_ADDRESS: registryAddress!,

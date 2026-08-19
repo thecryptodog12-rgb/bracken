@@ -5,14 +5,14 @@
 use super::effects::{read_slash_policy, submit_slash_proposal};
 use super::*;
 
-impl<P: Provider + WalletProvider + Clone + 'static> Handler<InterfoldEvent>
+impl<P: Provider + WalletProvider + Clone + 'static> Handler<LoxleyEvent>
     for SlashingManagerSolWriter<P>
 {
     type Result = ();
 
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         match msg.into_data() {
-            InterfoldEventData::AccusationQuorumReached(data) => {
+            LoxleyEventData::AccusationQuorumReached(data) => {
                 // Every node evaluates the policy after quorum. Only the first three voters send
                 // a transaction when Lane A is enabled, but all nodes need the same disabled-policy
                 // decision so they can derive the same E3-scoped exclusion.
@@ -33,7 +33,7 @@ impl<P: Provider + WalletProvider + Clone + 'static> Handler<InterfoldEvent>
                     }
                 }
             }
-            InterfoldEventData::CommitteeMemberExcluded(data) => {
+            LoxleyEventData::CommitteeMemberExcluded(data) => {
                 if data.e3_id.chain_id() == self.provider.chain_id() {
                     match SlashIntentKey::from_exclusion(&data) {
                         Ok(key) => self.submissions.mark_completed(key),
@@ -41,7 +41,7 @@ impl<P: Provider + WalletProvider + Clone + 'static> Handler<InterfoldEvent>
                     }
                 }
             }
-            InterfoldEventData::EffectsEnabled(_) => {
+            LoxleyEventData::EffectsEnabled(_) => {
                 let deferred = self.submissions.enable_effects();
                 if !deferred.is_empty() {
                     info!(
@@ -64,7 +64,7 @@ impl<P: Provider + WalletProvider + Clone + 'static> Handler<InterfoldEvent>
                     );
                 }
             }
-            InterfoldEventData::Shutdown(data) => self.notify_sync(ctx, data),
+            LoxleyEventData::Shutdown(data) => self.notify_sync(ctx, data),
             _ => (),
         }
     }

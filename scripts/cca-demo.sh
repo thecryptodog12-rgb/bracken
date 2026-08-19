@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════════════════════════════
-# Interfold CCA Demo — FOLD Token + CCA Auction Rehearsal on Sepolia
+# Loxley CCA Demo — FOLD Token + CCA Auction Rehearsal on Sepolia
 # ═══════════════════════════════════════════════════════════════════════════════
 #
 # What this shows:
@@ -18,8 +18,8 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-CONTRACTS_DIR="$REPO_ROOT/packages/interfold-contracts"
-SALE_UI_DIR="$REPO_ROOT/packages/interfold-sale"
+CONTRACTS_DIR="$REPO_ROOT/packages/loxley-contracts"
+SALE_UI_DIR="$REPO_ROOT/packages/loxley-sale"
 
 # ── Config ───────────────────────────────────────────────────────────────────
 SAFE="0x27853b4E771061390477AD8d40826276b1F4BF2F"

@@ -151,7 +151,7 @@ jobs:
             experimental-features = nix-command flakes
       - uses: cachix/cachix-action@v15
         with:
-          name: interfold
+          name: loxley
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         # if the following fails it means some of our git dependencies or bb has updated
         # to fix this basically what you need to do here is copy the actual hashes
@@ -201,11 +201,11 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: brew install solidity
 
-      - name: Build interfold binary
-        run: cargo build --locked --release --target ${{ matrix.target }} --bin interfold
+      - name: Build loxley binary
+        run: cargo build --locked --release --target ${{ matrix.target }} --bin loxley
 
-      - name: Build interfoldup binary
-        run: cargo build --locked --release --target ${{ matrix.target }} --bin interfoldup
+      - name: Build loxleyup binary
+        run: cargo build --locked --release --target ${{ matrix.target }} --bin loxleyup
 
       - name: Create release archives
         shell: bash
@@ -219,20 +219,20 @@ jobs:
             EXT=""
           fi
 
-          # Create interfold archive
-          cp "target/${{ matrix.target }}/release/interfold${EXT}" "./interfold${EXT}"
-          tar -czf "dist/interfold-${{ matrix.os_name }}-${{ matrix.arch }}.tar.gz" "interfold${EXT}"
-          rm "interfold${EXT}"
+          # Create loxley archive
+          cp "target/${{ matrix.target }}/release/loxley${EXT}" "./loxley${EXT}"
+          tar -czf "dist/loxley-${{ matrix.os_name }}-${{ matrix.arch }}.tar.gz" "loxley${EXT}"
+          rm "loxley${EXT}"
 
-          # Create interfoldup archive
-          cp "target/${{ matrix.target }}/release/interfoldup${EXT}" "./interfoldup${EXT}"
-          tar -czf "dist/interfoldup-${{ matrix.os_name }}-${{ matrix.arch }}.tar.gz" "interfoldup${EXT}"
-          rm "interfoldup${EXT}"
+          # Create loxleyup archive
+          cp "target/${{ matrix.target }}/release/loxleyup${EXT}" "./loxleyup${EXT}"
+          tar -czf "dist/loxleyup-${{ matrix.os_name }}-${{ matrix.arch }}.tar.gz" "loxleyup${EXT}"
+          rm "loxleyup${EXT}"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: interfold-binaries-${{ matrix.os_name }}-${{ matrix.arch }}
+          name: loxley-binaries-${{ matrix.os_name }}-${{ matrix.arch }}
           path: dist/
 
   publish-rust-crates:
@@ -293,7 +293,7 @@ jobs:
         uses: pnpm/action-setup@v4
 
       # `pnpm build:ts` builds the SDK, whose prebuild compiles the threshold
-      # circuits via `nargo` (packages/interfold-sdk/scripts/compile-circuits.sh).
+      # circuits via `nargo` (packages/loxley-sdk/scripts/compile-circuits.sh).
       # Without nargo on PATH the build fails with "nargo is not installed".
       - name: Install Nargo
         uses: noir-lang/noirup@v0.1.4
@@ -320,28 +320,28 @@ jobs:
             echo "📦 Publishing with 'latest' tag for stable release"
           fi
 
-      - name: Publish @interfold/config
-        working-directory: packages/interfold-config
+      - name: Publish @loxley/config
+        working-directory: packages/loxley-config
         run: npm publish --access public --tag ${{ steps.npm_tag.outputs.tag }} --provenance
 
-      - name: Publish @interfold/contracts
-        working-directory: packages/interfold-contracts
+      - name: Publish @loxley/contracts
+        working-directory: packages/loxley-contracts
         run: npm publish --access public --tag ${{ steps.npm_tag.outputs.tag }} --provenance
 
-      - name: Publish @interfold/wasm
+      - name: Publish @loxley/wasm
         working-directory: crates/wasm
         run: npm publish --access public --tag ${{ steps.npm_tag.outputs.tag }} --provenance
 
-      - name: Publish @interfold/sdk
-        working-directory: packages/interfold-sdk
+      - name: Publish @loxley/sdk
+        working-directory: packages/loxley-sdk
         run: npm publish --access public --tag ${{ steps.npm_tag.outputs.tag }} --provenance
 
-      - name: Publish @interfold/react
-        working-directory: packages/interfold-react
+      - name: Publish @loxley/react
+        working-directory: packages/loxley-react
         run: npm publish --access public --tag ${{ steps.npm_tag.outputs.tag }} --provenance
 
-      - name: Publish @interfold/mcp
-        working-directory: packages/interfold-mcp
+      - name: Publish @loxley/mcp
+        working-directory: packages/loxley-mcp
         run: npm publish --access public --tag ${{ steps.npm_tag.outputs.tag }} --provenance
 
   download-circuits:
@@ -489,7 +489,7 @@ jobs:
           mkdir -p release-assets
           find dist/ -name "*.tar.gz" -exec cp {} release-assets/ \;
           cp compute-provider-provenance.json release-assets/
-          # `interfold config check` fetches this asset from the latest release,
+          # `loxley config check` fetches this asset from the latest release,
           # so a release without it leaves operators unable to detect a redeploy.
           if [ ! -f deployments/manifest.json ]; then
             echo "deployments/manifest.json is missing. Run \`pnpm gen:manifest\` and commit it." >&2
@@ -540,16 +540,16 @@ jobs:
 
           ## 📦 Installation
 
-          ### Install via interfoldup (Recommended)
+          ### Install via loxleyup (Recommended)
 
           Install the installer:
           \`\`\`bash
-          curl -fsSL https://raw.githubusercontent.com/gnosisguild/interfold/main/install | bash
+          curl -fsSL https://raw.githubusercontent.com/gnosisguild/loxley/main/install | bash
           \`\`\`
 
-          Then use it to install interfold:
+          Then use it to install loxley:
           \`\`\`bash
-          interfoldup install
+          loxleyup install
           \`\`\`
 
           ### NPM Packages
@@ -560,20 +560,20 @@ jobs:
             cat >> release_notes.md << EOF
           \`\`\`bash
           # Install pre-release versions
-          npm install @interfold/sdk@next
-          npm install @interfold/contracts@next
-          npm install @interfold/config@next
-          npm install @interfold/react@next
+          npm install @loxley/sdk@next
+          npm install @loxley/contracts@next
+          npm install @loxley/config@next
+          npm install @loxley/react@next
           \`\`\`
           EOF
           else
             cat >> release_notes.md << EOF
           \`\`\`bash
           # Install stable versions
-          npm install @interfold/sdk@latest
-          npm install @interfold/contracts@latest
-          npm install @interfold/config@latest
-          npm install @interfold/react@latest
+          npm install @loxley/sdk@latest
+          npm install @loxley/contracts@latest
+          npm install @loxley/config@latest
+          npm install @loxley/react@latest
           \`\`\`
           EOF
           fi
@@ -586,7 +586,7 @@ jobs:
 
           \`\`\`toml
           [dependencies]
-          interfold = "${VERSION}"
+          loxley = "${VERSION}"
           \`\`\`
           EOF
           fi
@@ -596,8 +596,8 @@ jobs:
 
           ## 💾 Binary Assets
 
-          - \`interfold-*\`: The main Interfold CLI binary
-          - \`interfoldup-*\`: The installer/version manager binary
+          - \`loxley-*\`: The main Loxley CLI binary
+          - \`loxleyup-*\`: The installer/version manager binary
 
           ### Supported Platforms
           - Linux (x86_64)

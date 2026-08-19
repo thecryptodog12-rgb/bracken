@@ -12,7 +12,7 @@ use anyhow::*;
 use async_trait::async_trait;
 use e3_data::RepositoriesFactory;
 use e3_events::{
-    DkgFoldAttestationContext, E3Requested, Event, InterfoldEvent, InterfoldEventData, Seed,
+    DkgFoldAttestationContext, E3Requested, Event, LoxleyEvent, LoxleyEventData, Seed,
     DKG_FOLD_ATTESTATION_CONTEXT_SCHEMA_VERSION,
 };
 use e3_fhe_params::BfvPreset;
@@ -43,8 +43,8 @@ impl E3MetaExtension {
 
 #[async_trait]
 impl E3Extension for E3MetaExtension {
-    fn on_event(&self, ctx: &mut crate::E3Context, event: &InterfoldEvent) {
-        if let InterfoldEventData::DkgFoldAttestationContextEstablished(data) = event.get_data() {
+    fn on_event(&self, ctx: &mut crate::E3Context, event: &LoxleyEvent) {
+        if let LoxleyEventData::DkgFoldAttestationContextEstablished(data) = event.get_data() {
             if data.schema_version != DKG_FOLD_ATTESTATION_CONTEXT_SCHEMA_VERSION {
                 return;
             }
@@ -55,7 +55,7 @@ impl E3Extension for E3MetaExtension {
             return;
         }
 
-        let InterfoldEventData::E3Requested(data) = event.get_data() else {
+        let LoxleyEventData::E3Requested(data) = event.get_data() else {
             return;
         };
         let E3Requested {

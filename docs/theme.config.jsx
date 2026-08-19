@@ -10,8 +10,8 @@ import Footer from './components/Footer'
 
 export default {
   logo: (
-    <Link href='https://theinterfold.com' target='_self'>
-      <img src='/interfold-logo.png' style={{ maxWidth: '150px', borderRadius: '0px' }} />
+    <Link href='https://theloxley.com' target='_self'>
+      <img src='/loxley-logo.png' style={{ maxWidth: '150px', borderRadius: '0px' }} />
     </Link>
   ),
   logoLink: false,
@@ -20,15 +20,15 @@ export default {
     key: 'enclave-rename',
     text: (
       <span>
-        Enclave is now <strong>The Interfold</strong>.
+        Enclave is now <strong>The Loxley</strong>.
       </span>
     ),
   },
 
   project: {
-    link: 'https://github.com/gnosisguild/interfold',
+    link: 'https://github.com/gnosisguild/loxley',
   },
-  docsRepositoryBase: 'https://github.com/theinterfold/interfold/tree/main/docs',
+  docsRepositoryBase: 'https://github.com/theloxley/loxley/tree/main/docs',
   darkMode: false,
   nextThemes: {
     defaultTheme: 'light',
@@ -43,7 +43,7 @@ export default {
     const { asPath } = useRouter()
     if (asPath !== '/') {
       return {
-        titleTemplate: '%s - The Interfold',
+        titleTemplate: '%s - The Loxley',
       }
     }
   },
@@ -53,8 +53,8 @@ export default {
     } = useConfig()
     return (
       <>
-        <title>{title ? title : 'The Interfold'}</title>
-        <meta name='title' content={title ? title : 'The Interfold'} />
+        <title>{title ? title : 'The Loxley'}</title>
+        <meta name='title' content={title ? title : 'The Loxley'} />
         <meta
           name='description'
           content={
@@ -65,8 +65,8 @@ export default {
         />
 
         <meta property='og:type' content='website' />
-        <meta property='og:url' content='https://docs.theinterfold.com' />
-        <meta property='og:title' content={title ? title : 'The Interfold'} />
+        <meta property='og:url' content='https://docs.theloxley.com' />
+        <meta property='og:title' content={title ? title : 'The Loxley'} />
         <meta
           property='og:description'
           content={
@@ -75,11 +75,11 @@ export default {
               : 'Infrastructure for confidential coordination powered by Encrypted Execution Environments (E3).'
           }
         />
-        <meta property='og:image' content='https://docs.theinterfold.com/interfold-meta.jpg' />
+        <meta property='og:image' content='https://docs.theloxley.com/loxley-meta.jpg' />
 
         <meta property='twitter:card' content='summary_large_image' />
-        <meta property='twitter:url' content='https://docs.theinterfold.com' />
-        <meta property='twitter:title' content={title ? title : 'The Interfold'} />
+        <meta property='twitter:url' content='https://docs.theloxley.com' />
+        <meta property='twitter:title' content={title ? title : 'The Loxley'} />
         <meta
           property='twitter:description'
           content={
@@ -88,7 +88,7 @@ export default {
               : 'Infrastructure for confidential coordination powered by Encrypted Execution Environments (E3).'
           }
         />
-        <meta property='twitter:image' content='/interfold-meta.jpg' />
+        <meta property='twitter:image' content='/loxley-meta.jpg' />
 
         <link rel='apple-touch-icon' sizes='180x180' href='/apple-touch-icon.png' />
         <link rel='icon' type='image/png' sizes='32x32' href='/favicon-32x32.png' />

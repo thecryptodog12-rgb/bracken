@@ -12,8 +12,8 @@ use e3_trbfv::shares::BfvEncryptedShares;
 use e3_zk_helpers::{computation::DkgInputType, CiphernodesCommitteeSize};
 
 fn ec() -> EventContext<Sequenced> {
-    use e3_events::{InterfoldEventData, TestEvent, Unsequenced};
-    EventContext::<Unsequenced>::from(InterfoldEventData::from(TestEvent::new("x", 0))).sequence(0)
+    use e3_events::{LoxleyEventData, TestEvent, Unsequenced};
+    EventContext::<Unsequenced>::from(LoxleyEventData::from(TestEvent::new("x", 0))).sequence(0)
 }
 
 fn sensitive() -> SensitiveBytes {

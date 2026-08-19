@@ -7,7 +7,7 @@ _template_dev_config_root() {
 
 load_template_dev_config() {
   TEMPLATE_ROOT="$(_template_dev_config_root)"
-  INTERFOLD_REPO_ROOT="$(cd "${TEMPLATE_ROOT}/../.." && pwd)"
+  LOXLEY_REPO_ROOT="$(cd "${TEMPLATE_ROOT}/../.." && pwd)"
 
   BFV_PRESET="${BFV_PRESET:-insecure-512}"
   COMMITTEE="${COMMITTEE:-minimum}"
@@ -20,14 +20,14 @@ load_template_dev_config() {
       ;;
   esac
 
-  export TEMPLATE_ROOT INTERFOLD_REPO_ROOT BFV_PRESET COMMITTEE
+  export TEMPLATE_ROOT LOXLEY_REPO_ROOT BFV_PRESET COMMITTEE
 }
 
 template_monorepo_build_available() {
-  [[ -f "${INTERFOLD_REPO_ROOT}/scripts/build-circuits.ts" ]]
+  [[ -f "${LOXLEY_REPO_ROOT}/scripts/build-circuits.ts" ]]
 }
 
-# Whether the installed `interfold` carries an optional Cargo feature.
+# Whether the installed `loxley` carries an optional Cargo feature.
 #
 # Features are resolved when the binary is compiled, so the presence of a
 # monorepo checkout proves nothing about the binary on PATH: a stale or
@@ -38,25 +38,25 @@ template_cli_has_feature() {
   local feature="$1"
   local compiled
 
-  if ! command -v interfold >/dev/null 2>&1; then
+  if ! command -v loxley >/dev/null 2>&1; then
     return 1
   fi
 
   # `|| true`: an older CLI without `--features` exits non-zero, which must read
   # as "feature absent" rather than abort a `set -e` caller.
-  compiled="$(interfold rev --features 2>/dev/null || true)"
+  compiled="$(loxley rev --features 2>/dev/null || true)"
   printf '%s\n' "${compiled}" | grep -qxF "${feature}"
 }
 
-build_interfold_circuits_at_setup() {
+build_loxley_circuits_at_setup() {
   if ! template_monorepo_build_available; then
-    echo "Skipping circuit build (standalone template; use interfold noir setup release artifacts)."
+    echo "Skipping circuit build (standalone template; use loxley noir setup release artifacts)."
     return 0
   fi
 
-  echo "Building interfold circuits (preset=${BFV_PRESET}, committee=${COMMITTEE})..."
+  echo "Building loxley circuits (preset=${BFV_PRESET}, committee=${COMMITTEE})..."
   (
-    cd "${INTERFOLD_REPO_ROOT}" &&
+    cd "${LOXLEY_REPO_ROOT}" &&
       pnpm build:circuits \
         --preset "${BFV_PRESET}" \
         --committee "${COMMITTEE}" \
@@ -64,16 +64,16 @@ build_interfold_circuits_at_setup() {
   )
 }
 
-sync_interfold_circuit_artifacts() {
+sync_loxley_circuit_artifacts() {
   if ! template_monorepo_build_available; then
     return 0
   fi
 
-  local src="${INTERFOLD_REPO_ROOT}/dist/circuits/${BFV_PRESET}/${COMMITTEE}"
-  local dst="${TEMPLATE_ROOT}/.interfold/noir/circuits/${BFV_PRESET}/${COMMITTEE}"
+  local src="${LOXLEY_REPO_ROOT}/dist/circuits/${BFV_PRESET}/${COMMITTEE}"
+  local dst="${TEMPLATE_ROOT}/.loxley/noir/circuits/${BFV_PRESET}/${COMMITTEE}"
 
   if [[ ! -f "${src}/recursive/dkg/pk/pk.json" ]]; then
-    echo "No built circuits at ${src}; run pnpm dev:setup first. Using interfold noir setup release layout."
+    echo "No built circuits at ${src}; run pnpm dev:setup first. Using loxley noir setup release layout."
     return 0
   fi
 

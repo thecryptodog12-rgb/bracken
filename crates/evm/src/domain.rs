@@ -30,11 +30,11 @@ pub(crate) mod evm_event_catalog;
 pub(crate) mod evm_log_observation;
 #[path = "historical_order/workflow.rs"]
 pub(crate) mod historical_order_fixer;
-#[path = "interfold/events.rs"]
-pub(crate) mod interfold_events;
+#[path = "loxley/events.rs"]
+pub(crate) mod loxley_events;
 #[path = "chain_reader/log_timestamp.rs"]
 pub(crate) mod log_timestamp;
-#[path = "interfold_writing/workflow.rs"]
+#[path = "loxley_writing/workflow.rs"]
 pub(crate) mod plaintext_publication;
 #[path = "chain_reader/reorg.rs"]
 pub(crate) mod reorg;

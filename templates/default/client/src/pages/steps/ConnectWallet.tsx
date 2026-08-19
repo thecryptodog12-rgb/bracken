@@ -12,9 +12,9 @@ import Spinner from '../components/Spinner'
 import { useWizard } from '../../context/WizardContext'
 
 /**
- * ConnectWallet component - First step in the Interfold wizard flow
+ * ConnectWallet component - First step in the Loxley wizard flow
  *
- * This component introduces users to the Interfold protocol and provides the initial
+ * This component introduces users to the Loxley protocol and provides the initial
  * wallet connection interface. It explains the E3 (Encrypted Execution Environment)
  * concept and guides users through the secure computation workflow using FHE,
  * zero-knowledge proofs, and distributed key cryptography.
@@ -40,7 +40,7 @@ const ConnectWallet: React.FC = () => {
             <p className='leading-relaxed text-ink-3'>
               {isReconnecting
                 ? 'Restoring your wallet connection. This will only take a moment.'
-                : 'Setting up the Interfold SDK and cryptographic context. Please wait before continuing.'}
+                : 'Setting up the Loxley SDK and cryptographic context. Please wait before continuing.'}
             </p>
           </div>
         </div>
@@ -56,9 +56,9 @@ const ConnectWallet: React.FC = () => {
         </div>
         <p className='eyebrow justify-center'>Step 1 · Connect Your Wallet</p>
         <div className='space-y-4'>
-          <h3 className='text-2xl'>Welcome to Interfold</h3>
+          <h3 className='text-2xl'>Welcome to Loxley</h3>
           <p className='leading-relaxed text-ink-3'>
-            Interfold is a protocol for Encrypted Execution Environments (E3) that enables secure computations on private data using fully
+            Loxley is a protocol for Encrypted Execution Environments (E3) that enables secure computations on private data using fully
             homomorphic encryption (FHE), zero-knowledge proofs, and distributed key cryptography. Connect your wallet to experience
             privacy-preserving computation.
           </p>

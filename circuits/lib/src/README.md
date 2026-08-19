@@ -7,7 +7,7 @@ BFV** constraint logic: polynomials, commitments, SAFE hashing, modular arithmet
 For **which** binary package maps to **C0–C7** and **`CircuitName`**, see the
 [**circuit package index**](../../README.md#circuit-package-index) in
 [`circuits/README.md`](../../README.md); for protocol phases and the PV-TBFV picture, read
-[Cryptography](https://docs.theinterfold.com/cryptography)
+[Cryptography](https://docs.theloxley.com/cryptography)
 ([`docs/pages/cryptography.mdx`](../../../docs/pages/cryptography.mdx)).
 
 ```text
@@ -60,5 +60,5 @@ defines `N`, `L`, `QIS`, bounds, `PARITY_MATRIX`, per-circuit `Configs`, and
 | Topic                                          | Location                                                                                                       |
 | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | Binary packages, `CircuitName`, build and test | [`circuits/README.md`](../../README.md)                                                                        |
-| Phases, PV-TBFV, circuit identifiers           | [Cryptography](https://docs.theinterfold.com/cryptography) · [source](../../../docs/pages/cryptography.mdx)    |
-| Toolchain, `interfold noir`, compile scripts   | [Noir Circuits](https://docs.theinterfold.com/noir-circuits) · [source](../../../docs/pages/noir-circuits.mdx) |
+| Phases, PV-TBFV, circuit identifiers           | [Cryptography](https://docs.theloxley.com/cryptography) · [source](../../../docs/pages/cryptography.mdx)    |
+| Toolchain, `loxley noir`, compile scripts   | [Noir Circuits](https://docs.theloxley.com/noir-circuits) · [source](../../../docs/pages/noir-circuits.mdx) |

@@ -8,34 +8,34 @@ impl Actor for AccusationManager {
     type Context = Context<Self>;
 }
 
-impl Handler<InterfoldEvent> for AccusationManager {
+impl Handler<LoxleyEvent> for AccusationManager {
     type Result = ();
 
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            InterfoldEventData::ProofVerificationFailed(data) => {
+            LoxleyEventData::ProofVerificationFailed(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ProofVerificationPassed(data) => {
+            LoxleyEventData::ProofVerificationPassed(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ProofFailureAccusation(data) => {
+            LoxleyEventData::ProofFailureAccusation(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::AccusationVote(data) => {
+            LoxleyEventData::AccusationVote(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ComputeResponse(data) => {
+            LoxleyEventData::ComputeResponse(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ComputeRequestError(data) => {
+            LoxleyEventData::ComputeRequestError(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::SlashExecuted(data) => {
+            LoxleyEventData::SlashExecuted(data) => {
                 self.voting.on_slash_executed(data);
             }
-            InterfoldEventData::CommitmentConsistencyViolation(data) => {
+            LoxleyEventData::CommitmentConsistencyViolation(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
             _ => (),

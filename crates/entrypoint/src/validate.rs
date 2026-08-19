@@ -6,7 +6,7 @@
 
 //! Offline node-state validation.
 //!
-//! Backs the `interfold node validate` CLI command. It opens a node's persisted
+//! Backs the `loxley node validate` CLI command. It opens a node's persisted
 //! stores offline (no network or chain writes) and answers the
 //! operator question: *"Is my on-disk state intact, internally consistent, free
 //! of loose ends, and will this binary be able to load it after an upgrade?"*
@@ -36,8 +36,8 @@ use anyhow::{bail, Context, Result};
 use e3_config::AppConfig;
 use e3_data::{CommitLogEventLog, EventLogOpenMode, Repositories};
 use e3_events::{
-    AggregateId, E3Stage, Event, EventContextAccessors, EventContextSeq, InterfoldEvent,
-    InterfoldEventData,
+    AggregateId, E3Stage, Event, EventContextAccessors, EventContextSeq, LoxleyEvent,
+    LoxleyEventData,
 };
 use e3_sortition::{committee_key, NodeRegistry, NodeStateRepositoryFactory, NodeStateStore};
 use e3_sync::{
@@ -130,7 +130,7 @@ impl ValidationReport {
     /// Render the report as human-readable text.
     pub fn render(&self) -> String {
         let mut out = String::new();
-        out.push_str("Interfold node validation report\n");
+        out.push_str("Loxley node validation report\n");
         out.push_str("==============================\n");
         for c in &self.checks {
             out.push_str(&format!(
@@ -467,16 +467,16 @@ fn find_orphaned_committees(
 /// Mirrors the terminal-release dispatch in the `Sortition` actor: an E3 is
 /// terminal on `PlaintextOutputPublished`, `E3Failed`, or `E3StageChanged` to
 /// `Complete`/`Failed`.
-fn collect_terminal_keys(events: &[InterfoldEvent], out: &mut HashSet<String>) {
+fn collect_terminal_keys(events: &[LoxleyEvent], out: &mut HashSet<String>) {
     for event in events {
         match event.get_data() {
-            InterfoldEventData::PlaintextOutputPublished(d) => {
+            LoxleyEventData::PlaintextOutputPublished(d) => {
                 out.insert(committee_key(&d.e3_id));
             }
-            InterfoldEventData::E3Failed(d) => {
+            LoxleyEventData::E3Failed(d) => {
                 out.insert(committee_key(&d.e3_id));
             }
-            InterfoldEventData::E3StageChanged(d)
+            LoxleyEventData::E3StageChanged(d)
                 if matches!(d.new_stage, E3Stage::Complete | E3Stage::Failed) =>
             {
                 out.insert(committee_key(&d.e3_id));
@@ -492,7 +492,7 @@ fn read_event_log(
     path: &Path,
     expected_aggregate: AggregateId,
     repair: bool,
-) -> Result<Vec<InterfoldEvent>> {
+) -> Result<Vec<LoxleyEvent>> {
     if !path.exists() {
         return Ok(Vec::new());
     }
@@ -504,7 +504,7 @@ fn read_event_log(
     };
     let log = CommitLogEventLog::open(path, mode)
         .with_context(|| format!("failed to open commit log {}", path.display()))?;
-    let events: Vec<InterfoldEvent> = log
+    let events: Vec<LoxleyEvent> = log
         .read_from_checked(1)
         .with_context(|| format!("failed integrity scan for {}", path.display()))
         .map(|events| {
@@ -575,7 +575,7 @@ mod tests {
         let log_path = dir.path().join("log.0");
         let segment_path = log_path.join("00000000000000000000.log");
         let mut log = CommitLogEventLog::new(&log_path).unwrap();
-        let event = InterfoldEvent::<Unsequenced>::new_with_timestamp(
+        let event = LoxleyEvent::<Unsequenced>::new_with_timestamp(
             TestEvent::new("valid", 1).into(),
             None,
             1,
@@ -608,7 +608,7 @@ mod tests {
         let dir = tempdir().unwrap();
         let log_path = dir.path().join("log.1");
         let mut log = CommitLogEventLog::new(&log_path).unwrap();
-        let aggregate_zero_event = InterfoldEvent::<Unsequenced>::new_with_timestamp(
+        let aggregate_zero_event = LoxleyEvent::<Unsequenced>::new_with_timestamp(
             TestEvent::new("misfiled", 1).into(),
             None,
             1,

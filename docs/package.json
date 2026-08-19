@@ -1,8 +1,8 @@
 {
-  "name": "interfold-docs",
+  "name": "loxley-docs",
   "version": "1.0.0",
   "private": true,
-  "description": "the official documentation for Interfold.",
+  "description": "the official documentation for Loxley.",
   "main": "index.js",
   "scripts": {
     "dev": "next",

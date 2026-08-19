@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
   const { mintTokens, isMinting } = useToken()
 
   return (
-    <div className='crisp-editorial' data-palette='interfold' data-mode='light' data-density='comfortable'>
+    <div className='crisp-editorial' data-palette='loxley' data-mode='light' data-density='comfortable'>
       <header className='topbar'>
         <Link to={'/'} className='brand' style={{ cursor: 'pointer' }}>
           <span className='glyph' />

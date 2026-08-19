@@ -9,7 +9,7 @@ use std::path::PathBuf;
 use super::write_file_with_dirs;
 use actix::{Actor, Addr, Context, Handler};
 use e3_events::{
-    prelude::*, BusHandle, EventSubscriber, EventType, InterfoldEvent, InterfoldEventData,
+    prelude::*, BusHandle, EventSubscriber, EventType, LoxleyEvent, LoxleyEventData,
 };
 use e3_utils::MAILBOX_LIMIT;
 use tracing::info;
@@ -36,10 +36,10 @@ impl Actor for PublicKeyWriter {
     }
 }
 
-impl Handler<InterfoldEvent> for PublicKeyWriter {
+impl Handler<LoxleyEvent> for PublicKeyWriter {
     type Result = ();
-    fn handle(&mut self, msg: InterfoldEvent, _: &mut Self::Context) -> Self::Result {
-        if let InterfoldEventData::PublicKeyAggregated(data) = msg.into_data() {
+    fn handle(&mut self, msg: LoxleyEvent, _: &mut Self::Context) -> Self::Result {
+        if let LoxleyEventData::PublicKeyAggregated(data) = msg.into_data() {
             info!(path = ?&self.path, "Writing Pubkey To Path");
             write_file_with_dirs(&self.path, &data.pubkey).unwrap();
         }

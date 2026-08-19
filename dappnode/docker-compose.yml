@@ -5,7 +5,7 @@ services:
       context: .
       args:
         UPSTREAM_VERSION: 0.2.3
-    image: 'ciphernode.interfold-ciphernode.public.dappnode.eth:0.2.3'
+    image: 'ciphernode.loxley-ciphernode.public.dappnode.eth:0.2.3'
     restart: unless-stopped
     # Allow the node's 30-second durability barrier to finish before Docker sends SIGKILL.
     stop_grace_period: 45s
@@ -24,10 +24,10 @@ services:
       LOG_LEVEL: 'info'
       EXTRA_OPTS: ''
       # Contracts (variants override these)
-      INTERFOLD_CONTRACT: ''
+      LOXLEY_CONTRACT: ''
       CIPHERNODE_REGISTRY_CONTRACT: ''
       BONDING_REGISTRY_CONTRACT: ''
-      INTERFOLD_DEPLOY_BLOCK: '0'
+      LOXLEY_DEPLOY_BLOCK: '0'
       CIPHERNODE_REGISTRY_DEPLOY_BLOCK: '0'
       BONDING_REGISTRY_DEPLOY_BLOCK: '0'
     security_opt:

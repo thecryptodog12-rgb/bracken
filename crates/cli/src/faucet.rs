@@ -182,7 +182,7 @@ fn select_chain<'a>(config: &'a AppConfig, name: Option<&str>) -> Result<&'a Cha
             .find(|c| c.name == desired)
             .ok_or_else(|| anyhow!("Chain '{}' not found in configuration", desired)),
         None => config.chains().first().ok_or_else(|| {
-            anyhow!("No chains configured. Run `interfold ciphernode setup` first.")
+            anyhow!("No chains configured. Run `loxley ciphernode setup` first.")
         }),
     }
 }

@@ -7,12 +7,12 @@
 use actix::{Actor, Handler};
 use alloy::primitives::{LogData, B256};
 use anyhow::{Context as _, Result};
-use e3_events::InterfoldEventData;
+use e3_events::LoxleyEventData;
 use e3_utils::MAILBOX_LIMIT;
 use tracing::{debug, error};
 
 use crate::domain::log_timestamp::from_log_chain_id_to_ts;
-use crate::messages::{EvmEvent, EvmEventProcessor, EvmLog, EvmLogRejected, InterfoldEvmEvent};
+use crate::messages::{EvmEvent, EvmEventProcessor, EvmLog, EvmLogRejected, LoxleyEvmEvent};
 
 pub type ExtractorFn<E> = fn(&LogData, &[B256], u64) -> Option<E>;
 pub type VersionAwareExtractorFn<E> = fn(&LogData, &[B256], u64) -> Result<Option<E>>;
@@ -24,7 +24,7 @@ enum Extractor<E> {
 
 pub struct EvmParser {
     next: EvmEventProcessor,
-    extractor: Extractor<InterfoldEventData>,
+    extractor: Extractor<LoxleyEventData>,
 }
 
 impl Actor for EvmParser {
@@ -35,7 +35,7 @@ impl Actor for EvmParser {
 }
 
 impl EvmParser {
-    pub fn new(next: &EvmEventProcessor, extractor: ExtractorFn<InterfoldEventData>) -> Self {
+    pub fn new(next: &EvmEventProcessor, extractor: ExtractorFn<LoxleyEventData>) -> Self {
         Self {
             next: next.clone(),
             extractor: Extractor::Strict(extractor),
@@ -44,7 +44,7 @@ impl EvmParser {
 
     pub fn new_version_aware(
         next: &EvmEventProcessor,
-        extractor: VersionAwareExtractorFn<InterfoldEventData>,
+        extractor: VersionAwareExtractorFn<LoxleyEventData>,
     ) -> Self {
         Self {
             next: next.clone(),
@@ -53,7 +53,7 @@ impl EvmParser {
     }
 }
 
-fn parse_log(log: EvmLog, extractor: &Extractor<InterfoldEventData>) -> Result<Option<EvmEvent>> {
+fn parse_log(log: EvmLog, extractor: &Extractor<LoxleyEventData>) -> Result<Option<EvmEvent>> {
     let block = log.log.block_number.context(
         "provider log is missing its block number; pending or malformed logs cannot be ordered",
     )?;
@@ -83,19 +83,19 @@ fn parse_log(log: EvmLog, extractor: &Extractor<InterfoldEventData>) -> Result<O
     )))
 }
 
-impl Handler<InterfoldEvmEvent> for EvmParser {
+impl Handler<LoxleyEvmEvent> for EvmParser {
     type Result = ();
-    fn handle(&mut self, msg: InterfoldEvmEvent, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvmEvent, _ctx: &mut Self::Context) -> Self::Result {
         match msg.clone() {
-            InterfoldEvmEvent::Log(log) => {
+            LoxleyEvmEvent::Log(log) => {
                 debug!("processing event({})", msg.get_id());
                 let id = log.id;
                 let chain_id = log.chain_id;
                 match parse_log(log, &self.extractor) {
-                    Ok(Some(event)) => self.next.do_send(InterfoldEvmEvent::Event(event)),
+                    Ok(Some(event)) => self.next.do_send(LoxleyEvmEvent::Event(event)),
                     Ok(None) => {
                         debug!(%id, chain_id, "Skipping unsupported EVM event and advancing historical ordering");
-                        self.next.do_send(InterfoldEvmEvent::Processed(id));
+                        self.next.do_send(LoxleyEvmEvent::Processed(id));
                     }
                     Err(parse_error) => {
                         error!(
@@ -105,7 +105,7 @@ impl Handler<InterfoldEvmEvent> for EvmParser {
                             "Rejecting EVM log and failing the chain ingestion pipeline"
                         );
                         self.next
-                            .do_send(InterfoldEvmEvent::Rejected(EvmLogRejected::new(
+                            .do_send(LoxleyEvmEvent::Rejected(EvmLogRejected::new(
                                 id,
                                 chain_id,
                                 parse_error.to_string(),
@@ -113,7 +113,7 @@ impl Handler<InterfoldEvmEvent> for EvmParser {
                     }
                 }
             }
-            hist @ InterfoldEvmEvent::HistoricalSyncComplete(..) => self.next.do_send(hist),
+            hist @ LoxleyEvmEvent::HistoricalSyncComplete(..) => self.next.do_send(hist),
             _ => (),
         }
     }
@@ -127,15 +127,15 @@ mod tests {
     use e3_events::TestEvent;
     use tokio::sync::mpsc;
 
-    fn test_extractor(_: &LogData, _: &[B256], _: u64) -> Option<InterfoldEventData> {
+    fn test_extractor(_: &LogData, _: &[B256], _: u64) -> Option<LoxleyEventData> {
         Some(TestEvent::new("parsed", 1).into())
     }
 
-    fn rejected_extractor(_: &LogData, _: &[B256], _: u64) -> Option<InterfoldEventData> {
+    fn rejected_extractor(_: &LogData, _: &[B256], _: u64) -> Option<LoxleyEventData> {
         None
     }
 
-    fn skipped_extractor(_: &LogData, _: &[B256], _: u64) -> Result<Option<InterfoldEventData>> {
+    fn skipped_extractor(_: &LogData, _: &[B256], _: u64) -> Result<Option<LoxleyEventData>> {
         Ok(None)
     }
 
@@ -185,16 +185,16 @@ mod tests {
         assert_eq!(block, 7);
     }
 
-    struct Collector(mpsc::UnboundedSender<InterfoldEvmEvent>);
+    struct Collector(mpsc::UnboundedSender<LoxleyEvmEvent>);
 
     impl Actor for Collector {
         type Context = Context<Self>;
     }
 
-    impl Handler<InterfoldEvmEvent> for Collector {
+    impl Handler<LoxleyEvmEvent> for Collector {
         type Result = ();
 
-        fn handle(&mut self, msg: InterfoldEvmEvent, _: &mut Self::Context) {
+        fn handle(&mut self, msg: LoxleyEvmEvent, _: &mut Self::Context) {
             let _ = self.0.send(msg);
         }
     }
@@ -208,14 +208,14 @@ mod tests {
         let expected_id = malformed.id;
 
         parser
-            .send(InterfoldEvmEvent::Log(malformed))
+            .send(LoxleyEvmEvent::Log(malformed))
             .await
             .unwrap();
 
         let rejected = rx.recv().await.expect("parser rejection");
         assert!(matches!(
             rejected,
-            InterfoldEvmEvent::Rejected(EvmLogRejected { id, chain_id: 1, .. }) if id == expected_id
+            LoxleyEvmEvent::Rejected(EvmLogRejected { id, chain_id: 1, .. }) if id == expected_id
         ));
     }
 
@@ -228,13 +228,13 @@ mod tests {
         let expected_id = unsupported.id;
 
         parser
-            .send(InterfoldEvmEvent::Log(unsupported))
+            .send(LoxleyEvmEvent::Log(unsupported))
             .await
             .unwrap();
 
         assert_eq!(
             rx.recv().await.expect("processed marker"),
-            InterfoldEvmEvent::Processed(expected_id)
+            LoxleyEvmEvent::Processed(expected_id)
         );
     }
 }

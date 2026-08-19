@@ -6,13 +6,13 @@ packages:
   - examples/CRISP/packages/crisp-sdk
   - examples/CRISP/packages/crisp-contracts
   - examples/CRISP/packages/crisp-zk-inputs
-  - packages/interfold-config
-  - packages/interfold-react
-  - packages/interfold-sdk
-  - packages/interfold-contracts
-  - packages/interfold-mcp
-  - packages/interfold-dashboard
-  - packages/interfold-node
+  - packages/loxley-config
+  - packages/loxley-react
+  - packages/loxley-sdk
+  - packages/loxley-contracts
+  - packages/loxley-mcp
+  - packages/loxley-dashboard
+  - packages/loxley-node
   - templates/default
   - templates/default/client
 linkWorkspacePackages: true

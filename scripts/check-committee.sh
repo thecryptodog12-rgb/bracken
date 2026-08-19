@@ -10,9 +10,9 @@
 #
 #   1. circuits/lib/src/configs/committee/active.nr  (Noir-side active committee)
 #   2. circuits/bin/.active-preset.json              (last `pnpm build:circuits` stamp)
-#   3. packages/interfold-contracts/scripts/utils.ts   (BFV_DKG_H / BFV_THRESHOLD_T)
+#   3. packages/loxley-contracts/scripts/utils.ts   (BFV_DKG_H / BFV_THRESHOLD_T)
 #   4. crates/zk-helpers/src/ciphernodes_committee.rs (committee enum values, single source)
-#   5. packages/interfold-contracts/contracts/lib/ActiveCryptoConfig.sol
+#   5. packages/loxley-contracts/contracts/lib/ActiveCryptoConfig.sol
 #
 # A drift between any two means the next `pnpm build:circuits` would silently produce
 # verifiers / proofs against the wrong committee. Run from .husky/pre-push (or CI).
@@ -27,9 +27,9 @@ cd "$REPO_ROOT"
 
 ACTIVE_NR="circuits/lib/src/configs/committee/active.nr"
 STAMP="circuits/bin/.active-preset.json"
-UTILS_TS="packages/interfold-contracts/scripts/utils.ts"
+UTILS_TS="packages/loxley-contracts/scripts/utils.ts"
 COMMITTEE_RS="crates/zk-helpers/src/ciphernodes_committee.rs"
-ACTIVE_SOL="packages/interfold-contracts/contracts/lib/ActiveCryptoConfig.sol"
+ACTIVE_SOL="packages/loxley-contracts/contracts/lib/ActiveCryptoConfig.sol"
 RAN_STAMP_CHECK=false
 RAN_PARITY_CHECK=false
 

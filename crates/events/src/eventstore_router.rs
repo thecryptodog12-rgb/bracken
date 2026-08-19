@@ -8,7 +8,7 @@ use crate::{
     events::{EventStoreQueryResponse, FlushEventStores, StoreEventRequested},
     AggregateId, EventContextAccessors, EventLog, SequenceIndex,
 };
-use crate::{CorrelationId, Die, EventStoreQueryBy, InterfoldEvent, Seq, SeqAgg, Ts, TsAgg};
+use crate::{CorrelationId, Die, EventStoreQueryBy, LoxleyEvent, Seq, SeqAgg, Ts, TsAgg};
 use actix::{Actor, ActorContext, Addr, AsyncContext, Context, Handler, Recipient, ResponseFuture};
 use anyhow::{Context as _, Result};
 use e3_utils::MAILBOX_LIMIT_LARGE;
@@ -20,7 +20,7 @@ struct QueryAggregator {
     parent_id: CorrelationId,
     sender: Recipient<EventStoreQueryResponse>,
     pending: HashMap<CorrelationId, AggregateId>,
-    collected_events: Vec<InterfoldEvent>,
+    collected_events: Vec<LoxleyEvent>,
 }
 
 impl QueryAggregator {

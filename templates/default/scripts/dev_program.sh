@@ -9,6 +9,6 @@ source "${SCRIPT_DIR}/lib/dev_config.sh"
 load_template_dev_config
 cd "${TEMPLATE_ROOT}"
 
-echo "interfold rev = $(interfold rev)"
+echo "loxley rev = $(loxley rev)"
 echo "Waiting on ciphernodes to be ready..."
-pnpm wait-on file:/tmp/interfold_ciphernodes_ready && interfold program start
+pnpm wait-on file:/tmp/loxley_ciphernodes_ready && loxley program start

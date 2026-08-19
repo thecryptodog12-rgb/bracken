@@ -1,4 +1,4 @@
-# Interfold — Agent Entry Point
+# Loxley — Agent Entry Point
 
 This file is the tool-neutral entry point for any LLM coding agent (Claude Code, opencode, Codex,
 Cursor, Cline, Windsurf, ...). Tool-specific config files point here or to `agent/RULES.md`; the
@@ -7,7 +7,7 @@ content lives in `agent/` — never duplicate it into tool configs.
 Read before starting any task, in this order:
 
 1. `agent/RULES.md` — mandatory working rules (always)
-2. `agent/CONTEXT.md` — what Interfold is: terminology, monorepo map, commands, conventions
+2. `agent/CONTEXT.md` — what Loxley is: terminology, monorepo map, commands, conventions
 3. `agent/INVARIANTS.md` — protocol, crypto, runtime, and build invariants you must not break
 4. `.agents/skills/asd-ste100/SKILL.md` — before writing or reviewing comments, docs, error text,
    requirements, PR prose, or other natural-language technical content
@@ -27,7 +27,7 @@ Canonical, tool-neutral (edit these; they are the single source of truth):
   `references/` directory
 - `scripts/check-*.sh` + `.husky/pre-push` — mechanical gates (committee sync, doc drift, invariant
   ratchets); tool-independent
-- `packages/interfold-mcp/` — implementation of the `interfold-docs` MCP server
+- `packages/loxley-mcp/` — implementation of the `loxley-docs` MCP server
 
 Per-tool adapters (thin wrappers; never put content here):
 

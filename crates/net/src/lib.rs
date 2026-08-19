@@ -48,7 +48,7 @@ pub async fn setup_libp2p_keypair(
                 info!("Found keypair in repository");
                 cipher.decrypt_data(&bytes)?
             }
-            None => bail!("No network keypair found in repository, please generate a new one using `interfold net generate-key`"),
+            None => bail!("No network keypair found in repository, please generate a new one using `loxley net generate-key`"),
         };
     Libp2pKeypair::try_from_bytes(&mut bytes)
 }

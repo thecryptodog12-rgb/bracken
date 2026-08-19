@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "interfold-docs": {
+    "loxley-docs": {
       "command": "pnpm",
-      "args": ["--filter", "@interfold/mcp", "exec", "tsx", "src/index.ts"]
+      "args": ["--filter", "@loxley/mcp", "exec", "tsx", "src/index.ts"]
     }
   }
 }

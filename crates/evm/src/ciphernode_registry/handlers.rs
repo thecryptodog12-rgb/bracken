@@ -26,39 +26,39 @@ impl<P: Provider + WalletProvider + Clone + 'static> Actor for CiphernodeRegistr
     }
 }
 
-impl<P: Provider + WalletProvider + Clone + 'static> Handler<InterfoldEvent>
+impl<P: Provider + WalletProvider + Clone + 'static> Handler<LoxleyEvent>
     for CiphernodeRegistrySolWriter<P>
 {
     type Result = ();
 
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         match msg.into_data() {
-            InterfoldEventData::EffectsEnabled(data) => self.notify_sync(ctx, data),
-            InterfoldEventData::AggregatorChanged(data) => self.notify_sync(ctx, data),
-            InterfoldEventData::DkgFoldAttestationContextEstablished(data) => {
+            LoxleyEventData::EffectsEnabled(data) => self.notify_sync(ctx, data),
+            LoxleyEventData::AggregatorChanged(data) => self.notify_sync(ctx, data),
+            LoxleyEventData::DkgFoldAttestationContextEstablished(data) => {
                 if self.provider.chain_id() == data.e3_id.chain_id() {
                     ctx.notify(data);
                 }
             }
-            InterfoldEventData::PublicKeyAggregated(data) => {
+            LoxleyEventData::PublicKeyAggregated(data) => {
                 // Only publish if the src and destination chains match
                 if self.provider.chain_id() == data.e3_id.chain_id() {
                     ctx.notify(data);
                 }
             }
-            InterfoldEventData::CommitteeFinalizeRequested(data) => {
+            LoxleyEventData::CommitteeFinalizeRequested(data) => {
                 if self.provider.chain_id() == data.e3_id.chain_id() {
                     ctx.notify(data);
                 }
             }
-            InterfoldEventData::TicketGenerated(data) => {
+            LoxleyEventData::TicketGenerated(data) => {
                 // Submit ticket if chain matches
                 if self.provider.chain_id() == data.e3_id.chain_id() {
                     ctx.notify(data);
                 }
             }
-            InterfoldEventData::E3RequestComplete(data) => self.notify_sync(ctx, data),
-            InterfoldEventData::Shutdown(data) => self.notify_sync(ctx, data),
+            LoxleyEventData::E3RequestComplete(data) => self.notify_sync(ctx, data),
+            LoxleyEventData::Shutdown(data) => self.notify_sync(ctx, data),
             _ => (),
         }
     }

@@ -18,7 +18,7 @@ use alloy::primitives::Address;
 use alloy::signers::local::PrivateKeySigner;
 use anyhow::Result;
 use async_trait::async_trait;
-use e3_events::{BusHandle, CommitteeFinalized, Event, InterfoldEvent, InterfoldEventData};
+use e3_events::{BusHandle, CommitteeFinalized, Event, LoxleyEvent, LoxleyEventData};
 use e3_request::{E3Context, E3ContextSnapshot, E3Extension, META_KEY};
 use e3_zk_helpers::CiphernodesCommitteeSize;
 use tracing::{error, info, warn};
@@ -86,8 +86,8 @@ impl AccusationManagerExtension {
 
 #[async_trait]
 impl E3Extension for AccusationManagerExtension {
-    fn on_event(&self, ctx: &mut E3Context, evt: &InterfoldEvent) {
-        let InterfoldEventData::CommitteeFinalized(data) = evt.get_data() else {
+    fn on_event(&self, ctx: &mut E3Context, evt: &LoxleyEvent) {
+        let LoxleyEventData::CommitteeFinalized(data) = evt.get_data() else {
             return;
         };
 

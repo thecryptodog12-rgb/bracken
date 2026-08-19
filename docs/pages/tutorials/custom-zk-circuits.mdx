@@ -44,7 +44,7 @@ Additionally proves:
 2. **Within balance** — the vote amount does not exceed the voter's token balance
 
 **Mask vote** (for
-[receipt-freeness](https://blog.theinterfold.com/vote-masking-receipt-freeness-secret-ballots/)) —
+[receipt-freeness](https://blog.theloxley.com/vote-masking-receipt-freeness-secret-ballots/)) —
 the addend is the ciphertext already in the slot, so the vote there is unchanged. Additionally
 proves:
 
@@ -122,7 +122,7 @@ published ciphertext = addend + ballot ciphertext
 - **Mask vote**: Verifies a zero-value ballot, in every plaintext coefficient. The addend is the
   ciphertext already in the slot, so the vote there is unchanged. Anyone can submit mask votes to
   any slot, which provides
-  [receipt-freeness](https://blog.theinterfold.com/vote-masking-receipt-freeness-secret-ballots/) —
+  [receipt-freeness](https://blog.theloxley.com/vote-masking-receipt-freeness-secret-ballots/) —
   voters cannot prove which ciphertext is theirs
 
 Because both branches return the same commitment and publish the same shape of ciphertext, an
@@ -237,7 +237,7 @@ const { encryptedVote, inputs } = generator.generateInputs(
 
 The WASM module handles BFV encryption and produces the exact polynomial decompositions the Noir
 circuits expect. See the
-[crisp-zk-inputs README](https://github.com/theinterfold/interfold/tree/main/examples/CRISP/packages/crisp-zk-inputs)
+[crisp-zk-inputs README](https://github.com/theloxley/loxley/tree/main/examples/CRISP/packages/crisp-zk-inputs)
 for the full API.
 
 ---
@@ -255,6 +255,6 @@ If your E3 program needs custom input validation:
 5. **Build a TypeScript SDK** — wrap circuit input generation in a package your frontend can use
 
 For simpler cases (e.g. just checking a value is in range), you may not need custom circuits at all,
-you can reuse the user-data-encryption circuit and the standard Interfold SDK.
+you can reuse the user-data-encryption circuit and the standard Loxley SDK.
 
 See [Noir Circuits](/noir-circuits) for toolchain setup and compilation instructions.

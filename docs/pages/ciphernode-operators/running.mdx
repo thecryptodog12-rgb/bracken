@@ -1,6 +1,6 @@
 ---
 title: 'Running a Ciphernode'
-description: 'Three ways to run a ciphernode: DappNode, Interfold CLI, or Docker'
+description: 'Three ways to run a ciphernode: DappNode, Loxley CLI, or Docker'
 ---
 
 # Running a Ciphernode
@@ -15,7 +15,7 @@ DappNode provides a user-friendly interface for running a ciphernode with minima
 ### Installation
 
 1. Open your DappNode UI (`http://my.dappnode`)
-2. Search for **"Interfold Ciphernode"** (the current package name for the Interfold ciphernode) and
+2. Search for **"Loxley Ciphernode"** (the current package name for the Loxley ciphernode) and
    install the package
 3. The setup wizard will prompt you for:
    - `RPC_URL` - WebSocket RPC endpoint (e.g., `wss://ethereum-sepolia-rpc.publicnode.com`)
@@ -24,7 +24,7 @@ DappNode provides a user-friendly interface for running a ciphernode with minima
    - Optional: encryption password, network key, private key
 
 4. Confirm and complete the installation
-5. Check **Packages → interfold-ciphernode → Logs** to verify the node started
+5. Check **Packages → loxley-ciphernode → Logs** to verify the node started
 
 ### Configuration via Environment Variables
 
@@ -41,54 +41,54 @@ DappNode provides a user-friendly interface for running a ciphernode with minima
 
 ---
 
-## Method 2: Interfold CLI (Recommended)
+## Method 2: Loxley CLI (Recommended)
 
-The Interfold CLI provides the most control and is recommended for production deployments.
+The Loxley CLI provides the most control and is recommended for production deployments.
 
 ### Install the CLI
 
 ```bash
 # Quick install
-curl -fsSL https://raw.githubusercontent.com/theinterfold/interfold/main/install | bash
+curl -fsSL https://raw.githubusercontent.com/theloxley/loxley/main/install | bash
 
 # Then install the CLI
-interfoldup install
+loxleyup install
 ```
 
 ### Initialize Configuration
 
 ```bash
-interfold ciphernode setup
+loxley ciphernode setup
 ```
 
-This creates `~/.config/interfold/interfold.config.yaml`. You'll be prompted for a password to
+This creates `~/.config/loxley/loxley.config.yaml`. You'll be prompted for a password to
 encrypt sensitive data.
 
 ### Set Up Credentials
 
 ```bash
 # Set encryption password (encrypts local keystore)
-interfold password set
+loxley password set
 
 # Generate or set network keypair (for libp2p)
-interfold net keypair generate
+loxley net keypair generate
 # Or import an existing key:
-# interfold net keypair set --net-keypair 0x...
+# loxley net keypair set --net-keypair 0x...
 
 # Set your wallet private key (for on-chain transactions)
-interfold wallet set --private-key 0xYourPrivateKey
+loxley wallet set --private-key 0xYourPrivateKey
 ```
 
 ### Configure Your Node
 
-Edit `~/.config/interfold/interfold.config.yaml`:
+Edit `~/.config/loxley/loxley.config.yaml`:
 
 ```yaml
 node:
   address: '0xYourAddress'
   quic_port: 9091
   peers:
-    - '/dnsaddr/bootstrap.interfold.network'
+    - '/dnsaddr/bootstrap.loxley.network'
   autonetkey: true
   autopassword: true
 
@@ -97,7 +97,7 @@ chains:
     rpc_url: 'wss://eth-mainnet.g.alchemy.com/v2/YOUR_KEY'
     chain_id: 1
     contracts:
-      interfold:
+      loxley:
         address: '0x28cF63B459e6218C69EA97ea7D90541cf648c715'
         deploy_block: 25786382
       ciphernode_registry:
@@ -117,7 +117,7 @@ chains:
     rpc_url: 'wss://ethereum-sepolia-rpc.publicnode.com'
     chain_id: 11155111
     contracts:
-      interfold:
+      loxley:
         address: '0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7'
         deploy_block: 11459000
       ciphernode_registry:
@@ -144,13 +144,13 @@ fails silently — it syncs nothing and reports no error. Before starting, and a
 announcement, compare your config against the published deployment manifest:
 
 ```bash
-interfold config check
+loxley config check
 ```
 
 ```
 Deployment manifest: release v0.6.0
 sepolia:
-  STALE interfold: config has 0x64Cd2d88…, published is 0xd49990bc…
+  STALE loxley: config has 0x64Cd2d88…, published is 0xd49990bc…
   warn  ciphernode_registry: deploy_block 11124526, published is 11458978
 ```
 
@@ -163,42 +163,42 @@ a specific manifest instead of the latest release.
 
 ```bash
 # Start in foreground with verbose logging
-interfold start -v
+loxley start -v
 
 # Or use the node supervisor for multiple nodes
-interfold nodes up --detach
-interfold nodes ps          # Check status
-interfold nodes logs cn1    # View logs
-interfold nodes down        # Stop all nodes
+loxley nodes up --detach
+loxley nodes ps          # Check status
+loxley nodes logs cn1    # View logs
+loxley nodes down        # Stop all nodes
 ```
 
 ### CLI Commands Reference
 
 | Command                          | Description                                         |
 | -------------------------------- | --------------------------------------------------- |
-| `interfold start`                | Start the node in foreground                        |
-| `interfold start -v`             | Start with INFO logging (`-vv`=DEBUG, `-vvv`=TRACE) |
-| `interfold nodes up`             | Start all configured nodes                          |
-| `interfold nodes up --detach`    | Start all nodes in background                       |
-| `interfold nodes up --exclude x` | Start all nodes except `x`                          |
-| `interfold nodes down`           | Stop all nodes                                      |
-| `interfold nodes ps`             | List running nodes and their status                 |
-| `interfold nodes start <name>`   | Start an individual node                            |
-| `interfold nodes stop <name>`    | Stop an individual node                             |
-| `interfold nodes status <name>`  | Check specific node status                          |
-| `interfold nodes restart <name>` | Restart a specific node                             |
-| `interfold nodes purge`          | Purge all local ciphernode data                     |
-| `interfold ciphernode status`    | Show on-chain registration status                   |
-| `interfold config check`         | Compare configured addresses against the manifest   |
-| `interfold net get-peer-id`      | Show your libp2p peer ID                            |
-| `interfold wallet get`           | Show your wallet address                            |
-| `interfold rev`                  | Show the git SHA the CLI was built from             |
-| `interfold purge-all`            | Wipe all local data (use with caution)              |
-| `interfold print-env`            | Print contract addresses as env vars                |
-| `interfold print-env --vite`     | Print env vars with `VITE_` prefix                  |
-| `interfold print-env --chain x`  | Print env vars for chain `x`                        |
-| `interfold noir status`          | Check ZK prover status                              |
-| `interfold noir setup`           | Install/update ZK prover components                 |
+| `loxley start`                | Start the node in foreground                        |
+| `loxley start -v`             | Start with INFO logging (`-vv`=DEBUG, `-vvv`=TRACE) |
+| `loxley nodes up`             | Start all configured nodes                          |
+| `loxley nodes up --detach`    | Start all nodes in background                       |
+| `loxley nodes up --exclude x` | Start all nodes except `x`                          |
+| `loxley nodes down`           | Stop all nodes                                      |
+| `loxley nodes ps`             | List running nodes and their status                 |
+| `loxley nodes start <name>`   | Start an individual node                            |
+| `loxley nodes stop <name>`    | Stop an individual node                             |
+| `loxley nodes status <name>`  | Check specific node status                          |
+| `loxley nodes restart <name>` | Restart a specific node                             |
+| `loxley nodes purge`          | Purge all local ciphernode data                     |
+| `loxley ciphernode status`    | Show on-chain registration status                   |
+| `loxley config check`         | Compare configured addresses against the manifest   |
+| `loxley net get-peer-id`      | Show your libp2p peer ID                            |
+| `loxley wallet get`           | Show your wallet address                            |
+| `loxley rev`                  | Show the git SHA the CLI was built from             |
+| `loxley purge-all`            | Wipe all local data (use with caution)              |
+| `loxley print-env`            | Print contract addresses as env vars                |
+| `loxley print-env --vite`     | Print env vars with `VITE_` prefix                  |
+| `loxley print-env --chain x`  | Print env vars for chain `x`                        |
+| `loxley noir status`          | Check ZK prover status                              |
+| `loxley noir setup`           | Install/update ZK prover components                 |
 
 ---
 
@@ -225,7 +225,7 @@ node:
   address: '0xYourAddress'
   quic_port: 9091
   peers:
-    - '/dnsaddr/bootstrap.interfold.network'
+    - '/dnsaddr/bootstrap.loxley.network'
   autonetkey: true
   autopassword: true
 
@@ -234,7 +234,7 @@ chains:
     rpc_url: 'wss://ethereum-sepolia-rpc.publicnode.com'
     chain_id: 11155111
     contracts:
-      interfold:
+      loxley:
         address: '0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7'
         deploy_block: 11459000
       ciphernode_registry:
@@ -285,9 +285,9 @@ docker run -d \
   --name ciphernode \
   --restart unless-stopped \
   --stop-timeout 300 \
-  -v $(pwd)/config.yaml:/home/ciphernode/.config/interfold/config.yaml:ro \
+  -v $(pwd)/config.yaml:/home/ciphernode/.config/loxley/config.yaml:ro \
   -v $(pwd)/secrets.json:/run/secrets/secrets.json:ro \
-  -v ciphernode-data:/home/ciphernode/.local/share/interfold \
+  -v ciphernode-data:/home/ciphernode/.local/share/loxley \
   -p 9091:9091/udp \
   "$CIPHERNODE_IMAGE"
 ```
@@ -303,8 +303,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 5m
     volumes:
-      - ./config.yaml:/home/ciphernode/.config/interfold/config.yaml:ro
-      - ciphernode-data:/home/ciphernode/.local/share/interfold
+      - ./config.yaml:/home/ciphernode/.config/loxley/config.yaml:ro
+      - ciphernode-data:/home/ciphernode/.local/share/loxley
     secrets:
       - source: ciphernode_credentials
         target: secrets.json
@@ -324,11 +324,11 @@ same release's offline integrity check against the mounted configuration and dat
 
 ```bash
 docker run --rm \
-  -v $(pwd)/config.yaml:/home/ciphernode/.config/interfold/config.yaml:ro \
-  -v ciphernode-data:/home/ciphernode/.local/share/interfold \
-  --entrypoint interfold \
+  -v $(pwd)/config.yaml:/home/ciphernode/.config/loxley/config.yaml:ro \
+  -v ciphernode-data:/home/ciphernode/.local/share/loxley \
+  --entrypoint loxley \
   "$CIPHERNODE_IMAGE" \
-  node validate --config /home/ciphernode/.config/interfold/config.yaml
+  node validate --config /home/ciphernode/.config/loxley/config.yaml
 ```
 
 Do not start the node when validation reports `FAIL`; preserve a copy of the volume before repair,
@@ -353,8 +353,8 @@ docker logs -f ciphernode
 | `peers`        | Bootstrap peer multiaddresses       | `[]`                       |
 | `autopassword` | Auto-generate password if missing   | `false`                    |
 | `autowallet`   | Auto-load wallet from environment   | `false`                    |
-| `data_dir`     | Override data directory             | `~/.local/share/interfold` |
-| `config_dir`   | Override config directory           | `~/.config/interfold`      |
+| `data_dir`     | Override data directory             | `~/.local/share/loxley` |
+| `config_dir`   | Override config directory           | `~/.config/loxley`      |
 
 ### Chain Configuration
 
@@ -365,7 +365,7 @@ docker logs -f ciphernode
 | `chain_id`  | EIP-155 chain ID                     | No       |
 | `contracts` | Contract addresses and deploy blocks | Yes      |
 
-Set `chain_id` even though it is optional: `interfold config check` compares it against the manifest
+Set `chain_id` even though it is optional: `loxley config check` compares it against the manifest
 rather than querying the endpoint, so it is the only thing that catches an `rpc_url` pointing at the
 wrong network. Without it, a config whose addresses all match but whose RPC points elsewhere passes
 the check.
@@ -376,7 +376,7 @@ Each chain requires these contract addresses:
 
 | Contract              | Description                          | Required for ciphernode |
 | --------------------- | ------------------------------------ | ----------------------- |
-| `interfold`           | Main Interfold coordinator contract  | Yes                     |
+| `loxley`           | Main Loxley coordinator contract  | Yes                     |
 | `ciphernode_registry` | Tracks registered operators          | Yes                     |
 | `bonding_registry`    | Manages bonds and tickets            | Yes                     |
 | `slashing_manager`    | Manages slashing penalties           | Yes                     |
@@ -388,7 +388,7 @@ Each contract can be specified as a simple address string or with a deploy block
 
 ```yaml
 contracts:
-  interfold:
+  loxley:
     address: '0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7'
     deploy_block: 11459000
   ciphernode_registry: '0xCD571e311c11a6259ad95b7F95C1f2AF2b60ae6A'
@@ -414,11 +414,11 @@ Open the following ports:
 
 ### Bootstrap Peers
 
-Connect to the Interfold bootstrap network:
+Connect to the Loxley bootstrap network:
 
 ```yaml
 peers:
-  - '/dnsaddr/bootstrap.interfold.network'
+  - '/dnsaddr/bootstrap.loxley.network'
 ```
 
 Or specify individual peers:
@@ -435,9 +435,9 @@ peers:
 
 | Directory                        | Contents                          |
 | -------------------------------- | --------------------------------- |
-| `~/.config/interfold/`           | Configuration files, network keys |
-| `~/.local/share/interfold/`      | Databases, job data, keystores    |
-| `~/.local/share/interfold/jobs/` | Per-E3 secret shares and state    |
+| `~/.config/loxley/`           | Configuration files, network keys |
+| `~/.local/share/loxley/`      | Databases, job data, keystores    |
+| `~/.local/share/loxley/jobs/` | Per-E3 secret shares and state    |
 
 > Back up these directories regularly. The `jobs/` directory contains encrypted key shares for
 > active E3s - losing this data while participating in a committee may result in slashing.

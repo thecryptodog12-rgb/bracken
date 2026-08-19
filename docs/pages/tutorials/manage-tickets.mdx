@@ -40,7 +40,7 @@ you'll be selected roughly 10% of the time (assuming no buffer effects).
 From an EOA bond-owner config, fund the operator:
 
 ```bash
-interfold --config /path/to/owner.yaml ciphernode tickets \
+loxley --config /path/to/owner.yaml ciphernode tickets \
   --operator 0xOPERATOR buy --amount 100
 ```
 
@@ -56,7 +56,7 @@ Your available ticket count is:
 availableTickets = floor(ticketTokenBalance / ticketPrice)
 ```
 
-Check `ticketPrice` with `interfold ciphernode status` — it's set by governance and may change.
+Check `ticketPrice` with `loxley ciphernode status` — it's set by governance and may change.
 
 ---
 
@@ -65,7 +65,7 @@ Check `ticketPrice` with `interfold ciphernode status` — it's set by governanc
 Queue underlying ticket collateral for withdrawal:
 
 ```bash
-interfold --config /path/to/owner.yaml ciphernode tickets \
+loxley --config /path/to/owner.yaml ciphernode tickets \
   --operator 0xOPERATOR burn --amount 25
 ```
 
@@ -98,7 +98,7 @@ stops being eligible for selection.
 Check the current minimum:
 
 ```bash
-interfold ciphernode status
+loxley ciphernode status
 ```
 
 ---
@@ -119,9 +119,9 @@ two requests ahead so they're captured in the snapshot.
 
 | Parameter             | What it means                 | How to check                  |
 | --------------------- | ----------------------------- | ----------------------------- |
-| `ticketPrice`         | Ticket collateral per ticket  | `interfold ciphernode status` |
-| `minTicketBalance`    | Minimum to stay active        | `interfold ciphernode status` |
-| `availableTickets`    | Your current ticket count     | `interfold ciphernode status` |
+| `ticketPrice`         | Ticket collateral per ticket  | `loxley ciphernode status` |
+| `minTicketBalance`    | Minimum to stay active        | `loxley ciphernode status` |
+| `availableTickets`    | Your current ticket count     | `loxley ciphernode status` |
 | Total network tickets | Sum of all operators' tickets | On-chain query (registry)     |
 
 ## What Happens When You're Selected

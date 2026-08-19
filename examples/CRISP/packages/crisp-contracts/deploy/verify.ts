@@ -6,7 +6,7 @@
 
 import hre from 'hardhat'
 
-import { verifyContracts } from '@interfold/contracts/scripts'
+import { verifyContracts } from '@loxley/contracts/scripts'
 
 async function main() {
   const { ethers } = await hre.network.connect()

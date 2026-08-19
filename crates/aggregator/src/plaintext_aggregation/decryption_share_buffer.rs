@@ -5,7 +5,7 @@
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
 use actix::prelude::*;
-use e3_events::{prelude::*, AggregatorChanged, Die, InterfoldEvent, InterfoldEventData};
+use e3_events::{prelude::*, AggregatorChanged, Die, LoxleyEvent, LoxleyEventData};
 use e3_utils::MAILBOX_LIMIT;
 use std::collections::HashSet;
 
@@ -13,7 +13,7 @@ use crate::ThresholdPlaintextAggregator;
 
 pub struct DecryptionshareCreatedBuffer {
     dest: Addr<ThresholdPlaintextAggregator>,
-    buffer: Vec<InterfoldEvent>,
+    buffer: Vec<LoxleyEvent>,
     expelled_parties: HashSet<u64>,
     is_aggregator: bool,
 }
@@ -35,7 +35,7 @@ impl DecryptionshareCreatedBuffer {
         }
     }
 
-    fn forward(dest: &Addr<ThresholdPlaintextAggregator>, event: InterfoldEvent) {
+    fn forward(dest: &Addr<ThresholdPlaintextAggregator>, event: LoxleyEvent) {
         dest.do_send(event);
     }
 
@@ -46,18 +46,18 @@ impl DecryptionshareCreatedBuffer {
 
         for event in self.buffer.drain(..) {
             match event.get_data() {
-                InterfoldEventData::DecryptionshareCreated(data)
+                LoxleyEventData::DecryptionshareCreated(data)
                     if !self.expelled_parties.contains(&data.party_id) =>
                 {
                     Self::forward(&self.dest, event);
                 }
-                InterfoldEventData::CommitteeMemberExpelled(data) if data.party_id.is_some() => {
+                LoxleyEventData::CommitteeMemberExpelled(data) if data.party_id.is_some() => {
                     Self::forward(&self.dest, event);
                 }
-                InterfoldEventData::CommitteeMemberExcluded(data) if data.party_id.is_some() => {
+                LoxleyEventData::CommitteeMemberExcluded(data) if data.party_id.is_some() => {
                     Self::forward(&self.dest, event);
                 }
-                InterfoldEventData::E3RequestComplete(_) | InterfoldEventData::Shutdown(_) => {
+                LoxleyEventData::E3RequestComplete(_) | LoxleyEventData::Shutdown(_) => {
                     Self::forward(&self.dest, event);
                 }
                 _ => {}
@@ -74,12 +74,12 @@ impl Actor for DecryptionshareCreatedBuffer {
     }
 }
 
-impl Handler<InterfoldEvent> for DecryptionshareCreatedBuffer {
+impl Handler<LoxleyEvent> for DecryptionshareCreatedBuffer {
     type Result = ();
 
-    fn handle(&mut self, msg: InterfoldEvent, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, _ctx: &mut Self::Context) -> Self::Result {
         match msg.get_data() {
-            InterfoldEventData::DecryptionshareCreated(data) => {
+            LoxleyEventData::DecryptionshareCreated(data) => {
                 if self.expelled_parties.contains(&data.party_id) {
                     return;
                 }
@@ -90,7 +90,7 @@ impl Handler<InterfoldEvent> for DecryptionshareCreatedBuffer {
                     self.buffer.push(msg);
                 }
             }
-            InterfoldEventData::CommitteeMemberExpelled(data) => {
+            LoxleyEventData::CommitteeMemberExpelled(data) => {
                 let Some(party_id) = data.party_id else {
                     return;
                 };
@@ -101,7 +101,7 @@ impl Handler<InterfoldEvent> for DecryptionshareCreatedBuffer {
                 self.buffer.retain(|event| {
                     !matches!(
                         event.get_data(),
-                        InterfoldEventData::DecryptionshareCreated(share)
+                        LoxleyEventData::DecryptionshareCreated(share)
                             if share.party_id == party_id
                     )
                 });
@@ -112,7 +112,7 @@ impl Handler<InterfoldEvent> for DecryptionshareCreatedBuffer {
                     self.buffer.push(msg);
                 }
             }
-            InterfoldEventData::CommitteeMemberExcluded(data) => {
+            LoxleyEventData::CommitteeMemberExcluded(data) => {
                 let Some(party_id) = data.party_id else {
                     return;
                 };
@@ -123,7 +123,7 @@ impl Handler<InterfoldEvent> for DecryptionshareCreatedBuffer {
                 self.buffer.retain(|event| {
                     !matches!(
                         event.get_data(),
-                        InterfoldEventData::DecryptionshareCreated(share)
+                        LoxleyEventData::DecryptionshareCreated(share)
                             if share.party_id == party_id
                     )
                 });
@@ -134,11 +134,11 @@ impl Handler<InterfoldEvent> for DecryptionshareCreatedBuffer {
                     self.buffer.push(msg);
                 }
             }
-            InterfoldEventData::AggregatorChanged(AggregatorChanged { is_aggregator, .. }) => {
+            LoxleyEventData::AggregatorChanged(AggregatorChanged { is_aggregator, .. }) => {
                 self.is_aggregator = *is_aggregator;
                 self.flush();
             }
-            InterfoldEventData::E3RequestComplete(_) | InterfoldEventData::Shutdown(_) => {
+            LoxleyEventData::E3RequestComplete(_) | LoxleyEventData::Shutdown(_) => {
                 Self::forward(&self.dest, msg);
             }
             _ => {

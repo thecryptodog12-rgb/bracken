@@ -6,8 +6,8 @@
 
 use actix::{Actor, Addr, Context, Handler};
 use e3_events::{
-    prelude::Event, BusHandle, E3Stage, EventBus, EventContextAccessors, EventType, InterfoldEvent,
-    InterfoldEventData, SeqState, Subscribe,
+    prelude::Event, BusHandle, E3Stage, EventBus, EventContextAccessors, EventType, LoxleyEvent,
+    LoxleyEventData, SeqState, Subscribe,
 };
 use std::marker::PhantomData;
 use tracing::{debug, error, info, warn};
@@ -21,8 +21,8 @@ pub trait EventLogging: Event {
 /// Keeping this wiring here prevents node assembly from depending on logger
 /// actor details. The observer only subscribes; it never publishes or changes
 /// event ordering.
-pub fn attach_protocol_logger(name: &str, bus: &BusHandle) -> Addr<SimpleLogger<InterfoldEvent>> {
-    SimpleLogger::<InterfoldEvent>::attach(name, bus.event_bus().clone())
+pub fn attach_protocol_logger(name: &str, bus: &BusHandle) -> Addr<SimpleLogger<LoxleyEvent>> {
+    SimpleLogger::<LoxleyEvent>::attach(name, bus.event_bus().clone())
 }
 
 /// Optional protocol-event logger.
@@ -71,10 +71,10 @@ enum Severity {
     Debug,
 }
 
-fn severity(data: &InterfoldEventData) -> Severity {
-    use InterfoldEventData as E;
+fn severity(data: &LoxleyEventData) -> Severity {
+    use LoxleyEventData as E;
     match data {
-        E::InterfoldError(_)
+        E::LoxleyError(_)
         | E::E3Failed(_)
         | E::CommitteeFormationFailed(_)
         | E::ProofVerificationFailed(_)
@@ -117,8 +117,8 @@ fn severity(data: &InterfoldEventData) -> Severity {
     }
 }
 
-fn stage(data: &InterfoldEventData) -> &'static str {
-    use InterfoldEventData as E;
+fn stage(data: &LoxleyEventData) -> &'static str {
+    use LoxleyEventData as E;
     match data {
         E::E3Requested(_) => "request",
         E::CommitteeRequested(_)
@@ -235,11 +235,11 @@ fn compact_error(value: &str) -> String {
     }
 }
 
-impl<S: SeqState> EventLogging for InterfoldEvent<S> {
+impl<S: SeqState> EventLogging for LoxleyEvent<S> {
     fn log(&self, logger_name: &str) {
         let data = self.get_data();
         let event_type = match data {
-            InterfoldEventData::EvmLogObserved(event) => {
+            LoxleyEventData::EvmLogObserved(event) => {
                 format!("{}::{}", event.contract, event.event_name)
             }
             _ => self.event_type(),
@@ -249,21 +249,21 @@ impl<S: SeqState> EventLogging for InterfoldEvent<S> {
             .map(|id| id.to_string())
             .unwrap_or_default();
         let error_message = match data {
-            InterfoldEventData::InterfoldError(error) => compact_error(&error.message),
+            LoxleyEventData::LoxleyError(error) => compact_error(&error.message),
             _ => String::new(),
         };
         let stage = stage(data);
         let observation = matches!(
             data,
-            InterfoldEventData::EvmLogObserved(_)
-                | InterfoldEventData::InputPublished(_)
-                | InterfoldEventData::PlaintextOutputPublished(_)
-                | InterfoldEventData::RewardsDistributed(_)
-                | InterfoldEventData::RewardCredited(_)
-                | InterfoldEventData::RewardClaimed(_)
-                | InterfoldEventData::CommitteeFormationFailed(_)
-                | InterfoldEventData::CommitteeActivationChanged(_)
-                | InterfoldEventData::CommitteeViabilityUpdated(_)
+            LoxleyEventData::EvmLogObserved(_)
+                | LoxleyEventData::InputPublished(_)
+                | LoxleyEventData::PlaintextOutputPublished(_)
+                | LoxleyEventData::RewardsDistributed(_)
+                | LoxleyEventData::RewardCredited(_)
+                | LoxleyEventData::RewardClaimed(_)
+                | LoxleyEventData::CommitteeFormationFailed(_)
+                | LoxleyEventData::CommitteeActivationChanged(_)
+                | LoxleyEventData::CommitteeViabilityUpdated(_)
         );
 
         macro_rules! emit {

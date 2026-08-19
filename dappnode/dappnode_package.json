@@ -1,28 +1,28 @@
 {
-  "name": "interfold-ciphernode.public.dappnode.eth",
+  "name": "loxley-ciphernode.public.dappnode.eth",
   "version": "0.2.3",
   "upstreamVersion": "0.2.3",
   "upstreamArg": "UPSTREAM_VERSION",
-  "upstreamRepo": "theinterfold/interfold",
-  "shortDescription": "Interfold Ciphernode - Run a node for confidential computing",
-  "description": "Run an Interfold ciphernode to participate in the E3 (Encrypted Execution Environments) network.",
+  "upstreamRepo": "theloxley/loxley",
+  "shortDescription": "Loxley Ciphernode - Run a node for confidential computing",
+  "description": "Run an Loxley ciphernode to participate in the E3 (Encrypted Execution Environments) network.",
   "type": "service",
   "mainService": "ciphernode",
   "author": "Gnosis Guild <https://github.com/gnosisguild>",
   "categories": ["Blockchain", "Developer tools"],
-  "keywords": ["interfold", "fhe", "mpc", "ciphernode", "threshold", "encryption"],
+  "keywords": ["loxley", "fhe", "mpc", "ciphernode", "threshold", "encryption"],
   "links": {
-    "homepage": "https://interfold.network",
-    "docs": "https://docs.interfold.network",
-    "repository": "https://github.com/theinterfold/interfold"
+    "homepage": "https://loxley.network",
+    "docs": "https://docs.loxley.network",
+    "repository": "https://github.com/theloxley/loxley"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/theinterfold/interfold.git",
+    "url": "https://github.com/theloxley/loxley.git",
     "directory": "dappnode"
   },
   "bugs": {
-    "url": "https://github.com/theinterfold/interfold/issues"
+    "url": "https://github.com/theloxley/loxley/issues"
   },
   "license": "LGPL-3.0-only",
   "requirements": {

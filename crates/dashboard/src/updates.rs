@@ -14,8 +14,8 @@ use std::{
 };
 use tokio::sync::Mutex;
 
-const LATEST_RELEASE: &str = "https://api.github.com/repos/gnosisguild/interfold/releases/latest";
-const RELEASES_PAGE: &str = "https://github.com/gnosisguild/interfold/releases";
+const LATEST_RELEASE: &str = "https://api.github.com/repos/gnosisguild/loxley/releases/latest";
+const RELEASES_PAGE: &str = "https://github.com/gnosisguild/loxley/releases";
 const CACHE_TTL: Duration = Duration::from_secs(60 * 60);
 const ERROR_CACHE_TTL: Duration = Duration::from_secs(5 * 60);
 
@@ -141,7 +141,7 @@ impl UpdateService {
             .get(LATEST_RELEASE)
             .header(
                 reqwest::header::USER_AGENT,
-                "interfold-ciphernode-dashboard",
+                "loxley-ciphernode-dashboard",
             )
             .header(reqwest::header::ACCEPT, "application/vnd.github+json")
             .header("X-GitHub-Api-Version", "2022-11-28")

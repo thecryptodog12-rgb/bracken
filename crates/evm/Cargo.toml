@@ -3,7 +3,7 @@ name = "e3-evm"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "E3 - Interfold Ciphernode EVM Connectors"
+description = "E3 - Loxley Ciphernode EVM Connectors"
 repository.workspace = true
 publish = false
 

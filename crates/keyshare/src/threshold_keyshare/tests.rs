@@ -13,7 +13,7 @@ use e3_crypto::Cipher;
 use e3_data::{AutoPersist, DataStore, InMemStore, Persistable, Repository};
 use e3_events::{
     hlc_factory::HlcFactory, BusHandle, E3Stage, E3id, EffectsEnabled, EventBus, EventBusConfig,
-    EventSource, FailureReason, HistoryCollector, InterfoldEvent, InterfoldEventData, Sequencer,
+    EventSource, FailureReason, HistoryCollector, LoxleyEvent, LoxleyEventData, Sequencer,
     StoreEventRequested, StoreEventResponse, TakeEvents, Unsequenced,
 };
 use e3_fhe_params::DEFAULT_BFV_PRESET;
@@ -39,8 +39,8 @@ impl Handler<StoreEventRequested> for TestEventStore {
     }
 }
 
-fn test_bus() -> (BusHandle, Addr<HistoryCollector<InterfoldEvent>>) {
-    let event_bus = EventBus::<InterfoldEvent>::new(EventBusConfig { deduplicate: true }).start();
+fn test_bus() -> (BusHandle, Addr<HistoryCollector<LoxleyEvent>>) {
+    let event_bus = EventBus::<LoxleyEvent>::new(EventBusConfig { deduplicate: true }).start();
     let store = TestEventStore::default().start();
     let sequencer = Sequencer::new(&event_bus, store.recipient()).start();
     let bus = BusHandle::new(event_bus, sequencer, HlcFactory::new()).enable("test-keyshare");
@@ -73,7 +73,7 @@ async fn start_actor_with_state(
     keyshare_state: KeyshareState,
 ) -> Result<(
     Addr<ThresholdKeyshare>,
-    Addr<HistoryCollector<InterfoldEvent>>,
+    Addr<HistoryCollector<LoxleyEvent>>,
     E3id,
     Repository<ThresholdKeyshareState>,
 )> {
@@ -85,7 +85,7 @@ async fn start_actor_with_state(
         cipher: Arc::new(Cipher::from_password("test-password").await?),
         state,
         share_enc_preset: DEFAULT_BFV_PRESET,
-        interfold_address: Address::ZERO,
+        loxley_address: Address::ZERO,
     })
     .start();
 
@@ -94,25 +94,25 @@ async fn start_actor_with_state(
 
 async fn start_actor() -> Result<(
     Addr<ThresholdKeyshare>,
-    Addr<HistoryCollector<InterfoldEvent>>,
+    Addr<HistoryCollector<LoxleyEvent>>,
     E3id,
     Repository<ThresholdKeyshareState>,
 )> {
     start_actor_with_state(KeyshareState::Init).await
 }
 
-async fn next_event(history: &Addr<HistoryCollector<InterfoldEvent>>) -> Result<InterfoldEvent> {
-    let mut result = history.send(TakeEvents::<InterfoldEvent>::new(1)).await?;
+async fn next_event(history: &Addr<HistoryCollector<LoxleyEvent>>) -> Result<LoxleyEvent> {
+    let mut result = history.send(TakeEvents::<LoxleyEvent>::new(1)).await?;
     assert!(!result.timed_out, "timed out waiting for an event");
     Ok(result.events.pop().expect("expected one event"))
 }
 
 async fn next_events(
-    history: &Addr<HistoryCollector<InterfoldEvent>>,
+    history: &Addr<HistoryCollector<LoxleyEvent>>,
     count: usize,
-) -> Result<Vec<InterfoldEvent>> {
+) -> Result<Vec<LoxleyEvent>> {
     let result = history
-        .send(TakeEvents::<InterfoldEvent>::new(count))
+        .send(TakeEvents::<LoxleyEvent>::new(count))
         .await?;
     assert!(!result.timed_out, "timed out waiting for events");
     assert_eq!(result.events.len(), count, "expected {count} events");
@@ -134,13 +134,13 @@ async fn encryption_key_collection_failure_preserves_telemetry_and_emits_e3_fail
     let event = events.remove(0);
     assert!(matches!(
         event.into_data(),
-        InterfoldEventData::EncryptionKeyCollectionFailed(data) if data == failure
+        LoxleyEventData::EncryptionKeyCollectionFailed(data) if data == failure
     ));
 
     let event = events.remove(0);
     assert!(matches!(
         event.into_data(),
-        InterfoldEventData::E3Failed(data)
+        LoxleyEventData::E3Failed(data)
             if data.e3_id == failure.e3_id
                 && data.failed_at_stage == E3Stage::CommitteeFinalized
                 && data.reason == FailureReason::DKGTimeout
@@ -172,13 +172,13 @@ async fn threshold_share_collection_failure_preserves_telemetry_and_emits_e3_fai
     let event = events.remove(0);
     assert!(matches!(
         event.into_data(),
-        InterfoldEventData::ThresholdShareCollectionFailed(data) if data == failure
+        LoxleyEventData::ThresholdShareCollectionFailed(data) if data == failure
     ));
 
     let event = events.remove(0);
     assert!(matches!(
         event.into_data(),
-        InterfoldEventData::E3Failed(data)
+        LoxleyEventData::E3Failed(data)
             if data.e3_id == failure.e3_id
                 && data.failed_at_stage == E3Stage::CommitteeFinalized
                 && data.reason == FailureReason::DKGTimeout
@@ -208,7 +208,7 @@ async fn decryption_key_shared_collection_failure_emits_e3_failed() -> Result<()
     let event = next_event(&history).await?;
     assert!(matches!(
         event.into_data(),
-        InterfoldEventData::E3Failed(data)
+        LoxleyEventData::E3Failed(data)
             if data.e3_id == failure.e3_id
                 && data.failed_at_stage == E3Stage::CommitteeFinalized
                 && data.reason == FailureReason::DecryptionTimeout
@@ -233,7 +233,7 @@ async fn restart_redrives_a_persisted_terminal_failure() -> Result<()> {
         reason: reason.clone(),
     })
     .await?;
-    let effects_enabled = InterfoldEvent::<Unsequenced>::new_with_timestamp(
+    let effects_enabled = LoxleyEvent::<Unsequenced>::new_with_timestamp(
         EffectsEnabled::new().into(),
         None,
         1,
@@ -247,7 +247,7 @@ async fn restart_redrives_a_persisted_terminal_failure() -> Result<()> {
     let event = next_event(&history).await?;
     assert!(matches!(
         event.into_data(),
-        InterfoldEventData::E3Failed(data)
+        LoxleyEventData::E3Failed(data)
             if data.e3_id == e3_id
                 && data.failed_at_stage == failed_at_stage
                 && data.reason == reason

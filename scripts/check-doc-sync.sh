@@ -27,7 +27,7 @@ fi
 
 # Paths whose changes are expected to be reflected in agent/ docs. Mirrors the
 # "When to update" table in agent/RULES.md and the flow-trace area mapping.
-WATCHED_REGEX='^(packages/interfold-contracts/(contracts|scripts|tasks)/|circuits/(lib|bin)/|crates/(aggregator|bfv-client|ciphernode-builder|cli|committee-hash|compute-provider|config|crypto|daemon-server|data|entrypoint|events|evm|evm-helpers|fhe|fhe-params|fs|indexer|keyshare|multithread|net|parity-matrix|polynomial|program-server|request|safe|slashing|sortition|sync|trbfv|zk-helpers|zk-prover)/src/)'
+WATCHED_REGEX='^(packages/loxley-contracts/(contracts|scripts|tasks)/|circuits/(lib|bin)/|crates/(aggregator|bfv-client|ciphernode-builder|cli|committee-hash|compute-provider|config|crypto|daemon-server|data|entrypoint|events|evm|evm-helpers|fhe|fhe-params|fs|indexer|keyshare|multithread|net|parity-matrix|polynomial|program-server|request|safe|slashing|sortition|sync|trbfv|zk-helpers|zk-prover)/src/)'
 DOCS_REGEX='^agent/(RULES|CONTEXT|INVARIANTS|ARCHITECTURE|CRATES_ARCHITECTURE)\.md$|^agent/flow-trace/'
 
 base_ref="${DOC_SYNC_BASE_REF:-origin/main}"

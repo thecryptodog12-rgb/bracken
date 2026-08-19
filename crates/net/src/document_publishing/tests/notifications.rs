@@ -83,9 +83,9 @@ async fn test_notified_of_document() -> Result<()> {
 
     // Check event was dispatched
     let events = history.send(GetEvents::new()).await?;
-    let Some(InterfoldEventData::DocumentReceived(DocumentReceived { value: doc, .. })) =
+    let Some(LoxleyEventData::DocumentReceived(DocumentReceived { value: doc, .. })) =
         events.iter().find_map(|event| match event.get_data() {
-            data @ InterfoldEventData::DocumentReceived(_) => Some(data),
+            data @ LoxleyEventData::DocumentReceived(_) => Some(data),
             _ => None,
         })
     else {
@@ -149,7 +149,7 @@ async fn notification_cannot_relabel_payload_for_another_e3() -> Result<()> {
     })?;
 
     let error_events = errors.send(TakeEvents::new(1)).await?;
-    let error: InterfoldError = error_events.events.first().unwrap().try_into()?;
+    let error: LoxleyError = error_events.events.first().unwrap().try_into()?;
     assert!(error.message.contains("metadata E3 1:100"));
     assert!(error.message.contains("payload E3 1:200"));
 
@@ -157,7 +157,7 @@ async fn notification_cannot_relabel_payload_for_another_e3() -> Result<()> {
     assert!(
         !events
             .iter()
-            .any(|event| matches!(event.get_data(), InterfoldEventData::DocumentReceived(_))),
+            .any(|event| matches!(event.get_data(), LoxleyEventData::DocumentReceived(_))),
         "mismatched document must not be persisted"
     );
     Ok(())

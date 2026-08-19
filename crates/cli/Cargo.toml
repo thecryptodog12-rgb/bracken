@@ -3,7 +3,7 @@ name = "e3-cli"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "E3 - Interfold CLI"
+description = "E3 - Loxley CLI"
 repository.workspace = true
 build = "build.rs"
 
@@ -13,7 +13,7 @@ test-only-skip-proof-aggregation = [
 ]
 
 [[bin]]
-name = "interfold"
+name = "loxley"
 path = "src/main.rs"
 
 [dependencies]

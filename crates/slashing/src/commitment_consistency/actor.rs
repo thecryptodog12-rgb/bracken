@@ -25,7 +25,7 @@
 //! This file is a **thin actix shell**. All consistency-checking logic lives in
 //! the plain, synchronous [`CommitmentConsistency`] service
 //! ([`crate::domain::commitment_consistency`]). The actor's only job is to
-//! translate inbound [`InterfoldEvent`]s into service calls and to publish the
+//! translate inbound [`LoxleyEvent`]s into service calls and to publish the
 //! [`CommitmentConsistencyViolation`]s and [`CommitmentConsistencyCheckComplete`]
 //! responses the service returns.
 //!
@@ -35,7 +35,7 @@
 use actix::{Actor, Addr, Context, Handler};
 use e3_events::{
     BusHandle, CommitmentConsistencyCheckRequested, CommitmentLink, E3id, EventPublisher,
-    EventSubscriber, EventType, InterfoldEvent, InterfoldEventData, ProofVerificationPassed,
+    EventSubscriber, EventType, LoxleyEvent, LoxleyEventData, ProofVerificationPassed,
     TypedEvent,
 };
 use e3_utils::NotifySync;
@@ -97,16 +97,16 @@ impl Actor for CommitmentConsistencyChecker {
     }
 }
 
-impl Handler<InterfoldEvent> for CommitmentConsistencyChecker {
+impl Handler<LoxleyEvent> for CommitmentConsistencyChecker {
     type Result = ();
 
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            InterfoldEventData::CommitmentConsistencyCheckRequested(data) => {
+            LoxleyEventData::CommitmentConsistencyCheckRequested(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ProofVerificationPassed(data) => {
+            LoxleyEventData::ProofVerificationPassed(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
             _ => (),

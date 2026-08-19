@@ -34,11 +34,11 @@ impl<P: Provider + Clone + 'static> Actor for EvmReadInterface<P> {
     }
 }
 
-impl<P: Provider + Clone + 'static> Handler<InterfoldEvent> for EvmReadInterface<P> {
+impl<P: Provider + Clone + 'static> Handler<LoxleyEvent> for EvmReadInterface<P> {
     type Result = ();
 
-    fn handle(&mut self, msg: InterfoldEvent, _: &mut Self::Context) -> Self::Result {
-        if let InterfoldEventData::Shutdown(_) = msg.into_data() {
+    fn handle(&mut self, msg: LoxleyEvent, _: &mut Self::Context) -> Self::Result {
+        if let LoxleyEventData::Shutdown(_) = msg.into_data() {
             if let Some(shutdown) = self.shutdown_tx.take() {
                 let _ = shutdown.send(());
             }

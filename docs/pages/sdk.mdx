@@ -1,20 +1,20 @@
 ---
-title: 'Interfold SDK'
+title: 'Loxley SDK'
 description: 'Use the TypeScript + React SDKs to drive E3 programs from clients and services'
 ---
 
-# Interfold SDK Overview
+# Loxley SDK Overview
 
-The Interfold SDK (`@interfold/sdk`) and React helpers (`@interfold/react`) provide a
+The Loxley SDK (`@loxley/sdk`) and React helpers (`@loxley/react`) provide a
 batteries-included client stack for requesting E3 computations, subscribing to protocol events, and
 coordinating custom frontends or backend services. Both packages ship in this repository (see
-`packages/interfold-sdk` and `packages/interfold-react`).
+`packages/loxley-sdk` and `packages/loxley-react`).
 
 ## Installation
 
 ```bash
-pnpm add @interfold/sdk           # TypeScript SDK
-pnpm add @interfold/react         # React hooks (optional)
+pnpm add @loxley/sdk           # TypeScript SDK
+pnpm add @loxley/react         # React hooks (optional)
 ```
 
 For browser projects using WASM (encryption helpers, FHE keygen), configure Vite per the SDK README:
@@ -26,7 +26,7 @@ import topLevelAwait from 'vite-plugin-top-level-await'
 
 export default defineConfig({
   optimizeDeps: {
-    exclude: ['@interfold/wasm'],
+    exclude: ['@loxley/wasm'],
   },
   plugins: [wasm(), topLevelAwait()],
 })
@@ -35,7 +35,7 @@ export default defineConfig({
 ## Core client
 
 ```ts
-import { InterfoldSDK, InterfoldEventType, RegistryEventType } from '@interfold/sdk'
+import { LoxleySDK, LoxleyEventType, RegistryEventType } from '@loxley/sdk'
 import { createPublicClient, createWalletClient, http, custom } from 'viem'
 import { sepolia } from 'viem/chains'
 
@@ -48,11 +48,11 @@ const walletClient = createWalletClient({
   transport: custom(window.ethereum),
 })
 
-const sdk = new InterfoldSDK({
+const sdk = new LoxleySDK({
   publicClient,
   walletClient,
   contracts: {
-    interfold: import.meta.env.VITE_INTERFOLD_ADDRESS,
+    loxley: import.meta.env.VITE_LOXLEY_ADDRESS,
     ciphernodeRegistry: import.meta.env.VITE_REGISTRY_ADDRESS,
     feeToken: import.meta.env.VITE_FEE_TOKEN_ADDRESS,
   },
@@ -65,13 +65,13 @@ const sdk = new InterfoldSDK({
 For server-side or simpler setups, use the factory method:
 
 ```ts
-import { InterfoldSDK } from '@interfold/sdk'
+import { LoxleySDK } from '@loxley/sdk'
 import { sepolia } from 'viem/chains'
 
-const sdk = InterfoldSDK.create({
+const sdk = LoxleySDK.create({
   rpcUrl: import.meta.env.VITE_RPC_URL,
   contracts: {
-    interfold: import.meta.env.VITE_INTERFOLD_ADDRESS,
+    loxley: import.meta.env.VITE_LOXLEY_ADDRESS,
     ciphernodeRegistry: import.meta.env.VITE_REGISTRY_ADDRESS,
     feeToken: import.meta.env.VITE_FEE_TOKEN_ADDRESS,
   },
@@ -85,7 +85,7 @@ const sdk = InterfoldSDK.create({
 ### BFV Parameter Presets
 
 The `thresholdBfvParamsPresetName` field selects the BFV encryption parameters used by the client.
-It must match the `paramSet` index registered in the on-chain `Interfold` contract:
+It must match the `paramSet` index registered in the on-chain `Loxley` contract:
 
 | Preset Name              | On-chain `paramSet` | Degree | CRT moduli (L) | Security | Use case                           |
 | ------------------------ | ------------------- | ------ | -------------- | -------- | ---------------------------------- |
@@ -124,20 +124,20 @@ const e3Handler = (event) => {
   console.log('New request', event.data)
 }
 
-sdk.onInterfoldEvent(InterfoldEventType.E3_REQUESTED, e3Handler)
+sdk.onLoxleyEvent(LoxleyEventType.E3_REQUESTED, e3Handler)
 
-sdk.onInterfoldEvent(RegistryEventType.COMMITTEE_REQUESTED, (event) => {
+sdk.onLoxleyEvent(RegistryEventType.COMMITTEE_REQUESTED, (event) => {
   console.log('Committee requested', event.data)
 })
 
 // Later, remember to clean up
-sdk.off(InterfoldEventType.E3_REQUESTED, e3Handler)
+sdk.off(LoxleyEventType.E3_REQUESTED, e3Handler)
 ```
 
 ### React hook
 
 ```tsx
-import { useInterfoldSDK } from '@interfold/react'
+import { useLoxleySDK } from '@loxley/react'
 
 export function Dashboard() {
   const {
@@ -146,14 +146,14 @@ export function Dashboard() {
     error,
     requestE3,
     getThresholdBfvParamsSet,
-    onInterfoldEvent,
+    onLoxleyEvent,
     off,
-    InterfoldEventType,
+    LoxleyEventType,
     RegistryEventType,
-  } = useInterfoldSDK({
+  } = useLoxleySDK({
     autoConnect: true,
     contracts: {
-      interfold: import.meta.env.VITE_INTERFOLD_ADDRESS,
+      loxley: import.meta.env.VITE_LOXLEY_ADDRESS,
       ciphernodeRegistry: import.meta.env.VITE_REGISTRY_ADDRESS,
       feeToken: import.meta.env.VITE_FEE_TOKEN_ADDRESS,
     },
@@ -164,8 +164,8 @@ export function Dashboard() {
   useEffect(() => {
     if (!isInitialized) return
     const handle = (event) => console.log('E3 Requested', event.data)
-    onInterfoldEvent(InterfoldEventType.E3_REQUESTED, handle)
-    return () => off(InterfoldEventType.E3_REQUESTED, handle)
+    onLoxleyEvent(LoxleyEventType.E3_REQUESTED, handle)
+    return () => off(LoxleyEventType.E3_REQUESTED, handle)
   }, [isInitialized])
 
   if (error) return <div>Error: {error}</div>
@@ -197,7 +197,7 @@ const { encryptedData: vecData, proof: vecProof } = await sdk.encryptVectorAndGe
 const { encryptedData, circuitInputs } = await sdk.encryptNumberAndGenInputs(42n, publicKey)
 
 // Standalone import (pass preset name explicitly)
-import { generatePublicKey, encryptNumber } from '@interfold/sdk'
+import { generatePublicKey, encryptNumber } from '@loxley/sdk'
 
 const pk = await generatePublicKey('SECURE_THRESHOLD_8192')
 const ct = await encryptNumber(42n, pk, 'SECURE_THRESHOLD_8192')
@@ -224,18 +224,18 @@ The SDK is organized into three submodules (`contracts`, `events`, `crypto`) tha
 independently for tree-shaking:
 
 ```ts
-import { generatePublicKey, encryptNumber } from '@interfold/sdk/crypto'
-import { ContractClient } from '@interfold/sdk/contracts'
-import { EventListener, InterfoldEventType } from '@interfold/sdk/events'
+import { generatePublicKey, encryptNumber } from '@loxley/sdk/crypto'
+import { ContractClient } from '@loxley/sdk/contracts'
+import { EventListener, LoxleyEventType } from '@loxley/sdk/events'
 ```
 
-All exports are also available from the main `@interfold/sdk` entry point.
+All exports are also available from the main `@loxley/sdk` entry point.
 
 ## Event types
 
 The SDK provides two event type enums for subscribing to on-chain events:
 
-### `InterfoldEventType`
+### `LoxleyEventType`
 
 | Enum Key                         | Solidity Event Name          |
 | -------------------------------- | ---------------------------- |
@@ -259,7 +259,7 @@ The SDK provides two event type enums for subscribing to on-chain events:
 | `COMMITTEE_REQUESTED`   | `CommitteeRequested`   |
 | `COMMITTEE_PUBLISHED`   | `CommitteePublished`   |
 | `COMMITTEE_FINALIZED`   | `CommitteeFinalized`   |
-| `INTERFOLD_SET`         | `InterfoldSet`         |
+| `LOXLEY_SET`         | `LoxleySet`         |
 | `OWNERSHIP_TRANSFERRED` | `OwnershipTransferred` |
 | `INITIALIZED`           | `Initialized`          |
 
@@ -310,7 +310,7 @@ import {
   getCurrentTimestamp,
   DEFAULT_COMPUTE_PROVIDER_PARAMS,
   DEFAULT_E3_CONFIG,
-} from '@interfold/sdk'
+} from '@loxley/sdk'
 ```
 
 | Export                            | Description                                                       |
@@ -327,18 +327,18 @@ import {
 
 ## Configuration contract map
 
-Provide the Interfold, CiphernodeRegistry, and FeeToken addresses. The template exposes these via
-`.env` / `interfold.config.yaml`. For multi-chain apps, instantiate separate SDK instances per
+Provide the Loxley, CiphernodeRegistry, and FeeToken addresses. The template exposes these via
+`.env` / `loxley.config.yaml`. For multi-chain apps, instantiate separate SDK instances per
 chain.
 
 ## Working with the template
 
-`interfold init` generates the default template (see [Project Template](/project-template)). The
-client already wires `@interfold/sdk` and `@interfold/react`:
+`loxley init` generates the default template (see [Project Template](/project-template)). The
+client already wires `@loxley/sdk` and `@loxley/react`:
 
 - `client/src/sdk.ts` builds the shared SDK instance
-- `client/src/hooks/useE3.ts` uses `useInterfoldSDK` to expose helper hooks throughout the UI
-- `server/src/services/interfold.ts` instantiates the SDK with a server wallet using
+- `client/src/hooks/useE3.ts` uses `useLoxleySDK` to expose helper hooks throughout the UI
+- `server/src/services/loxley.ts` instantiates the SDK with a server wallet using
   `createWalletClient`
 
 When you add new contracts or E3 programs, update `client/.env` and `server/.env` with the new
@@ -347,8 +347,8 @@ addresses, then restart the dev server so the SDK reconnects.
 ## Application-specific SDKs
 
 For complex E3 programs with specialized requirements, you may want to build an application-specific
-SDK on top of or alongside the Interfold SDK. For example,
-[CRISP](https://github.com/theinterfold/interfold/tree/main/examples/CRISP) uses `@crisp-e3/sdk`,
+SDK on top of or alongside the Loxley SDK. For example,
+[CRISP](https://github.com/theloxley/loxley/tree/main/examples/CRISP) uses `@crisp-e3/sdk`,
 which provides:
 
 - Zero-knowledge proof generation for votes using Noir circuits
@@ -359,7 +359,7 @@ which provides:
 
 If your E3 program requires specialized cryptographic operations, domain-specific logic, or
 application-level abstractions beyond basic protocol interactions, consider building a dedicated SDK
-that wraps or complements the core Interfold SDK.
+that wraps or complements the core Loxley SDK.
 
 ## Advanced usage
 
@@ -369,7 +369,7 @@ that wraps or complements the core Interfold SDK.
   `sdk.publishCiphertextOutput(e3Id, ciphertextOutput, ciphertextCommitment, proof, gasLimit?)`
   submits the computed ciphertext output for an E3.
 - **Gas controls**: pass `gasLimit` to `requestE3`, `publishCiphertextOutput`, or other write
-  methods if you want fixed limits when interacting with Interfold on L2s.
+  methods if you want fixed limits when interacting with Loxley on L2s.
 - **Gas estimation**: `sdk.estimateGas(functionName, args, contractAddress, abi)` returns the
   estimated gas for a contract call before sending.
 - **Transaction confirmation**: `sdk.waitForTransaction(hash)` blocks until a transaction is mined
@@ -405,4 +405,4 @@ that wraps or complements the core Interfold SDK.
 | Hooks never initialize         | Confirm `autoConnect` is true, wallet is connected, and React component is inside a wagmi provider that renders on the client. |
 | No events arrive               | Switch to a WebSocket RPC or call `sdk.startEventPolling()` so logs are polled over HTTP.                                      |
 
-For additional API surface details see `packages/interfold-sdk/README.md` inside this repo.
+For additional API surface details see `packages/loxley-sdk/README.md` inside this repo.

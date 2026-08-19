@@ -96,7 +96,7 @@ where
 //////////////////////////////////////////////////////////////////////////////
 // EventBus Implementation
 //////////////////////////////////////////////////////////////////////////////
-/// Central EventBus for each node. Actors publish events to this bus by sending it InterfoldEvents.
+/// Central EventBus for each node. Actors publish events to this bus by sending it LoxleyEvents.
 /// All events sent to this bus are assumed to be published over the network via pubsub.
 /// Other actors such as the NetEventTranslator and Evm actor connect to outside services and control which events
 /// actually get published as well as ensure that local events are not rebroadcast locally after
@@ -140,7 +140,7 @@ impl<E: Event> EventBus<E> {
     pub fn error<EE: Event>(source: &Addr<EventBus<EE>>) -> Addr<HistoryCollector<EE>> {
         let addr = HistoryCollector::<EE>::new().start();
         source.do_send(Subscribe::new(
-            EventType::InterfoldError,
+            EventType::LoxleyError,
             addr.clone().recipient(),
         ));
         addr

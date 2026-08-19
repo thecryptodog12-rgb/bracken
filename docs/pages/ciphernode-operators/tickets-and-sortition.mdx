@@ -31,7 +31,7 @@ availableTickets = floor(ticketTokenBalance / ticketPrice)
 The bond owner approves the ticket wrapper and funds the operator:
 
 ```bash
-interfold --config /path/to/owner.yaml ciphernode tickets \
+loxley --config /path/to/owner.yaml ciphernode tickets \
   --operator 0xOPERATOR buy --amount 100
 ```
 
@@ -42,7 +42,7 @@ This:
 3. Re-evaluates the operator's active status
 
 To buy tickets from a wallet instead of the CLI, use step 5 of the
-[interactive operator guide](https://dashboard.theinterfold.com/#operator). It prices the purchase
+[interactive operator guide](https://dashboard.theloxley.com/#operator). It prices the purchase
 from the live `ticketPrice` and handles the approval.
 
 ### Burn Tickets
@@ -50,7 +50,7 @@ from the live `ticketPrice` and handles the approval.
 The bond owner queues ticket collateral for withdrawal:
 
 ```bash
-interfold --config /path/to/owner.yaml ciphernode tickets \
+loxley --config /path/to/owner.yaml ciphernode tickets \
   --operator 0xOPERATOR burn --amount 25
 ```
 
@@ -61,7 +61,7 @@ interfold --config /path/to/owner.yaml ciphernode tickets \
 ### Check Balance
 
 ```bash
-interfold ciphernode status
+loxley ciphernode status
 ```
 
 Look for the "Ticket balance" and "available" fields in the output.

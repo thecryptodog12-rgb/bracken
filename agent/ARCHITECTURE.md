@@ -1,4 +1,4 @@
-# Interfold Ciphernode Target Architecture
+# Loxley Ciphernode Target Architecture
 
 This document defines the target architecture for the Rust ciphernode. It is a design constraint for
 new code and the destination for incremental refactors; it is not a claim that every existing module
@@ -12,9 +12,9 @@ documents must be corrected.
 The repository-wide thin-actor findings and deliberate residuals are recorded in
 [`ACTOR_AUDIT.md`](ACTOR_AUDIT.md).
 
-## Why Interfold Uses Actors
+## Why Loxley Uses Actors
 
-Interfold is an asynchronous, multi-party cryptographic workflow. A node concurrently receives chain
+Loxley is an asynchronous, multi-party cryptographic workflow. A node concurrently receives chain
 logs, peer messages, timers, proof results, storage acknowledgements, and operator signals. Work is
 partitioned by E3 and must remain responsive while cryptographic jobs run for seconds or minutes.
 Actors are a good fit for those concurrency boundaries.
@@ -29,7 +29,7 @@ The governing principle is:
 > Effect runners perform crypto, storage, network, and chain I/O. Every correctness-relevant
 > transition and intent is recoverable.
 
-This means Interfold keeps global choreography between nodes while using explicit, persisted local
+This means Loxley keeps global choreography between nodes while using explicit, persisted local
 orchestration for each E3.
 
 ## Sources of Authority
@@ -389,7 +389,7 @@ fallback delay in a way that suppresses the only remaining submitter.
 
 ## Choreography and Local Orchestration
 
-Interfold remains choreographed across nodes and contracts: no node is the global coordinator.
+Loxley remains choreographed across nodes and contracts: no node is the global coordinator.
 Inside one node, a per-E3 workflow is explicitly orchestrated so its durable state answers:
 
 - what facts have been accepted;

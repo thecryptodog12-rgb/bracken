@@ -10,7 +10,7 @@ use actix::Recipient;
 use anyhow::{bail, Context, Result};
 use e3_events::{
     AggregateId, BusHandle, CorrelationId, EventBusBarrier, EventBusFanout, EventContextAccessors,
-    EventContextSeq, EventStoreQueryBy, EventStoreQueryResponse, InterfoldEvent, SeqAgg,
+    EventContextSeq, EventStoreQueryBy, EventStoreQueryResponse, LoxleyEvent, SeqAgg,
 };
 use e3_utils::actix::channel as actix_toolbox;
 use std::{
@@ -151,7 +151,7 @@ async fn query_page(
     eventstore: &Recipient<EventStoreQueryBy<SeqAgg>>,
     aggregate_id: AggregateId,
     cursor: u64,
-) -> Result<Vec<InterfoldEvent>> {
+) -> Result<Vec<LoxleyEvent>> {
     let (addr, rx) = actix_toolbox::oneshot::<EventStoreQueryResponse>();
     eventstore
         .send(
@@ -170,11 +170,11 @@ async fn query_page(
         .context("EventStore paged replay query failed")
 }
 
-fn event_order_key(event: &InterfoldEvent) -> (u128, AggregateId, u64) {
+fn event_order_key(event: &LoxleyEvent) -> (u128, AggregateId, u64) {
     (event.ts(), event.aggregate_id(), event.seq())
 }
 
-fn write_run(events: Vec<InterfoldEvent>) -> Result<NamedTempFile> {
+fn write_run(events: Vec<LoxleyEvent>) -> Result<NamedTempFile> {
     let mut file = NamedTempFile::new().context("failed to create EventStore replay spool file")?;
     {
         let mut writer = BufWriter::new(file.as_file_mut());
@@ -221,7 +221,7 @@ fn merge_to_run(runs: &[NamedTempFile]) -> Result<NamedTempFile> {
     Ok(output)
 }
 
-fn write_event(writer: &mut impl Write, event: &InterfoldEvent) -> Result<()> {
+fn write_event(writer: &mut impl Write, event: &LoxleyEvent) -> Result<()> {
     let bytes = bincode::serialize(event).context("failed to encode replay spool event")?;
     if bytes.len() > MAX_SPOOLED_EVENT_BYTES {
         bail!(
@@ -237,7 +237,7 @@ fn write_event(writer: &mut impl Write, event: &InterfoldEvent) -> Result<()> {
         .context("failed to write replay spool event")
 }
 
-fn read_event(reader: &mut impl Read) -> Result<Option<InterfoldEvent>> {
+fn read_event(reader: &mut impl Read) -> Result<Option<LoxleyEvent>> {
     let mut len_bytes = [0u8; 8];
     match reader
         .read(&mut len_bytes[..1])
@@ -270,7 +270,7 @@ fn read_event(reader: &mut impl Read) -> Result<Option<InterfoldEvent>> {
 struct HeapItem {
     key: (u128, AggregateId, u64),
     run: usize,
-    event: InterfoldEvent,
+    event: LoxleyEvent,
 }
 
 impl PartialEq for HeapItem {
@@ -322,7 +322,7 @@ impl RunMerger {
         Ok(Self { readers, heap })
     }
 
-    fn next_event(&mut self) -> Result<Option<InterfoldEvent>> {
+    fn next_event(&mut self) -> Result<Option<LoxleyEvent>> {
         let Some(item) = self.heap.pop() else {
             return Ok(None);
         };
@@ -343,8 +343,8 @@ mod tests {
     use e3_ciphernode_builder::EventSystem;
     use e3_events::{E3id, EventPublisher, Sequenced, TestEvent};
 
-    fn event(aggregate: u64, sequence: u64, timestamp: u128) -> InterfoldEvent<Sequenced> {
-        InterfoldEvent::<Sequenced>::test_event("spooled")
+    fn event(aggregate: u64, sequence: u64, timestamp: u128) -> LoxleyEvent<Sequenced> {
+        LoxleyEvent::<Sequenced>::test_event("spooled")
             .e3_id(E3id::new(sequence.to_string(), aggregate))
             .seq(sequence)
             .ts(timestamp)

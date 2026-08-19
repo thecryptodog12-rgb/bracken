@@ -10,7 +10,7 @@ operator. Make sure your node is already [running](./running) before proceeding.
 
 > **Interactive alternative:** the dashboard can do every step on this page in your browser. It
 > shows the live bond size, ticket price, and operator status, and it sends each transaction from
-> the connected wallet. Open [Run a ciphernode](https://dashboard.theinterfold.com/#operator). The
+> the connected wallet. Open [Run a ciphernode](https://dashboard.theloxley.com/#operator). The
 > commands below remain the reference path for automated or headless setups.
 
 ## Prerequisites
@@ -31,7 +31,7 @@ single-wallet setup. Ensure the selected bond-owner wallet has:
 | **ETH**   | Sufficient for gas                       | Transaction fees             |
 
 > **Testnet tokens:** on Sepolia you can self-serve test FOLD and mock USDC from the faucet with
-> `interfold faucet` (requires the `faucet` contract address in your config — see
+> `loxley faucet` (requires the `faucet` contract address in your config — see
 > [Running a Node → Contract Addresses](/ciphernode-operators/running#contract-addresses)). Each
 > call tops up FOLD and the fee token independently, only when your balance for that token is below
 > the faucet threshold. One call dispenses enough FOLD to meet the default Sepolia ciphernode bond.
@@ -44,7 +44,7 @@ single-wallet setup. Ensure the selected bond-owner wallet has:
 First, verify your current on-chain status:
 
 ```bash
-interfold ciphernode status
+loxley ciphernode status
 ```
 
 Example output:
@@ -67,7 +67,7 @@ Ciphernode status on mainnet:
 From the node's operator key, authorize the wallet or Safe that will control collateral:
 
 ```bash
-interfold ciphernode set-bond-owner --owner 0xBOND_OWNER
+loxley ciphernode set-bond-owner --owner 0xBOND_OWNER
 ```
 
 The owner must be nonzero and may equal the operator address, although a separate cold wallet or
@@ -81,10 +81,10 @@ For an EOA bond owner, run the owner-aware CLI commands using a config whose enc
 that owner:
 
 ```bash
-interfold --config /path/to/owner.yaml ciphernode bond \
+loxley --config /path/to/owner.yaml ciphernode bond \
   --operator 0xOPERATOR bond --amount 32000
-interfold --config /path/to/owner.yaml ciphernode register --operator 0xOPERATOR
-interfold --config /path/to/owner.yaml ciphernode tickets \
+loxley --config /path/to/owner.yaml ciphernode register --operator 0xOPERATOR
+loxley --config /path/to/owner.yaml ciphernode tickets \
   --operator 0xOPERATOR buy --amount 1000
 ```
 
@@ -109,7 +109,7 @@ ticket.
 Confirm your registration is complete:
 
 ```bash
-interfold ciphernode status
+loxley ciphernode status
 ```
 
 Expected output for an active operator:
@@ -131,20 +131,20 @@ Ciphernode status on mainnet:
 
 ```bash
 # Authorize the bond owner from the hot operator key
-interfold ciphernode set-bond-owner --owner 0xBOND_OWNER
+loxley ciphernode set-bond-owner --owner 0xBOND_OWNER
 
 # Fund and register from an EOA bond-owner config
-interfold --config /path/to/owner.yaml ciphernode bond \
+loxley --config /path/to/owner.yaml ciphernode bond \
   --operator 0xOPERATOR bond --amount 32000
-interfold --config /path/to/owner.yaml ciphernode register --operator 0xOPERATOR
-interfold --config /path/to/owner.yaml ciphernode tickets \
+loxley --config /path/to/owner.yaml ciphernode register --operator 0xOPERATOR
+loxley --config /path/to/owner.yaml ciphernode tickets \
   --operator 0xOPERATOR buy --amount 1000
 
 # The owner or operator can stop participation
-interfold ciphernode deregister --operator 0xOPERATOR
+loxley ciphernode deregister --operator 0xOPERATOR
 
 # Check status
-interfold ciphernode status --operator 0xOPERATOR
+loxley ciphernode status --operator 0xOPERATOR
 ```
 
 Omit `--operator` for a self-owned position. In the recommended two-wallet setup, run financial
@@ -156,10 +156,10 @@ Two commands adjust the activation state of an operator without a full exit:
 
 ```bash
 # Register an operator again after a full exit
-interfold --config /path/to/owner.yaml ciphernode activate --operator 0xOPERATOR
+loxley --config /path/to/owner.yaml ciphernode activate --operator 0xOPERATOR
 
 # Queue collateral for exit and drop below the active thresholds
-interfold --config /path/to/owner.yaml ciphernode deactivate \
+loxley --config /path/to/owner.yaml ciphernode deactivate \
   --operator 0xOPERATOR --tickets 50 --bond 25
 ```
 
@@ -181,9 +181,9 @@ queue and become claimable after the exit delay. The operator stays registered, 
 The current owner proposes a replacement, then the new owner accepts:
 
 ```bash
-interfold --config /path/to/current-owner.yaml ciphernode propose-bond-owner \
+loxley --config /path/to/current-owner.yaml ciphernode propose-bond-owner \
   --operator 0xOPERATOR --new-owner 0xNEW_OWNER
-interfold --config /path/to/new-owner.yaml ciphernode accept-bond-owner \
+loxley --config /path/to/new-owner.yaml ciphernode accept-bond-owner \
   --operator 0xOPERATOR
 ```
 
@@ -195,8 +195,8 @@ involved in rotation.
 Specify a chain when operating on multiple networks:
 
 ```bash
-interfold ciphernode status --chain mainnet
-interfold ciphernode set-bond-owner --owner 0xBOND_OWNER --chain sepolia
+loxley ciphernode status --chain mainnet
+loxley ciphernode set-bond-owner --owner 0xBOND_OWNER --chain sepolia
 ```
 
 The `--chain` parameter matches the `name` field in your config's `chains` array.

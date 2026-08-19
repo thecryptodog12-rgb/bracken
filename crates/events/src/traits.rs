@@ -12,7 +12,7 @@ use std::{fmt::Display, future::Future};
 
 use crate::{
     event_context::{AggregateId, EventContext},
-    EventId, EventSource, EventType, InterfoldEvent, Sequenced, Unsequenced,
+    EventId, EventSource, EventType, LoxleyEvent, Sequenced, Unsequenced,
 };
 
 /// Trait that must be implemented by events used with EventBus
@@ -176,7 +176,7 @@ pub trait SequenceIndex: Unpin + 'static {
 /// Store and retrieve events from a write ahead log
 pub trait EventLog: Unpin + 'static {
     /// Append an event to the log, returning its sequence number
-    fn append(&mut self, event: &InterfoldEvent<Unsequenced>) -> Result<u64>;
+    fn append(&mut self, event: &LoxleyEvent<Unsequenced>) -> Result<u64>;
     /// Flush buffered log and index data before a clean process exit.
     ///
     /// In-memory and test implementations may use the default no-op. Durable
@@ -188,7 +188,7 @@ pub trait EventLog: Unpin + 'static {
     fn read_from(
         &self,
         from: u64,
-    ) -> Result<Box<dyn Iterator<Item = (u64, InterfoldEvent<Unsequenced>)>>>;
+    ) -> Result<Box<dyn Iterator<Item = (u64, LoxleyEvent<Unsequenced>)>>>;
     /// Read at most `limit` events starting from the given sequence number (inclusive).
     ///
     /// Implementations backed by persistent storage should override this method so a bounded
@@ -198,7 +198,7 @@ pub trait EventLog: Unpin + 'static {
         &self,
         from: u64,
         limit: usize,
-    ) -> Result<Box<dyn Iterator<Item = (u64, InterfoldEvent<Unsequenced>)>>> {
+    ) -> Result<Box<dyn Iterator<Item = (u64, LoxleyEvent<Unsequenced>)>>> {
         Ok(Box::new(self.read_from(from)?.take(limit)))
     }
     /// The 1-indexed sequence number of the last appended event, or `0` if the log is empty.

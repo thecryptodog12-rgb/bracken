@@ -31,12 +31,12 @@ use tokio::fs;
 use crate::logging::TaskSpinner;
 
 const DEFAULT_TEMPLATE_URL: &str =
-    "https://github.com/gnosisguild/interfold.git#v{{VERSION}}:templates/default";
-const TEMP_DIR: &str = "/tmp/__interfold-tmp-folder.1";
+    "https://github.com/gnosisguild/loxley.git#v{{VERSION}}:templates/default";
+const TEMP_DIR: &str = "/tmp/__loxley-tmp-folder.1";
 const DEFAULT_TEMPLATE_PATH: &str = ".";
 const DEFAULT_BRANCH: &str = "main";
 
-async fn install_interfold(cwd: &PathBuf, template: Option<String>, verbose: bool) -> Result<()> {
+async fn install_loxley(cwd: &PathBuf, template: Option<String>, verbose: bool) -> Result<()> {
     let mut spinner = TaskSpinner::new("".to_string(), verbose);
 
     spinner.update("Downloading template...".to_string()).await;
@@ -74,9 +74,9 @@ async fn install_interfold(cwd: &PathBuf, template: Option<String>, verbose: boo
     spinner.update("Configuring template...".to_string()).await;
 
     let evm_version = spinner
-        .run("Getting workspace version of interfold...", || async {
+        .run("Getting workspace version of loxley...", || async {
             package_json::get_version_from_package_json(
-                &PathBuf::from(TEMP_DIR).join("packages/interfold-contracts/package.json"),
+                &PathBuf::from(TEMP_DIR).join("packages/loxley-contracts/package.json"),
             )
             .await
         })
@@ -84,10 +84,10 @@ async fn install_interfold(cwd: &PathBuf, template: Option<String>, verbose: boo
 
     let react_version = spinner
         .run(
-            "Getting workspace version of interfold-react...",
+            "Getting workspace version of loxley-react...",
             || async {
                 package_json::get_version_from_package_json(
-                    &PathBuf::from(TEMP_DIR).join("packages/interfold-react/package.json"),
+                    &PathBuf::from(TEMP_DIR).join("packages/loxley-react/package.json"),
                 )
                 .await
             },
@@ -95,9 +95,9 @@ async fn install_interfold(cwd: &PathBuf, template: Option<String>, verbose: boo
         .await?;
 
     let sdk_version = spinner
-        .run("Getting workspace version of interfold-sdk...", || async {
+        .run("Getting workspace version of loxley-sdk...", || async {
             package_json::get_version_from_package_json(
-                &PathBuf::from(TEMP_DIR).join("packages/interfold-sdk/package.json"),
+                &PathBuf::from(TEMP_DIR).join("packages/loxley-sdk/package.json"),
             )
             .await
         })
@@ -113,38 +113,38 @@ async fn install_interfold(cwd: &PathBuf, template: Option<String>, verbose: boo
                 &[
                     Filter::new(
                         "**/package.json",
-                        r#""@interfold/contracts":\s*"[^"]*""#,
-                        &format!(r#""@interfold/contracts": "{}""#, evm_version),
+                        r#""@loxley/contracts":\s*"[^"]*""#,
+                        &format!(r#""@loxley/contracts": "{}""#, evm_version),
                     ),
                     Filter::new(
                         "**/package.json",
-                        r#""@interfold/react":\s*"[^"]*""#,
-                        &format!(r#""@interfold/react": "{}""#, react_version),
+                        r#""@loxley/react":\s*"[^"]*""#,
+                        &format!(r#""@loxley/react": "{}""#, react_version),
                     ),
                     Filter::new(
                         "**/package.json",
-                        r#""@interfold/sdk":\s*"[^"]*""#,
-                        &format!(r#""@interfold/sdk": "{}""#, sdk_version),
+                        r#""@loxley/sdk":\s*"[^"]*""#,
+                        &format!(r#""@loxley/sdk": "{}""#, sdk_version),
                     ),
                     Filter::new(
                         "**/Cargo.toml",
                         r"(?m)^e3-program-server =.*\n?",
-                        &format!("e3-program-server = {{ git = \"https://github.com/gnosisguild/interfold\", rev = \"{}\" }}\n",commit_hash),
+                        &format!("e3-program-server = {{ git = \"https://github.com/gnosisguild/loxley\", rev = \"{}\" }}\n",commit_hash),
                     ),
                     Filter::new(
                        "**/Cargo.toml",
                        r"(?m)^e3-bfv-client =.*\n?",
-                       &format!("e3-bfv-client = {{ git = \"https://github.com/gnosisguild/interfold\", rev = \"{}\" }}\n",commit_hash),
+                       &format!("e3-bfv-client = {{ git = \"https://github.com/gnosisguild/loxley\", rev = \"{}\" }}\n",commit_hash),
                     ),
                     Filter::new(
                        "**/Cargo.toml",
                        r"(?m)^e3-fhe-params =.*\n?",
-                       &format!("e3-fhe-params = {{ git = \"https://github.com/gnosisguild/interfold\", rev = \"{}\" }}\n",commit_hash),
+                       &format!("e3-fhe-params = {{ git = \"https://github.com/gnosisguild/loxley\", rev = \"{}\" }}\n",commit_hash),
                     ),
                     Filter::new(
                        "**/Cargo.toml",
                        r"(?m)^e3-compute-provider =.*\n?",
-                       &format!("e3-compute-provider = {{ git = \"https://github.com/gnosisguild/interfold\", rev = \"{}\" }}\n",commit_hash),
+                       &format!("e3-compute-provider = {{ git = \"https://github.com/gnosisguild/loxley\", rev = \"{}\" }}\n",commit_hash),
                     ),
                 ],
             )
@@ -160,7 +160,7 @@ async fn install_interfold(cwd: &PathBuf, template: Option<String>, verbose: boo
 
     spinner
         .run("Resetting support folder...", || async {
-            remove_dir_except(&cwd.join(".interfold"), &["generated"]).await
+            remove_dir_except(&cwd.join(".loxley"), &["generated"]).await
         })
         .await?;
 
@@ -168,14 +168,14 @@ async fn install_interfold(cwd: &PathBuf, template: Option<String>, verbose: boo
         .run("Setting up support folders ctl and dev", || async {
             copy::copy_with_filters(
                 &PathBuf::from(TEMP_DIR).join("crates/support-scripts/ctl"),
-                &cwd.join(".interfold/support/ctl"),
+                &cwd.join(".loxley/support/ctl"),
                 &[],
             )
             .await?;
 
             copy::copy_with_filters(
                 &PathBuf::from(TEMP_DIR).join("crates/support-scripts/dev"),
-                &cwd.join(".interfold/support/dev"),
+                &cwd.join(".loxley/support/dev"),
                 &[],
             )
             .await
@@ -301,7 +301,7 @@ async fn install_interfold(cwd: &PathBuf, template: Option<String>, verbose: boo
 
     spinner.complete_task("Git repository set up\n");
 
-    spinner.done("🎉 You can now start building on Interfold");
+    spinner.done("🎉 You can now start building on Loxley");
 
     Ok(())
 }
@@ -325,7 +325,7 @@ pub async fn execute(
     );
 
     let mut task_spinner =
-        TaskSpinner::new("Setting up a new Interfold project".to_string(), verbose);
+        TaskSpinner::new("Setting up a new Loxley project".to_string(), verbose);
 
     task_spinner.update("Preparing paths...".to_string()).await;
 
@@ -365,7 +365,7 @@ pub async fn execute(
     task_spinner.complete_task("Paths prepared");
     task_spinner.done("");
 
-    match install_interfold(&cwd, template, verbose).await {
+    match install_loxley(&cwd, template, verbose).await {
         Ok(_) => Ok(()),
         Err(e) => {
             if !skip_cleanup {
@@ -378,7 +378,7 @@ pub async fn execute(
             }
             eprintln!("❌ Sorry about this but there was an error running the installer. ");
             eprintln!("❌ Error: {}\n", e);
-            eprintln!("Interfold is currently under active development please share this with our team:\n\n  https://github.com/gnosisguild/interfold/issues/new\n");
+            eprintln!("Loxley is currently under active development please share this with our team:\n\n  https://github.com/gnosisguild/loxley/issues/new\n");
             exit(1);
         }
     }

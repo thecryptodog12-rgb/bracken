@@ -228,7 +228,7 @@ publishPlaintextOutput() succeeds
 ## Rust-Side: Node Shutdown
 
 ```text
-interfold start → running node
+loxley start → running node
 │
 ├─ Ctrl+C / SIGINT / SIGTERM
 │
@@ -305,14 +305,14 @@ accept within the timeout fails recovery instead of being silently skipped. Snap
 contains asynchronous edges, so this does not claim that every downstream actor is synchronously
 durable at each replay step.
 
-`interfold node validate` detects a recoverable uncommitted event-log tail without changing it. With
-the node stopped, `interfold node validate --repair` applies the same boundary-checked tail recovery
+`loxley node validate` detects a recoverable uncommitted event-log tail without changing it. With
+the node stopped, `loxley node validate --repair` applies the same boundary-checked tail recovery
 as startup and refuses to remove indexed records. Runtime EventStore query failures are returned to
 the correlated caller rather than panicking the actor; committed corruption remains a
 startup/integrity failure.
 
 For DAppNode installations, package v0.2.3 is the mandatory bridge from the shipped v0.1.8 state. It
-atomically moves the legacy `.enclave` custom-config root to `.interfold`, preserves the encrypted
+atomically moves the legacy `.enclave` custom-config root to `.loxley`, preserves the encrypted
 operator/libp2p identity, and lets the v0.2.3 binary stamp schema version 1 before later binaries
 enforce the marker. An ambiguous volume containing both roots fails closed.
 
@@ -381,7 +381,7 @@ protocol execution.
 `CiphernodeSelector` also emits every persisted `AggregatorChanged` entry before EventStore replay.
 If a prior snapshot failed to persist the selector's completion cleanup, the request router may log
 that emission as unexpected for an already-completed E3. The router converts it to an
-`InterfoldError`; it does not abort EventBus replay. Treat the warning as evidence of stale snapshot
+`LoxleyError`; it does not abort EventBus replay. Treat the warning as evidence of stale snapshot
 state rather than suppressing it unconditionally.
 
 For crashes after key publication but before ciphertext publication, the recovered active aggregator

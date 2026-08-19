@@ -9,8 +9,8 @@ read
 # Use the locally installed bb
 export E3_CUSTOM_BB=$(which bb)
 
-echo "Resetting installed interfold"
-rm -rf ~/.cargo/bin/interfold
+echo "Resetting installed loxley"
+rm -rf ~/.cargo/bin/loxley
 
 rm -rf * && \
   git reset --hard HEAD && \

@@ -49,7 +49,7 @@ jobs:
       build_circuits: ${{ steps.jobs.outputs.build_circuits }}
       integration_prebuild: ${{ steps.jobs.outputs.integration_prebuild }}
       zk_prover_integration: ${{ steps.jobs.outputs.zk_prover_integration }}
-      build_interfold_cli: ${{ steps.jobs.outputs.build_interfold_cli }}
+      build_loxley_cli: ${{ steps.jobs.outputs.build_loxley_cli }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
       - uses: dorny/paths-filter@6852f92c20ea7fd3b0c25de3b5112db3a98da050 # v3
@@ -62,7 +62,7 @@ jobs:
               - 'Cargo.lock'
               - 'rust-toolchain.toml'
             contracts:
-              - 'packages/interfold-contracts/**'
+              - 'packages/loxley-contracts/**'
               # The manifest is generated from deployed_contracts.json and
               # verified by `gen:manifest:check` in test_contracts. Without this
               # path a hand-edited manifest never runs the drift check and
@@ -76,9 +76,9 @@ jobs:
             templates:
               - 'templates/**'
             sdk:
-              - 'packages/interfold-sdk/**'
-              - 'packages/interfold-react/**'
-              - 'packages/interfold-config/**'
+              - 'packages/loxley-sdk/**'
+              - 'packages/loxley-react/**'
+              - 'packages/loxley-config/**'
               - 'crates/wasm/**'
             integration_tests:
               - 'tests/integration/**'
@@ -120,7 +120,7 @@ jobs:
           echo "build_circuits=$(any $FORCE $RUST $CIRCUITS $CI)" >> $GITHUB_OUTPUT
           echo "integration_prebuild=$(any $FORCE $RUST $CONTRACTS $CIRCUITS $INTEGRATION $CI)" >> $GITHUB_OUTPUT
           echo "zk_prover_integration=$(any $FORCE $RUST $CIRCUITS $CI)" >> $GITHUB_OUTPUT
-          echo "build_interfold_cli=$(any $FORCE $RUST $CONTRACTS $CIRCUITS $INTEGRATION $TEMPLATES $CRISP $CI)" >> $GITHUB_OUTPUT
+          echo "build_loxley_cli=$(any $FORCE $RUST $CONTRACTS $CIRCUITS $INTEGRATION $TEMPLATES $CRISP $CI)" >> $GITHUB_OUTPUT
 
   rust_unit_tests:
     needs: [detect_changes]
@@ -400,15 +400,15 @@ jobs:
           echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
 
       - name: 'Enforce production contract size budget'
-        run: 'pnpm --filter @interfold/contracts size:check'
+        run: 'pnpm --filter @loxley/contracts size:check'
 
       - name: 'Validate upgrade storage layouts'
-        run: 'pnpm --filter @interfold/contracts validate:upgrade'
+        run: 'pnpm --filter @loxley/contracts validate:upgrade'
 
       # The manifest is what operators fetch to detect a redeploy, so it must
       # never lag deployed_contracts.json.
       - name: 'Check the deployment manifest is up to date'
-        run: 'pnpm --filter @interfold/contracts gen:manifest:check'
+        run: 'pnpm --filter @loxley/contracts gen:manifest:check'
 
       - name: 'Test the contracts and generate the coverage report'
         run: 'pnpm coverage'
@@ -520,7 +520,7 @@ jobs:
         with:
           name: integration-noir-artifacts
           include-hidden-files: true
-          path: tests/integration/.interfold/noir/
+          path: tests/integration/.loxley/noir/
           retention-days: 1
           if-no-files-found: error
 
@@ -539,7 +539,7 @@ jobs:
       - run: bash ./scripts/nix-versions.sh # display bad versions when deps change
 
   ciphernode_integration_test:
-    needs: [detect_changes, integration_prebuild, build_interfold_cli, build_sdk]
+    needs: [detect_changes, integration_prebuild, build_loxley_cli, build_sdk]
     if: needs.detect_changes.outputs.ciphernode_e2e == 'true'
     timeout-minutes: 45
     runs-on:
@@ -578,11 +578,11 @@ jobs:
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: integration-noir-artifacts
-          path: tests/integration/.interfold/noir/
-      - name: 'Download interfold binary'
+          path: tests/integration/.loxley/noir/
+      - name: 'Download loxley binary'
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: interfold-binary
+          name: loxley-binary
           path: ~/.cargo/bin/
       - name: 'Download SDK artifacts'
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
@@ -594,27 +594,27 @@ jobs:
           echo "Checking for required artifacts:"
           ls -la target/debug/fake_encrypt || echo "fake_encrypt not found"
           ls -la target/debug/pack_e3_params || echo "pack_e3_params not found"
-          ls -la ~/.cargo/bin/interfold || echo "interfold binary not found"
-          ls -la packages/interfold-contracts/dist || echo "SDK dist not found"
+          ls -la ~/.cargo/bin/loxley || echo "loxley binary not found"
+          ls -la packages/loxley-contracts/dist || echo "SDK dist not found"
           ls -la crates/wasm/dist || echo "WASM dist not found"
       - name: 'Set executable permissions'
         run: |
           chmod +x target/debug/fake_encrypt
           chmod +x target/debug/pack_e3_params
-          chmod +x ~/.cargo/bin/interfold
-          chmod +x tests/integration/.interfold/noir/bin/bb
+          chmod +x ~/.cargo/bin/loxley
+          chmod +x tests/integration/.loxley/noir/bin/bb
       - name: 'Run ${{ matrix.test-suite }} tests'
         run: |
-          INTERFOLD_BIN="$HOME/.cargo/bin/interfold" \
+          LOXLEY_BIN="$HOME/.cargo/bin/loxley" \
             pnpm test:integration ${{ matrix.test-suite }} --no-prebuild
       - name: 'Add test summary'
         run: |
           echo "## Test results for ${{ matrix.test-suite }}" >> $GITHUB_STEP_SUMMARY
           echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
 
-  build_interfold_cli:
+  build_loxley_cli:
     needs: [detect_changes]
-    if: needs.detect_changes.outputs.build_interfold_cli == 'true'
+    if: needs.detect_changes.outputs.build_loxley_cli == 'true'
     timeout-minutes: 20
     runs-on:
       group: enclave-ci
@@ -641,14 +641,14 @@ jobs:
           && sudo apt-get update -y \
           && sudo apt-get install -y solc protobuf-compiler
 
-      - name: Build interfold CLI
-        run: cargo install --locked --path crates/cli --bin interfold --features test-only-skip-proof-aggregation
+      - name: Build loxley CLI
+        run: cargo install --locked --path crates/cli --bin loxley --features test-only-skip-proof-aggregation
 
-      - name: Upload interfold binary
+      - name: Upload loxley binary
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: interfold-binary
-          path: ~/.cargo/bin/interfold
+          name: loxley-binary
+          path: ~/.cargo/bin/loxley
           retention-days: 1
 
       - name: Cancel workflow on failure
@@ -685,7 +685,7 @@ jobs:
           # `crisp_contract_leg_coverage` fails if a test file ever belongs to no leg.
           #
           # Every contract leg needs both capabilities: `hardhat.config.ts` imports
-          # `@interfold/contracts/tasks/*`, which only resolves once `evm:build` has emitted `dist/`,
+          # `@loxley/contracts/tasks/*`, which only resolves once `evm:build` has emitted `dist/`,
           # and each leg contains at least one test that imports `@crisp-e3/sdk`.
           - test-suite: test:contracts:input-tree
             command: pnpm test:contracts:input-tree
@@ -760,8 +760,8 @@ jobs:
 
       # Gated on a declared capability rather than on the leg's name. Matching the name made the
       # label load-bearing: splitting `test:contracts` into three renamed legs silently skipped this
-      # step, and the suite failed on a missing `@interfold/contracts/dist` two steps later.
-      - name: Compile Interfold contracts
+      # step, and the suite failed on a missing `@loxley/contracts/dist` two steps later.
+      - name: Compile Loxley contracts
         if: matrix.needs-evm
         working-directory: .
         run: pnpm evm:build
@@ -778,7 +778,7 @@ jobs:
         run: ${{ matrix.command }}
 
   crisp_e2e:
-    needs: [detect_changes, build_interfold_cli, build_crisp_sdk]
+    needs: [detect_changes, build_loxley_cli, build_crisp_sdk]
     if: needs.detect_changes.outputs.crisp == 'true'
     timeout-minutes: 45
     runs-on:
@@ -832,7 +832,7 @@ jobs:
         working-directory: .
         run: pnpm install --frozen-lockfile
 
-      - name: Compile Interfold contracts
+      - name: Compile Loxley contracts
         working-directory: .
         run: pnpm evm:build
 
@@ -863,15 +863,15 @@ jobs:
         working-directory: ./examples/CRISP
         run: pnpm exec playwright install chromium
 
-      - name: Download interfold binary
+      - name: Download loxley binary
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: interfold-binary
+          name: loxley-binary
           path: ~/.cargo/bin/
 
       - name: Make binaries executable
         run: |
-          chmod +x ~/.cargo/bin/interfold
+          chmod +x ~/.cargo/bin/loxley
 
       - name: Install Nargo
         uses: noir-lang/noirup@7dbe69ccc78877f0200ffa5a40836c953d2cfd8f # v0.1.4
@@ -894,12 +894,12 @@ jobs:
           sudo mv "$BB_BIN" /usr/local/bin/bb
           chmod +x /usr/local/bin/bb
 
-      - name: Build interfold circuits
+      - name: Build loxley circuits
         run: pnpm build:circuits --preset insecure-512 --committee minimum --skip-if-built
 
       - name: Setup ZK prover
         run: |
-          interfold noir setup
+          loxley noir setup
 
       - name: Run Playwright tests
         working-directory: ./examples/CRISP
@@ -1205,11 +1205,11 @@ jobs:
           name: sdk-artifacts
           include-hidden-files: true
           path: |
-            packages/interfold-sdk/dist
-            packages/interfold-contracts/dist
-            packages/interfold-contracts/artifacts
-            packages/interfold-contracts/cache
-            packages/interfold-contracts/types
+            packages/loxley-sdk/dist
+            packages/loxley-contracts/dist
+            packages/loxley-contracts/artifacts
+            packages/loxley-contracts/cache
+            packages/loxley-contracts/types
             crates/wasm/dist
             circuits/bin/.active-preset.json
             circuits/bin/recursive_aggregation/*/target
@@ -1282,7 +1282,7 @@ jobs:
           if-no-files-found: warn
 
   template_integration:
-    needs: [detect_changes, build_interfold_cli, build_e3_support_dev, build_sdk]
+    needs: [detect_changes, build_loxley_cli, build_e3_support_dev, build_sdk]
     if: needs.detect_changes.outputs.templates == 'true'
     timeout-minutes: 30
     runs-on:
@@ -1315,10 +1315,10 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@c7450ba673e133f5ee30098b3b54f444d3a2ca2d # v1
 
-      - name: Download interfold binary
+      - name: Download loxley binary
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: interfold-binary
+          name: loxley-binary
           path: ~/.cargo/bin/
 
       - name: Download support scripts artifacts
@@ -1335,7 +1335,7 @@ jobs:
 
       - name: Make binaries executable
         run: |
-          chmod +x ~/.cargo/bin/interfold
+          chmod +x ~/.cargo/bin/loxley
           chmod +x templates/default/target/debug/e3-support-scripts-dev
 
       - name: Install Nargo
@@ -1359,19 +1359,19 @@ jobs:
           sudo mv "$BB_BIN" /usr/local/bin/bb
           chmod +x /usr/local/bin/bb
 
-      - name: Build interfold circuits
+      - name: Build loxley circuits
         run: pnpm build:circuits --preset insecure-512 --committee minimum --skip-if-built
 
       - name: Setup ZK prover
         run: |
-          interfold noir setup
+          loxley noir setup
 
       - name: Verify downloaded artifacts
         run: |
           echo "Checking downloaded artifacts:"
-          ls -la ~/.cargo/bin/interfold || echo "interfold binary not found"
+          ls -la ~/.cargo/bin/loxley || echo "loxley binary not found"
           ls -la templates/default/target/debug/e3-support-scripts-dev || echo "support scripts not found"
-          ls -la packages/interfold-contracts/dist || echo "SDK dist not found"
+          ls -la packages/loxley-contracts/dist || echo "SDK dist not found"
           ls -la crates/wasm/dist || echo "WASM dist not found"
           test -f circuits/bin/.active-preset.json || (echo "ERROR: circuit preset stamp not found" && exit 1)
           echo "Support scripts permissions:"
@@ -1381,12 +1381,12 @@ jobs:
         run: |
           cd templates/default
           pnpm compile
-          chmod 755 .interfold/generated/contracts tests
-          chmod 644 .interfold/generated/contracts/ImageID.sol
+          chmod 755 .loxley/generated/contracts tests
+          chmod 644 .loxley/generated/contracts/ImageID.sol
           pnpm test:integration
 
-  test_interfold_init:
-    needs: [detect_changes, build_interfold_cli, build_e3_support_dev]
+  test_loxley_init:
+    needs: [detect_changes, build_loxley_cli, build_e3_support_dev]
     if: needs.detect_changes.outputs.init == 'true'
     timeout-minutes: 10
     runs-on: 'ubuntu-latest'
@@ -1404,18 +1404,18 @@ jobs:
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
-      - name: Download interfold binary
+      - name: Download loxley binary
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: interfold-binary
+          name: loxley-binary
           path: ~/.cargo/bin/
       - name: Make binaries executable
         run: |
-          chmod +x ~/.cargo/bin/interfold
+          chmod +x ~/.cargo/bin/loxley
       - name: Verify downloaded artifacts
         run: |
-          ls -la ~/.cargo/bin/interfold || echo "interfold binary not found"
-      - name: Interfold init
+          ls -la ~/.cargo/bin/loxley || echo "loxley binary not found"
+      - name: Loxley init
         env:
           EVENT_NAME: ${{ github.event_name }}
           HEAD_REF: ${{ github.head_ref }}
@@ -1430,7 +1430,7 @@ jobs:
             BRANCH="$REF_NAME"
             TEMPLATE_REPO="$UPSTREAM_REPO_URL"
           fi
-          interfold init mycitest --verbose --template="${TEMPLATE_REPO}#${BRANCH}:templates/default"
+          loxley init mycitest --verbose --template="${TEMPLATE_REPO}#${BRANCH}:templates/default"
 
   contrib-readme-job:
     timeout-minutes: 10

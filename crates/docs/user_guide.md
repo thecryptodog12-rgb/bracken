@@ -6,7 +6,7 @@ towards BLS keys_
 You can use the cli to setup your node:
 
 ```
-$ interfold init
+$ loxley init
 Enter WebSocket devnet RPC URL [wss://ethereum-sepolia-rpc.publicnode.com]: wss://ethereum-sepolia-rpc.publicnode.com
 ✔ Enter your Ethereum address (press Enter to skip) · 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 
@@ -14,23 +14,23 @@ Enter WebSocket devnet RPC URL [wss://ethereum-sepolia-rpc.publicnode.com]: wss:
 Please enter a new password:
 Please confirm your password:
 Password sucessfully set.
-Interfold configuration successfully created!
-You can start your node using `interfold start`
+Loxley configuration successfully created!
+You can start your node using `loxley start`
 ```
 
 This will setup an initial configuration:
 
 ```
-$ cat ~/.config/interfold/config.yaml
+$ cat ~/.config/loxley/config.yaml
 ---
-# Interfold Configuration File
+# Loxley Configuration File
 # Ethereum Account Configuration
 address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
 chains:
   - name: "devnet"
     rpc_url: "wss://ethereum-sepolia-rpc.publicnode.com"
     contracts:
-      interfold:
+      loxley:
         address: "0xCe087F31e20E2F76b6544A2E4A74D4557C8fDf77"
         deploy_block: 7073317
       ciphernode_registry:
@@ -44,36 +44,36 @@ chains:
 It will also setup the nodes key_file in the following path:
 
 ```
-~/.config/interfold/key
+~/.config/loxley/key
 ```
 
 You can now setup your wallet if you have your node configured for writing to the blockchain:
 
 ```
 # Example key DO NOT USE
-$ interfold wallet set --private-key "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+$ loxley wallet set --private-key "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 ```
 
 _\*NOTE: do not use the above private key as this is obviously public and all funds will be lost_
 
 ## Configuration
 
-Interfold is configured using a configuration file. By default this file is located under
-`~/.config/interfold/config.yaml`
+Loxley is configured using a configuration file. By default this file is located under
+`~/.config/loxley/config.yaml`
 
 Default values for this file might effectively look like:
 
 ```
-# ~/.config/interfold/config.yaml
+# ~/.config/loxley/config.yaml
 key_file: "{config_dir}/key"
 db_file: "{data_dir}/db"
-config_dir: "~/.config/interfold"
-data_dir: "~/.local/share/interfold"
+config_dir: "~/.config/loxley"
+data_dir: "~/.local/share/loxley"
 ```
 
 > Note if you set `config_dir` it will change the default location for both the config file and the
 > `key_file` and if you specify `data_dir` it will change the default location for the `db_file` for
-> example: If I run `interfold start --config ./some-config.yaml` where `./some-config.yaml`
+> example: If I run `loxley start --config ./some-config.yaml` where `./some-config.yaml`
 > contains:
 >
 > ```
@@ -81,7 +81,7 @@ data_dir: "~/.local/share/interfold"
 > config_dir: "/my/config/dir"
 > ```
 >
-> The `interfold` binary will look for the key_file under: `/my/config/dir/key`
+> The `loxley` binary will look for the key_file under: `/my/config/dir/key`
 
 ### Setting a relative folder as a config dir
 
@@ -105,7 +105,7 @@ Ciphernodes need a registration address to identify themselves within a committe
 this with the `address` field within the configuration:
 
 ```
-# ~/.config/interfold/config.yaml
+# ~/.config/loxley/config.yaml
 address: "0x90F79bf6EB2c4f870365E785982E1f101E93b906"
 ```
 
@@ -120,7 +120,7 @@ wallet private keys. You can set this key in two ways:
 ## Provide your password using the commandline
 
 ```
-> interfold password set
+> loxley password set
 
 Please enter a new password:
 ```
@@ -138,21 +138,21 @@ Password sucessfully set.
 ```
 
 Assuming default settings you should now be able to find your keyfile under
-`~/.config/interfold/key`
+`~/.config/loxley/key`
 
 ## Provide your password using a key file
 
-You can use a keyfile to provide your password by creating a file under `~/.config/interfold/key`
+You can use a keyfile to provide your password by creating a file under `~/.config/loxley/key`
 and setting the file permissions to `400`
 
 ```
-mkdir -p ~/.config/interfold && read -s password && echo -n "$password" > ~/.config/interfold/key && chmod 400 ~/.config/interfold/key
+mkdir -p ~/.config/loxley && read -s password && echo -n "$password" > ~/.config/loxley/key && chmod 400 ~/.config/loxley/key
 ```
 
 You can change the location of your keyfile by using the `key_file` option within your configuration
 file:
 
 ```
-# ~/.config/interfold/config.yaml
-key_file: "/path/to/interfold/key"
+# ~/.config/loxley/config.yaml
+key_file: "/path/to/loxley/key"
 ```

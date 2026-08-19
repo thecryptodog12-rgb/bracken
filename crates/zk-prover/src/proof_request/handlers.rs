@@ -8,35 +8,35 @@ impl Actor for ProofRequestActor {
     type Context = Context<Self>;
 }
 
-impl Handler<InterfoldEvent> for ProofRequestActor {
+impl Handler<LoxleyEvent> for ProofRequestActor {
     type Result = ();
 
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
 
         match msg {
-            InterfoldEventData::EncryptionKeyPending(data) => {
+            LoxleyEventData::EncryptionKeyPending(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ThresholdSharePending(data) => {
+            LoxleyEventData::ThresholdSharePending(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ComputeResponse(data) => {
+            LoxleyEventData::ComputeResponse(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ComputeRequestError(data) => {
+            LoxleyEventData::ComputeRequestError(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::DecryptionShareProofsPending(data) => {
+            LoxleyEventData::DecryptionShareProofsPending(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ShareDecryptionProofPending(data) => {
+            LoxleyEventData::ShareDecryptionProofPending(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::PkAggregationProofPending(data) => {
+            LoxleyEventData::PkAggregationProofPending(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::AggregationProofPending(data) => {
+            LoxleyEventData::AggregationProofPending(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
             _ => (),

@@ -4,22 +4,22 @@
 
 use super::*;
 
-impl Handler<InterfoldEvent> for CommitteeFinalizer {
+impl Handler<LoxleyEvent> for CommitteeFinalizer {
     type Result = ();
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            InterfoldEventData::CommitteeRequested(data) => {
+            LoxleyEventData::CommitteeRequested(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::EffectsEnabled(data) => self.notify_sync(ctx, data),
-            InterfoldEventData::TicketGenerated(data) => self.notify_sync(ctx, data),
-            InterfoldEventData::Shutdown(data) => self.notify_sync(ctx, data),
-            InterfoldEventData::E3Failed(data) => self.notify_sync(ctx, TypedEvent::new(data, ec)),
-            InterfoldEventData::E3RequestComplete(data) => {
+            LoxleyEventData::EffectsEnabled(data) => self.notify_sync(ctx, data),
+            LoxleyEventData::TicketGenerated(data) => self.notify_sync(ctx, data),
+            LoxleyEventData::Shutdown(data) => self.notify_sync(ctx, data),
+            LoxleyEventData::E3Failed(data) => self.notify_sync(ctx, TypedEvent::new(data, ec)),
+            LoxleyEventData::E3RequestComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::E3StageChanged(data) => {
+            LoxleyEventData::E3StageChanged(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
             _ => (),

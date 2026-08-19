@@ -3,7 +3,7 @@ name = "e3-config"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "E3 - Interfold Ciphernode Configuration"
+description = "E3 - Loxley Ciphernode Configuration"
 repository.workspace = true
 
 [dependencies]

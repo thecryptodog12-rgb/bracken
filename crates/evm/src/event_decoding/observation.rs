@@ -5,7 +5,7 @@
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
 use alloy::primitives::{LogData, B256, U256};
-use e3_events::{E3id, EvmLogObserved, InterfoldEventData};
+use e3_events::{E3id, EvmLogObserved, LoxleyEventData};
 use e3_utils::ArcBytes;
 
 use super::evm_event_catalog;
@@ -17,7 +17,7 @@ pub(crate) fn observe(
     data: &LogData,
     topics: &[B256],
     chain_id: u64,
-) -> InterfoldEventData {
+) -> LoxleyEventData {
     let definition = topics
         .first()
         .and_then(|topic| evm_event_catalog::find(contract, *topic));
@@ -50,10 +50,10 @@ mod tests {
     fn names_known_logs_and_extracts_indexed_e3_id() {
         let topic0 = keccak256("TreasuryCredited(uint256,address,address,uint256)");
         let e3_id = B256::from(U256::from(17).to_be_bytes::<32>());
-        let event = observe("Interfold", &LogData::default(), &[topic0, e3_id], 31337);
+        let event = observe("Loxley", &LogData::default(), &[topic0, e3_id], 31337);
 
         match event {
-            InterfoldEventData::EvmLogObserved(event) => {
+            LoxleyEventData::EvmLogObserved(event) => {
                 assert!(event.known);
                 assert_eq!(event.event_name, "TreasuryCredited");
                 assert_eq!(event.e3_id, Some(E3id::new("17", 31337)));
@@ -65,9 +65,9 @@ mod tests {
     #[test]
     fn unknown_logs_remain_lossless_and_explicit() {
         let data = LogData::new_unchecked(vec![B256::ZERO], vec![1, 2, 3].into());
-        let event = observe("Interfold", &data, &[B256::ZERO], 1);
+        let event = observe("Loxley", &data, &[B256::ZERO], 1);
         match event {
-            InterfoldEventData::EvmLogObserved(event) => {
+            LoxleyEventData::EvmLogObserved(event) => {
                 assert!(!event.known);
                 assert_eq!(event.event_name, "UnknownEvmLog");
                 assert_eq!(event.data.extract_bytes(), &[1, 2, 3]);

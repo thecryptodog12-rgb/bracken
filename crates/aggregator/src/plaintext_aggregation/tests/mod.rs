@@ -17,7 +17,7 @@ use e3_sortition::{
 use e3_test_helpers::get_common_setup;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
-fn test_ctx(data: impl Into<InterfoldEventData>) -> EventContext<Sequenced> {
+fn test_ctx(data: impl Into<LoxleyEventData>) -> EventContext<Sequenced> {
     EventContext::<Unsequenced>::from(data.into()).sequence(0)
 }
 
@@ -148,7 +148,7 @@ async fn build_plaintext_aggregator(
     proof_aggregation_enabled: bool,
 ) -> Result<(
     ThresholdPlaintextAggregator,
-    Addr<HistoryCollector<InterfoldEvent>>,
+    Addr<HistoryCollector<LoxleyEvent>>,
     E3id,
 )> {
     let (bus, _rng, _seed, _params, _crp, _errors, history) =
@@ -171,8 +171,8 @@ async fn build_plaintext_aggregator(
     Ok((aggregator, history, e3_id))
 }
 
-async fn next_event(history: &Addr<HistoryCollector<InterfoldEvent>>) -> Result<InterfoldEvent> {
-    let mut result = history.send(TakeEvents::<InterfoldEvent>::new(1)).await?;
+async fn next_event(history: &Addr<HistoryCollector<LoxleyEvent>>) -> Result<LoxleyEvent> {
+    let mut result = history.send(TakeEvents::<LoxleyEvent>::new(1)).await?;
     assert!(!result.timed_out, "timed out waiting for an event");
     Ok(result.events.pop().expect("expected one event"))
 }

@@ -16,11 +16,11 @@ echo "Installing Cargo dependencies..."
 cargo build
 
 echo "Compiling guest program..."
-if [[ ! -f './.interfold/generated/contracts/ImageID.sol' ]]; then
-  interfold program compile
+if [[ ! -f './.loxley/generated/contracts/ImageID.sol' ]]; then
+  loxley program compile
 fi
 
-build_interfold_circuits_at_setup
+build_loxley_circuits_at_setup
 
 echo "Compiling contracts..."
 pnpm compile
@@ -33,23 +33,23 @@ pnpm compile
 # this build flag. Matches how CI builds the binary the template tests run against (ci.yml).
 #
 # Only the in-monorepo checkout can build it. A standalone template gets its binary from a release
-# install, so there is nothing to build from here - the old `[[ ! -f ~/.cargo/bin/interfold ]]`
+# install, so there is nothing to build from here - the old `[[ ! -f ~/.cargo/bin/loxley ]]`
 # guard was doing double duty for that case.
 if template_monorepo_build_available; then
-  echo "Building and installing interfold CLI..."
+  echo "Building and installing loxley CLI..."
   # Always reinstall so a stale binary from an earlier checkout cannot silently survive.
-  (cd "${INTERFOLD_REPO_ROOT}" &&
-    cargo install --locked --path crates/cli --bin interfold -f \
+  (cd "${LOXLEY_REPO_ROOT}" &&
+    cargo install --locked --path crates/cli --bin loxley -f \
       --features test-only-skip-proof-aggregation)
-elif [[ ! -f ~/.cargo/bin/interfold ]] && ! command -v interfold >/dev/null 2>&1; then
-  echo "interfold CLI not found and this is a standalone template (no monorepo at" >&2
-  echo "${INTERFOLD_REPO_ROOT}). Install it first, then re-run setup." >&2
+elif [[ ! -f ~/.cargo/bin/loxley ]] && ! command -v loxley >/dev/null 2>&1; then
+  echo "loxley CLI not found and this is a standalone template (no monorepo at" >&2
+  echo "${LOXLEY_REPO_ROOT}). Install it first, then re-run setup." >&2
   exit 1
 else
-  echo "Standalone template: using the already-installed interfold CLI."
+  echo "Standalone template: using the already-installed loxley CLI."
 fi
 
-echo "Running interfold noir setup..."
-interfold noir setup
+echo "Running loxley noir setup..."
+loxley noir setup
 
 echo "Template setup complete."

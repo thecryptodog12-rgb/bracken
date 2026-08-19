@@ -4,14 +4,14 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-//! Pure translation of `SlashingManager.sol` logs into `InterfoldEventData`.
+//! Pure translation of `SlashingManager.sol` logs into `LoxleyEventData`.
 
 use crate::contracts::ISlashingManager;
 use alloy::{
     primitives::{LogData, B256, U256},
     sol_types::SolEvent,
 };
-use e3_events::{E3id, InterfoldEventData};
+use e3_events::{E3id, LoxleyEventData};
 use tracing::{error, info, trace};
 
 /// Convert a U256 to u128, returning None if the value overflows.
@@ -27,7 +27,7 @@ pub(crate) fn extractor(
     data: &LogData,
     topics: &[B256],
     chain_id: u64,
-) -> Option<InterfoldEventData> {
+) -> Option<LoxleyEventData> {
     match topics.first() {
         Some(&ISlashingManager::SlashExecuted::SIGNATURE_HASH) => {
             let Ok(event) = ISlashingManager::SlashExecuted::decode_log_data(data) else {
@@ -38,7 +38,7 @@ pub(crate) fn extractor(
                 "SlashExecuted event received: proposal_id={}, e3_id={}, operator={}, reason={:?}, ticket={}, ciphernode_bond={}",
                 event.proposalId, event.e3Id, event.operator, event.reason, event.ticketAmount, event.ciphernodeBondAmount
             );
-            Some(InterfoldEventData::from(e3_events::SlashExecuted {
+            Some(LoxleyEventData::from(e3_events::SlashExecuted {
                 e3_id: E3id::new(event.e3Id.to_string(), chain_id),
                 proposal_id: match safe_u256_to_u128(event.proposalId) {
                     Some(v) => v,
@@ -111,11 +111,11 @@ mod tests {
         let log_data = LogData::default();
         assert!(matches!(
             extractor(&log_data, &[B256::ZERO], 1),
-            Some(InterfoldEventData::EvmLogObserved(_))
+            Some(LoxleyEventData::EvmLogObserved(_))
         ));
         assert!(matches!(
             extractor(&log_data, &[], 1),
-            Some(InterfoldEventData::EvmLogObserved(_))
+            Some(LoxleyEventData::EvmLogObserved(_))
         ));
     }
 
@@ -134,7 +134,7 @@ mod tests {
         let log = event.encode_log_data();
         let out = extractor(&log, log.topics(), 31337);
         match out {
-            Some(InterfoldEventData::SlashExecuted(event)) => {
+            Some(LoxleyEventData::SlashExecuted(event)) => {
                 assert_eq!(event.e3_id, E3id::new("9", 31337));
                 assert_eq!(event.ticket_amount, 100);
                 assert_eq!(event.ciphernode_bond_amount, 200);

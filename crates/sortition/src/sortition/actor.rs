@@ -21,10 +21,10 @@ use e3_events::{
     prelude::*, trap, CiphernodeAdded, CiphernodeRemoved, Committee, CommitteeFinalized,
     CommitteeMemberExcluded, CommitteeMemberExpelled, CommitteePublished, CommitteeRequested,
     ConfigurationUpdated, E3Failed, E3RequestComplete, E3Requested, E3Stage, E3StageChanged, EType,
-    EventContext, EventType, InterfoldEvent, OperatorActivationChanged, PlaintextOutputPublished,
+    EventContext, EventType, LoxleyEvent, OperatorActivationChanged, PlaintextOutputPublished,
     Seed, Sequenced, TicketBalanceUpdated, TypedEvent,
 };
-use e3_events::{BusHandle, E3id, InterfoldEventData};
+use e3_events::{BusHandle, E3id, LoxleyEventData};
 use e3_utils::{NotifySync, MAILBOX_LIMIT};
 use std::collections::HashMap;
 use tracing::{info, instrument, warn};
@@ -35,7 +35,7 @@ pub struct Sortition {
     backends: Persistable<HashMap<u64, SortitionBackend>>,
     /// Persistent map of `chain_id -> NodeStateStore`.
     node_state: Persistable<HashMap<u64, NodeStateStore>>,
-    /// Event bus for error reporting and interfold event subscription.
+    /// Event bus for error reporting and loxley event subscription.
     bus: BusHandle,
     /// Persistent map of finalized committees per E3
     finalized_committees: Persistable<HashMap<e3_events::E3id, Committee>>,

@@ -22,7 +22,7 @@ export function getProgramRunnerConfig() {
 export function getCheckedEnvVars() {
   return {
     RPC_URL: ensureEnv('RPC_URL'),
-    INTERFOLD_CONTRACT: ensureEnv('INTERFOLD_ADDRESS'),
+    LOXLEY_CONTRACT: ensureEnv('LOXLEY_ADDRESS'),
     CIPHERNODE_REGISTRY_CONTRACT: ensureEnv('REGISTRY_ADDRESS'),
     E3_PROGRAM_ADDRESS: ensureEnv('E3_PROGRAM_ADDRESS'),
     FEE_TOKEN_CONTRACT: ensureEnv('FEE_TOKEN_ADDRESS'),

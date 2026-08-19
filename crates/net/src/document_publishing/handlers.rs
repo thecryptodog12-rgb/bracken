@@ -11,18 +11,18 @@ impl Actor for DocumentPublisher {
     }
 }
 
-impl Handler<InterfoldEvent> for DocumentPublisher {
+impl Handler<LoxleyEvent> for DocumentPublisher {
     type Result = ();
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            InterfoldEventData::PublishDocumentRequested(data) => {
+            LoxleyEventData::PublishDocumentRequested(data) => {
                 ctx.notify(TypedEvent::new(data, ec))
             }
-            InterfoldEventData::CiphernodeSelected(data) => {
+            LoxleyEventData::CiphernodeSelected(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::E3RequestComplete(data) => {
+            LoxleyEventData::E3RequestComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
             _ => (),

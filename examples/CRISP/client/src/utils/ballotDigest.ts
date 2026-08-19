@@ -7,7 +7,7 @@
 import { parseAbi } from 'viem'
 import type { Address, PublicClient } from 'viem'
 
-const INTERFOLD_ABI = parseAbi([
+const LOXLEY_ABI = parseAbi([
   'function getE3(uint256 e3Id) view returns ((uint256 seed, uint8 committeeSize, uint256 requestBlock, uint256[2] inputWindow, bytes32 encryptionSchemeId, address e3Program, uint8 paramSet, bytes customParams, address decryptionVerifier, address pkVerifier, bytes32 committeePublicKey, bytes32 ciphertextOutput, bytes plaintextOutput, address requester, bytes32 ciphertextCommitment))',
 ])
 
@@ -19,18 +19,18 @@ const CRISP_PROGRAM_ABI = parseAbi([
  * Resolve the CRISP program a round was requested against.
  *
  * Read from the round rather than configured, so it cannot disagree with the program the round
- * actually points at. The client already knows the Interfold address from the round state, and a
+ * actually points at. The client already knows the Loxley address from the round state, and a
  * round names its own program, so no extra configuration reaches the browser.
  *
  * @param client The public client.
- * @param interfoldAddress The Interfold contract for this round.
+ * @param loxleyAddress The Loxley contract for this round.
  * @param e3Id The round.
  * @returns The CRISP program address.
  */
-export const getCrispProgramAddress = async (client: PublicClient, interfoldAddress: Address, e3Id: bigint): Promise<Address> => {
+export const getCrispProgramAddress = async (client: PublicClient, loxleyAddress: Address, e3Id: bigint): Promise<Address> => {
   const e3 = await client.readContract({
-    address: interfoldAddress,
-    abi: INTERFOLD_ABI,
+    address: loxleyAddress,
+    abi: LOXLEY_ABI,
     functionName: 'getE3',
     args: [e3Id],
   })

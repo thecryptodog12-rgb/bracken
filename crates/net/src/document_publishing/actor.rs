@@ -15,7 +15,7 @@ use actix::prelude::*;
 use anyhow::{Context, Result};
 use e3_events::{
     prelude::*, trap, trap_fut, BusHandle, CiphernodeSelected, CorrelationId, DocumentReceived,
-    E3RequestComplete, E3id, EType, EventSource, EventType, InterfoldEvent, InterfoldEventData,
+    E3RequestComplete, E3id, EType, EventSource, EventType, LoxleyEvent, LoxleyEventData,
     PartyId, PublishDocumentRequested, TypedEvent,
 };
 use e3_utils::ArcBytes;
@@ -36,11 +36,11 @@ const KADEMLIA_GET_TIMEOUT: Duration = Duration::from_secs(30);
 const KADEMLIA_BROADCAST_TIMEOUT: Duration = Duration::from_secs(30);
 
 /// DocumentPublisher is an actor that monitors events from both the Libp2pNetInterface and the
-/// Interfold EventBus in order to manage document publishing interactions. The decision/state logic
+/// Loxley EventBus in order to manage document publishing interactions. The decision/state logic
 /// lives in [`DocumentPublishingService`]; this actor only wires events to that service and
 /// performs the resulting libp2p/Kademlia I/O.
 pub struct DocumentPublisher {
-    /// Interfold EventBus
+    /// Loxley EventBus
     bus: BusHandle,
     /// NetCommand sender to forward commands to the Libp2pNetInterface
     tx: mpsc::Sender<NetCommand>,
@@ -71,14 +71,14 @@ impl DocumentPublisher {
     }
 
     /// This is needed to create simulation libp2p event routers
-    pub fn is_document_publisher_event(event: &InterfoldEvent) -> bool {
+    pub fn is_document_publisher_event(event: &LoxleyEvent) -> bool {
         // Add a list of events with paylods for the DHT
         matches!(
             event.get_data(),
-            InterfoldEventData::PublishDocumentRequested(_)
-                | InterfoldEventData::ThresholdShareCreated(_)
-                | InterfoldEventData::EncryptionKeyCreated(_)
-                | InterfoldEventData::DecryptionKeyShared(_)
+            LoxleyEventData::PublishDocumentRequested(_)
+                | LoxleyEventData::ThresholdShareCreated(_)
+                | LoxleyEventData::EncryptionKeyCreated(_)
+                | LoxleyEventData::DecryptionKeyShared(_)
         )
     }
 

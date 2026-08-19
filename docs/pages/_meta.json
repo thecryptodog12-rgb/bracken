@@ -4,7 +4,7 @@
     "title": "Overview"
   },
   "index": {
-    "title": "Interfold"
+    "title": "Loxley"
   },
   "introduction": {
     "title": "Introduction"
@@ -24,8 +24,8 @@
   "use-cases": {
     "title": "Use Cases"
   },
-  "building-with-interfold": {
-    "title": "Building with Interfold"
+  "building-with-loxley": {
+    "title": "Building with Loxley"
   },
   "best-practices": {
     "title": "Best Practices"
@@ -64,7 +64,7 @@
     "title": "Project Template"
   },
   "sdk": {
-    "title": "Interfold SDK"
+    "title": "Loxley SDK"
   },
   "setting-up-server": {
     "title": "Setting Up the Server"

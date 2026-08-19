@@ -34,7 +34,7 @@ describe('callFheRunner', () => {
       7n,
       {
         chainId: 31_337,
-        interfoldAddress: '0x1111111111111111111111111111111111111111',
+        loxleyAddress: '0x1111111111111111111111111111111111111111',
         encryptionSchemeId: `0x${'22'.repeat(32)}`,
         committeePublicKeyHash: `0x${'33'.repeat(32)}`,
       },
@@ -52,7 +52,7 @@ describe('callFheRunner', () => {
         body: JSON.stringify({
           e3_id: '7',
           chain_id: 31_337,
-          interfold_address: '0x1111111111111111111111111111111111111111',
+          loxley_address: '0x1111111111111111111111111111111111111111',
           encryption_scheme_id: `0x${'22'.repeat(32)}`,
           committee_public_key_hash: `0x${'33'.repeat(32)}`,
           params: '0x0102',

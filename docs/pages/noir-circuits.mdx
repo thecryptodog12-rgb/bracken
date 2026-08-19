@@ -1,7 +1,7 @@
 ---
 title: 'Noir Circuits'
 description:
-  'Toolchain, repo layout, compile/lint scripts, and integration hooks for Interfold Noir circuits'
+  'Toolchain, repo layout, compile/lint scripts, and integration hooks for Loxley Noir circuits'
 ---
 
 # Noir Circuits
@@ -12,10 +12,10 @@ live, which scripts to run, and how they connect to the Rust prover and on-chain
 For **what** the circuits prove (PV-TBFV, phases **P1–P4**, **C0–C7**, commitments), read
 [Cryptography](./cryptography) first. For **Rust types and events** (`ProofType`, `CircuitName`,
 public inputs), use the repo’s
-[`agent/flow-trace/04_DKG_AND_COMPUTATION.md`](https://github.com/theinterfold/interfold/blob/main/agent/flow-trace/04_DKG_AND_COMPUTATION.md).
+[`agent/flow-trace/04_DKG_AND_COMPUTATION.md`](https://github.com/theloxley/loxley/blob/main/agent/flow-trace/04_DKG_AND_COMPUTATION.md).
 
 The canonical **package index** (paths, **CircuitName**, C0–C7 IDs) is
-[`circuits/README.md`](https://github.com/theinterfold/interfold/blob/main/circuits/README.md) in
+[`circuits/README.md`](https://github.com/theloxley/loxley/blob/main/circuits/README.md) in
 the open-source tree—Noir sources are the source of truth; treat docs as orientation only.
 
 ## Workspace layout
@@ -51,7 +51,7 @@ Add a path or git dependency in your `Nargo.toml` (pin a **tag or rev** that mat
 
 ```toml
 [dependencies]
-interfold_lib = { git = "https://github.com/theinterfold/interfold", tag = "v0.2.2", directory = "circuits/lib" }
+loxley_lib = { git = "https://github.com/theloxley/loxley", tag = "v0.2.2", directory = "circuits/lib" }
 ```
 
 Check `crates/zk-prover/Cargo.toml` / `versions.json` in the same release for compatible **nargo**
@@ -63,7 +63,7 @@ Building the circuits needs two tools, and each has its own installer (or rely o
 
 - **nargo** — the Noir compiler, installed through `noirup`
 - **bb** — the [Barretenberg](https://barretenberg.aztec.network/docs/getting_started) proving
-  backend, installed through the Interfold CLI
+  backend, installed through the Loxley CLI
 
 ### nargo
 
@@ -82,17 +82,17 @@ session. New shells pick it up from the profile the installer edited.
 
 ### bb
 
-`interfold noir setup` fetches the Barretenberg version pinned in `crates/zk-prover/versions.json`
+`loxley noir setup` fetches the Barretenberg version pinned in `crates/zk-prover/versions.json`
 (`required_bb_version`), so your prover and your local builds agree:
 
 ```bash
-interfold noir status
-interfold noir setup
-interfold noir setup --force   # reinstall
+loxley noir status
+loxley noir setup
+loxley noir setup --force   # reinstall
 ```
 
-The CLI keeps this copy under `~/.interfold/noir` instead of on your `PATH`, so
-`interfold noir status` is what reports the installed version.
+The CLI keeps this copy under `~/.loxley/noir` instead of on your `PATH`, so
+`loxley noir status` is what reports the installed version.
 
 ## Compile, format, test
 
@@ -109,9 +109,9 @@ pnpm check:committee                             # verify active.nr, utils.ts, p
 **Preset** (`insecure-512` | `secure-8192`) selects the BFV parameter set; **committee** (`minimum`
 | `micro` | `small`) selects `(N, T, H)` for secret sharing. Always switch committee via
 `pnpm build:circuits --committee <name>` — see
-[`scripts/README.md`](https://github.com/theinterfold/interfold/blob/main/scripts/README.md#circuit-builder)
+[`scripts/README.md`](https://github.com/theloxley/loxley/blob/main/scripts/README.md#circuit-builder)
 and
-[`circuits/benchmarks/README.md`](https://github.com/theinterfold/interfold/blob/main/circuits/benchmarks/README.md).
+[`circuits/benchmarks/README.md`](https://github.com/theloxley/loxley/blob/main/circuits/benchmarks/README.md).
 
 Generate per-circuit witness/config artifacts with `zk_cli` (must pass matching `--committee`):
 
@@ -151,7 +151,7 @@ interface ICircuitVerifier {
 ## Rust integration
 
 - **`e3-zk-prover`** (`crates/zk-prover`) — witness wiring, `bb prove` / `bb verify`, artifact paths
-  aligned with `interfold noir setup`.
+  aligned with `loxley noir setup`.
 - **Events / API** — `CircuitName`, `ProofType`, and request payloads are defined next to the node.
 
 When you add or rename a circuit package, update root **`package.json`** / CI scripts that call

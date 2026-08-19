@@ -66,7 +66,7 @@ impl Handler<TypedEvent<ZkVerificationRequest>> for VerificationRecorder {
 }
 
 fn test_bus() -> BusHandle {
-    let event_bus = EventBus::<InterfoldEvent>::new(EventBusConfig { deduplicate: true }).start();
+    let event_bus = EventBus::<LoxleyEvent>::new(EventBusConfig { deduplicate: true }).start();
     let store = TestEventStore::default().start();
     let sequencer = Sequencer::new(&event_bus, store.recipient()).start();
     BusHandle::new(event_bus, sequencer, HlcFactory::new()).enable("c0-recovery-test")

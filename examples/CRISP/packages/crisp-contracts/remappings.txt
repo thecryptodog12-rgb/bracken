@@ -1,6 +1,6 @@
 forge-std/=lib/risc0-ethereum/lib/forge-std/src/
 risc0/=lib/risc0-ethereum/contracts/src/
-@interfold/contracts/=node_modules/@interfold/contracts/
+@loxley/contracts/=node_modules/@loxley/contracts/
 solady/=node_modules/solady/
 @zk-kit/lazy-imt.sol=node_modules/@zk-kit/lazy-imt.sol
 poseidon-solidity/=node_modules/poseidon-solidity/

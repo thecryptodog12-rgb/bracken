@@ -22,10 +22,10 @@ mod evm_read_interface;
 mod evm_router;
 #[path = "historical_order/actor.rs"]
 mod fix_historical_order;
-#[path = "interfold/reader.rs"]
-mod interfold_sol_reader;
-#[path = "interfold_writing/actor.rs"]
-mod interfold_sol_writer;
+#[path = "loxley/reader.rs"]
+mod loxley_sol_reader;
+#[path = "loxley_writing/actor.rs"]
+mod loxley_sol_writer;
 #[path = "slashing/reader.rs"]
 mod slashing_manager_sol_reader;
 #[path = "slashing_writing/actor.rs"]
@@ -44,8 +44,8 @@ pub use evm_parser::*;
 pub use evm_read_interface::*;
 pub use evm_router::*;
 pub use fix_historical_order::*;
-pub use interfold_sol_reader::InterfoldSolReader;
-pub use interfold_sol_writer::InterfoldSolWriter;
+pub use loxley_sol_reader::LoxleySolReader;
+pub use loxley_sol_writer::LoxleySolWriter;
 pub use slashing_manager_sol_reader::SlashingManagerSolReader;
 pub use slashing_manager_sol_writer::SlashingManagerSolWriter;
 pub use sync_start_extractor::*;

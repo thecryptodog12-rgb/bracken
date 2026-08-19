@@ -1,4 +1,4 @@
-# Interfold ZK Circuit Benchmarks
+# Loxley ZK Circuit Benchmarks
 
 **Generated:** 2026-05-27 18:28:14 UTC
 
@@ -45,7 +45,7 @@ Settings for this benchmark run (integration test + Nargo circuit benches on the
 
 ## Audit status
 
-On-chain verify gas: **complete** (CRISP Π_user + Interfold Π_DKG / Π_dec replay).
+On-chain verify gas: **complete** (CRISP Π_user + Loxley Π_DKG / Π_dec replay).
 
 ---
 

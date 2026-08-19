@@ -1,5 +1,5 @@
 import { defineConfig, globalIgnores } from 'eslint/config'
-import config from '@interfold/config/eslint.config.js'
+import config from '@loxley/config/eslint.config.js'
 
 export default defineConfig([
   globalIgnores([
@@ -19,7 +19,7 @@ export default defineConfig([
     '**/.cache-synpress/**',
     '**/.next/**',
     '**/.cargo/**',
-    '**/.interfold/**',
+    '**/.loxley/**',
     '.claude/worktrees/**',
     '**/test-results/**',
     '**/playwright-report/**',

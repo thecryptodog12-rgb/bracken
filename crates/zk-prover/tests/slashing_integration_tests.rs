@@ -30,7 +30,7 @@
 //!
 //! On-chain tests require:
 //! - `anvil` on PATH (from Foundry)
-//! - Compiled Hardhat artifacts: `cd packages/interfold-contracts && npx hardhat compile`
+//! - Compiled Hardhat artifacts: `cd packages/loxley-contracts && npx hardhat compile`
 //!
 //! Run with: `cargo test -p e3-zk-prover --test slashing_integration_tests`
 
@@ -75,7 +75,7 @@ sol! {
         function setSlashPolicy(bytes32 reason, SlashPolicy calldata policy) external;
         function setBondingRegistry(address newBondingRegistry) external;
         function setCiphernodeRegistry(address newCiphernodeRegistry) external;
-        function setInterfold(address newInterfold) external;
+        function setLoxley(address newLoxley) external;
         function totalProposals() external view returns (uint256);
         function isBanned(address node) external view returns (bool);
 
@@ -102,7 +102,7 @@ sol! {
 /// Deploys a contract whose runtime is a single STOP opcode.
 /// All calls to this contract succeed with empty return data, making it
 /// suitable as a mock for any interface that only has void-returning functions
-/// (e.g., IInterfold.onE3Failed).
+/// (e.g., ILoxley.onE3Failed).
 const NOOP_DEPLOY_BYTECODE: &[u8] = &[
     0x60, 0x01, // PUSH1 0x01 (runtime size)
     0x60, 0x0c, // PUSH1 0x0c (offset of runtime in init code)
@@ -135,7 +135,7 @@ const RETURNER_DEPLOY_BYTECODE: &[u8] = &[
 
 fn contracts_artifacts_dir() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../packages/interfold-contracts/artifacts/contracts")
+        .join("../../packages/loxley-contracts/artifacts/contracts")
 }
 
 fn read_artifact_bytecode(subpath: &str) -> Option<Vec<u8>> {
@@ -827,7 +827,7 @@ async fn deploy_and_configure(
     let accounts = provider.get_accounts().await.unwrap();
     let admin = accounts[0];
 
-    // Deploy noop for interfold (void functions)
+    // Deploy noop for loxley (void functions)
     let noop_addr = deploy_contract(provider, NOOP_DEPLOY_BYTECODE, &[]).await;
     // Deploy returner for bondingRegistry (slashTicketBalance returns uint256)
     let returner_addr = deploy_contract(provider, RETURNER_DEPLOY_BYTECODE, &[]).await;
@@ -855,7 +855,7 @@ async fn deploy_and_configure(
         .await
         .unwrap();
     slashing_mgr
-        .setInterfold(noop_addr)
+        .setLoxley(noop_addr)
         .send()
         .await
         .unwrap()
@@ -883,7 +883,7 @@ async fn test_onchain_valid_attestation_executes_slash() {
         None => {
             println!(
                 "skipping: contract artifacts not found \
-                 (run `npx hardhat compile` in packages/interfold-contracts)"
+                 (run `npx hardhat compile` in packages/loxley-contracts)"
             );
             return;
         }
@@ -1757,7 +1757,7 @@ async fn test_onchain_actor_signed_vote_accepted() {
         None => {
             println!(
                 "skipping: contract artifacts not found \
-                 (run `npx hardhat compile` in packages/interfold-contracts)"
+                 (run `npx hardhat compile` in packages/loxley-contracts)"
             );
             return;
         }

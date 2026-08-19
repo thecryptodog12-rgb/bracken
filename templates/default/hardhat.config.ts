@@ -4,8 +4,8 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-import { ciphernodeAdd, ciphernodeAdminAdd } from '@interfold/contracts/tasks/ciphernode'
-import { cleanDeploymentsTask } from '@interfold/contracts/tasks/utils'
+import { ciphernodeAdd, ciphernodeAdminAdd } from '@loxley/contracts/tasks/ciphernode'
+import { cleanDeploymentsTask } from '@loxley/contracts/tasks/utils'
 import dotenv from 'dotenv'
 
 import hardhatEthersChaiMatchers from '@nomicfoundation/hardhat-ethers-chai-matchers'
@@ -76,7 +76,7 @@ const config: HardhatUserConfig = {
     tsNocheck: false,
   },
   paths: {
-    sources: ['./contracts', './.interfold/generated/contracts'],
+    sources: ['./contracts', './.loxley/generated/contracts'],
   },
   networks: {
     hardhat: {
@@ -116,39 +116,39 @@ const config: HardhatUserConfig = {
       'poseidon-solidity/PoseidonT3.sol',
       '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol',
       '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol',
-      '@interfold/contracts/contracts/lib/InterfoldLifecycle.sol',
-      '@interfold/contracts/contracts/lib/InterfoldPricing.sol',
-      '@interfold/contracts/contracts/lib/BondingAssetLib.sol',
-      '@interfold/contracts/contracts/lib/BondingEligibilityLib.sol',
-      '@interfold/contracts/contracts/lib/BondingSlashingLib.sol',
-      '@interfold/contracts/contracts/lib/BondingRegistrationLib.sol',
-      '@interfold/contracts/contracts/lib/BondingOwnershipLib.sol',
-      '@interfold/contracts/contracts/lib/RegistrySortitionLib.sol',
-      '@interfold/contracts/contracts/lib/SlashingEvidenceLib.sol',
-      '@interfold/contracts/contracts/Interfold.sol',
-      '@interfold/contracts/contracts/registry/CiphernodeRegistryOwnable.sol',
-      '@interfold/contracts/contracts/registry/BondingRegistry.sol',
-      '@interfold/contracts/contracts/registry/BondedCheckpoints.sol',
-      '@interfold/contracts/contracts/registry/BondedVotes.sol',
-      '@interfold/contracts/contracts/slashing/SlashingManager.sol',
-      '@interfold/contracts/contracts/E3RefundManager.sol',
-      '@interfold/contracts/contracts/token/InterfoldToken.sol',
-      '@interfold/contracts/contracts/token/InterfoldTicketToken.sol',
-      '@interfold/contracts/contracts/verifiers/bfv/BfvDecryptionVerifier.sol',
-      '@interfold/contracts/contracts/verifiers/bfv/Risc0BfvCiphertextVerifier.sol',
-      '@interfold/contracts/contracts/verifiers/bfv/BfvPkVerifier.sol',
-      '@interfold/contracts/contracts/verifiers/bfv/honk/DkgAggregatorVerifier.sol',
-      '@interfold/contracts/contracts/verifiers/bfv/honk/DecryptionAggregatorVerifier.sol',
-      '@interfold/contracts/contracts/test/MockCiphernodeRegistry.sol',
-      '@interfold/contracts/contracts/test/MockCiphertextVerifier.sol',
-      '@interfold/contracts/contracts/test/MockComputeProvider.sol',
-      '@interfold/contracts/contracts/test/MockDecryptionVerifier.sol',
-      '@interfold/contracts/contracts/test/MockDkgFoldAttestationVerifier.sol',
-      '@interfold/contracts/contracts/test/MockE3Program.sol',
-      '@interfold/contracts/contracts/test/MockE3ProgramHarness.sol',
-      '@interfold/contracts/contracts/test/MockPkVerifier.sol',
-      '@interfold/contracts/contracts/test/MockSlashingVerifier.sol',
-      '@interfold/contracts/contracts/test/MockStableToken.sol',
+      '@loxley/contracts/contracts/lib/LoxleyLifecycle.sol',
+      '@loxley/contracts/contracts/lib/LoxleyPricing.sol',
+      '@loxley/contracts/contracts/lib/BondingAssetLib.sol',
+      '@loxley/contracts/contracts/lib/BondingEligibilityLib.sol',
+      '@loxley/contracts/contracts/lib/BondingSlashingLib.sol',
+      '@loxley/contracts/contracts/lib/BondingRegistrationLib.sol',
+      '@loxley/contracts/contracts/lib/BondingOwnershipLib.sol',
+      '@loxley/contracts/contracts/lib/RegistrySortitionLib.sol',
+      '@loxley/contracts/contracts/lib/SlashingEvidenceLib.sol',
+      '@loxley/contracts/contracts/Loxley.sol',
+      '@loxley/contracts/contracts/registry/CiphernodeRegistryOwnable.sol',
+      '@loxley/contracts/contracts/registry/BondingRegistry.sol',
+      '@loxley/contracts/contracts/registry/BondedCheckpoints.sol',
+      '@loxley/contracts/contracts/registry/BondedVotes.sol',
+      '@loxley/contracts/contracts/slashing/SlashingManager.sol',
+      '@loxley/contracts/contracts/E3RefundManager.sol',
+      '@loxley/contracts/contracts/token/LoxleyToken.sol',
+      '@loxley/contracts/contracts/token/LoxleyTicketToken.sol',
+      '@loxley/contracts/contracts/verifiers/bfv/BfvDecryptionVerifier.sol',
+      '@loxley/contracts/contracts/verifiers/bfv/Risc0BfvCiphertextVerifier.sol',
+      '@loxley/contracts/contracts/verifiers/bfv/BfvPkVerifier.sol',
+      '@loxley/contracts/contracts/verifiers/bfv/honk/DkgAggregatorVerifier.sol',
+      '@loxley/contracts/contracts/verifiers/bfv/honk/DecryptionAggregatorVerifier.sol',
+      '@loxley/contracts/contracts/test/MockCiphernodeRegistry.sol',
+      '@loxley/contracts/contracts/test/MockCiphertextVerifier.sol',
+      '@loxley/contracts/contracts/test/MockComputeProvider.sol',
+      '@loxley/contracts/contracts/test/MockDecryptionVerifier.sol',
+      '@loxley/contracts/contracts/test/MockDkgFoldAttestationVerifier.sol',
+      '@loxley/contracts/contracts/test/MockE3Program.sol',
+      '@loxley/contracts/contracts/test/MockE3ProgramHarness.sol',
+      '@loxley/contracts/contracts/test/MockPkVerifier.sol',
+      '@loxley/contracts/contracts/test/MockSlashingVerifier.sol',
+      '@loxley/contracts/contracts/test/MockStableToken.sol',
     ],
     compilers: [
       {

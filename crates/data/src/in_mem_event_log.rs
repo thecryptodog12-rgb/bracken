@@ -5,10 +5,10 @@
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
 use anyhow::Result;
-use e3_events::{EventLog, InterfoldEvent, Unsequenced};
+use e3_events::{EventLog, LoxleyEvent, Unsequenced};
 
 pub struct InMemEventLog {
-    log: Vec<InterfoldEvent<Unsequenced>>,
+    log: Vec<LoxleyEvent<Unsequenced>>,
 }
 
 impl InMemEventLog {
@@ -27,7 +27,7 @@ impl EventLog for InMemEventLog {
     fn read_from(
         &self,
         from: u64,
-    ) -> Result<Box<dyn Iterator<Item = (u64, InterfoldEvent<Unsequenced>)>>> {
+    ) -> Result<Box<dyn Iterator<Item = (u64, LoxleyEvent<Unsequenced>)>>> {
         // Convert 1-indexed sequence to 0-indexed array position
         let start_idx = from.saturating_sub(1) as usize;
 
@@ -44,7 +44,7 @@ impl EventLog for InMemEventLog {
         &self,
         from: u64,
         limit: usize,
-    ) -> Result<Box<dyn Iterator<Item = (u64, InterfoldEvent<Unsequenced>)>>> {
+    ) -> Result<Box<dyn Iterator<Item = (u64, LoxleyEvent<Unsequenced>)>>> {
         // Convert 1-indexed sequence to 0-indexed array position and clone only the requested
         // window. This path is used by bounded remote historical-sync queries.
         let start_idx = from.saturating_sub(1) as usize;
@@ -58,7 +58,7 @@ impl EventLog for InMemEventLog {
             .collect();
         Ok(Box::new(events.into_iter()))
     }
-    fn append(&mut self, event: &InterfoldEvent<Unsequenced>) -> Result<u64> {
+    fn append(&mut self, event: &LoxleyEvent<Unsequenced>) -> Result<u64> {
         self.log.push(event.to_owned());
         Ok(self.log.len() as u64)
     }
@@ -70,10 +70,10 @@ impl EventLog for InMemEventLog {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use e3_events::{EventConstructorWithTimestamp, EventSource, InterfoldEventData, TestEvent};
+    use e3_events::{EventConstructorWithTimestamp, EventSource, LoxleyEventData, TestEvent};
 
-    fn event_from(data: impl Into<InterfoldEventData>) -> InterfoldEvent<Unsequenced> {
-        InterfoldEvent::<Unsequenced>::new_with_timestamp(
+    fn event_from(data: impl Into<LoxleyEventData>) -> LoxleyEvent<Unsequenced> {
+        LoxleyEvent::<Unsequenced>::new_with_timestamp(
             data.into(),
             None,
             123,

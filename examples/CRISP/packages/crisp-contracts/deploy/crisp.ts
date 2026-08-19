@@ -4,8 +4,8 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-import { getDeploymentChain, readDeploymentArgs, storeDeploymentArgs } from '@interfold/contracts/scripts'
-import { Interfold__factory as InterfoldFactory } from '@interfold/contracts/types'
+import { getDeploymentChain, readDeploymentArgs, storeDeploymentArgs } from '@loxley/contracts/scripts'
+import { Loxley__factory as LoxleyFactory } from '@loxley/contracts/types'
 import { readFileSync } from 'fs'
 
 import hre from 'hardhat'
@@ -13,7 +13,7 @@ import hre from 'hardhat'
 import { CRISPProgram__factory as CRISPProgramFactory } from '../types'
 import { verifierNames } from '../scripts/verifiers'
 
-const imageIdContent = readFileSync('../../.interfold/generated/contracts/ImageID.sol', 'utf-8')
+const imageIdContent = readFileSync('../../.loxley/generated/contracts/ImageID.sol', 'utf-8')
 const match = imageIdContent.match(/bytes32 public constant PROGRAM_ID = bytes32\((0x[a-fA-F0-9]+)\)/)
 const IMAGE_ID = match ? match[1] : null
 
@@ -158,29 +158,29 @@ export const deployCRISPContracts = async (): Promise<CRISPDeploymentResult> => 
   )
 
   let governanceComplete = false
-  const interfoldAddress = readDeploymentArgs('Interfold', chain)?.address
-  if (interfoldAddress && (await ethers.provider.getCode(interfoldAddress)) !== '0x') {
-    const interfold = InterfoldFactory.connect(interfoldAddress, owner)
-    const interfoldOwner = await interfold.owner()
-    const registered = await interfold.e3Programs(crispAddress)
-    const boundInterfold = await crisp.interfold()
-    const configuredVerifier = await interfold.getCiphertextVerifier(encryptionSchemeId)
+  const loxleyAddress = readDeploymentArgs('Loxley', chain)?.address
+  if (loxleyAddress && (await ethers.provider.getCode(loxleyAddress)) !== '0x') {
+    const loxley = LoxleyFactory.connect(loxleyAddress, owner)
+    const loxleyOwner = await loxley.owner()
+    const registered = await loxley.e3Programs(crispAddress)
+    const boundLoxley = await crisp.loxley()
+    const configuredVerifier = await loxley.getCiphertextVerifier(encryptionSchemeId)
     if (
       registered &&
-      boundInterfold.toLowerCase() === interfoldAddress.toLowerCase() &&
+      boundLoxley.toLowerCase() === loxleyAddress.toLowerCase() &&
       configuredVerifier.toLowerCase() === ciphertextVerifierAddress.toLowerCase()
     ) {
       governanceComplete = true
-    } else if (interfoldOwner.toLowerCase() === ownerAddress.toLowerCase() && initialOwner.toLowerCase() === ownerAddress.toLowerCase()) {
-      await (await interfold.setCiphertextVerifier(encryptionSchemeId, ciphertextVerifierAddress)).wait()
+    } else if (loxleyOwner.toLowerCase() === ownerAddress.toLowerCase() && initialOwner.toLowerCase() === ownerAddress.toLowerCase()) {
+      await (await loxley.setCiphertextVerifier(encryptionSchemeId, ciphertextVerifierAddress)).wait()
       if (!registered) {
-        await (await interfold.registerE3Program(crispAddress)).wait()
+        await (await loxley.registerE3Program(crispAddress)).wait()
       }
-      await (await crisp.bindInterfold(interfoldAddress)).wait()
+      await (await crisp.bindLoxley(loxleyAddress)).wait()
       governanceComplete = true
     } else {
       console.log(
-        'CRISP integration is incomplete. Protocol governance must set the ciphertext verifier, register the program, and bind Interfold.',
+        'CRISP integration is incomplete. Protocol governance must set the ciphertext verifier, register the program, and bind Loxley.',
       )
     }
   }
@@ -204,7 +204,7 @@ export const deployCRISPContracts = async (): Promise<CRISPDeploymentResult> => 
   console.log(`
       Deployments:
       ----------------------------------------------------------------------
-      Interfold: ${interfoldAddress ?? '(bind during protocol governance wiring)'}
+      Loxley: ${loxleyAddress ?? '(bind during protocol governance wiring)'}
       Risc0Verifier: ${verifier}
       Risc0BfvCiphertextVerifier: ${ciphertextVerifierAddress}
       HonkVerifier: ${honkVerifierAddress}

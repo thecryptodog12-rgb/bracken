@@ -13,7 +13,7 @@ use e3_bfv_client::compute_pk_commitment;
 use e3_evm_helpers::contracts::ReadOnly;
 use e3_fhe_params::build_bfv_params_from_set_arc;
 use e3_fhe_params::DEFAULT_BFV_PRESET;
-use e3_indexer::{DataStore, InMemoryStore, InterfoldIndexer};
+use e3_indexer::{DataStore, InMemoryStore, LoxleyIndexer};
 use eyre::Result;
 use fhe::bfv::{PublicKey, SecretKey};
 use fhe_traits::Serialize;
@@ -25,12 +25,12 @@ use std::{
 };
 use tokio::time::sleep;
 use EmitLogs::PublishMessage;
-use Interfold::InputPublished;
+use Loxley::InputPublished;
 
 sol!(
     #[sol(rpc)]
-    Interfold,
-    "tests/fixtures/fake_interfold.json"
+    Loxley,
+    "tests/fixtures/fake_loxley.json"
 );
 
 sol!(
@@ -49,8 +49,8 @@ async fn test_indexer() -> Result<()> {
     let params = build_bfv_params_from_set_arc(param_set);
 
     let (
-        interfold_contract,
-        interfold_address,
+        loxley_contract,
+        loxley_address,
         emit_logs_contract,
         emit_logs_address,
         endpoint,
@@ -58,10 +58,10 @@ async fn test_indexer() -> Result<()> {
     ) = setup_two_contracts().await?;
 
     let indexer = Arc::new(
-        InterfoldIndexer::<InMemoryStore, ReadOnly>::from_endpoint_address_in_mem(
+        LoxleyIndexer::<InMemoryStore, ReadOnly>::from_endpoint_address_in_mem(
             &endpoint.to_string(),
             &[
-                &interfold_address.to_string(),
+                &loxley_address.to_string(),
                 &emit_logs_address.to_string(),
             ],
         )
@@ -115,7 +115,7 @@ async fn test_indexer() -> Result<()> {
     let ciphertext_output_data = vec![9, 8, 7, 6, 5, 4, 3, 2, 1];
 
     // first publish committee pk
-    interfold_contract
+    loxley_contract
         .emitCommitteePublished(
             Uint::from(E3_ID),
             Bytes::from(pk.to_bytes()),
@@ -127,7 +127,7 @@ async fn test_indexer() -> Result<()> {
         .watch()
         .await?;
 
-    interfold_contract
+    loxley_contract
         .emitInputPublished(
             Uint::from(E3_ID),
             input_data_bytes.clone(),
@@ -147,7 +147,7 @@ async fn test_indexer() -> Result<()> {
         .watch()
         .await?;
 
-    interfold_contract
+    loxley_contract
         .emitInputPublished(
             Uint::from(E3_ID),
             input_data_bytes.clone(),
@@ -159,7 +159,7 @@ async fn test_indexer() -> Result<()> {
         .watch()
         .await?;
 
-    interfold_contract
+    loxley_contract
         .emitInputPublished(
             Uint::from(E3_ID),
             input_data_bytes.clone(),
@@ -184,7 +184,7 @@ async fn test_indexer() -> Result<()> {
         );
     }
 
-    interfold_contract
+    loxley_contract
         .emitCiphertextOutputPublished(
             Uint::from(E3_ID),
             Bytes::from(ciphertext_output_data.clone()),
@@ -214,7 +214,7 @@ async fn test_indexer() -> Result<()> {
 
 mod test_memory_leak {
 
-    use e3_evm_helpers::{contracts::InterfoldContractFactory, event_listener::EventListener};
+    use e3_evm_helpers::{contracts::LoxleyContractFactory, event_listener::EventListener};
 
     use super::*;
     use std::sync::atomic::{AtomicUsize, Ordering};
@@ -241,14 +241,14 @@ mod test_memory_leak {
         }
     }
 
-    async fn create_indexer() -> Result<InterfoldIndexer<InMemoryStore, ReadOnly>> {
-        let (_, interfold_address, _, _, endpoint, _anvil) = setup_two_contracts().await?;
+    async fn create_indexer() -> Result<LoxleyIndexer<InMemoryStore, ReadOnly>> {
+        let (_, loxley_address, _, _, endpoint, _anvil) = setup_two_contracts().await?;
 
         let listener =
-            EventListener::create_contract_listener(&endpoint, &[&interfold_address]).await?;
-        let contract = InterfoldContractFactory::create_read(&endpoint, &interfold_address).await?;
+            EventListener::create_contract_listener(&endpoint, &[&loxley_address]).await?;
+        let contract = LoxleyContractFactory::create_read(&endpoint, &loxley_address).await?;
 
-        InterfoldIndexer::<InMemoryStore, ReadOnly>::new_with_in_mem_store(listener, contract).await
+        LoxleyIndexer::<InMemoryStore, ReadOnly>::new_with_in_mem_store(listener, contract).await
     }
 
     sol! {

@@ -4,7 +4,7 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-use crate::get_interfold_event_bus;
+use crate::get_loxley_event_bus;
 use crate::global_eventstore_cache::{share_eventstore_reader, EventStoreReader};
 use crate::global_store_cache::share_store;
 use actix::{Actor, Addr, Handler, Recipient};
@@ -16,7 +16,7 @@ use e3_data::{
 use e3_events::hlc_factory::HlcFactory;
 use e3_events::{
     AggregateConfig, BusHandle, Disabled, EventBus, EventBusConfig, EventStore, EventStoreRouter,
-    EventSubscriber, EventType, InsertBatch, InterfoldEvent, Sequencer, SnapshotBuffer,
+    EventSubscriber, EventType, InsertBatch, LoxleyEvent, Sequencer, SnapshotBuffer,
     StoreEventRequested, UpdateDestination,
 };
 use e3_utils::enumerate_path;
@@ -82,7 +82,7 @@ pub struct EventSystem {
     /// EventSystem Sequencer
     sequencer: OnceCell<Addr<Sequencer>>,
     /// EventSystem eventbus
-    eventbus: OnceCell<Addr<EventBus<InterfoldEvent>>>,
+    eventbus: OnceCell<Addr<EventBus<LoxleyEvent>>>,
     /// EventSystem BusHandle
     handle: OnceCell<BusHandle<Disabled>>,
     /// Central configuration for aggregates, including delays and other settings
@@ -165,7 +165,7 @@ impl EventSystem {
     }
 
     /// Pass in a specific given event bus
-    pub fn with_event_bus(self, bus: Addr<EventBus<InterfoldEvent>>) -> Self {
+    pub fn with_event_bus(self, bus: Addr<EventBus<LoxleyEvent>>) -> Self {
         let _ = self.eventbus.set(bus);
         self
     }
@@ -197,8 +197,8 @@ impl EventSystem {
     }
 
     /// Get the eventbus address
-    pub fn eventbus(&self) -> Addr<EventBus<InterfoldEvent>> {
-        self.eventbus.get_or_init(get_interfold_event_bus).clone()
+    pub fn eventbus(&self) -> Addr<EventBus<LoxleyEvent>> {
+        self.eventbus.get_or_init(get_loxley_event_bus).clone()
     }
 
     /// Get the aggregate configuration
@@ -448,7 +448,7 @@ mod tests {
 
     use e3_events::prelude::*;
     use e3_events::CorrelationId;
-    use e3_events::InterfoldEventData;
+    use e3_events::LoxleyEventData;
 
     use e3_events::EventStoreQueryBy;
     use e3_events::EventStoreQueryResponse;
@@ -468,7 +468,7 @@ mod tests {
 
     struct Listener {
         logs: Vec<String>,
-        events: Vec<InterfoldEvent>,
+        events: Vec<LoxleyEvent>,
     }
 
     struct ShutdownSnapshotWriter {
@@ -479,21 +479,21 @@ mod tests {
         type Context = actix::Context<Self>;
     }
 
-    impl Handler<InterfoldEvent> for ShutdownSnapshotWriter {
+    impl Handler<LoxleyEvent> for ShutdownSnapshotWriter {
         type Result = ();
 
-        fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
-            if matches!(msg.get_data(), InterfoldEventData::Shutdown(_)) {
+        fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+            if matches!(msg.get_data(), LoxleyEventData::Shutdown(_)) {
                 self.store.write("final-state".to_owned());
                 ctx.stop();
             }
         }
     }
 
-    impl Handler<InterfoldEvent> for Listener {
+    impl Handler<LoxleyEvent> for Listener {
         type Result = ();
-        fn handle(&mut self, msg: InterfoldEvent, _: &mut Self::Context) -> Self::Result {
-            if let InterfoldEventData::TestEvent(TestEvent { msg, .. }) = msg.into_data() {
+        fn handle(&mut self, msg: LoxleyEvent, _: &mut Self::Context) -> Self::Result {
+            if let LoxleyEventData::TestEvent(TestEvent { msg, .. }) = msg.into_data() {
                 self.logs.push(msg);
             }
         }
@@ -512,7 +512,7 @@ mod tests {
             self.events
                 .iter()
                 .filter_map(|event| {
-                    if let InterfoldEventData::TestEvent(evt) = event.get_data() {
+                    if let LoxleyEventData::TestEvent(evt) = event.get_data() {
                         return Some(evt.msg.clone());
                     }
                     None
@@ -579,7 +579,7 @@ mod tests {
 
     #[actix::test]
     async fn test_in_mem() {
-        let eventbus = EventBus::<InterfoldEvent>::default().start();
+        let eventbus = EventBus::<LoxleyEvent>::default().start();
         let system = EventSystem::in_mem().with_event_bus(eventbus);
 
         let _handle = system.handle().expect("Failed to get handle");

@@ -7,7 +7,7 @@
 use actix::prelude::*;
 use alloy::primitives::Address;
 
-use e3_events::{prelude::*, AggregatorChanged, Die, InterfoldEvent, InterfoldEventData};
+use e3_events::{prelude::*, AggregatorChanged, Die, LoxleyEvent, LoxleyEventData};
 use e3_utils::MAILBOX_LIMIT;
 use std::collections::HashSet;
 use tracing::info;
@@ -20,7 +20,7 @@ pub struct KeyshareCreatedFilterBuffer {
     /// Finalized committee in canonical party-id order. A membership set is insufficient here:
     /// accepting a real member under another member's `party_id` poisons the DKG roster.
     committee: Option<Vec<String>>,
-    buffer: Vec<InterfoldEvent>,
+    buffer: Vec<LoxleyEvent>,
     expelled_nodes: HashSet<Address>,
     is_aggregator: bool,
 }
@@ -53,7 +53,7 @@ impl KeyshareCreatedFilterBuffer {
         }
     }
 
-    fn forward(dest: &Addr<PublicKeyAggregator>, event: InterfoldEvent) {
+    fn forward(dest: &Addr<PublicKeyAggregator>, event: LoxleyEvent) {
         dest.do_send(event);
     }
 
@@ -65,7 +65,7 @@ impl KeyshareCreatedFilterBuffer {
         if let Some(ref committee) = self.committee {
             for event in self.buffer.drain(..) {
                 match event.get_data() {
-                    InterfoldEventData::KeyshareCreated(data)
+                    LoxleyEventData::KeyshareCreated(data)
                         if committee_member_matches(committee, data.party_id, &data.node)
                             && !data
                                 .node
@@ -74,17 +74,17 @@ impl KeyshareCreatedFilterBuffer {
                     {
                         Self::forward(&self.dest, event);
                     }
-                    InterfoldEventData::CommitteeMemberExpelled(data)
+                    LoxleyEventData::CommitteeMemberExpelled(data)
                         if data.party_id.is_none() =>
                     {
                         Self::forward(&self.dest, event);
                     }
-                    InterfoldEventData::CommitteeMemberExcluded(data)
+                    LoxleyEventData::CommitteeMemberExcluded(data)
                         if data.party_id.is_none() =>
                     {
                         Self::forward(&self.dest, event);
                     }
-                    InterfoldEventData::E3RequestComplete(_) | InterfoldEventData::Shutdown(_) => {
+                    LoxleyEventData::E3RequestComplete(_) | LoxleyEventData::Shutdown(_) => {
                         Self::forward(&self.dest, event);
                     }
                     _ => {}
@@ -101,12 +101,12 @@ impl Actor for KeyshareCreatedFilterBuffer {
     }
 }
 
-impl Handler<InterfoldEvent> for KeyshareCreatedFilterBuffer {
+impl Handler<LoxleyEvent> for KeyshareCreatedFilterBuffer {
     type Result = ();
 
-    fn handle(&mut self, msg: InterfoldEvent, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, _ctx: &mut Self::Context) -> Self::Result {
         match msg.get_data() {
-            InterfoldEventData::KeyshareCreated(data) => match &self.committee {
+            LoxleyEventData::KeyshareCreated(data) => match &self.committee {
                 Some(committee)
                     if self.is_aggregator
                         && committee_member_matches(committee, data.party_id, &data.node)
@@ -131,13 +131,13 @@ impl Handler<InterfoldEvent> for KeyshareCreatedFilterBuffer {
                 }
                 _ => {}
             },
-            InterfoldEventData::CommitteeFinalized(data) => {
+            LoxleyEventData::CommitteeFinalized(data) => {
                 let mut data = data.clone();
                 data.sort_by_address();
                 self.committee = Some(data.committee);
                 self.process_buffered_events();
             }
-            InterfoldEventData::CommitteeMemberExpelled(data) => {
+            LoxleyEventData::CommitteeMemberExpelled(data) => {
                 if data.party_id.is_some() {
                     return;
                 }
@@ -149,7 +149,7 @@ impl Handler<InterfoldEvent> for KeyshareCreatedFilterBuffer {
                 self.buffer.retain(|event| {
                     !matches!(
                         event.get_data(),
-                        InterfoldEventData::KeyshareCreated(share)
+                        LoxleyEventData::KeyshareCreated(share)
                             if address_matches(&share.node, node_addr)
                     )
                 });
@@ -167,7 +167,7 @@ impl Handler<InterfoldEvent> for KeyshareCreatedFilterBuffer {
                     self.buffer.push(msg);
                 }
             }
-            InterfoldEventData::CommitteeMemberExcluded(data) => {
+            LoxleyEventData::CommitteeMemberExcluded(data) => {
                 if data.party_id.is_some() {
                     return;
                 }
@@ -179,7 +179,7 @@ impl Handler<InterfoldEvent> for KeyshareCreatedFilterBuffer {
                 self.buffer.retain(|event| {
                     !matches!(
                         event.get_data(),
-                        InterfoldEventData::KeyshareCreated(share)
+                        LoxleyEventData::KeyshareCreated(share)
                             if address_matches(&share.node, node_addr)
                     )
                 });
@@ -190,11 +190,11 @@ impl Handler<InterfoldEvent> for KeyshareCreatedFilterBuffer {
                     self.buffer.push(msg);
                 }
             }
-            InterfoldEventData::AggregatorChanged(AggregatorChanged { is_aggregator, .. }) => {
+            LoxleyEventData::AggregatorChanged(AggregatorChanged { is_aggregator, .. }) => {
                 self.is_aggregator = *is_aggregator;
                 self.process_buffered_events();
             }
-            InterfoldEventData::E3RequestComplete(_) | InterfoldEventData::Shutdown(_) => {
+            LoxleyEventData::E3RequestComplete(_) | LoxleyEventData::Shutdown(_) => {
                 Self::forward(&self.dest, msg);
             }
             _ => {

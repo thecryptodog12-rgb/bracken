@@ -1,4 +1,4 @@
-# Wasm bundle for interfold
+# Wasm bundle for loxley
 
 Here we export wasm funcionality for consumption in typescript to enable use to share code between
 Rust and Typescript.
@@ -15,15 +15,15 @@ to load the wasm bundle.
 
 ```ts
 // Bad! Because this uses the raw loader which doesn't exist in node contexts
-import init, { bfvEncryptNumber } from '@interfold/wasm'
+import init, { bfvEncryptNumber } from '@loxley/wasm'
 ```
 
 ##### ✅ DO USE THE EXPORTED SUBMODULE
 
 ```ts
 // Good! Use the universal loader
-import init from '@interfold/wasm/init'
-import { bfvEncryptNumber } from '@interfold/wasm'
+import init from '@loxley/wasm/init'
+import { bfvEncryptNumber } from '@loxley/wasm'
 
 export async function bfvEncryptNumber(
   data: bigint,

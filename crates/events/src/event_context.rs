@@ -9,7 +9,7 @@ use std::{fmt, ops::Deref};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    E3id, EventContextAccessors, EventContextSeq, EventId, InterfoldEventData, SeqState, Sequenced,
+    E3id, EventContextAccessors, EventContextSeq, EventId, LoxleyEventData, SeqState, Sequenced,
     Unsequenced,
 };
 
@@ -160,8 +160,8 @@ impl EventContext<Unsequenced> {
     }
 }
 
-impl From<InterfoldEventData> for EventContext<Unsequenced> {
-    fn from(value: InterfoldEventData) -> Self {
+impl From<LoxleyEventData> for EventContext<Unsequenced> {
+    fn from(value: LoxleyEventData) -> Self {
         let id = EventId::hash(value);
         EventContext::<Unsequenced>::new_origin(
             id,

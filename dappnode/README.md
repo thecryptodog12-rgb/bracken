@@ -1,8 +1,8 @@
-# Interfold Ciphernode – DAppNode Package
+# Loxley Ciphernode – DAppNode Package
 
-Run an Interfold ciphernode on DAppNode.
+Run an Loxley ciphernode on DAppNode.
 
-This package wraps the `interfold` CLI in a DAppNode service so users can run a ciphernode with a
+This package wraps the `loxley` CLI in a DAppNode service so users can run a ciphernode with a
 simple UI form (setup wizard) instead of hand-crafting configs and Docker commands.
 
 ## Networks
@@ -28,9 +28,9 @@ dappnode/
 ├── docker-compose.yml    # DAppNode service definition (single variant)
 ├── dappnode_package.json # Package metadata (name, version, links, backup, etc.)
 ├── setup-wizard.yml      # DAppNode UI form -> configuration and credential upload
-├── entrypoint.sh         # Startup script (validates env, renders config, runs interfold)
+├── entrypoint.sh         # Startup script (validates env, renders config, runs loxley)
 ├── healthcheck.sh        # Local process, credential, config, and QUIC listener checks
-├── config.template.yaml  # Interfold config template (filled via envsubst)
+├── config.template.yaml  # Loxley config template (filled via envsubst)
 ├── releases.json         # Release metadata used by DAppNode
 └── avatar-default.png    # Icon shown in the DAppNode UI
 ```
@@ -46,7 +46,7 @@ are never accepted through container environment variables.
 Once this package is published to the DAppStore:
 
 1. Open your DAppNode UI (`http://my.dappnode`).
-2. Search for **“Interfold Ciphernode”** and install the package.
+2. Search for **“Loxley Ciphernode”** and install the package.
 3. The **setup wizard** will prompt you for:
    - `RPC_URL` – WebSocket RPC endpoint (e.g. `wss://ethereum-sepolia-rpc.publicnode.com`)
    - `NETWORK` – e.g. `sepolia`, `mainnet`, `localhost`
@@ -55,7 +55,7 @@ Once this package is published to the DAppStore:
    - Optional peers
 
 4. Confirm and finish the installation.
-5. Go to **Packages → interfold-ciphernode.public.dappnode.eth → Logs** to verify the node started
+5. Go to **Packages → loxley-ciphernode.public.dappnode.eth → Logs** to verify the node started
    correctly.
 
 Until it’s in the public store, you can install it by IPFS hash:
@@ -85,7 +85,7 @@ npx @dappnode/dappnodesdk@latest build -p remote
 This will:
 
 - Validate `docker-compose.yml`, `setup-wizard.yml`, and `dappnode_package.json`
-- Build a multi-arch Docker image for `ciphernode.interfold-ciphernode.public.dappnode.eth`
+- Build a multi-arch Docker image for `ciphernode.loxley-ciphernode.public.dappnode.eth`
 - Upload the release to the DAppNode IPFS node
 - Print an `/ipfs/<hash>` you can use to install the package
 
@@ -100,7 +100,7 @@ Fill in the wizard fields, then install.
 
 #### 3. Debugging and iteration
 
-- Use the package **Logs** tab to inspect `entrypoint.sh` and `interfold` output.
+- Use the package **Logs** tab to inspect `entrypoint.sh` and `loxley` output.
 
 - If something is wrong in the generated config, `docker exec` into the container and inspect:
 
@@ -125,28 +125,28 @@ Non-secret runtime configuration is provided through environment variables:
 - **`RPC_URL`** (required) WebSocket RPC endpoint for the chain (e.g.
   `wss://ethereum-sepolia-rpc.publicnode.com`).
 
-- **`NETWORK`** Logical network name written into the Interfold config (e.g. `sepolia`, `mainnet`,
+- **`NETWORK`** Logical network name written into the Loxley config (e.g. `sepolia`, `mainnet`,
   `localhost`).
 
-- **`NODE_ADDRESS`** Optional Ethereum address to bind the node to. Leave empty to let Interfold
+- **`NODE_ADDRESS`** Optional Ethereum address to bind the node to. Leave empty to let Loxley
   handle it.
 
 - **`QUIC_PORT`** Internal UDP port used for QUIC [Quick UDP Internet Connections] P2P networking.
   Default in this package: `37173`.
 
 - **`LOG_LEVEL`** One of `info`, `debug`, `trace`. Mapped internally to `-v`, `-vv`, or `-vvv` when
-  calling `interfold start`.
+  calling `loxley start`.
 
-- **`EXTRA_OPTS`** Extra flags appended to the `interfold start` CLI.
+- **`EXTRA_OPTS`** Extra flags appended to the `loxley start` CLI.
 
 ### Contracts
 
 Used to populate the `chains[0].contracts` section in `config.yaml`:
 
-- `INTERFOLD_CONTRACT`
+- `LOXLEY_CONTRACT`
 - `CIPHERNODE_REGISTRY_CONTRACT`
 - `BONDING_REGISTRY_CONTRACT`
-- `INTERFOLD_DEPLOY_BLOCK`
+- `LOXLEY_DEPLOY_BLOCK`
 - `CIPHERNODE_REGISTRY_DEPLOY_BLOCK`
 - `BONDING_REGISTRY_DEPLOY_BLOCK`
 
@@ -167,7 +167,7 @@ Create a local JSON file containing the password and operator key:
 Upload it in the setup wizard as **Ciphernode Credentials JSON**. DAppNode copies it to
 `/run/secrets/secrets.json` before starting the container. The entrypoint validates a maximum size
 of 16 KiB, required fields, and key encodings, then runs the exact commands supported by the pinned
-Interfold v0.2.3 image. Any failed command aborts startup. The wallet command atomically derives and
+Loxley v0.2.3 image. Any failed command aborts startup. The wallet command atomically derives and
 stores both the Ethereum and libp2p identities. Both keys are encrypted in `/data`; v0.2.3 stores
 its password key there as a mode-`0400` file. After successful persistence, the entrypoint removes
 the combined plaintext upload. Provisioning sends the secrets through the CLI's hidden TTY prompts
@@ -195,7 +195,7 @@ not required again. Uploading a different password while state already exists fa
   The entrypoint splits this on commas, trims spaces, and turns each into a `--peer` flag:
 
   ```bash
-  interfold start ... --peer /dns4/cn1/udp/37173/quic-v1 --peer /dns4/cn2/udp/37173/quic-v1
+  loxley start ... --peer /dns4/cn1/udp/37173/quic-v1 --peer /dns4/cn2/udp/37173/quic-v1
   ```
 
 If a variable is not set in the wizard, it still appears (with its default) in the package config
@@ -219,7 +219,7 @@ At container startup, `entrypoint.sh`:
 6. Executes:
 
    ```bash
-   interfold start --config /data/config.yaml ...
+   loxley start --config /data/config.yaml ...
    ```
 
 The state and databases live under `/data` inside the container, which is backed by the
@@ -231,7 +231,7 @@ access-controlled even though the wallet and network keys inside the volume are 
 
 DAppNode package v0.2.3 is the required bridge from the shipped v0.1.8 package to later binaries. On
 its first start it atomically renames the custom-config state root from `/data/.enclave` to
-`/data/.interfold`, refusing to proceed if both roots exist. The v0.2.3 binary then stamps schema
+`/data/.loxley`, refusing to proceed if both roots exist. The v0.2.3 binary then stamps schema
 version 1 using its release-era compatibility behavior. Later fail-closed binaries can therefore
 verify the marker instead of rejecting the old unversioned datastore. Do not skip this package when
 upgrading an existing v0.1.8 node, and keep a verified backup of `/data` until the bridge has
@@ -239,9 +239,9 @@ started successfully.
 
 ## Health semantics
 
-Interfold v0.2.3 does not expose a local readiness endpoint. The package health check therefore uses
+Loxley v0.2.3 does not expose a local readiness endpoint. The package health check therefore uses
 the strongest non-invasive local signals available in that release: PID 1 must be the expected
-`interfold start` command using `/data/config.yaml`, the protected config/password files must exist,
+`loxley start` command using `/data/config.yaml`, the protected config/password files must exist,
 the v0.2.3 Sled/event-log directories must be initialized, and the configured QUIC UDP listener must
 be bound. This detects the old false-positive case where an unrelated process matched `pgrep`, as
 well as missing credentials, uninitialized persistence, and a dead network listener.
@@ -252,7 +252,7 @@ status before treating the node as protocol-ready.
 
 ## Data & Ports
 
-- **Data volume**: `ciphernode_data` → `/data` This is where Interfold stores its databases and
+- **Data volume**: `ciphernode_data` → `/data` This is where Loxley stores its databases and
   state.
 
 - **Ports**:
@@ -278,8 +278,8 @@ new package version.
 
 ## Links
 
-- [Interfold Docs](https://docs.interfold.network)
+- [Loxley Docs](https://docs.loxley.network)
 - [DAppNode Package Development – Single Configuration](https://docs.dappnode.io/docs/dev/package-development/single-configuration/)
 - [DAppNode Docker Compose Reference](https://docs.dappnode.io/docs/dev/references/docker-compose/)
 - [DAppNode Setup Wizard Reference](https://docs.dappnode.io/docs/dev/references/setup-wizard/)
-- [Interfold GitHub Repository](https://github.com/gnosisguild/interfold)
+- [Loxley GitHub Repository](https://github.com/gnosisguild/loxley)

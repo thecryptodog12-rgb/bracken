@@ -12,11 +12,11 @@ async fn startup_history_is_fenced_between_effects_and_live_mode() -> anyhow::Re
     let bus = system.handle()?.enable("test-startup-history-fences");
     let history = bus.history();
     let historical = vec![
-        InterfoldEvent::<Unsequenced>::test_event("first")
+        LoxleyEvent::<Unsequenced>::test_event("first")
             .id(1)
             .ts(10)
             .build(),
-        InterfoldEvent::<Unsequenced>::test_event("second")
+        LoxleyEvent::<Unsequenced>::test_event("second")
             .id(2)
             .ts(20)
             .build(),
@@ -69,10 +69,10 @@ async fn effects_enabled_gates_event_subscriptions() -> anyhow::Result<()> {
             impl Actor for Counter {
                 type Context = Context<Self>;
             }
-            impl Handler<InterfoldEvent> for Counter {
+            impl Handler<LoxleyEvent> for Counter {
                 type Result = ();
-                fn handle(&mut self, msg: InterfoldEvent, _: &mut Self::Context) -> Self::Result {
-                    if matches!(msg.get_data(), InterfoldEventData::TestEvent(_)) {
+                fn handle(&mut self, msg: LoxleyEvent, _: &mut Self::Context) -> Self::Result {
+                    if matches!(msg.get_data(), LoxleyEventData::TestEvent(_)) {
                         self.0.fetch_add(1, Ordering::SeqCst);
                     }
                 }
@@ -87,7 +87,7 @@ async fn effects_enabled_gates_event_subscriptions() -> anyhow::Result<()> {
 
     // 1. Publish a TestEvent BEFORE EffectsEnabled — should NOT be received
     bus.event_bus().try_send(
-        InterfoldEvent::<Unsequenced>::test_event("before-effects")
+        LoxleyEvent::<Unsequenced>::test_event("before-effects")
             .id(1)
             .seq(1)
             .build(),
@@ -106,7 +106,7 @@ async fn effects_enabled_gates_event_subscriptions() -> anyhow::Result<()> {
 
     // 3. Publish a TestEvent AFTER EffectsEnabled — should be received
     bus.event_bus().try_send(
-        InterfoldEvent::<Unsequenced>::test_event("after-effects")
+        LoxleyEvent::<Unsequenced>::test_event("after-effects")
             .id(2)
             .seq(2)
             .build(),
@@ -149,10 +149,10 @@ async fn immediate_subscriptions_receive_before_effects_enabled() -> anyhow::Res
     impl Actor for Counter {
         type Context = Context<Self>;
     }
-    impl Handler<InterfoldEvent> for Counter {
+    impl Handler<LoxleyEvent> for Counter {
         type Result = ();
-        fn handle(&mut self, msg: InterfoldEvent, _: &mut Self::Context) -> Self::Result {
-            if matches!(msg.get_data(), InterfoldEventData::TestEvent(_)) {
+        fn handle(&mut self, msg: LoxleyEvent, _: &mut Self::Context) -> Self::Result {
+            if matches!(msg.get_data(), LoxleyEventData::TestEvent(_)) {
                 self.0.fetch_add(1, Ordering::SeqCst);
             }
         }
@@ -176,7 +176,7 @@ async fn immediate_subscriptions_receive_before_effects_enabled() -> anyhow::Res
 
     // 1. Publish event BEFORE EffectsEnabled
     bus.event_bus().try_send(
-        InterfoldEvent::<Unsequenced>::test_event("during-replay")
+        LoxleyEvent::<Unsequenced>::test_event("during-replay")
             .id(1)
             .seq(1)
             .build(),
@@ -200,7 +200,7 @@ async fn immediate_subscriptions_receive_before_effects_enabled() -> anyhow::Res
 
     // 3. Publish event AFTER EffectsEnabled
     bus.event_bus().try_send(
-        InterfoldEvent::<Unsequenced>::test_event("after-effects")
+        LoxleyEvent::<Unsequenced>::test_event("after-effects")
             .id(2)
             .seq(2)
             .build(),

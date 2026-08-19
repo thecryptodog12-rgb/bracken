@@ -374,7 +374,7 @@ async fn handle_compute(req: web::Json<ComputeRequest>) -> ActixResult<HttpRespo
     let published = published_from(&req)?;
     let domain = ComputeDomain::new(
         req.chain_id,
-        &req.interfold_address,
+        &req.loxley_address,
         &e3_id,
         &req.encryption_scheme_id,
         &req.committee_public_key_hash,

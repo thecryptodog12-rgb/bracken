@@ -13,10 +13,10 @@ node_modules
 /coverage
 /coverage.json
 
-.interfold/data/
-.interfold/config/
-.interfold/caches/
-.interfold/noir/
+.loxley/data/
+.loxley/config/
+.loxley/caches/
+.loxley/noir/
 
 /target
 

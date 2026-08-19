@@ -1,15 +1,15 @@
 ---
 title: 'Installation'
-description: 'Install and set up the Interfold CLI'
+description: 'Install and set up the Loxley CLI'
 ---
 
 # Installation
 
-This guide covers how to install the Interfold CLI and get your development environment set up.
+This guide covers how to install the Loxley CLI and get your development environment set up.
 
 ## Prerequisites
 
-Before installing Interfold, make sure you have the following dependency installed:
+Before installing Loxley, make sure you have the following dependency installed:
 
 - [Rust](https://www.rust-lang.org/tools/install)
 
@@ -17,56 +17,56 @@ For full hardware and software requirements, see [System Requirements](/requirem
 
 ## Quick Install (Recommended)
 
-The easiest way to install the Interfold CLI is using our installer script:
+The easiest way to install the Loxley CLI is using our installer script:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/theinterfold/interfold/main/install | bash
+curl -fsSL https://raw.githubusercontent.com/theloxley/loxley/main/install | bash
 ```
 
 Or if you prefer `wget`:
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/theinterfold/interfold/main/install | bash
+wget -qO- https://raw.githubusercontent.com/theloxley/loxley/main/install | bash
 ```
 
-This script will download and install `interfoldup`, which is the standalone installer for the
-Interfold CLI.
+This script will download and install `loxleyup`, which is the standalone installer for the
+Loxley CLI.
 
-## Using interfoldup
+## Using loxleyup
 
-Once you have `interfoldup` installed, you can manage your Interfold CLI installation:
+Once you have `loxleyup` installed, you can manage your Loxley CLI installation:
 
-### Install the Interfold CLI
+### Install the Loxley CLI
 
 ```bash
 # Install to ~/.local/bin (default)
-interfoldup install
+loxleyup install
 
 # Install to /usr/local/bin (requires sudo)
-interfoldup install --system
+loxleyup install --system
 ```
 
-Running `interfoldup install` will install the latest version of the Interfold CLI. See
-`interfoldup --help` for more options.
+Running `loxleyup install` will install the latest version of the Loxley CLI. See
+`loxleyup --help` for more options.
 
-### Update the Interfold CLI
+### Update the Loxley CLI
 
 ```bash
 # Update to the latest version
-interfoldup update
+loxleyup update
 
 # Update system-wide installation
-interfoldup update --system
+loxleyup update --system
 ```
 
 ### Uninstall
 
 ```bash
-# Remove the Interfold CLI
-interfoldup uninstall
+# Remove the Loxley CLI
+loxleyup uninstall
 
 # Remove system-wide installation
-interfoldup uninstall --system
+loxleyup uninstall --system
 ```
 
 ## Install with Nix
@@ -77,17 +77,17 @@ with no additional dependencies — Nix handles everything including installing 
 Get a devshell directly without installing it:
 
 ```bash
-nix develop github:theinterfold/interfold/{branch,tag,commit}
+nix develop github:theloxley/loxley/{branch,tag,commit}
 ```
 
 This will build from source using the nix package manager and provide a runtime environemnt for
-interfold. It might take some time but the result will be cached on your local nix store for future
+loxley. It might take some time but the result will be cached on your local nix store for future
 execution.
 
 ```bash
-❯ nix develop github:theinterfold/interfold/v0.2.2
-❯ interfold --version
-interfold 0.2.2
+❯ nix develop github:theloxley/loxley/v0.2.2
+❯ loxley --version
+loxley 0.2.2
 ❯ bb --version
 3.0.0-nightly.20251104
 ❯ echo $E3_CUSTOM_BB
@@ -108,12 +108,12 @@ If you decline, everything still works — it just builds from source, which tak
 
 If you prefer to install manually:
 
-1. Visit the [releases page](https://github.com/theinterfold/interfold/releases)
+1. Visit the [releases page](https://github.com/theloxley/loxley/releases)
 2. Download the appropriate release archive for your platform:
-   - Linux: `interfold-linux-x86_64.tar.gz`
-   - macOS: `interfold-macos-aarch64.tar.gz`
+   - Linux: `loxley-linux-x86_64.tar.gz`
+   - macOS: `loxley-macos-aarch64.tar.gz`
 3. Extract the binary and place it in your PATH (e.g., `~/.local/bin` or `/usr/local/bin`)
-4. Make sure the binary is executable: `chmod +x interfold`
+4. Make sure the binary is executable: `chmod +x loxley`
 
 ## Platform Support
 
@@ -127,35 +127,35 @@ _Note: Intel Macs automatically run Apple Silicon binaries through Rosetta 2 tra
 
 ### Building from Source
 
-If you need to build `interfold` from source:
+If you need to build `loxley` from source:
 
 1. Ensure you have Rust installed (using [rustup](https://rustup.rs/))
 2. Clone the repository
 
 ```bash
-git clone https://github.com/theinterfold/interfold.git
-cd interfold
+git clone https://github.com/theloxley/loxley.git
+cd loxley
 ```
 
 3. Build the binary
 
 ```bash
-cargo install --locked --path ./crates/cli --bin interfold -f
+cargo install --locked --path ./crates/cli --bin loxley -f
 ```
 
 ## Verify Installation
 
-After installation, verify that the Interfold CLI is working correctly:
+After installation, verify that the Loxley CLI is working correctly:
 
 ```bash
-interfold --help
+loxley --help
 ```
 
-You should see the help information for the Interfold CLI.
+You should see the help information for the Loxley CLI.
 
 ## Next Steps
 
-Once you have the Interfold CLI installed, you're ready to:
+Once you have the Loxley CLI installed, you're ready to:
 
 1. [Run your first E3 program](/quick-start)
 2. [Learn about E3 concepts](/what-is-e3)

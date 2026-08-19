@@ -38,10 +38,10 @@ fn widening_needed(host_uids_reach_container: bool, owner_uid: u32) -> bool {
 /// The RISC Zero build script in `crates/support/methods/build.rs` writes
 /// `ImageID.sol` to `../contracts` and `Elf.sol` to `../tests`, both relative
 /// to `/app`. `ctl/container` maps these two paths to
-/// `.interfold/generated/contracts` and `tests` on the host.
+/// `.loxley/generated/contracts` and `tests` on the host.
 pub fn container_writable_paths(cwd: &Path) -> Vec<PathBuf> {
     vec![
-        cwd.join(".interfold").join("generated").join("contracts"),
+        cwd.join(".loxley").join("generated").join("contracts"),
         cwd.join("tests"),
     ]
 }
@@ -56,7 +56,7 @@ mod tests {
         let cwd = Path::new("/proj");
         let paths = container_writable_paths(cwd);
 
-        assert!(paths.contains(&cwd.join(".interfold/generated/contracts")));
+        assert!(paths.contains(&cwd.join(".loxley/generated/contracts")));
         assert!(paths.contains(&cwd.join("tests")));
     }
 

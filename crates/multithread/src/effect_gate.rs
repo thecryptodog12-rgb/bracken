@@ -9,7 +9,7 @@
 use actix::{Actor, Context, Handler, Recipient};
 use e3_events::{
     ComputeRequestKind, E3Stage, E3id, Event, EventContextAccessors, EventSubscriber, EventType,
-    InterfoldEvent, InterfoldEventData,
+    LoxleyEvent, LoxleyEventData,
 };
 use e3_utils::MAILBOX_LIMIT;
 use std::collections::{HashMap, HashSet};
@@ -32,14 +32,14 @@ type RequestKey = (E3id, ComputeRequestKind);
 /// cannot drop a semantically distinct compute. Keys are cleared per-E3 on
 /// terminal events, bounding growth to live E3s.
 pub(crate) struct ComputeEffectGate {
-    target: Recipient<InterfoldEvent>,
+    target: Recipient<LoxleyEvent>,
     enabled: bool,
-    pending: HashMap<RequestKey, InterfoldEvent>,
+    pending: HashMap<RequestKey, LoxleyEvent>,
     forwarded: HashSet<RequestKey>,
 }
 
 impl ComputeEffectGate {
-    fn new(target: Recipient<InterfoldEvent>) -> Self {
+    fn new(target: Recipient<LoxleyEvent>) -> Self {
         Self {
             target,
             enabled: false,
@@ -49,9 +49,9 @@ impl ComputeEffectGate {
     }
 
     /// Extract the dedup key from a ComputeRequest event, if it is one.
-    fn request_key(event: &InterfoldEvent) -> Option<RequestKey> {
+    fn request_key(event: &LoxleyEvent) -> Option<RequestKey> {
         match event.get_data() {
-            InterfoldEventData::ComputeRequest(request) => {
+            LoxleyEventData::ComputeRequest(request) => {
                 Some((request.e3_id.clone(), request.request.clone()))
             }
             _ => None,
@@ -61,7 +61,7 @@ impl ComputeEffectGate {
     /// Forward a compute effect to the target once, recording its key so a
     /// later duplicate (stale-vs-re-driven across the enable boundary) is
     /// suppressed. Returns false if the key was already forwarded.
-    fn forward(&mut self, event: InterfoldEvent) -> bool {
+    fn forward(&mut self, event: LoxleyEvent) -> bool {
         if let Some(key) = Self::request_key(&event) {
             if !self.forwarded.insert(key) {
                 debug!("dropping duplicate compute effect (already forwarded)");
@@ -72,7 +72,7 @@ impl ComputeEffectGate {
         true
     }
 
-    pub(crate) fn attach(bus: &BusHandle, target: Recipient<InterfoldEvent>) {
+    pub(crate) fn attach(bus: &BusHandle, target: Recipient<LoxleyEvent>) {
         let gate = Self::new(target).start();
         bus.subscribe_all(
             &[
@@ -86,8 +86,8 @@ impl ComputeEffectGate {
         );
     }
 
-    fn queue(&mut self, event: InterfoldEvent) {
-        let InterfoldEventData::ComputeRequest(request) = event.get_data() else {
+    fn queue(&mut self, event: LoxleyEvent) {
+        let LoxleyEventData::ComputeRequest(request) = event.get_data() else {
             return;
         };
         let key = (request.e3_id.clone(), request.request.clone());
@@ -131,19 +131,19 @@ impl Actor for ComputeEffectGate {
     }
 }
 
-impl Handler<InterfoldEvent> for ComputeEffectGate {
+impl Handler<LoxleyEvent> for ComputeEffectGate {
     type Result = ();
 
-    fn handle(&mut self, event: InterfoldEvent, _: &mut Self::Context) {
+    fn handle(&mut self, event: LoxleyEvent, _: &mut Self::Context) {
         match event.get_data() {
-            InterfoldEventData::ComputeRequest(_) if self.enabled => {
+            LoxleyEventData::ComputeRequest(_) if self.enabled => {
                 self.forward(event);
             }
-            InterfoldEventData::ComputeRequest(_) => self.queue(event),
-            InterfoldEventData::EffectsEnabled(_) => self.enable(),
-            InterfoldEventData::E3RequestComplete(complete) => self.cancel(&complete.e3_id),
-            InterfoldEventData::E3Failed(failed) => self.cancel(&failed.e3_id),
-            InterfoldEventData::E3StageChanged(stage)
+            LoxleyEventData::ComputeRequest(_) => self.queue(event),
+            LoxleyEventData::EffectsEnabled(_) => self.enable(),
+            LoxleyEventData::E3RequestComplete(complete) => self.cancel(&complete.e3_id),
+            LoxleyEventData::E3Failed(failed) => self.cancel(&failed.e3_id),
+            LoxleyEventData::E3StageChanged(stage)
                 if matches!(stage.new_stage, E3Stage::Complete | E3Stage::Failed) =>
             {
                 self.cancel(&stage.e3_id)
@@ -159,7 +159,7 @@ mod tests {
     use actix::{Message, ResponseFuture};
     use e3_events::{
         ComputeRequest, CorrelationId, E3RequestComplete, EffectsEnabled,
-        EventConstructorWithTimestamp, EventSource, InterfoldEvent, PkBfvProofRequest, Unsequenced,
+        EventConstructorWithTimestamp, EventSource, LoxleyEvent, PkBfvProofRequest, Unsequenced,
         ZkRequest,
     };
     use e3_fhe_params::BfvPreset;
@@ -177,11 +177,11 @@ mod tests {
         type Context = Context<Self>;
     }
 
-    impl Handler<InterfoldEvent> for Recorder {
+    impl Handler<LoxleyEvent> for Recorder {
         type Result = ();
 
-        fn handle(&mut self, event: InterfoldEvent, _: &mut Self::Context) {
-            if let InterfoldEventData::ComputeRequest(request) = event.get_data() {
+        fn handle(&mut self, event: LoxleyEvent, _: &mut Self::Context) {
+            if let LoxleyEventData::ComputeRequest(request) = event.get_data() {
                 self.0.push(request.correlation_id);
             }
         }
@@ -196,7 +196,7 @@ mod tests {
         }
     }
 
-    fn compute(correlation_id: CorrelationId, timestamp: u128) -> InterfoldEvent {
+    fn compute(correlation_id: CorrelationId, timestamp: u128) -> LoxleyEvent {
         let request = ComputeRequest::zk(
             ZkRequest::PkBfv(PkBfvProofRequest::new(
                 ArcBytes::from_bytes(&[]),
@@ -206,7 +206,7 @@ mod tests {
             correlation_id,
             E3id::new("4", 1),
         );
-        InterfoldEvent::<Unsequenced>::new_with_timestamp(
+        LoxleyEvent::<Unsequenced>::new_with_timestamp(
             request.into(),
             None,
             timestamp,
@@ -216,8 +216,8 @@ mod tests {
         .into_sequenced(1)
     }
 
-    fn effects_enabled() -> InterfoldEvent {
-        InterfoldEvent::<Unsequenced>::new_with_timestamp(
+    fn effects_enabled() -> LoxleyEvent {
+        LoxleyEvent::<Unsequenced>::new_with_timestamp(
             EffectsEnabled::new().into(),
             None,
             30,
@@ -227,8 +227,8 @@ mod tests {
         .into_sequenced(2)
     }
 
-    fn completed() -> InterfoldEvent {
-        InterfoldEvent::<Unsequenced>::new_with_timestamp(
+    fn completed() -> LoxleyEvent {
+        LoxleyEvent::<Unsequenced>::new_with_timestamp(
             E3RequestComplete {
                 e3_id: E3id::new("4", 1),
             }

@@ -13,7 +13,7 @@ use e3_events::{
 use e3_test_helpers::get_common_setup;
 use std::collections::{BTreeSet, HashMap};
 
-fn test_ctx(data: impl Into<InterfoldEventData>) -> EventContext<Sequenced> {
+fn test_ctx(data: impl Into<LoxleyEventData>) -> EventContext<Sequenced> {
     EventContext::<Unsequenced>::from(data.into()).sequence(0)
 }
 
@@ -68,7 +68,7 @@ async fn build_public_key_aggregator(
     initial_state: PublicKeyAggregatorState,
 ) -> Result<(
     PublicKeyAggregator,
-    Addr<HistoryCollector<InterfoldEvent>>,
+    Addr<HistoryCollector<LoxleyEvent>>,
     E3id,
 )> {
     build_public_key_aggregator_with_committee(initial_state, CiphernodesCommitteeSize::Minimum)
@@ -80,7 +80,7 @@ async fn build_public_key_aggregator_with_committee(
     committee_size: CiphernodesCommitteeSize,
 ) -> Result<(
     PublicKeyAggregator,
-    Addr<HistoryCollector<InterfoldEvent>>,
+    Addr<HistoryCollector<LoxleyEvent>>,
     E3id,
 )> {
     let (bus, rng, _seed, params, crp, _errors, history) =
@@ -177,8 +177,8 @@ fn verifying_c1_non_square_state(
     ))
 }
 
-async fn next_event(history: &Addr<HistoryCollector<InterfoldEvent>>) -> Result<InterfoldEvent> {
-    let mut result = history.send(TakeEvents::<InterfoldEvent>::new(1)).await?;
+async fn next_event(history: &Addr<HistoryCollector<LoxleyEvent>>) -> Result<LoxleyEvent> {
+    let mut result = history.send(TakeEvents::<LoxleyEvent>::new(1)).await?;
     assert!(!result.timed_out, "timed out waiting for an event");
     Ok(result.events.pop().expect("expected one event"))
 }

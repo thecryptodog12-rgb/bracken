@@ -10,7 +10,7 @@ use actix::{Message, Recipient};
 use alloy::rpc::types::Log;
 use anyhow::Result;
 use e3_events::{
-    BusHandle, CorrelationId, EventFactory, EventSource, InterfoldEvent, InterfoldEventData,
+    BusHandle, CorrelationId, EventFactory, EventSource, LoxleyEvent, LoxleyEventData,
     Unsequenced,
 };
 use serde::{Deserialize, Serialize};
@@ -61,7 +61,7 @@ impl HistoricalSyncComplete {
 #[derive(Message, Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[rtype(result = "()")]
 pub struct EvmEvent {
-    data: InterfoldEventData,
+    data: LoxleyEventData,
     block: u64,
     chain_id: u64,
     ts: u128,
@@ -71,7 +71,7 @@ pub struct EvmEvent {
 impl EvmEvent {
     pub fn new(
         id: CorrelationId,
-        data: InterfoldEventData,
+        data: LoxleyEventData,
         block: u64,
         ts: u128,
         chain_id: u64,
@@ -85,7 +85,7 @@ impl EvmEvent {
         }
     }
 
-    pub fn split(self) -> (InterfoldEventData, u128, u64) {
+    pub fn split(self) -> (LoxleyEventData, u128, u64) {
         (self.data, self.ts, self.block)
     }
 
@@ -101,7 +101,7 @@ impl EvmEvent {
         self.ts
     }
 
-    pub fn into_interfold_event(self, bus: &BusHandle) -> Result<InterfoldEvent<Unsequenced>> {
+    pub fn into_loxley_event(self, bus: &BusHandle) -> Result<LoxleyEvent<Unsequenced>> {
         let data = self.data;
         let ts = self.ts;
         bus.event_from_remote_source(data, None, ts, Some(self.block), EventSource::Evm)
@@ -110,7 +110,7 @@ impl EvmEvent {
 
 #[derive(Message, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[rtype(result = "()")]
-pub enum InterfoldEvmEvent {
+pub enum LoxleyEvmEvent {
     /// Signal that this reader has completed historical sync
     HistoricalSyncComplete(HistoricalSyncComplete),
     /// An actual event from the blockchain
@@ -124,14 +124,14 @@ pub enum InterfoldEvmEvent {
     Processed(CorrelationId),
 }
 
-impl InterfoldEvmEvent {
+impl LoxleyEvmEvent {
     pub fn get_id(&self) -> CorrelationId {
         match self {
-            InterfoldEvmEvent::HistoricalSyncComplete(e) => e.get_id(),
-            InterfoldEvmEvent::Log(e) => e.get_id(),
-            InterfoldEvmEvent::Rejected(e) => e.id,
-            InterfoldEvmEvent::Event(e) => e.get_id(),
-            InterfoldEvmEvent::Processed(id) => id.to_owned(),
+            LoxleyEvmEvent::HistoricalSyncComplete(e) => e.get_id(),
+            LoxleyEvmEvent::Log(e) => e.get_id(),
+            LoxleyEvmEvent::Rejected(e) => e.id,
+            LoxleyEvmEvent::Event(e) => e.get_id(),
+            LoxleyEvmEvent::Processed(id) => id.to_owned(),
         }
     }
 }
@@ -182,4 +182,4 @@ impl EvmLog {
     }
 }
 
-pub type EvmEventProcessor = Recipient<InterfoldEvmEvent>;
+pub type EvmEventProcessor = Recipient<LoxleyEvmEvent>;

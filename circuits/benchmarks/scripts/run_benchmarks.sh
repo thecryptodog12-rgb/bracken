@@ -98,7 +98,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
 fi
 
 echo "╔════════════════════════════════════════════════╗"
-echo "║       Interfold ZK Circuit Benchmark Suite       ║"
+echo "║       Loxley ZK Circuit Benchmark Suite       ║"
 echo "╚════════════════════════════════════════════════╝"
 echo ""
 

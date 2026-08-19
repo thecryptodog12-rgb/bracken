@@ -28,11 +28,11 @@ interface PackageJson {
 }
 
 const PACKAGES: Package[] = [
-  { name: '@interfold/wasm', path: 'crates/wasm' },
-  { name: '@interfold/config', path: 'packages/interfold-config' },
-  { name: '@interfold/contracts', path: 'packages/interfold-contracts' },
-  { name: '@interfold/sdk', path: 'packages/interfold-sdk' },
-  { name: '@interfold/react', path: 'packages/interfold-react' },
+  { name: '@loxley/wasm', path: 'crates/wasm' },
+  { name: '@loxley/config', path: 'packages/loxley-config' },
+  { name: '@loxley/contracts', path: 'packages/loxley-contracts' },
+  { name: '@loxley/sdk', path: 'packages/loxley-sdk' },
+  { name: '@loxley/react', path: 'packages/loxley-react' },
 ]
 
 console.log('🔧 Preparing packages for npm publishing...\n')

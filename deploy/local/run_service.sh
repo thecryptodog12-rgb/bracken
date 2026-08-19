@@ -79,7 +79,7 @@ case "$SERVICE" in
     rm -f "${SIGNAL_FILE}"
     wait_for_file "${SIGNAL_FILE}" "deploy signal file"
     echo "[run_service] Deploy done. Starting ${SERVICE} directly..."
-    exec interfold --name "${SERVICE}" start -v
+    exec loxley --name "${SERVICE}" start -v
     ;;
 
   program)

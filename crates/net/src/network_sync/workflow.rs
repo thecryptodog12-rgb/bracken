@@ -4,7 +4,7 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-use e3_events::{prelude::*, InterfoldEvent, Unsequenced};
+use e3_events::{prelude::*, LoxleyEvent, Unsequenced};
 
 use crate::domain::{
     event_translation::EventTranslationService,
@@ -105,7 +105,7 @@ pub enum SyncBatchOutcome {
     /// The request was malformed and should be rejected.
     BadRequest(String),
     /// The batch to return to the requesting peer.
-    Batch(EventBatch<InterfoldEvent<Unsequenced>>),
+    Batch(EventBatch<LoxleyEvent<Unsequenced>>),
 }
 
 /// Build a sync response batch from the events returned by the event store.
@@ -115,7 +115,7 @@ pub enum SyncBatchOutcome {
 /// inclusive storage cursor, so it advances to one timestamp after the last returned or scanned
 /// event. Both response work and storage scanning are capped independently of the peer's input.
 pub fn build_sync_batch(
-    all_events: Vec<InterfoldEvent>,
+    all_events: Vec<LoxleyEvent>,
     fetch: &FetchEventsSince,
 ) -> SyncBatchOutcome {
     if fetch.limit() == 0 {

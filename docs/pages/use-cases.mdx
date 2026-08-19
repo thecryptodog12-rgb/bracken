@@ -2,17 +2,17 @@
 title: 'Use Cases'
 ---
 
-# Unlocking Interfold Use Cases
+# Unlocking Loxley Use Cases
 
 Leading confidential-compute platforms such as Ritual, Fhenix, and Olas showcase their ecosystems by
 highlighting concrete scenarios, personas, and implementation patterns. This page borrows that
-structure so you can quickly map Interfold building blocks to the outcomes you need.
+structure so you can quickly map Loxley building blocks to the outcomes you need.
 
 ## Confidential Governance (CRISP-style)
 
 - **Problem**: Public DAOs struggle to keep tallies, delegations, and vote rationales private during
   sensitive decisions.
-- **Pattern**: Use the CRISP template (client, Rust server, Noir circuits) with the Interfold SDK.
+- **Pattern**: Use the CRISP template (client, Rust server, Noir circuits) with the Loxley SDK.
 - **Flow**: DAO admins request an E3 round, contributors encrypt ballots in the browser, and
   Ciphernodes publish the plaintext tally once the compute provider finishes execution.
 - **Extras**: Plug Synpress or Playwright into the client for scripted voting drills.
@@ -32,7 +32,7 @@ structure so you can quickly map Interfold building blocks to the outcomes you n
 - **Problem**: Networks such as Ritual and Olas expose agent marketplaces; those agents still need a
   privacy-preserving substrate for sensitive scoring, routing, or risk checks.
 - **Pattern**: Treat each agent as a Data Provider, push policy enforcement into the E3 Program's
-  `publishInput` validation, and let the Interfold host shared state transitions (e.g., allocating
+  `publishInput` validation, and let the Loxley host shared state transitions (e.g., allocating
   budget or updating trust scores).
 - **Flow**: Agents encrypt telemetry, the Secure Process computes rankings, and downstream contracts
   or marketplaces read the published plaintext.

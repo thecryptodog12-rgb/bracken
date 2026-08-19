@@ -16,7 +16,7 @@ use e3_events::TypedEvent;
 use e3_events::{
     prelude::*, trap, AggregatorChanged, BusHandle, CiphernodeSelected, Committee,
     CommitteeFinalized, CommitteeMemberExcluded, CommitteeMemberExpelled, E3Requested, E3id, EType,
-    EventType, InterfoldEvent, InterfoldEventData, Shutdown, TicketGenerated, TicketId,
+    EventType, LoxleyEvent, LoxleyEventData, Shutdown, TicketGenerated, TicketId,
 };
 use e3_request::E3Meta;
 use e3_utils::NotifySync;

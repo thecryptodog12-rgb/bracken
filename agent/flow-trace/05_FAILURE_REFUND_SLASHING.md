@@ -31,7 +31,7 @@ and refund settlement use the same payer classifier.
 During the failure grace period, only active finalized committee members have committee authority.
 Expelled members and provisional candidates do not.
 
-Interfold rejects `None`, the enum sentinel, and larger failure reason values before it changes the
+Loxley rejects `None`, the enum sentinel, and larger failure reason values before it changes the
 E3 stage.
 
 Committee key publication is valid through the DKG deadline. Later publication is rejected as a
@@ -44,7 +44,7 @@ supplier-side timeout.
 > missing feature.
 
 ```text
-Anyone calls: Interfold.markE3Failed(e3Id)
+Anyone calls: Loxley.markE3Failed(e3Id)
 │
 ├─ Revert if stage == None, Complete, or Failed
 │
@@ -81,7 +81,7 @@ Anyone calls: Interfold.markE3Failed(e3Id)
 
 ```text
 CiphernodeRegistry or SlashingManager calls:
-  Interfold.onE3Failed(e3Id, reason)
+  Loxley.onE3Failed(e3Id, reason)
 │
 ├─ require(caller == ciphernodeRegistry || caller == slashingManager)
 ├─ _e3Stages[e3Id] = Failed
@@ -105,7 +105,7 @@ Cancellation and settlement are separate. This lets the E3 stop even if a regist
 transfer temporarily fails. Any account can later retry `processE3Failure(e3Id)`.
 
 ```text
-Requester calls: Interfold.cancelE3(e3Id)
+Requester calls: Loxley.cancelE3(e3Id)
 │
 ├─ require(msg.sender == request-time requester)
 ├─ require(stage is active and not terminal)
@@ -130,13 +130,13 @@ No decryption allocation is paid unless the E3 completes normally.
 
 ### Step 1: Process Failure
 
-Runtime note: `processE3Failure()` is a permissionless cleanup path. The Rust `InterfoldSolWriter`
+Runtime note: `processE3Failure()` is a permissionless cleanup path. The Rust `LoxleySolWriter`
 may auto-submit it from any effects-enabled node on the same chain, and it must not depend on
 active-aggregator designation because failures can happen before committee finalization or while the
 current aggregator is offline.
 
 ```text
-Anyone calls: Interfold.processE3Failure(e3Id)
+Anyone calls: Loxley.processE3Failure(e3Id)
 │
 ├─ require(stage == Failed)
 ├─ require(e3Payments[e3Id] > 0) → payment exists
@@ -232,7 +232,7 @@ REQUESTER claims:
   E3RefundManager.claimRequesterRefund(e3Id)
 │
 ├─ require(distribution calculated)
-├─ require(msg.sender == requester from Interfold)
+├─ require(msg.sender == requester from Loxley)
 ├─ require(!requester refund already claimed)
 ├─ requesterAmount is either:
 │   • 100% of fee escrow for ciphernodes/supply liability, or
@@ -825,7 +825,7 @@ _executeSlash(proposalId):
 │     │  └───────────────────────────────────────────────────────┘
 │     │
 │     └─ If activeCount < thresholdM:
-│         ├─ Read the E3 stage from its request-time Interfold contract
+│         ├─ Read the E3 stage from its request-time Loxley contract
 │         ├─ Complete or Failed: allow the later slash without another callback
 │         └─ Any other stage: call onE3Failed with InsufficientCommitteeMembers
 │            → No catch-all suppression
@@ -883,7 +883,7 @@ _executeSlash(proposalId):
 │     │  │  │         burnTickets() during slashTicketBalance     │
 │     │  │  │                                                     │
 │     │  │  │  Step B: Update escrow accounting                   │
-│     │  │  │    interfold.escrowSlashedFunds(                    │
+│     │  │  │    loxley.escrowSlashedFunds(                    │
 │     │  │  │      e3Id, proposalId, operator, token, amount      │
 │     │  │  │    )                                                │
 │     │  │  │    → e3RefundManager.escrowSlashedFunds(            │
@@ -962,14 +962,14 @@ Design rationale:
 ```text
 distributeSlashedFundsOnSuccess(e3Id, paymentToken):
 │
-├─ Called by Interfold._distributeRewards() when E3 completes successfully
+├─ Called by Loxley._distributeRewards() when E3 completes successfully
 │
 ├─ Mark success settlement ready
 ├─ Every proposal settles independently via
 │   settleSlashedFunds(e3Id, proposalId)
 │
-├─ Load the immutable E3PolicySnapshot captured by Interfold.request
-│   (allocation, treasury, Interfold, registry, bonding registry, policy version)
+├─ Load the immutable E3PolicySnapshot captured by Loxley.request
+│   (allocation, treasury, Loxley, registry, bonding registry, policy version)
 ├─ Read activeNodes from the request-time registry at settlement time
 │   → Expelled nodes cannot receive a later slash-funded bonus
 │   → The proposal target cannot receive its own penalty proceeds
@@ -1032,8 +1032,8 @@ sequence:
 5. Replace the dependency pointers and ticket-token registry only after all drain counters are zero.
 6. Wire the complete reciprocal graph, validate it, and enable requests.
 
-`Interfold` rejects every request while paused and validates the full dependency graph before each
-accepted request. The graph includes reciprocal Interfold, committee registry, bonding registry,
+`Loxley` rejects every request while paused and validates the full dependency graph before each
+accepted request. The graph includes reciprocal Loxley, committee registry, bonding registry,
 slashing manager, refund manager, and ticket-token pointers. It also requires the committee and
 bonding registries to report the same operator count. Component setters reject a replacement while
 their generation still owns live state. This prevents mixed-generation membership, slash routing,
@@ -1326,7 +1326,7 @@ Applied audit findings: **C-05, H-05, H-06, H-07, H-09, H-10, H-24, M-14, M-15, 
 
 ### EIP-712 domain (H-10, M-24)
 
-- SlashingManager declares `EIP712("InterfoldSlashing", "1")` so accusation signatures are bound to
+- SlashingManager declares `EIP712("LoxleySlashing", "1")` so accusation signatures are bound to
   `verifyingContract` _and_ `chainId`. Signatures produced against a different deployment or chain
   are rejected with `InvalidSigner()`. Cross-deployment / cross-chain replay is blocked.
 
@@ -1387,7 +1387,7 @@ expulsion handling; the full contract log is also retained by the raw EVM observ
 ### Upgrade posture
 
 - `SlashingManager` is **non-upgradeable** by design (transparent proxy removed). Migrations require
-  redeployment + GOVERNANCE_ROLE rotation on `BondingRegistry`/`Interfold`.
+  redeployment + GOVERNANCE_ROLE rotation on `BondingRegistry`/`Loxley`.
 - Install the entitlement-aware `E3RefundManager` only when no E3 or expelling proposal is in
   flight. Existing policy snapshots do not contain a slashing-manager address, and existing
   proposals cannot be backfilled safely. Fresh deployments need no migration.

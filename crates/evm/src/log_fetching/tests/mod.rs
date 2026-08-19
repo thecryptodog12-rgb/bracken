@@ -105,16 +105,16 @@ impl LogProvider for MockLogProvider {
 }
 
 struct TestCollector {
-    tx: mpsc::UnboundedSender<InterfoldEvmEvent>,
+    tx: mpsc::UnboundedSender<LoxleyEvmEvent>,
 }
 
 impl Actor for TestCollector {
     type Context = Context<Self>;
 }
 
-impl Handler<InterfoldEvmEvent> for TestCollector {
+impl Handler<LoxleyEvmEvent> for TestCollector {
     type Result = ();
-    fn handle(&mut self, msg: InterfoldEvmEvent, _: &mut Self::Context) {
+    fn handle(&mut self, msg: LoxleyEvmEvent, _: &mut Self::Context) {
         let _ = self.tx.send(msg);
     }
 }
@@ -128,7 +128,7 @@ fn make_test_log(block_number: u64) -> Log {
 
 fn setup_collector() -> (
     EvmEventProcessor,
-    mpsc::UnboundedReceiver<InterfoldEvmEvent>,
+    mpsc::UnboundedReceiver<LoxleyEvmEvent>,
 ) {
     let (tx, rx) = mpsc::unbounded_channel();
     let addr = TestCollector { tx }.start();

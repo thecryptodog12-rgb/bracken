@@ -5,18 +5,18 @@
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
 import { getContractAddresses } from './env-config'
-import type { ThresholdBfvParamsPresetName } from '@interfold/sdk'
+import type { ThresholdBfvParamsPresetName } from '@loxley/sdk'
 import { THRESHOLD_BFV_PARAMS_PRESET_NAME } from './env-config'
 
 /**
- * Get the Interfold SDK configuration.
+ * Get the Loxley SDK configuration.
  */
-export function getInterfoldSDKConfig() {
+export function getLoxleySDKConfig() {
   const contracts = getContractAddresses()
   return {
     autoConnect: true,
     contracts: {
-      interfold: contracts.interfold,
+      loxley: contracts.loxley,
       ciphernodeRegistry: contracts.ciphernodeRegistry,
       feeToken: contracts.feeToken,
     },

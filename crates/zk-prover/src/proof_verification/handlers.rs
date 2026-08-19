@@ -8,13 +8,13 @@ impl Actor for ProofVerificationActor {
     type Context = Context<Self>;
 }
 
-impl Handler<InterfoldEvent> for ProofVerificationActor {
+impl Handler<LoxleyEvent> for ProofVerificationActor {
     type Result = ();
 
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            InterfoldEventData::CiphernodeSelected(data) => {
+            LoxleyEventData::CiphernodeSelected(data) => {
                 self.store_preset(
                     data.e3_id,
                     data.params_preset,
@@ -22,16 +22,16 @@ impl Handler<InterfoldEvent> for ProofVerificationActor {
                     data.threshold_n,
                 );
             }
-            InterfoldEventData::CommitteeFinalized(mut data) => {
+            LoxleyEventData::CommitteeFinalized(mut data) => {
                 // The EVM decoder already emits canonical address order, but sorting again keeps
                 // this trust boundary correct for replayed/test-produced events as well.
                 data.sort_by_address();
                 self.store_committee(data.e3_id, &data.committee);
             }
-            InterfoldEventData::EncryptionKeyReceived(data) => {
+            LoxleyEventData::EncryptionKeyReceived(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::E3RequestComplete(data) => {
+            LoxleyEventData::E3RequestComplete(data) => {
                 let e3_id = data.e3_id;
                 self.presets.remove(&e3_id);
                 self.committees.remove(&e3_id);

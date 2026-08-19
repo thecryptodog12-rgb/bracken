@@ -1,9 +1,0 @@
-{
-  "extends": "@interfold/config/dom.tsconfig.json",
-  "include": ["src/**/*", "tests/**/*"],
-  "exclude": ["node_modules", "dist"],
-  "compilerOptions": {
-    "incremental": true,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
-  }
-}

@@ -1,5 +1,5 @@
 {
-  "name": "interfold-client",
+  "name": "loxley-client",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -7,7 +7,7 @@
     "name": "gnosisguild",
     "url": "https://github.com/gnosisguild"
   },
-  "homepage": "https://github.com/theinterfold/interfold",
+  "homepage": "https://github.com/theloxley/loxley",
   "scripts": {
     "dev": "vite --no-open --host",
     "build": "tsc && vite build",
@@ -16,8 +16,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@interfold/react": "workspace:*",
-    "@interfold/sdk": "workspace:*",
+    "@loxley/react": "workspace:*",
+    "@loxley/sdk": "workspace:*",
     "@phosphor-icons/react": "^2.1.4",
     "@tanstack/react-query": "^5.74.3",
     "@wagmi/core": "^2.14.16",

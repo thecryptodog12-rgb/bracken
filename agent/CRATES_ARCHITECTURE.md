@@ -1,4 +1,4 @@
-# Interfold Rust Workspace Architecture
+# Loxley Rust Workspace Architecture
 
 This document describes the implementation in `crates/`. It is intentionally code-facing: names in
 the diagrams are crate, module, actor, message, or durable repository names that can be searched in
@@ -26,7 +26,7 @@ flowchart TD
         Init[e3-init]
         Fs[e3-fs]
         Support[e3-support-scripts]
-        Up[interfoldup]
+        Up[loxleyup]
     end
 
     subgraph Clients[Client and compute surfaces]
@@ -247,7 +247,7 @@ key, any event log without a marker, upgrades, and downgrades fail closed. This 
 required because autowallet atomically creates the two bootstrap identities before the builder can
 stamp the schema; it does not let protocol state bypass compatibility checks. The DAppNode v0.2.3
 package is the explicit bridge for the previously shipped v0.1.8 state: its entrypoint atomically
-moves `/data/.enclave` to `/data/.interfold`, and the v0.2.3 release stamps schema version 1 before
+moves `/data/.enclave` to `/data/.loxley`, and the v0.2.3 release stamps schema version 1 before
 a later fail-closed binary is installed. If both namespace roots exist, the bridge refuses to choose
 between them.
 
@@ -313,7 +313,7 @@ semantic operation names rather than circuit-stage labels. No `src/actors/`, `sr
 | `e3-slashing`   | `accusation_voting`, `commitment_consistency`                                                                              | Actors own timers and message routing; workflow files own admission, verification, voting, quorum, and commitment decisions.                               |
 | `e3-sortition`  | `sortition`, `ciphernode_selection`                                                                                        | Actors own chain/request routing and cache lifecycle; selection backends, ticket rules, and registry decisions sit beside them.                            |
 | `e3-net`        | `event_buffer`, `event_conversion`, `event_translation`, `network_sync`, `document_publishing`                             | Mailboxes own transport ordering and lifecycle; workflow/model files own decisions and effects own DHT, gossip, and history I/O.                           |
-| `e3-evm`        | `chain_gateway`, `chain_reader`, `event_decoding`, registry/interfold/slashing read and write capabilities, `log_fetching` | Per-chain mailboxes own concurrency; provider recovery, log fetching, transaction preflight, and submission live with the chain capability they serve.     |
+| `e3-evm`        | `chain_gateway`, `chain_reader`, `event_decoding`, registry/loxley/slashing read and write capabilities, `log_fetching` | Per-chain mailboxes own concurrency; provider recovery, log fetching, transaction preflight, and submission live with the chain capability they serve.     |
 | `e3-request`    | `routing`, `lifecycle`                                                                                                     | Context routing and lifecycle mailboxes call deterministic workflows; snapshot/context construction is co-located with routing.                            |
 | `e3-sync`       | `sync`                                                                                                                     | No Actix actor: an acknowledged startup/replay service contains its state, plan, preflight, history collection, and tests in one capability.               |
 
@@ -413,7 +413,7 @@ flowchart LR
     Raw --> SyncManager[NetSyncManager]
     Startup -->|await actor acceptance after SyncEnded| Translator[NetEventTranslator]
     Translator --> Allowlist{forwardable event type?}
-    Allowlist -->|yes| Domain[bounded decode to InterfoldEvent]
+    Allowlist -->|yes| Domain[bounded decode to LoxleyEvent]
     Allowlist -->|no| Reject[reject input]
     Domain --> Handle[BusHandle remote publish]
     Bus --> DocumentPublisher[DocumentPublisher]
@@ -703,9 +703,9 @@ sequenceDiagram
 
 The whole barrier is time-bounded. Failure to drain or flush is returned to the CLI and produces a
 non-zero exit. On restart, the process fence prevents two local writers from sharing one database.
-Schema preflight rejects unsupported upgrades or downgrades. `interfold node validate` provides
+Schema preflight rejects unsupported upgrades or downgrades. `loxley node validate` provides
 offline integrity and loose-end diagnostics without mutation by default.
-`interfold node validate --repair` is narrowly allowed to perform the same safe uncommitted-tail
+`loxley node validate --repair` is narrowly allowed to perform the same safe uncommitted-tail
 recovery used at normal startup; it never removes an indexed record.
 
 The implemented restart and operator-controlled recovery boundary is:
@@ -713,7 +713,7 @@ The implemented restart and operator-controlled recovery boundary is:
 ```mermaid
 flowchart TD
     Incident[unclean exit, corruption warning, or unsupported schema] --> Stop[stop the node and preserve its data]
-    Stop --> Validate[run interfold node validate offline]
+    Stop --> Validate[run loxley node validate offline]
     Validate --> Tail{recoverable uncommitted log tail?}
     Tail -->|yes| Repair[run node validate --repair or start normally]
     Repair --> Validate
@@ -789,7 +789,7 @@ flowchart TD
     StartResult --> CLIExit[CLI returns failure]
 
     Handler[recoverable actor or adapter error] --> Trap[trap / trap_fut or BusHandle::err]
-    Trap --> ErrorEvent[typed InterfoldError event]
+    Trap --> ErrorEvent[typed LoxleyError event]
     ErrorEvent --> Durable[normal durable event pipeline]
     Durable --> Observers[logs, collectors, and interested actors]
 
@@ -820,7 +820,7 @@ flowchart TD
 
 Startup barriers propagate errors to the caller and fail closed where continuing would drop
 historical or live input. Awaited network bridges stop when their destination actor closes.
-Recoverable handler failures are generally converted into durable `InterfoldError` events by the
+Recoverable handler failures are generally converted into durable `LoxleyError` events by the
 existing `trap` helpers; a logged error is not itself a supervision restart. EventStore write
 failures preserve safety by panicking before dispatch, but the default unwind build does not turn a
 spawned Actix actor panic into a guaranteed process exit. The store actor can die while the process

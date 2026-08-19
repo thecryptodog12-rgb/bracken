@@ -10,10 +10,10 @@ import CardContent from '../components/CardContent'
 import Spinner from '../components/Spinner'
 import ErrorDisplay from '../components/ErrorDisplay'
 import { useWizard, WizardStep } from '../../context/WizardContext'
-import { decodePlaintextOutput } from '@interfold/sdk'
+import { decodePlaintextOutput } from '@loxley/sdk'
 
 /**
- * EncryptSubmit component - Fourth step in the Interfold wizard flow
+ * EncryptSubmit component - Fourth step in the Loxley wizard flow
  *
  * This component handles the encryption and submission of user inputs to the E3.
  * It provides feedback on the encryption process and displays the status of the
@@ -22,7 +22,7 @@ import { decodePlaintextOutput } from '@interfold/sdk'
 const EncryptSubmit: React.FC = () => {
   const { e3State, setE3State, setResult, setCurrentStep, inputPublishError, inputPublishSuccess, handleTryAgain, handleReset, sdk } =
     useWizard()
-  const { isInitialized, onInterfoldEvent, off, InterfoldEventType } = sdk
+  const { isInitialized, onLoxleyEvent, off, LoxleyEventType } = sdk
 
   const [showErrorDetails, setShowErrorDetails] = useState(false)
   const [isExpired, setIsExpired] = useState(false)
@@ -57,14 +57,14 @@ const EncryptSubmit: React.FC = () => {
       })
     }
 
-    onInterfoldEvent(InterfoldEventType.CIPHERTEXT_OUTPUT_PUBLISHED, handleCiphertextOutput)
-    onInterfoldEvent(InterfoldEventType.PLAINTEXT_OUTPUT_PUBLISHED, handlePlaintextOutput)
+    onLoxleyEvent(LoxleyEventType.CIPHERTEXT_OUTPUT_PUBLISHED, handleCiphertextOutput)
+    onLoxleyEvent(LoxleyEventType.PLAINTEXT_OUTPUT_PUBLISHED, handlePlaintextOutput)
 
     return () => {
-      off(InterfoldEventType.CIPHERTEXT_OUTPUT_PUBLISHED, handleCiphertextOutput)
-      off(InterfoldEventType.PLAINTEXT_OUTPUT_PUBLISHED, handlePlaintextOutput)
+      off(LoxleyEventType.CIPHERTEXT_OUTPUT_PUBLISHED, handleCiphertextOutput)
+      off(LoxleyEventType.PLAINTEXT_OUTPUT_PUBLISHED, handlePlaintextOutput)
     }
-  }, [isInitialized, onInterfoldEvent, off, InterfoldEventType, setE3State, setResult])
+  }, [isInitialized, onLoxleyEvent, off, LoxleyEventType, setE3State, setResult])
 
   // Check for E3 expiration
   useEffect(() => {

@@ -3,7 +3,7 @@ name = "e3-program-server"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "E3 - Interfold Program Server"
+description = "E3 - Loxley Program Server"
 repository.workspace = true
 
 [dependencies]

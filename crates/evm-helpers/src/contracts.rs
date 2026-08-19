@@ -124,7 +124,7 @@ sol! {
 
     #[derive(Debug)]
     #[sol(rpc)]
-    contract Interfold {
+    contract Loxley {
         uint256 public nexte3Id = 0;
         mapping(address e3Program => bool allowed) public e3Programs;
         function request(E3RequestParams calldata requestParams) external returns (uint256 e3Id, E3 memory e3);
@@ -145,9 +145,9 @@ sol! {
     }
 }
 
-/// Trait for read-only operations on the Interfold contract
+/// Trait for read-only operations on the Loxley contract
 #[async_trait]
-pub trait InterfoldRead {
+pub trait LoxleyRead {
     /// Get the next E3 ID
     async fn get_e3_id(&self) -> Result<U256>;
 
@@ -187,10 +187,10 @@ pub trait InterfoldRead {
     async fn get_param_set_registry(&self, param_set: u8) -> Result<Bytes>;
 }
 
-/// Trait for write operations on the Interfold contract
+/// Trait for write operations on the Loxley contract
 #[async_trait]
 #[allow(clippy::too_many_arguments)]
-pub trait InterfoldWrite {
+pub trait LoxleyWrite {
     /// Request a new E3
     async fn request_e3(
         &self,
@@ -232,25 +232,25 @@ pub trait ProviderType: Clone + Send + Sync + 'static {
 #[derive(Clone)]
 pub struct ReadOnly;
 impl ProviderType for ReadOnly {
-    type Provider = InterfoldReadOnlyProvider;
+    type Provider = LoxleyReadOnlyProvider;
 }
 /// Marker type for read-write provider
 #[derive(Clone)]
 pub struct ReadWrite;
 impl ProviderType for ReadWrite {
-    type Provider = InterfoldWriteProvider;
+    type Provider = LoxleyWriteProvider;
 }
 
-/// Generic Interfold contract
+/// Generic Loxley contract
 #[derive(Clone)]
-pub struct InterfoldContract<T: ProviderType> {
+pub struct LoxleyContract<T: ProviderType> {
     pub provider: Arc<T::Provider>,
     pub contract_address: Address,
     pub wallet_address: Option<Address>,
     _marker: PhantomData<T>,
 }
 
-impl<R: ProviderType> InterfoldContract<R> {
+impl<R: ProviderType> LoxleyContract<R> {
     pub fn address(&self) -> &Address {
         &self.contract_address
     }
@@ -259,27 +259,27 @@ impl<R: ProviderType> InterfoldContract<R> {
     }
 }
 
-impl InterfoldContract<ReadWrite> {
+impl LoxleyContract<ReadWrite> {
     pub async fn new(
         http_rpc_url: &str,
         private_key: &str,
         contract_address: &str,
-    ) -> Result<InterfoldContract<ReadWrite>> {
-        InterfoldContractFactory::create_write(http_rpc_url, contract_address, private_key).await
+    ) -> Result<LoxleyContract<ReadWrite>> {
+        LoxleyContractFactory::create_write(http_rpc_url, contract_address, private_key).await
     }
 }
 
-impl InterfoldContract<ReadOnly> {
+impl LoxleyContract<ReadOnly> {
     pub async fn read_only(
         http_rpc_url: &str,
         contract_address: &str,
-    ) -> Result<InterfoldContract<ReadOnly>> {
-        InterfoldContractFactory::create_read(http_rpc_url, contract_address).await
+    ) -> Result<LoxleyContract<ReadOnly>> {
+        LoxleyContractFactory::create_read(http_rpc_url, contract_address).await
     }
 }
 
 /// Type alias for read-only provider
-pub type InterfoldReadOnlyProvider = FillProvider<
+pub type LoxleyReadOnlyProvider = FillProvider<
     JoinFill<
         Identity,
         JoinFill<GasFiller, JoinFill<BlobGasFiller, JoinFill<NonceFiller, ChainIdFiller>>>,
@@ -288,7 +288,7 @@ pub type InterfoldReadOnlyProvider = FillProvider<
 >;
 
 /// Type alias for read-write provider
-pub type InterfoldWriteProvider = FillProvider<
+pub type LoxleyWriteProvider = FillProvider<
     JoinFill<
         JoinFill<
             Identity,
@@ -301,19 +301,19 @@ pub type InterfoldWriteProvider = FillProvider<
 >;
 
 /// Type aliases for the two contract variants
-pub type InterfoldReadContract = InterfoldContract<ReadOnly>;
-pub type InterfoldWriteContract = InterfoldContract<ReadWrite>;
+pub type LoxleyReadContract = LoxleyContract<ReadOnly>;
+pub type LoxleyWriteContract = LoxleyContract<ReadWrite>;
 
 // Factory for creating contract instances
-pub struct InterfoldContractFactory;
+pub struct LoxleyContractFactory;
 
-impl InterfoldContractFactory {
+impl LoxleyContractFactory {
     /// Create a write-capable contract
     pub async fn create_write(
         rpc_url: &str,
         contract_address: &str,
         private_key: &str,
-    ) -> Result<InterfoldContract<ReadWrite>> {
+    ) -> Result<LoxleyContract<ReadWrite>> {
         let contract_address = contract_address.parse()?;
 
         let signer: PrivateKeySigner = private_key.parse()?;
@@ -324,7 +324,7 @@ impl InterfoldContractFactory {
             .connect(rpc_url)
             .await?;
 
-        Ok(InterfoldContract::<ReadWrite> {
+        Ok(LoxleyContract::<ReadWrite> {
             provider: Arc::new(provider),
             contract_address,
             wallet_address: Some(wallet_address),
@@ -336,12 +336,12 @@ impl InterfoldContractFactory {
     pub async fn create_read(
         rpc_url: &str,
         contract_address: &str,
-    ) -> Result<InterfoldContract<ReadOnly>> {
+    ) -> Result<LoxleyContract<ReadOnly>> {
         let contract_address = contract_address.parse()?;
 
         let provider = ProviderBuilder::new().connect(rpc_url).await?;
 
-        Ok(InterfoldContract::<ReadOnly> {
+        Ok(LoxleyContract::<ReadOnly> {
             provider: Arc::new(provider),
             contract_address,
             wallet_address: None,
@@ -350,20 +350,20 @@ impl InterfoldContractFactory {
     }
 }
 
-// Implement InterfoldRead for any InterfoldContract regardless of provider type
+// Implement LoxleyRead for any LoxleyContract regardless of provider type
 #[async_trait]
-impl<T: Send + Sync> InterfoldRead for InterfoldContract<T>
+impl<T: Send + Sync> LoxleyRead for LoxleyContract<T>
 where
     T: ProviderType,
 {
     async fn get_e3_id(&self) -> Result<U256> {
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let e3_id = contract.nexte3Id().call().await?;
         Ok(e3_id)
     }
 
     async fn get_e3(&self, e3_id: U256) -> Result<E3> {
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let e3_return = contract.getE3(e3_id).call().await?;
         Ok(e3_return)
     }
@@ -374,7 +374,7 @@ where
     }
 
     async fn is_e3_program_enabled(&self, e3_program: Address) -> Result<bool> {
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let enabled = contract.e3Programs(e3_program).call().await?;
         Ok(enabled)
     }
@@ -399,56 +399,56 @@ where
             maxFee: U256::ZERO,
         };
 
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let fee = contract.getE3Quote(e3_request).call().await?;
         Ok(fee)
     }
 
     async fn get_e3_stage(&self, e3_id: U256) -> Result<E3Stage> {
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let stage = contract.getE3Stage(e3_id).call().await?;
         Ok(stage)
     }
 
     async fn get_failure_reason(&self, e3_id: U256) -> Result<FailureReason> {
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let reason = contract.getFailureReason(e3_id).call().await?;
         Ok(reason)
     }
 
     async fn get_requester(&self, e3_id: U256) -> Result<Address> {
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let requester = contract.getRequester(e3_id).call().await?;
         Ok(requester)
     }
 
     async fn get_deadlines(&self, e3_id: U256) -> Result<E3Deadlines> {
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let deadlines = contract.getDeadlines(e3_id).call().await?;
         Ok(deadlines)
     }
 
     async fn get_timeout_config(&self) -> Result<E3TimeoutConfig> {
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let config = contract.getTimeoutConfig().call().await?;
         Ok(config)
     }
 
     async fn get_e3_crypto_config_id(&self, e3_id: U256) -> Result<B256> {
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         Ok(contract.e3CryptoConfigIds(e3_id).call().await?)
     }
 
     async fn get_param_set_registry(&self, param_set: u8) -> Result<Bytes> {
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let params = contract.paramSetRegistry(param_set).call().await?;
         Ok(params)
     }
 }
 
-// Implement InterfoldWrite only for contracts with ReadWrite marker
+// Implement LoxleyWrite only for contracts with ReadWrite marker
 #[async_trait]
-impl InterfoldWrite for InterfoldContract<ReadWrite> {
+impl LoxleyWrite for LoxleyContract<ReadWrite> {
     async fn request_e3(
         &self,
         committee_size: CommitteeSize,
@@ -464,7 +464,7 @@ impl InterfoldWrite for InterfoldContract<ReadWrite> {
             .ok_or_else(|| eyre::eyre!("No wallet address configured"))?;
         let nonce = get_next_nonce(&*self.provider, wallet_addr).await?;
 
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let fee_token = contract.feeToken().call().await?;
         let crypto_config_id = contract.activeCryptoConfigId().call().await?;
 
@@ -513,7 +513,7 @@ impl InterfoldWrite for InterfoldContract<ReadWrite> {
             .ok_or_else(|| eyre::eyre!("No wallet address configured"))?;
         let nonce = get_next_nonce(&*self.provider, wallet_addr).await?;
 
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let builder = contract.registerE3Program(e3_program).nonce(nonce);
         let receipt = builder.send().await?.get_receipt().await?;
         e3_utils::require_successful_receipt("register E3 program", &receipt)?;
@@ -534,7 +534,7 @@ impl InterfoldWrite for InterfoldContract<ReadWrite> {
             .ok_or_else(|| eyre::eyre!("No wallet address configured"))?;
         let nonce = get_next_nonce(&*self.provider, wallet_addr).await?;
 
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let builder = contract
             .publishCiphertextOutput(e3_id, data, ciphertext_commitment, proof)
             .nonce(nonce);
@@ -556,7 +556,7 @@ impl InterfoldWrite for InterfoldContract<ReadWrite> {
             .ok_or_else(|| eyre::eyre!("No wallet address configured"))?;
         let nonce = get_next_nonce(&*self.provider, wallet_addr).await?;
 
-        let contract = Interfold::new(self.contract_address, &self.provider);
+        let contract = Loxley::new(self.contract_address, &self.provider);
         let builder = contract
             .publishPlaintextOutput(e3_id, data, proof)
             .nonce(nonce);

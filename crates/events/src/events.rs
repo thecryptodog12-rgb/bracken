@@ -9,7 +9,7 @@ use std::collections::HashMap;
 use actix::{Message, Recipient};
 use anyhow::Result;
 
-use crate::{AggregateId, CorrelationId, EventSource, InterfoldEvent, Sequenced, Unsequenced};
+use crate::{AggregateId, CorrelationId, EventSource, LoxleyEvent, Sequenced, Unsequenced};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum EventStoreFilter {
@@ -20,13 +20,13 @@ pub enum EventStoreFilter {
 #[derive(Message, Debug)]
 #[rtype("()")]
 pub struct StoreEventRequested {
-    pub event: InterfoldEvent<Unsequenced>,
+    pub event: LoxleyEvent<Unsequenced>,
     pub sender: Recipient<StoreEventResponse>,
 }
 
 impl StoreEventRequested {
     pub fn new(
-        event: InterfoldEvent<Unsequenced>,
+        event: LoxleyEvent<Unsequenced>,
         sender: impl Into<Recipient<StoreEventResponse>>,
     ) -> Self {
         Self {
@@ -41,25 +41,25 @@ impl StoreEventRequested {
 #[rtype("()")]
 pub struct EventStoreQueryResponse {
     id: CorrelationId,
-    result: std::result::Result<Vec<InterfoldEvent<Sequenced>>, String>,
+    result: std::result::Result<Vec<LoxleyEvent<Sequenced>>, String>,
 }
 
 impl EventStoreQueryResponse {
-    pub fn new(id: CorrelationId, events: Vec<InterfoldEvent>) -> Self {
+    pub fn new(id: CorrelationId, events: Vec<LoxleyEvent>) -> Self {
         Self {
             id,
             result: Ok(events),
         }
     }
 
-    pub fn from_result(id: CorrelationId, result: Result<Vec<InterfoldEvent>>) -> Self {
+    pub fn from_result(id: CorrelationId, result: Result<Vec<LoxleyEvent>>) -> Self {
         Self {
             id,
             result: result.map_err(|error| format!("{error:#}")),
         }
     }
 
-    pub fn into_events(self) -> Result<Vec<InterfoldEvent>> {
+    pub fn into_events(self) -> Result<Vec<LoxleyEvent>> {
         self.result.map_err(anyhow::Error::msg)
     }
 
@@ -71,10 +71,10 @@ impl EventStoreQueryResponse {
 /// Direct event received by the Sequencer once an event has been stored
 #[derive(Message, Debug)]
 #[rtype("()")]
-pub struct StoreEventResponse(pub InterfoldEvent<Sequenced>);
+pub struct StoreEventResponse(pub LoxleyEvent<Sequenced>);
 
 impl StoreEventResponse {
-    pub fn into_event(self) -> InterfoldEvent<Sequenced> {
+    pub fn into_event(self) -> LoxleyEvent<Sequenced> {
         self.0
     }
 }

@@ -15,7 +15,7 @@ use chrono::Utc;
 use e3_ciphernode_builder::EventSystem;
 use e3_events::{
     BusHandle, CiphernodeSelected, DocumentKind, DocumentMeta, E3id, EncryptionKey,
-    EncryptionKeyCreated, GetEvents, HistoryCollector, InterfoldError, InterfoldEvent,
+    EncryptionKeyCreated, GetEvents, HistoryCollector, LoxleyError, LoxleyEvent,
     PublishDocumentRequested, TakeEvents,
 };
 use e3_utils::ArcBytes;
@@ -35,8 +35,8 @@ fn setup_test() -> Result<(
     mpsc::Receiver<NetCommand>,
     broadcast::Sender<NetEvent>,
     Arc<broadcast::Receiver<NetEvent>>,
-    Addr<HistoryCollector<InterfoldEvent>>,
-    Addr<HistoryCollector<InterfoldEvent>>,
+    Addr<HistoryCollector<LoxleyEvent>>,
+    Addr<HistoryCollector<LoxleyEvent>>,
     Addr<DocumentPublisher>,
 )> {
     use tracing_subscriber::{fmt, EnvFilter};
@@ -53,10 +53,10 @@ fn setup_test() -> Result<(
     let (net_cmd_tx, net_cmd_rx) = mpsc::channel(100);
     let (net_evt_tx, net_evt_rx) = broadcast::channel(100);
     let net_evt_rx = Arc::new(net_evt_rx);
-    let history = HistoryCollector::<InterfoldEvent>::new().start();
-    let error = HistoryCollector::<InterfoldEvent>::new().start();
+    let history = HistoryCollector::<LoxleyEvent>::new().start();
+    let error = HistoryCollector::<LoxleyEvent>::new().start();
     bus.subscribe(EventType::All, history.clone().recipient());
-    bus.subscribe(EventType::InterfoldError, error.clone().recipient());
+    bus.subscribe(EventType::LoxleyError, error.clone().recipient());
     let publisher = DocumentPublisher::setup(&bus, &net_cmd_tx, &net_evt_rx, "topic");
 
     Ok((

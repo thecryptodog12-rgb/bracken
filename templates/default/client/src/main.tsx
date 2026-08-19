@@ -16,7 +16,7 @@ const CHAINS = import.meta.env.DEV ? ([sepolia, anvil] as const) : ([sepolia] as
 
 const wagmiConfig = createConfig(
   getDefaultConfig({
-    appName: 'Interfold E3',
+    appName: 'Loxley E3',
     enableFamily: false,
     chains: CHAINS,
     walletConnectProjectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID!,

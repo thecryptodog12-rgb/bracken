@@ -9,13 +9,13 @@ description:
 
 The Secure Process defines the core computation for your E3 Program. It runs within your selected
 Compute Provider's environment, ultimately producing a ciphertext output that is decrypted by your
-Ciphernode Committee. To facilitate this, Interfold provides a
-[Compute Provider package](https://github.com/theinterfold/interfold/tree/main/crates/compute-provider)
+Ciphernode Committee. To facilitate this, Loxley provides a
+[Compute Provider package](https://github.com/theloxley/loxley/tree/main/crates/compute-provider)
 to simplify writing the Secure Process with any Compute Provider.
 
 ### Using the Compute Provider Package
 
-To simplify integration with the Interfold, use the provided Compute Provider package.
+To simplify integration with the Loxley, use the provided Compute Provider package.
 
 **Benefits:**
 
@@ -111,7 +111,7 @@ expects:
 - The `FHEInputs` struct that consists of the FHE parameters and the ciphertexts to use. Each
   ciphertext is a tuple of `(bytes, index)` where `index` is the position in the input set.
 - The Secure Process function `fhe_processor`
-- The [`InputPolicy`](https://github.com/theinterfold/interfold/tree/main/crates/compute-provider)
+- The [`InputPolicy`](https://github.com/theloxley/loxley/tree/main/crates/compute-provider)
   your E3 program exports, which decides the leaf layout and which inputs are computed over.
 
 The `FHEInputs` struct is defined as:

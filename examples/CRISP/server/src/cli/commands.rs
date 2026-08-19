@@ -22,7 +22,7 @@ use crisp::config::CONFIG;
 use crisp::deployments;
 use e3_fhe_params::build_bfv_params_from_set_arc;
 use e3_sdk::evm_helpers::contracts::{
-    CommitteeSize, InterfoldContract, InterfoldRead, InterfoldWrite,
+    CommitteeSize, LoxleyContract, LoxleyRead, LoxleyWrite,
 };
 use fhe::bfv::{BfvParameters, Ciphertext, Encoding, Plaintext, PublicKey, SecretKey};
 use fhe_traits::{
@@ -102,7 +102,7 @@ fn format_request_e3_revert(err: impl std::fmt::Display) -> anyhow::Error {
              requires at least {n} active operators (bondingRegistry.numActiveOperators() is too low). \
              Register ciphernodes before init: run full `pnpm dev:up`, or from examples/CRISP run \
              `pnpm ciphernode:add --ciphernode-address <addr> --network localhost` until at least {n} \
-             nodes are active. Default dev config uses Minimum (N=3, cn1–cn3 in interfold.config.yaml).",
+             nodes are active. Default dev config uses Minimum (N=3, cn1–cn3 in loxley.config.yaml).",
             label = label,
             size = CONFIG.e3_committee_size,
             n = n,
@@ -206,10 +206,10 @@ pub async fn initialize_crisp_round(
     token_address: &str,
     balance_threshold: &str,
 ) -> Result<U256, Box<dyn std::error::Error + Send + Sync>> {
-    let contract = InterfoldContract::new(
+    let contract = LoxleyContract::new(
         &CONFIG.http_rpc_url,
         &CONFIG.private_key,
-        &CONFIG.interfold_address,
+        &CONFIG.loxley_address,
     )
     .await?;
     let e3_program: Address = CONFIG.e3_program_address.parse()?;
@@ -316,14 +316,14 @@ pub async fn initialize_crisp_round(
         &CONFIG.http_rpc_url,
         &CONFIG.private_key,
         &CONFIG.fee_token_address,
-        &CONFIG.interfold_address,
+        &CONFIG.loxley_address,
         fee_amount,
     )
     .await?;
 
     current_timestamp = get_current_timestamp().await?;
 
-    info!("Requesting E3 on contract: {}", CONFIG.interfold_address);
+    info!("Requesting E3 on contract: {}", CONFIG.loxley_address);
 
     info!("Debug - committee_size: {:?}", committee_size);
     info!("Debug - input_window: {:?}", input_window);
@@ -379,7 +379,7 @@ pub async fn participate_in_existing_round(
 
     let url = format!(
         "{}/rounds/public-key",
-        CONFIG.interfold_server_url_for_clients()
+        CONFIG.loxley_server_url_for_clients()
     );
     let resp = client
         .post(&url)
@@ -400,7 +400,7 @@ pub async fn participate_in_existing_round(
         let contract = CRISPContract::new(
             &CONFIG.http_rpc_url,
             &CONFIG.private_key,
-            &CONFIG.interfold_address,
+            &CONFIG.loxley_address,
         )
         .await?;
         let res = contract
@@ -425,7 +425,7 @@ pub async fn decrypt_and_publish_result(
 
     let url = format!(
         "{}/rounds/ciphertext",
-        CONFIG.interfold_server_url_for_clients()
+        CONFIG.loxley_server_url_for_clients()
     );
     let resp = client
         .post(&url)
@@ -453,10 +453,10 @@ pub async fn decrypt_and_publish_result(
 
     let proof = Bytes::from(vec![0]);
 
-    let contract = InterfoldContract::new(
+    let contract = LoxleyContract::new(
         &CONFIG.http_rpc_url,
         &CONFIG.private_key,
-        &CONFIG.interfold_address,
+        &CONFIG.loxley_address,
     )
     .await?;
     let res = contract

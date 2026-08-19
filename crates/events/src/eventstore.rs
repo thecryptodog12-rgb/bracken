@@ -7,7 +7,7 @@
 use crate::{
     events::{FlushEventStores, StoreEventRequested, StoreEventResponse},
     Event, EventContextAccessors, EventLog, EventStoreFilter, EventStoreQueryBy,
-    EventStoreQueryResponse, InterfoldEvent, Seq, SequenceIndex, Sequenced, Ts, Unsequenced,
+    EventStoreQueryResponse, LoxleyEvent, Seq, SequenceIndex, Sequenced, Ts, Unsequenced,
 };
 use actix::{Actor, AsyncContext, Handler, Recipient, WrapFuture};
 use anyhow::{bail, Context as _, Result};
@@ -27,8 +27,8 @@ impl<I: SequenceIndex, L: EventLog> EventStore<I, L> {
     /// logical event identity and may legitimately change during historical redelivery.
     pub fn store_event(
         &mut self,
-        event: InterfoldEvent<Unsequenced>,
-    ) -> Result<Option<InterfoldEvent<Sequenced>>> {
+        event: LoxleyEvent<Unsequenced>,
+    ) -> Result<Option<LoxleyEvent<Sequenced>>> {
         let ts = event.ts();
         if let Some(indexed_seq) = self.index.get(ts)? {
             let Some((logged_seq, existing)) = self.log.read_from_bounded(indexed_seq, 1)?.next()
@@ -72,10 +72,10 @@ impl<I: SequenceIndex, L: EventLog> EventStore<I, L> {
 
     fn collect_events(
         &self,
-        iter: Box<dyn Iterator<Item = (u64, InterfoldEvent<Unsequenced>)>>,
+        iter: Box<dyn Iterator<Item = (u64, LoxleyEvent<Unsequenced>)>>,
         filter: Option<EventStoreFilter>,
         limit: Option<u64>,
-    ) -> Vec<InterfoldEvent<Sequenced>> {
+    ) -> Vec<LoxleyEvent<Sequenced>> {
         let iter = iter.map(|(s, e)| e.into_sequenced(s));
 
         match filter {
@@ -99,7 +99,7 @@ impl<I: SequenceIndex, L: EventLog> EventStore<I, L> {
         query: u128,
         filter: Option<EventStoreFilter>,
         limit: Option<u64>,
-    ) -> Result<Vec<InterfoldEvent<Sequenced>>> {
+    ) -> Result<Vec<LoxleyEvent<Sequenced>>> {
         let Some(seq) = self.index.seek(query)? else {
             return Ok(vec![]);
         };
@@ -123,7 +123,7 @@ impl<I: SequenceIndex, L: EventLog> EventStore<I, L> {
         query: u64,
         filter: Option<EventStoreFilter>,
         limit: Option<u64>,
-    ) -> Result<Vec<InterfoldEvent<Sequenced>>> {
+    ) -> Result<Vec<LoxleyEvent<Sequenced>>> {
         // H7: the replay cursor must never point past the log head. The snapshot
         // cursor is committed atomically with its snapshot data, so a cursor ahead
         // of the log can only happen if the two unsynchronised flush timers
@@ -180,7 +180,7 @@ impl<I: SequenceIndex, L: EventLog> EventStore<I, L> {
                 if seq != next_sequence {
                     bail!(
                         "Event log integrity failure during index reconciliation: expected sequence \
-                         {next_sequence}, got {seq}. Halting; run `interfold node validate` and \
+                         {next_sequence}, got {seq}. Halting; run `loxley node validate` and \
                          recover from a verified backup or controlled resync."
                     );
                 }
@@ -223,7 +223,7 @@ impl<I: SequenceIndex, L: EventLog> EventStore<I, L> {
                 bail!(
                     "Event log integrity failure during index reconciliation: log head is {head}, \
                      but no event was returned for sequence {next_sequence}. Halting; run \
-                     `interfold node validate` and recover from a verified backup or controlled \
+                     `loxley node validate` and recover from a verified backup or controlled \
                      resync."
                 );
             }
@@ -377,7 +377,7 @@ mod tests {
     // Mock EventLog backed by Vec
     // ---------------------------------------------------------------------------
     struct MockLog {
-        events: Vec<InterfoldEvent<Unsequenced>>,
+        events: Vec<LoxleyEvent<Unsequenced>>,
         bounded_read_calls: Option<Arc<AtomicUsize>>,
         bounded_read_limit: Option<Arc<AtomicUsize>>,
         flushes: Option<Arc<AtomicUsize>>,
@@ -420,7 +420,7 @@ mod tests {
         }
 
         fn with_reconcile_trackers(
-            events: Vec<InterfoldEvent<Unsequenced>>,
+            events: Vec<LoxleyEvent<Unsequenced>>,
             bounded_read_calls: Arc<AtomicUsize>,
             bounded_read_limit: Arc<AtomicUsize>,
             unbounded_read_calls: Arc<AtomicUsize>,
@@ -444,7 +444,7 @@ mod tests {
     }
 
     impl EventLog for MockLog {
-        fn append(&mut self, event: &InterfoldEvent<Unsequenced>) -> Result<u64> {
+        fn append(&mut self, event: &LoxleyEvent<Unsequenced>) -> Result<u64> {
             self.events.push(event.clone());
             Ok(self.events.len() as u64)
         }
@@ -459,7 +459,7 @@ mod tests {
         fn read_from(
             &self,
             from: u64,
-        ) -> Result<Box<dyn Iterator<Item = (u64, InterfoldEvent<Unsequenced>)>>> {
+        ) -> Result<Box<dyn Iterator<Item = (u64, LoxleyEvent<Unsequenced>)>>> {
             if self.fail_reads {
                 bail!("simulated event-log integrity failure");
             }
@@ -480,7 +480,7 @@ mod tests {
             &self,
             from: u64,
             limit: usize,
-        ) -> Result<Box<dyn Iterator<Item = (u64, InterfoldEvent<Unsequenced>)>>> {
+        ) -> Result<Box<dyn Iterator<Item = (u64, LoxleyEvent<Unsequenced>)>>> {
             if self.fail_reads {
                 bail!("simulated event-log integrity failure");
             }
@@ -509,8 +509,8 @@ mod tests {
     // ---------------------------------------------------------------------------
     // Test helpers
     // ---------------------------------------------------------------------------
-    fn make_event(ts: u128, source: EventSource) -> InterfoldEvent<Unsequenced> {
-        InterfoldEvent::<Unsequenced>::new_with_timestamp(
+    fn make_event(ts: u128, source: EventSource) -> LoxleyEvent<Unsequenced> {
+        LoxleyEvent::<Unsequenced>::new_with_timestamp(
             TestEvent::new("test", 1).into(),
             None,
             ts,
@@ -519,8 +519,8 @@ mod tests {
         )
     }
 
-    fn make_distinct_event(ts: u128, source: EventSource) -> InterfoldEvent<Unsequenced> {
-        InterfoldEvent::<Unsequenced>::new_with_timestamp(
+    fn make_distinct_event(ts: u128, source: EventSource) -> LoxleyEvent<Unsequenced> {
+        LoxleyEvent::<Unsequenced>::new_with_timestamp(
             TestEvent::new("different", 2).into(),
             None,
             ts,
@@ -529,11 +529,11 @@ mod tests {
         )
     }
 
-    fn make_local_event(ts: u128) -> InterfoldEvent<Unsequenced> {
+    fn make_local_event(ts: u128) -> LoxleyEvent<Unsequenced> {
         make_event(ts, EventSource::Local)
     }
 
-    fn make_network_event(ts: u128) -> InterfoldEvent<Unsequenced> {
+    fn make_network_event(ts: u128) -> LoxleyEvent<Unsequenced> {
         make_event(ts, EventSource::Net)
     }
 
@@ -541,7 +541,7 @@ mod tests {
         EventStore::new(MockIndex::new(), MockLog::new()).unwrap()
     }
 
-    fn populated_store(events: &[InterfoldEvent<Unsequenced>]) -> EventStore<MockIndex, MockLog> {
+    fn populated_store(events: &[LoxleyEvent<Unsequenced>]) -> EventStore<MockIndex, MockLog> {
         let mut store = new_store();
         for event in events {
             store.store_event(event.clone()).unwrap();

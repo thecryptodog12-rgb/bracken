@@ -7,10 +7,10 @@ pragma solidity >=0.8.27;
 
 import { IRiscZeroVerifier } from "risc0/IRiscZeroVerifier.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { IE3Program } from "@interfold/contracts/contracts/interfaces/IE3Program.sol";
-import { IInterfold } from "@interfold/contracts/contracts/interfaces/IInterfold.sol";
-import { E3 } from "@interfold/contracts/contracts/interfaces/IE3.sol";
-import { Risc0ComputeProof } from "@interfold/contracts/contracts/lib/Risc0ComputeProof.sol";
+import { IE3Program } from "@loxley/contracts/contracts/interfaces/IE3Program.sol";
+import { ILoxley } from "@loxley/contracts/contracts/interfaces/ILoxley.sol";
+import { E3 } from "@loxley/contracts/contracts/interfaces/IE3.sol";
+import { Risc0ComputeProof } from "@loxley/contracts/contracts/lib/Risc0ComputeProof.sol";
 import { LazyIMTData, InternalLazyIMT } from "@zk-kit/lazy-imt.sol/InternalLazyIMT.sol";
 import { SNARK_SCALAR_FIELD } from "@zk-kit/lazy-imt.sol/Constants.sol";
 import { EIP712 } from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
@@ -18,7 +18,7 @@ import { IHonkVerifier } from "./interfaces/IHonkVerifier.sol";
 import { IVotesToken } from "./interfaces/IVotesToken.sol";
 import { IERC6372Clock } from "./interfaces/IERC6372Clock.sol";
 
-interface IInterfoldProgramRegistry {
+interface ILoxleyProgramRegistry {
   function e3Programs(IE3Program e3Program) external view returns (bool);
 }
 
@@ -125,7 +125,7 @@ contract CRISPProgram is IE3Program, Ownable, EIP712 {
   /// that fits in a uint256.
   uint8 constant MAX_DERIVABLE_DECIMALS = 78;
   // State variables
-  IInterfold public interfold;
+  ILoxley public loxley;
   IRiscZeroVerifier public risc0Verifier;
   bytes32 public imageId;
   /// @notice Verifies ballots for the census modes that prove membership of a Merkle tree.
@@ -146,9 +146,9 @@ contract CRISPProgram is IE3Program, Ownable, EIP712 {
   // Errors
   error CallerNotAuthorized();
   error E3AlreadyInitialized();
-  error InterfoldAddressZero();
-  error InterfoldAlreadyBound();
-  error InterfoldNotContract();
+  error LoxleyAddressZero();
+  error LoxleyAlreadyBound();
+  error LoxleyNotContract();
   error ProgramNotRegistered();
   error Risc0VerifierAddressZero();
   error InvalidHonkVerifier();
@@ -198,7 +198,7 @@ contract CRISPProgram is IE3Program, Ownable, EIP712 {
   error InvalidComputeContext();
 
   // Events
-  event InterfoldBound(address indexed interfold);
+  event LoxleyBound(address indexed loxley);
 
   /// @notice A ciphertext input was accepted for a round.
   /// @dev Carries the slot and the commitment as well as the bytes. Both are already public — the
@@ -214,8 +214,8 @@ contract CRISPProgram is IE3Program, Ownable, EIP712 {
     uint40 parentIndexPlusOne
   );
 
-  /// @notice Initialize the contract without an Interfold controller.
-  /// @dev The owner binds the controller after Interfold registers this program.
+  /// @notice Initialize the contract without an Loxley controller.
+  /// @dev The owner binds the controller after Loxley registers this program.
   /// @param _initialOwner The account that can configure and bind this program.
   /// @param _risc0Verifier The RISC Zero verifier address
   /// @param _honkVerifier The honk verifier address
@@ -237,19 +237,19 @@ contract CRISPProgram is IE3Program, Ownable, EIP712 {
     imageId = _imageId;
   }
 
-  /// @notice Bind this program to its permanent Interfold controller.
-  /// @dev Interfold must register this program before the owner calls this function.
-  /// @param _interfold The Interfold controller that registered this program.
-  function bindInterfold(IInterfold _interfold) external onlyOwner {
-    if (address(interfold) != address(0)) revert InterfoldAlreadyBound();
-    if (address(_interfold) == address(0)) revert InterfoldAddressZero();
-    if (address(_interfold).code.length == 0) revert InterfoldNotContract();
-    if (!IInterfoldProgramRegistry(address(_interfold)).e3Programs(IE3Program(address(this)))) {
+  /// @notice Bind this program to its permanent Loxley controller.
+  /// @dev Loxley must register this program before the owner calls this function.
+  /// @param _loxley The Loxley controller that registered this program.
+  function bindLoxley(ILoxley _loxley) external onlyOwner {
+    if (address(loxley) != address(0)) revert LoxleyAlreadyBound();
+    if (address(_loxley) == address(0)) revert LoxleyAddressZero();
+    if (address(_loxley).code.length == 0) revert LoxleyNotContract();
+    if (!ILoxleyProgramRegistry(address(_loxley)).e3Programs(IE3Program(address(this)))) {
       revert ProgramNotRegistered();
     }
 
-    interfold = _interfold;
-    emit InterfoldBound(address(_interfold));
+    loxley = _loxley;
+    emit LoxleyBound(address(_loxley));
   }
 
   /// @notice The digest a voter signs to authorise one ballot.
@@ -276,7 +276,7 @@ contract CRISPProgram is IE3Program, Ownable, EIP712 {
   }
 
   /// @notice Set the Image ID for the guest program
-  /// @dev This value is application state, not protocol state. Interfold snapshots the protocol
+  /// @dev This value is application state, not protocol state. Loxley snapshots the protocol
   /// ciphertext verifier for each E3 at request time, and that verifier's own `imageId` is
   /// immutable, so changing this value cannot replace a computation the protocol already accepted.
   /// It can still break an E3 that is in flight: `verify` would then check the receipt against a
@@ -376,7 +376,7 @@ contract CRISPProgram is IE3Program, Ownable, EIP712 {
     bytes calldata,
     bytes calldata customParams
   ) external returns (bytes32) {
-    if (msg.sender != address(interfold) && msg.sender != owner()) revert CallerNotAuthorized();
+    if (msg.sender != address(loxley) && msg.sender != owner()) revert CallerNotAuthorized();
     if (e3Data[e3Id].paramsHash != bytes32(0)) revert E3AlreadyInitialized();
 
     // Delegated to its own frame rather than scoped inline: `validate` is close enough to the
@@ -491,11 +491,11 @@ contract CRISPProgram is IE3Program, Ownable, EIP712 {
 
   /// @inheritdoc IE3Program
   function publishInput(uint256 e3Id, bytes memory data) external {
-    E3 memory e3 = interfold.getE3(e3Id);
+    E3 memory e3 = loxley.getE3(e3Id);
 
     // check that we are in the correct stage
-    IInterfold.E3Stage stage = interfold.getE3Stage(e3Id);
-    if (stage != IInterfold.E3Stage.KeyPublished) {
+    ILoxley.E3Stage stage = loxley.getE3Stage(e3Id);
+    if (stage != ILoxley.E3Stage.KeyPublished) {
       revert KeyNotPublished(e3Id);
     }
 
@@ -653,7 +653,7 @@ contract CRISPProgram is IE3Program, Ownable, EIP712 {
   /// @param e3Id The E3 program ID
   /// @return votes - an array of vote counts for each option
   function decodeTally(uint256 e3Id) public view returns (uint256[] memory votes) {
-    E3 memory e3 = interfold.getE3(e3Id);
+    E3 memory e3 = loxley.getE3(e3Id);
 
     uint256 numOptions = e3Data[e3Id].numOptions;
 
@@ -724,7 +724,7 @@ contract CRISPProgram is IE3Program, Ownable, EIP712 {
     bytes32 ciphertextCommitment,
     bytes memory proof
   ) external view override returns (bool) {
-    E3 memory e3 = interfold.getE3(e3Id);
+    E3 memory e3 = loxley.getE3(e3Id);
     bytes32 paramsHash = getParamsHash(e3Id);
     bytes32 inputRoot = bytes32(e3Data[e3Id].votes._root());
     Risc0ComputeProof.Proof memory computeProof = Risc0ComputeProof.decode(proof);
@@ -732,7 +732,7 @@ contract CRISPProgram is IE3Program, Ownable, EIP712 {
 
     bytes memory journal = Risc0ComputeProof.journal(
       bytes32(block.chainid),
-      bytes32(uint256(uint160(address(interfold)))),
+      bytes32(uint256(uint160(address(loxley)))),
       bytes32(e3Id),
       e3.encryptionSchemeId,
       e3.committeePublicKey,

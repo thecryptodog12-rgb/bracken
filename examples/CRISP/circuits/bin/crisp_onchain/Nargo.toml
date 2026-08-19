@@ -2,8 +2,8 @@
 name = "crisp_onchain"
 type = "bin"
 version = "0.1.0"
-authors = ["Gnosis Guild / Interfold"]
+authors = ["Gnosis Guild / Loxley"]
 
 [dependencies]
-interfold_lib = { path = "../../../../../circuits/lib" }
+loxley_lib = { path = "../../../../../circuits/lib" }
 crisp_lib = { path = "../../lib" }

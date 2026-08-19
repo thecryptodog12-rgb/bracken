@@ -3,7 +3,7 @@ name = "e3-request"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "E3 - Interfold Ciphernode E3Request Handling Components"
+description = "E3 - Loxley Ciphernode E3Request Handling Components"
 repository.workspace = true
 
 [dependencies]

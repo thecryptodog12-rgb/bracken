@@ -1,12 +1,12 @@
 # Sortition and E3 Complete Flow
 
-This document describes the complete flow of the Interfold system, from operator registration
+This document describes the complete flow of the Loxley system, from operator registration
 through E3 computation request, sortition, committee selection, keyshare generation, public key
 aggregation, encryption, and decryption.
 
 ## Overview
 
-The Interfold system uses a score-based sortition mechanism to select a committee of ciphernodes to
+The Loxley system uses a score-based sortition mechanism to select a committee of ciphernodes to
 perform threshold homomorphic encryption operations. The flow involves:
 
 1. **Operator Setup** - Bonding ciphernode bond tokens and ticket balance
@@ -328,7 +328,7 @@ reserve collateral or reduce the range that Solidity accepts. On-chain candidate
 | `CiphernodeRemoved`  | address, index, numNodes, chainId         | Node removal           |
 | `CommitteeRequested` | e3Id, entropyBlock, requestBlock, chainId | Delayed sortition seed |
 
-### Interfold Events
+### Loxley Events
 
 | Event                       | Parameters                                                     | Purpose               |
 | --------------------------- | -------------------------------------------------------------- | --------------------- |

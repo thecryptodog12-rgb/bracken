@@ -14,12 +14,12 @@ use e3_events::{
 use e3_test_helpers::get_common_setup;
 use e3_utils::utility_types::ArcBytes;
 
-fn test_ctx(data: impl Into<InterfoldEventData>) -> EventContext<Sequenced> {
+fn test_ctx(data: impl Into<LoxleyEventData>) -> EventContext<Sequenced> {
     EventContext::<Unsequenced>::from(data.into()).sequence(0)
 }
 
-async fn next_event(history: &Addr<HistoryCollector<InterfoldEvent>>) -> Result<InterfoldEvent> {
-    let mut result = history.send(TakeEvents::<InterfoldEvent>::new(1)).await?;
+async fn next_event(history: &Addr<HistoryCollector<LoxleyEvent>>) -> Result<LoxleyEvent> {
+    let mut result = history.send(TakeEvents::<LoxleyEvent>::new(1)).await?;
     assert!(!result.timed_out, "timed out waiting for an event");
     Ok(result.events.pop().expect("expected one event"))
 }
@@ -62,7 +62,7 @@ async fn c0_compute_error_emits_e3_failed() -> Result<()> {
     let event = next_event(&history).await?;
     assert!(matches!(
         event.into_data(),
-        InterfoldEventData::E3Failed(data)
+        LoxleyEventData::E3Failed(data)
             if data.e3_id == e3_id
                 && data.failed_at_stage == E3Stage::CommitteeFinalized
                 && data.reason == FailureReason::DKGInvalidShares
@@ -91,7 +91,7 @@ async fn decryption_failure_helper_emits_e3_failed() -> Result<()> {
     let event = next_event(&history).await?;
     assert!(matches!(
         event.into_data(),
-        InterfoldEventData::E3Failed(data)
+        LoxleyEventData::E3Failed(data)
             if data.e3_id == e3_id
                 && data.failed_at_stage == E3Stage::CiphertextReady
                 && data.reason == FailureReason::DecryptionInvalidShares

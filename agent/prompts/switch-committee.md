@@ -9,10 +9,10 @@ Input: a committee name `minimum` | `micro` | `small`, optionally
 Rules — read `agent/INVARIANTS.md` §Committee config sync first:
 
 1. NEVER hand-edit the synced files (`circuits/lib/src/configs/committee/active.nr`,
-   `circuits/bin/.active-preset.json`, `packages/interfold-contracts/scripts/utils.ts`, parity
+   `circuits/bin/.active-preset.json`, `packages/loxley-contracts/scripts/utils.ts`, parity
    matrices). The only legal mechanism is the build script.
 2. Run `pnpm build:circuits --committee <name> [--preset <preset>]`. This requires `nargo` and `bb`
-   on PATH (`interfold noir setup` installs a matching toolchain) — if they're missing, stop and
+   on PATH (`loxley noir setup` installs a matching toolchain) — if they're missing, stop and
    tell the user rather than improvising.
 3. Verify with `pnpm check:committee` and report its output.
 4. Remind the user of the operational consequences: wrapper Solidity verifiers (`BfvPkVerifier`,

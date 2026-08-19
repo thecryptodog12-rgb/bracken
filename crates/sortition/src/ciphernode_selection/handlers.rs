@@ -4,27 +4,27 @@
 
 use super::*;
 
-impl Handler<InterfoldEvent> for CiphernodeSelector {
+impl Handler<LoxleyEvent> for CiphernodeSelector {
     type Result = ();
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            InterfoldEventData::E3Requested(data) => {
+            LoxleyEventData::E3Requested(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::E3RequestComplete(data) => {
+            LoxleyEventData::E3RequestComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::CommitteeFinalized(data) => {
+            LoxleyEventData::CommitteeFinalized(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::CommitteeMemberExpelled(data) => {
+            LoxleyEventData::CommitteeMemberExpelled(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::CommitteeMemberExcluded(data) => {
+            LoxleyEventData::CommitteeMemberExcluded(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::Shutdown(data) => self.notify_sync(ctx, data),
+            LoxleyEventData::Shutdown(data) => self.notify_sync(ctx, data),
             _ => (),
         }
     }

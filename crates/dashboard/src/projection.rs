@@ -9,7 +9,7 @@
 use alloy::primitives::U256;
 use e3_events::{
     hlc::HlcTimestamp, E3Stage, Event, EventContextAccessors, EventContextSeq, EventSource,
-    InterfoldEvent, InterfoldEventData,
+    LoxleyEvent, LoxleyEventData,
 };
 use serde::Serialize;
 use serde_json::{json, Map, Value};
@@ -245,7 +245,7 @@ impl TelemetryProjection {
         }
     }
 
-    pub fn apply(&mut self, event: InterfoldEvent) {
+    pub fn apply(&mut self, event: LoxleyEvent) {
         let view = project_event(&event, &self.local_address);
         self.apply_operator_state(event.get_data());
         if let Some(e3_id) = view.e3_id.clone() {
@@ -308,22 +308,22 @@ impl TelemetryProjection {
         }
     }
 
-    fn apply_operator_state(&mut self, data: &InterfoldEventData) {
+    fn apply_operator_state(&mut self, data: &LoxleyEventData) {
         match data {
-            InterfoldEventData::CiphernodeAdded(event) => {
+            LoxleyEventData::CiphernodeAdded(event) => {
                 self.chains
                     .entry(event.chain_id)
                     .or_default()
                     .registered
                     .insert(normalize_address(&event.address));
             }
-            InterfoldEventData::CiphernodeRemoved(event) => {
+            LoxleyEventData::CiphernodeRemoved(event) => {
                 let state = self.chains.entry(event.chain_id).or_default();
                 let address = normalize_address(&event.address);
                 state.registered.remove(&address);
                 state.active.remove(&address);
             }
-            InterfoldEventData::OperatorActivationChanged(event) => {
+            LoxleyEventData::OperatorActivationChanged(event) => {
                 let state = self.chains.entry(event.chain_id).or_default();
                 let operator = normalize_address(&event.operator);
                 if event.active {
@@ -332,7 +332,7 @@ impl TelemetryProjection {
                     state.active.remove(&operator);
                 }
             }
-            InterfoldEventData::TicketBalanceUpdated(event)
+            LoxleyEventData::TicketBalanceUpdated(event)
                 if normalize_address(&event.operator) == self.local_address =>
             {
                 self.chains
@@ -340,7 +340,7 @@ impl TelemetryProjection {
                     .or_default()
                     .ticket_balance = Some(event.new_balance.to_string());
             }
-            InterfoldEventData::CiphernodeBondUpdated(event)
+            LoxleyEventData::CiphernodeBondUpdated(event)
                 if normalize_address(&event.operator) == self.local_address =>
             {
                 self.chains
@@ -348,13 +348,13 @@ impl TelemetryProjection {
                     .or_default()
                     .ciphernode_bond = Some(event.new_bond.to_string());
             }
-            InterfoldEventData::BondOwnerSet(event)
+            LoxleyEventData::BondOwnerSet(event)
                 if normalize_address(&event.operator) == self.local_address =>
             {
                 self.chains.entry(event.chain_id).or_default().bond_owner =
                     Some(event.bond_owner.clone());
             }
-            InterfoldEventData::CiphernodeDeregistrationRequested(event)
+            LoxleyEventData::CiphernodeDeregistrationRequested(event)
                 if normalize_address(&event.operator) == self.local_address =>
             {
                 self.chains
@@ -362,7 +362,7 @@ impl TelemetryProjection {
                     .or_default()
                     .exit_unlock_at = Some(event.unlock_at);
             }
-            InterfoldEventData::RewardCredited(event)
+            LoxleyEventData::RewardCredited(event)
                 if normalize_address(&event.account) == self.local_address =>
             {
                 self.chains
@@ -379,7 +379,7 @@ impl TelemetryProjection {
                         },
                     });
             }
-            InterfoldEventData::RewardClaimed(event)
+            LoxleyEventData::RewardClaimed(event)
                 if normalize_address(&event.account) == self.local_address =>
             {
                 let state = self.chains.entry(event.e3_id.chain_id()).or_default();
@@ -399,7 +399,7 @@ impl TelemetryProjection {
         }
     }
 
-    fn apply_e3_state(&mut self, e3_id: &str, data: &InterfoldEventData, view: &EventView) {
+    fn apply_e3_state(&mut self, e3_id: &str, data: &LoxleyEventData, view: &EventView) {
         let chain_id = e3_id
             .split_once(':')
             .and_then(|(chain, _)| chain.parse().ok())
@@ -424,24 +424,24 @@ impl TelemetryProjection {
         }
 
         match data {
-            InterfoldEventData::CommitteeFinalized(event) => {
+            LoxleyEventData::CommitteeFinalized(event) => {
                 state.committee = event.committee.clone();
                 state.scores = event.scores.clone();
             }
-            InterfoldEventData::CommitteePublished(event) if state.committee.is_empty() => {
+            LoxleyEventData::CommitteePublished(event) if state.committee.is_empty() => {
                 state.committee = event.nodes.clone();
             }
-            InterfoldEventData::TicketSubmitted(event) => state.tickets.push(TicketView {
+            LoxleyEventData::TicketSubmitted(event) => state.tickets.push(TicketView {
                 node: event.node.clone(),
                 ticket_id: event.ticket_id,
                 score: event.score.clone(),
             }),
-            InterfoldEventData::CommitteeMemberExpelled(event) => {
+            LoxleyEventData::CommitteeMemberExpelled(event) => {
                 state
                     .expelled
                     .insert(normalize_address(&event.node.to_string()));
             }
-            InterfoldEventData::E3Failed(event) => {
+            LoxleyEventData::E3Failed(event) => {
                 state.status = "failed".to_owned();
                 state.failed_phase = view.phase;
                 state.failure = Some(json!({
@@ -449,7 +449,7 @@ impl TelemetryProjection {
                     "reason": event.reason,
                 }));
             }
-            InterfoldEventData::CommitteeFormationFailed(event) => {
+            LoxleyEventData::CommitteeFormationFailed(event) => {
                 state.status = "failed".to_owned();
                 state.failed_phase = Some(E3Phase::Committee);
                 state.failure = Some(json!({
@@ -458,11 +458,11 @@ impl TelemetryProjection {
                     "threshold_required": event.threshold_required,
                 }));
             }
-            InterfoldEventData::E3RequestComplete(_)
-            | InterfoldEventData::PlaintextOutputPublished(_) => {
+            LoxleyEventData::E3RequestComplete(_)
+            | LoxleyEventData::PlaintextOutputPublished(_) => {
                 state.status = "complete".to_owned();
             }
-            InterfoldEventData::E3StageChanged(event) => match event.new_stage {
+            LoxleyEventData::E3StageChanged(event) => match event.new_stage {
                 E3Stage::Complete => state.status = "complete".to_owned(),
                 E3Stage::Failed => {
                     let failed_phase = stage_phase(&event.previous_stage);
@@ -472,7 +472,7 @@ impl TelemetryProjection {
                 }
                 _ => {}
             },
-            InterfoldEventData::RewardsDistributed(event) => {
+            LoxleyEventData::RewardsDistributed(event) => {
                 state.reward_allocations = event
                     .nodes
                     .iter()
@@ -483,7 +483,7 @@ impl TelemetryProjection {
                     })
                     .collect();
             }
-            InterfoldEventData::RewardCredited(event) => {
+            LoxleyEventData::RewardCredited(event) => {
                 state.rewards.push(RewardView {
                     account: event.account.clone(),
                     token: Some(event.token.clone()),
@@ -491,7 +491,7 @@ impl TelemetryProjection {
                     claimed: false,
                 });
             }
-            InterfoldEventData::RewardClaimed(event) => {
+            LoxleyEventData::RewardClaimed(event) => {
                 mark_claimed_rewards(
                     state.rewards.iter_mut(),
                     &event.account,
@@ -505,7 +505,7 @@ impl TelemetryProjection {
     }
 }
 
-fn project_event(event: &InterfoldEvent, local_address: &str) -> EventView {
+fn project_event(event: &LoxleyEvent, local_address: &str) -> EventView {
     let timestamp = HlcTimestamp::from(event.ts());
     let source = match event.source() {
         EventSource::Local => "local",
@@ -514,14 +514,14 @@ fn project_event(event: &InterfoldEvent, local_address: &str) -> EventView {
     };
     let producer = match (event.source(), event.get_data()) {
         (EventSource::Local, _) => local_address.to_owned(),
-        (EventSource::Evm, InterfoldEventData::EvmLogObserved(observed)) => {
+        (EventSource::Evm, LoxleyEventData::EvmLogObserved(observed)) => {
             observed.contract.clone()
         }
         (EventSource::Evm, _) => "on-chain contract".to_owned(),
         (EventSource::Net, _) => format!("node:{:08x}", timestamp.node),
     };
     let event_type = match event.get_data() {
-        InterfoldEventData::EvmLogObserved(observed) => {
+        LoxleyEventData::EvmLogObserved(observed) => {
             format!("{}::{}", observed.contract, observed.event_name)
         }
         _ => event.event_type(),
@@ -546,9 +546,9 @@ fn project_event(event: &InterfoldEvent, local_address: &str) -> EventView {
     }
 }
 
-fn phase(data: &InterfoldEventData) -> Option<E3Phase> {
+fn phase(data: &LoxleyEventData) -> Option<E3Phase> {
     use E3Phase as P;
-    use InterfoldEventData as E;
+    use LoxleyEventData as E;
     match data {
         E::E3Requested(_) => Some(P::Request),
         E::CommitteeRequested(_)
@@ -662,10 +662,10 @@ fn stage_phase(stage: &E3Stage) -> E3Phase {
     }
 }
 
-fn severity(data: &InterfoldEventData) -> EventSeverity {
-    use InterfoldEventData as E;
+fn severity(data: &LoxleyEventData) -> EventSeverity {
+    use LoxleyEventData as E;
     match data {
-        E::InterfoldError(_)
+        E::LoxleyError(_)
         | E::E3Failed(_)
         | E::CommitteeFormationFailed(_)
         | E::ProofVerificationFailed(_)
@@ -685,7 +685,7 @@ fn severity(data: &InterfoldEventData) -> EventSeverity {
     }
 }
 
-fn compact_payload(data: &InterfoldEventData) -> Value {
+fn compact_payload(data: &LoxleyEventData) -> Value {
     let serialized = serde_json::to_value(data)
         .unwrap_or_else(|error| json!({ "serialization_error": error.to_string() }));
     let payload = match serialized {
@@ -1092,8 +1092,8 @@ mod tests {
         assert!(rewards.iter().all(|reward| !reward.claimed));
     }
 
-    fn replay_event(data: InterfoldEventData, seq: u64, timestamp: u128) -> InterfoldEvent {
-        InterfoldEvent::<Unsequenced>::new_with_timestamp(
+    fn replay_event(data: LoxleyEventData, seq: u64, timestamp: u128) -> LoxleyEvent {
+        LoxleyEvent::<Unsequenced>::new_with_timestamp(
             data,
             None,
             timestamp,

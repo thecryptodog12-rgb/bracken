@@ -29,15 +29,15 @@ jq -e '
 
 # Set password
 echo "Setting password"
-jq -er '.password' "$SECRETS_FILE" | interfold password set --config "$CONFIG_FILE" --password-stdin
+jq -er '.password' "$SECRETS_FILE" | loxley password set --config "$CONFIG_FILE" --password-stdin
 
 echo "Setting wallet key"
 # The refactored wallet command atomically derives and stores the libp2p key
 # from the operator key, so a separate network-key command is no longer used.
-jq -er '.private_key' "$SECRETS_FILE" | interfold wallet set --config "$CONFIG_FILE" --private-key-stdin
+jq -er '.private_key' "$SECRETS_FILE" | loxley wallet set --config "$CONFIG_FILE" --private-key-stdin
 
 rm -f "$SECRETS_FILE"
 
 echo "Starting ciphernode"
-exec interfold start -v --config "$CONFIG_FILE"
+exec loxley start -v --config "$CONFIG_FILE"
 

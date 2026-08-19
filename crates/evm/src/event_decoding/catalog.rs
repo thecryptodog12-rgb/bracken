@@ -39,7 +39,7 @@ pub(crate) fn find(contract: &str, topic0: B256) -> Option<&'static EvmEventDefi
 
 fn catalog(contract: &str) -> &'static [EvmEventDefinition] {
     match contract {
-        "Interfold" => INTERFOLD,
+        "Loxley" => LOXLEY,
         "BondingRegistry" => BONDING_REGISTRY,
         "CiphernodeRegistry" => CIPHERNODE_REGISTRY,
         "SlashingManager" => SLASHING_MANAGER,
@@ -72,7 +72,7 @@ const RETIRED_BONDING_REGISTRY: &[EvmEventDefinition] = &[
     ),
 ];
 
-const INTERFOLD: &[EvmEventDefinition] = &[
+const LOXLEY: &[EvmEventDefinition] = &[
     EvmEventDefinition::new("BondingRegistrySet", "BondingRegistrySet(address)", None),
     EvmEventDefinition::new("CiphernodeRegistrySet", "CiphernodeRegistrySet(address)", None),
     EvmEventDefinition::new(
@@ -414,7 +414,7 @@ const CIPHERNODE_REGISTRY: &[EvmEventDefinition] = &[
         None,
     ),
     EvmEventDefinition::new("Initialized", "Initialized(uint64)", None),
-    EvmEventDefinition::new("InterfoldSet", "InterfoldSet(address)", None),
+    EvmEventDefinition::new("LoxleySet", "LoxleySet(address)", None),
     EvmEventDefinition::new(
         "OwnershipTransferStarted",
         "OwnershipTransferStarted(address,address)",
@@ -514,10 +514,10 @@ const SLASHING_MANAGER: &[EvmEventDefinition] = &[
         None,
     ),
     EvmEventDefinition::new("EIP712DomainChanged", "EIP712DomainChanged()", None),
-    EvmEventDefinition::new("InterfoldSet", "InterfoldSet(address)", None),
+    EvmEventDefinition::new("LoxleySet", "LoxleySet(address)", None),
     EvmEventDefinition::new(
-        "InterfoldUpdated",
-        "InterfoldUpdated(address,address)",
+        "LoxleyUpdated",
+        "LoxleyUpdated(address,address)",
         None,
     ),
     EvmEventDefinition::new(
@@ -575,8 +575,8 @@ mod tests {
 
     const CONTRACT_ARTIFACTS: &[(&str, &str)] = &[
         (
-            "Interfold",
-            "artifacts/contracts/Interfold.sol/Interfold.json",
+            "Loxley",
+            "artifacts/contracts/Loxley.sol/Loxley.json",
         ),
         (
             "BondingRegistry",
@@ -594,7 +594,7 @@ mod tests {
 
     fn artifact_path(relative: &str) -> PathBuf {
         PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("../../packages/interfold-contracts")
+            .join("../../packages/loxley-contracts")
             .join(relative)
     }
 
@@ -651,7 +651,7 @@ mod tests {
     #[test]
     fn every_contract_catalog_has_unique_topics() {
         for contract in [
-            "Interfold",
+            "Loxley",
             "BondingRegistry",
             "CiphernodeRegistry",
             "SlashingManager",
@@ -676,7 +676,7 @@ mod tests {
         );
 
         let treasury = keccak256("TreasuryCredited(uint256,address,address,uint256)");
-        let definition = find("Interfold", treasury).unwrap();
+        let definition = find("Loxley", treasury).unwrap();
         assert_eq!(definition.name, "TreasuryCredited");
         assert_eq!(definition.e3_id_topic, Some(1));
     }
@@ -706,7 +706,7 @@ mod tests {
     #[test]
     fn retired_signatures_never_shadow_a_live_one() {
         for contract in [
-            "Interfold",
+            "Loxley",
             "BondingRegistry",
             "CiphernodeRegistry",
             "SlashingManager",

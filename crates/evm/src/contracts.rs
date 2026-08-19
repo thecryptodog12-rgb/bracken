@@ -15,12 +15,12 @@
 
 use alloy::sol;
 
-// ── IInterfold ───────────────────────────────────────────────────────────────
+// ── ILoxley ───────────────────────────────────────────────────────────────
 
 sol! {
     #[sol(rpc)]
     #[derive(Debug)]
-    interface IInterfold {
+    interface ILoxley {
         struct E3 {
             uint256 seed;
             uint8 committeeSize;

@@ -11,53 +11,53 @@ impl Actor for Sortition {
     }
 }
 
-impl Handler<InterfoldEvent> for Sortition {
+impl Handler<LoxleyEvent> for Sortition {
     type Result = ();
 
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            InterfoldEventData::E3Requested(data) => {
+            LoxleyEventData::E3Requested(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::CiphernodeAdded(data) => {
+            LoxleyEventData::CiphernodeAdded(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::CiphernodeRemoved(data) => {
+            LoxleyEventData::CiphernodeRemoved(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::TicketBalanceUpdated(data) => {
+            LoxleyEventData::TicketBalanceUpdated(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::OperatorActivationChanged(data) => {
+            LoxleyEventData::OperatorActivationChanged(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ConfigurationUpdated(data) => {
+            LoxleyEventData::ConfigurationUpdated(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::CommitteeRequested(data) => {
+            LoxleyEventData::CommitteeRequested(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::CommitteePublished(data) => {
+            LoxleyEventData::CommitteePublished(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::PlaintextOutputPublished(data) => {
+            LoxleyEventData::PlaintextOutputPublished(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::CommitteeFinalized(data) => {
+            LoxleyEventData::CommitteeFinalized(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::CommitteeMemberExpelled(data) => {
+            LoxleyEventData::CommitteeMemberExpelled(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::CommitteeMemberExcluded(data) => {
+            LoxleyEventData::CommitteeMemberExcluded(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::E3Failed(data) => self.notify_sync(ctx, TypedEvent::new(data, ec)),
-            InterfoldEventData::E3StageChanged(data) => {
+            LoxleyEventData::E3Failed(data) => self.notify_sync(ctx, TypedEvent::new(data, ec)),
+            LoxleyEventData::E3StageChanged(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::E3RequestComplete(data) => {
+            LoxleyEventData::E3RequestComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
             _ => (),

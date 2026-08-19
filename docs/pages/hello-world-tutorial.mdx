@@ -23,7 +23,7 @@ We'll create a simple E3 program that:
 
 Before starting, ensure you have:
 
-- [Interfold CLI installed](/installation)
+- [Loxley CLI installed](/installation)
 - Basic knowledge of Rust and TypeScript
 - Rust, Docker, Node.js, and pnpm installed
 
@@ -32,7 +32,7 @@ Before starting, ensure you have:
 Create a new E3 project:
 
 ```bash
-interfold init hello-world-e3
+loxley init hello-world-e3
 cd hello-world-e3
 ```
 
@@ -44,7 +44,7 @@ hello-world-e3/
 ├── contracts/         # Smart contracts (Solidity)
 ├── client/           # Frontend application (React/TypeScript)
 ├── server/           # Coordination server (TypeScript)
-├── interfold.config.yaml # Interfold configuration
+├── loxley.config.yaml # Loxley configuration
 └── README.md         # Project documentation
 ```
 
@@ -116,7 +116,7 @@ pub fn fhe_processor(fhe_inputs: &FHEInputs) -> Vec<u8> {
 
 ## Step 4: Understanding the Configuration
 
-The `interfold.config.yaml` file configures your development environment:
+The `loxley.config.yaml` file configures your development environment:
 
 ```yaml
 chains:
@@ -146,7 +146,7 @@ nodes:
 Compile your modified program:
 
 ```bash
-interfold program compile
+loxley program compile
 ```
 
 Start the development environment:
@@ -160,8 +160,8 @@ pnpm dev:all
 The client application (in `./client/`) handles:
 
 1. **Encryption**: User inputs → encrypted ciphertexts
-2. **Submission**: Publish encrypted data to the Interfold contract
-3. **Result retrieval**: Get the decrypted result from the Interfold contract
+2. **Submission**: Publish encrypted data to the Loxley contract
+3. **Result retrieval**: Get the decrypted result from the Loxley contract
 
 ## Step 7: Test Your Program
 
@@ -193,7 +193,7 @@ Modify your program to accept three or more encrypted inputs.
 
 Customize the client application in `./client/src/` to match your computation.
 
-Happy building with the Interfold! 🚀
+Happy building with the Loxley! 🚀
 
 ## Next Steps
 

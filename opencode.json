@@ -12,9 +12,9 @@
     }
   },
   "mcp": {
-    "interfold-docs": {
+    "loxley-docs": {
       "type": "local",
-      "command": ["pnpm", "--filter", "@interfold/mcp", "exec", "tsx", "src/index.ts"],
+      "command": ["pnpm", "--filter", "@loxley/mcp", "exec", "tsx", "src/index.ts"],
       "enabled": true,
       "timeout": 15000
     }

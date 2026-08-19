@@ -8,25 +8,25 @@ impl Actor for NodeProofAggregator {
     type Context = Context<Self>;
 }
 
-impl Handler<InterfoldEvent> for NodeProofAggregator {
+impl Handler<LoxleyEvent> for NodeProofAggregator {
     type Result = ();
 
-    fn handle(&mut self, msg: InterfoldEvent, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, _ctx: &mut Self::Context) -> Self::Result {
         let (data, ec) = msg.into_components();
         match data {
-            InterfoldEventData::DkgFoldAttestationContextEstablished(data) => {
+            LoxleyEventData::DkgFoldAttestationContextEstablished(data) => {
                 self.handle_dkg_fold_attestation_context(TypedEvent::new(data, ec));
             }
-            InterfoldEventData::ThresholdSharePending(data) => {
+            LoxleyEventData::ThresholdSharePending(data) => {
                 self.handle_threshold_share_pending(TypedEvent::new(data, ec));
             }
-            InterfoldEventData::DKGInnerProofReady(data) => {
+            LoxleyEventData::DKGInnerProofReady(data) => {
                 self.handle_inner_proof_ready(TypedEvent::new(data, ec));
             }
-            InterfoldEventData::ComputeResponse(data) => {
+            LoxleyEventData::ComputeResponse(data) => {
                 self.handle_compute_response(TypedEvent::new(data, ec));
             }
-            InterfoldEventData::ComputeRequestError(data) => {
+            LoxleyEventData::ComputeRequestError(data) => {
                 self.handle_compute_request_error(TypedEvent::new(data, ec));
             }
             _ => {}

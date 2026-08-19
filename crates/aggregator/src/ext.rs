@@ -24,7 +24,7 @@ use e3_data::{AutoPersist, Persistable, RepositoriesFactory};
 use e3_events::{
     prelude::*, CiphernodeSelected, CiphertextOutputPublished, DkgFoldAttestationContext, E3id,
 };
-use e3_events::{BusHandle, EType, InterfoldEvent, InterfoldEventData};
+use e3_events::{BusHandle, EType, LoxleyEvent, LoxleyEventData};
 use e3_fhe::ext::FHE_KEY;
 use e3_fhe::Fhe;
 use e3_fhe_params::BfvPreset;
@@ -64,9 +64,9 @@ const ERROR_PUBKEY_META_MISSING:&str = "Could not create PublicKeyAggregator bec
 
 #[async_trait]
 impl E3Extension for PublicKeyAggregatorExtension {
-    fn on_event(&self, ctx: &mut E3Context, evt: &InterfoldEvent) {
+    fn on_event(&self, ctx: &mut E3Context, evt: &LoxleyEvent) {
         // Create the public-key aggregation pipeline only for finalized committee members.
-        let InterfoldEventData::CiphernodeSelected(data) = evt.get_data() else {
+        let LoxleyEventData::CiphernodeSelected(data) = evt.get_data() else {
             return;
         };
 
@@ -215,7 +215,7 @@ fn create_publickey_aggregator(
     params_preset: BfvPreset,
     committee_size: CiphernodesCommitteeSize,
     dkg_fold_attestation_context: Option<DkgFoldAttestationContext>,
-) -> Recipient<InterfoldEvent> {
+) -> Recipient<LoxleyEvent> {
     KeyshareCreatedFilterBuffer::new(
         PublicKeyAggregator::new(
             PublicKeyAggregatorParams {
@@ -562,7 +562,7 @@ fn load_is_active_aggregator(ctx: &E3Context) -> bool {
 fn create_decryptionshare_buffer(
     dest: Addr<ThresholdPlaintextAggregator>,
     initial_is_aggregator: bool,
-) -> Recipient<InterfoldEvent> {
+) -> Recipient<LoxleyEvent> {
     DecryptionshareCreatedBuffer::new_with_aggregator_state(dest, initial_is_aggregator)
         .start()
         .into()
@@ -570,8 +570,8 @@ fn create_decryptionshare_buffer(
 
 #[async_trait]
 impl E3Extension for ThresholdPlaintextAggregatorExtension {
-    fn on_event(&self, ctx: &mut E3Context, evt: &InterfoldEvent) {
-        if let InterfoldEventData::AggregatorChanged(data) = evt.get_data() {
+    fn on_event(&self, ctx: &mut E3Context, evt: &LoxleyEvent) {
+        if let LoxleyEventData::AggregatorChanged(data) = evt.get_data() {
             ctx.set_dependency(ACTIVE_AGGREGATOR_KEY, data.is_aggregator);
             if let Some(ciphertext) = ctx.get_dependency(PENDING_CIPHERTEXT_OUTPUT_KEY).cloned() {
                 self.try_start_plaintext(ctx, &ciphertext);
@@ -579,14 +579,14 @@ impl E3Extension for ThresholdPlaintextAggregatorExtension {
             return;
         }
 
-        if matches!(evt.get_data(), InterfoldEventData::CiphernodeSelected(_)) {
+        if matches!(evt.get_data(), LoxleyEventData::CiphernodeSelected(_)) {
             if let Some(ciphertext) = ctx.get_dependency(PENDING_CIPHERTEXT_OUTPUT_KEY).cloned() {
                 self.try_start_plaintext(ctx, &ciphertext);
             }
             return;
         }
 
-        if let InterfoldEventData::PublicKeyAggregated(data) = evt.get_data() {
+        if let LoxleyEventData::PublicKeyAggregated(data) = evt.get_data() {
             let addrs = if !data.committee_addresses.is_empty() {
                 Ok(data.committee_addresses.clone())
             } else {
@@ -619,7 +619,7 @@ impl E3Extension for ThresholdPlaintextAggregatorExtension {
             return;
         }
 
-        if let InterfoldEventData::CommitteePublished(data) = evt.get_data() {
+        if let LoxleyEventData::CommitteePublished(data) = evt.get_data() {
             if let Err(e) = remember_committee_published(ctx, &data.e3_id, &data.nodes) {
                 self.bus.err(EType::PlaintextAggregation, e);
             }
@@ -630,7 +630,7 @@ impl E3Extension for ThresholdPlaintextAggregatorExtension {
         }
 
         // Save plaintext aggregator for finalized committee members.
-        let InterfoldEventData::CiphertextOutputPublished(data) = evt.get_data() else {
+        let LoxleyEventData::CiphertextOutputPublished(data) = evt.get_data() else {
             return;
         };
         ctx.set_dependency(PENDING_CIPHERTEXT_OUTPUT_KEY, data.clone());

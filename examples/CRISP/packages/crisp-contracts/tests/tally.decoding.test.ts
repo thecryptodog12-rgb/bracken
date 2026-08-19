@@ -17,8 +17,8 @@
 
 import { encodeVote, decodeTally, MAX_MSG_NON_ZERO_COEFFS, MAX_VOTE_OPTIONS } from '@crisp-e3/sdk'
 import { expect } from 'chai'
-import { deployCRISPProgram, deployMockInterfold } from './utils'
-import type { CRISPProgram, MockInterfold } from '../types'
+import { deployCRISPProgram, deployMockLoxley } from './utils'
+import type { CRISPProgram, MockLoxley } from '../types'
 
 /**
  * Pack polynomial coefficients exactly as the ciphernodes publish them:
@@ -43,20 +43,20 @@ const aggregateBallots = (ballots: number[][]): number[] =>
 describe('Tally decoding (SDK vs CRISPProgram)', function () {
   this.timeout(120000)
 
-  let mockInterfold: MockInterfold
+  let mockLoxley: MockLoxley
   let crispProgram: CRISPProgram
 
   before(async function () {
-    mockInterfold = await deployMockInterfold()
-    crispProgram = await deployCRISPProgram({ mockInterfold })
+    mockLoxley = await deployMockLoxley()
+    crispProgram = await deployCRISPProgram({ mockLoxley })
   })
 
   /** Publish a plaintext output for a fresh E3 and read back the on-chain tally. */
   const decodeOnChain = async (coefficients: number[], numOptions: number): Promise<bigint[]> => {
-    const e3Id = await mockInterfold.nextE3Id()
+    const e3Id = await mockLoxley.nextE3Id()
 
-    await mockInterfold.requestWithOptions(await crispProgram.getAddress(), numOptions)
-    await mockInterfold.setPlaintextOutput(packCoefficients(coefficients))
+    await mockLoxley.requestWithOptions(await crispProgram.getAddress(), numOptions)
+    await mockLoxley.setPlaintextOutput(packCoefficients(coefficients))
 
     return crispProgram.decodeTally(e3Id)
   }
@@ -136,16 +136,16 @@ describe('Tally decoding (SDK vs CRISPProgram)', function () {
     // The Noir circuit asserts num_options <= MAX_OPTIONS (10). A round above that could
     // never accept a ballot, so the contract and the SDK must reject it at the same point.
     it('should reject a round with more options than the circuit allows', async function () {
-      await expect(mockInterfold.requestWithOptions(await crispProgram.getAddress(), MAX_VOTE_OPTIONS + 1)).to.be.revertedWithCustomError(
+      await expect(mockLoxley.requestWithOptions(await crispProgram.getAddress(), MAX_VOTE_OPTIONS + 1)).to.be.revertedWithCustomError(
         crispProgram,
         'InvalidNumOptions',
       )
     })
 
     it('should accept a round at exactly MAX_VOTE_OPTIONS options', async function () {
-      const e3Id = await mockInterfold.nextE3Id()
+      const e3Id = await mockLoxley.nextE3Id()
 
-      await mockInterfold.requestWithOptions(await crispProgram.getAddress(), MAX_VOTE_OPTIONS)
+      await mockLoxley.requestWithOptions(await crispProgram.getAddress(), MAX_VOTE_OPTIONS)
 
       const [, , numOptions] = await crispProgram.getRoundData(e3Id)
       expect(numOptions).to.equal(BigInt(MAX_VOTE_OPTIONS))

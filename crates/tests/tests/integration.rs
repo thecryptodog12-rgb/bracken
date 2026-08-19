@@ -15,7 +15,7 @@ use e3_crypto::Cipher;
 use e3_events::{
     hlc::HlcTimestamp, prelude::*, BusHandle, CiphertextOutputPublished, CommitteeFinalized,
     CommitteeRequested, ComputeRequestKind, ComputeResponseKind, ConfigurationUpdated,
-    DkgFoldAttestationContextEstablished, E3Requested, E3id, InterfoldEvent, InterfoldEventData,
+    DkgFoldAttestationContextEstablished, E3Requested, E3id, LoxleyEvent, LoxleyEventData,
     OperatorActivationChanged, PlaintextAggregated, ProofType, Seed, TakeEvents,
     TicketBalanceUpdated, VerificationKind, ZkRequest, ZkResponse,
     DKG_FOLD_ATTESTATION_CONTEXT_SCHEMA_VERSION,
@@ -933,9 +933,9 @@ async fn expect_node_events_with_timeouts(
     Ok(h)
 }
 
-fn project_history<F>(history: &[InterfoldEvent], mut projector: F) -> Vec<&'static str>
+fn project_history<F>(history: &[LoxleyEvent], mut projector: F) -> Vec<&'static str>
 where
-    F: FnMut(&InterfoldEventData) -> Option<&'static str>,
+    F: FnMut(&LoxleyEventData) -> Option<&'static str>,
 {
     history
         .iter()
@@ -951,7 +951,7 @@ fn count_projected_events(projected: &[&str], event_type: &str) -> usize {
 /// appear on an all-honest benchmark run. Catches regressions such as spurious C2→C4
 /// commitment mismatches when N > H that completion-only assertions would miss.
 fn collect_honest_run_faults(
-    history: &[InterfoldEvent],
+    history: &[LoxleyEvent],
     e3_id: &E3id,
     context: &str,
 ) -> Vec<String> {
@@ -959,7 +959,7 @@ fn collect_honest_run_faults(
 
     for event in history {
         match event.get_data() {
-            InterfoldEventData::CommitmentConsistencyCheckComplete(data)
+            LoxleyEventData::CommitmentConsistencyCheckComplete(data)
                 if data.e3_id == *e3_id && !data.inconsistent_parties.is_empty() =>
             {
                 faults.push(format!(
@@ -967,31 +967,31 @@ fn collect_honest_run_faults(
                     data.kind, data.inconsistent_parties
                 ));
             }
-            InterfoldEventData::CommitmentConsistencyViolation(data) if data.e3_id == *e3_id => {
+            LoxleyEventData::CommitmentConsistencyViolation(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: CommitmentConsistencyViolation accused_party_id={} proof_type={:?}",
                     data.accused_party_id, data.proof_type
                 ));
             }
-            InterfoldEventData::ProofFailureAccusation(data) if data.e3_id == *e3_id => {
+            LoxleyEventData::ProofFailureAccusation(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: ProofFailureAccusation accuser={} accused_party_id={} proof_type={:?}",
                     data.accuser, data.accused_party_id, data.proof_type
                 ));
             }
-            InterfoldEventData::ProofVerificationFailed(data) if data.e3_id == *e3_id => {
+            LoxleyEventData::ProofVerificationFailed(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: ProofVerificationFailed accused_party_id={} proof_type={:?}",
                     data.accused_party_id, data.proof_type
                 ));
             }
-            InterfoldEventData::SignedProofFailed(data) if data.e3_id == *e3_id => {
+            LoxleyEventData::SignedProofFailed(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: SignedProofFailed faulting_node={} proof_type={:?}",
                     data.faulting_node, data.proof_type
                 ));
             }
-            InterfoldEventData::ShareVerificationComplete(data)
+            LoxleyEventData::ShareVerificationComplete(data)
                 if data.e3_id == *e3_id && !data.dishonest_parties.is_empty() =>
             {
                 faults.push(format!(
@@ -999,27 +999,27 @@ fn collect_honest_run_faults(
                     data.kind, data.dishonest_parties
                 ));
             }
-            InterfoldEventData::AccusationVote(data) if data.e3_id == *e3_id => {
+            LoxleyEventData::AccusationVote(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: AccusationVote voter={} accusation_id={:?}",
                     data.voter, data.accusation_id
                 ));
             }
-            InterfoldEventData::CommitteeMemberExpelled(data) if data.e3_id == *e3_id => {
+            LoxleyEventData::CommitteeMemberExpelled(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: CommitteeMemberExpelled node={} party_id={:?}",
                     data.node, data.party_id
                 ));
             }
-            InterfoldEventData::E3Failed(data) if data.e3_id == *e3_id => {
+            LoxleyEventData::E3Failed(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: E3Failed stage={:?} reason={:?}",
                     data.failed_at_stage, data.reason
                 ));
             }
-            InterfoldEventData::InterfoldError(data) => {
+            LoxleyEventData::LoxleyError(data) => {
                 faults.push(format!(
-                    "{context}: InterfoldError {:?}: {}",
+                    "{context}: LoxleyError {:?}: {}",
                     data.err_type, data.message
                 ));
             }
@@ -1030,7 +1030,7 @@ fn collect_honest_run_faults(
     faults
 }
 
-fn assert_honest_run_safeguards(history: &[InterfoldEvent], e3_id: &E3id, context: &str) {
+fn assert_honest_run_safeguards(history: &[LoxleyEvent], e3_id: &E3id, context: &str) {
     let faults = collect_honest_run_faults(history, e3_id, context);
     assert!(
         faults.is_empty(),
@@ -1042,13 +1042,13 @@ fn assert_honest_run_safeguards(history: &[InterfoldEvent], e3_id: &E3id, contex
 
 /// Wall seconds between first `start_when` and last `end_when` event in `history` (HLC physical time).
 fn history_wall_seconds_between<F1, F2>(
-    history: &[InterfoldEvent],
+    history: &[LoxleyEvent],
     start_when: F1,
     end_when: F2,
 ) -> Option<f64>
 where
-    F1: Fn(&InterfoldEventData) -> bool,
-    F2: Fn(&InterfoldEventData) -> bool,
+    F1: Fn(&LoxleyEventData) -> bool,
+    F2: Fn(&LoxleyEventData) -> bool,
 {
     let start = history.iter().find(|e| start_when(e.get_data()))?;
     let end = history.iter().rfind(|e| end_when(e.get_data()))?;
@@ -1057,87 +1057,87 @@ where
     (end_us >= start_us).then(|| (end_us - start_us) as f64 / 1_000_000.0)
 }
 
-fn publickey_aggregator_marker(data: &InterfoldEventData, e3_id: &E3id) -> Option<&'static str> {
+fn publickey_aggregator_marker(data: &LoxleyEventData, e3_id: &E3id) -> Option<&'static str> {
     match data {
-        InterfoldEventData::CommitteeFinalized(data) if data.e3_id == *e3_id => {
+        LoxleyEventData::CommitteeFinalized(data) if data.e3_id == *e3_id => {
             Some("CommitteeFinalized")
         }
-        InterfoldEventData::CiphernodeSelected(data) if data.e3_id == *e3_id => {
+        LoxleyEventData::CiphernodeSelected(data) if data.e3_id == *e3_id => {
             Some("CiphernodeSelected")
         }
-        InterfoldEventData::AggregatorChanged(data)
+        LoxleyEventData::AggregatorChanged(data)
             if data.e3_id == *e3_id && data.is_aggregator =>
         {
             Some("AggregatorChanged")
         }
-        InterfoldEventData::KeyshareCreated(data) if data.e3_id == *e3_id => {
+        LoxleyEventData::KeyshareCreated(data) if data.e3_id == *e3_id => {
             Some("KeyshareCreated")
         }
-        InterfoldEventData::ShareVerificationDispatched(data)
+        LoxleyEventData::ShareVerificationDispatched(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::PkGenerationProofs =>
         {
             Some("ShareVerificationDispatched")
         }
-        InterfoldEventData::CommitmentConsistencyCheckRequested(data)
+        LoxleyEventData::CommitmentConsistencyCheckRequested(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::PkGenerationProofs =>
         {
             Some("CommitmentConsistencyCheckRequested")
         }
-        InterfoldEventData::CommitmentConsistencyCheckComplete(data)
+        LoxleyEventData::CommitmentConsistencyCheckComplete(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::PkGenerationProofs =>
         {
             Some("CommitmentConsistencyCheckComplete")
         }
-        InterfoldEventData::ProofVerificationPassed(data)
+        LoxleyEventData::ProofVerificationPassed(data)
             if data.e3_id == *e3_id && data.proof_type == ProofType::C1PkGeneration =>
         {
             Some("ProofVerificationPassed")
         }
-        InterfoldEventData::ShareVerificationComplete(data)
+        LoxleyEventData::ShareVerificationComplete(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::PkGenerationProofs =>
         {
             Some("ShareVerificationComplete")
         }
-        InterfoldEventData::PkAggregationProofPending(data) if data.e3_id == *e3_id => {
+        LoxleyEventData::PkAggregationProofPending(data) if data.e3_id == *e3_id => {
             Some("PkAggregationProofPending")
         }
-        InterfoldEventData::PkAggregationProofSigned(data) if data.e3_id == *e3_id => {
+        LoxleyEventData::PkAggregationProofSigned(data) if data.e3_id == *e3_id => {
             Some("PkAggregationProofSigned")
         }
-        InterfoldEventData::DKGRecursiveAggregationComplete(data) if data.e3_id == *e3_id => {
+        LoxleyEventData::DKGRecursiveAggregationComplete(data) if data.e3_id == *e3_id => {
             Some("DKGRecursiveAggregationComplete")
         }
-        InterfoldEventData::PublicKeyAggregated(data) if data.e3_id == *e3_id => {
+        LoxleyEventData::PublicKeyAggregated(data) if data.e3_id == *e3_id => {
             Some("PublicKeyAggregated")
         }
         _ => None,
     }
 }
 
-fn plaintext_aggregator_marker(data: &InterfoldEventData, e3_id: &E3id) -> Option<&'static str> {
+fn plaintext_aggregator_marker(data: &LoxleyEventData, e3_id: &E3id) -> Option<&'static str> {
     match data {
-        InterfoldEventData::CiphertextOutputPublished(data) if data.e3_id == *e3_id => {
+        LoxleyEventData::CiphertextOutputPublished(data) if data.e3_id == *e3_id => {
             Some("CiphertextOutputPublished")
         }
-        InterfoldEventData::DecryptionshareCreated(data) if data.e3_id == *e3_id => {
+        LoxleyEventData::DecryptionshareCreated(data) if data.e3_id == *e3_id => {
             Some("DecryptionshareCreated")
         }
-        InterfoldEventData::ShareVerificationDispatched(data)
+        LoxleyEventData::ShareVerificationDispatched(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::ThresholdDecryptionProofs =>
         {
             Some("ShareVerificationDispatched")
         }
-        InterfoldEventData::CommitmentConsistencyCheckRequested(data)
+        LoxleyEventData::CommitmentConsistencyCheckRequested(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::ThresholdDecryptionProofs =>
         {
             Some("CommitmentConsistencyCheckRequested")
         }
-        InterfoldEventData::CommitmentConsistencyCheckComplete(data)
+        LoxleyEventData::CommitmentConsistencyCheckComplete(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::ThresholdDecryptionProofs =>
         {
             Some("CommitmentConsistencyCheckComplete")
         }
-        InterfoldEventData::ComputeRequest(data)
+        LoxleyEventData::ComputeRequest(data)
             if data.e3_id == *e3_id
                 && matches!(
                     &data.request,
@@ -1151,7 +1151,7 @@ fn plaintext_aggregator_marker(data: &InterfoldEventData, e3_id: &E3id) -> Optio
         {
             Some("ComputeRequest")
         }
-        InterfoldEventData::ComputeResponse(data)
+        LoxleyEventData::ComputeResponse(data)
             if data.e3_id == *e3_id
                 && matches!(
                     &data.response,
@@ -1167,23 +1167,23 @@ fn plaintext_aggregator_marker(data: &InterfoldEventData, e3_id: &E3id) -> Optio
         {
             Some("ComputeResponse")
         }
-        InterfoldEventData::ProofVerificationPassed(data)
+        LoxleyEventData::ProofVerificationPassed(data)
             if data.e3_id == *e3_id && data.proof_type == ProofType::C6ThresholdShareDecryption =>
         {
             Some("ProofVerificationPassed")
         }
-        InterfoldEventData::ShareVerificationComplete(data)
+        LoxleyEventData::ShareVerificationComplete(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::ThresholdDecryptionProofs =>
         {
             Some("ShareVerificationComplete")
         }
-        InterfoldEventData::AggregationProofPending(data) if data.e3_id == *e3_id => {
+        LoxleyEventData::AggregationProofPending(data) if data.e3_id == *e3_id => {
             Some("AggregationProofPending")
         }
-        InterfoldEventData::AggregationProofSigned(data) if data.e3_id == *e3_id => {
+        LoxleyEventData::AggregationProofSigned(data) if data.e3_id == *e3_id => {
             Some("AggregationProofSigned")
         }
-        InterfoldEventData::PlaintextAggregated(data) if data.e3_id == *e3_id => {
+        LoxleyEventData::PlaintextAggregated(data) if data.e3_id == *e3_id => {
             Some("PlaintextAggregated")
         }
         _ => None,
@@ -1404,7 +1404,7 @@ async fn test_trbfv_actor() -> Result<()> {
         rpc_url: "http://localhost:8545".into(),
         rpc_auth: Default::default(),
         contracts: e3_config::ContractAddresses {
-            interfold: e3_config::Contract::AddressOnly(
+            loxley: e3_config::Contract::AddressOnly(
                 "0x0000000000000000000000000000000000000000".into(),
             ),
             ciphernode_registry: e3_config::Contract::AddressOnly(
@@ -1694,14 +1694,14 @@ async fn test_trbfv_actor() -> Result<()> {
     let dkg_parties: HashSet<u64> = h
         .iter()
         .filter_map(|e| match e.get_data() {
-            InterfoldEventData::DKGRecursiveAggregationComplete(d) => Some(d.party_id),
+            LoxleyEventData::DKGRecursiveAggregationComplete(d) => Some(d.party_id),
             _ => None,
         })
         .collect();
     let ks_parties: HashSet<u64> = h
         .iter()
         .filter_map(|e| match e.get_data() {
-            InterfoldEventData::KeyshareCreated(d) => Some(d.party_id),
+            LoxleyEventData::KeyshareCreated(d) => Some(d.party_id),
             _ => None,
         })
         .collect();
@@ -1726,7 +1726,7 @@ async fn test_trbfv_actor() -> Result<()> {
         .iter()
         .rev()
         .find_map(|e| match e.get_data() {
-            InterfoldEventData::PublicKeyAggregated(d) => Some(d),
+            LoxleyEventData::PublicKeyAggregated(d) => Some(d),
             _ => None,
         })
         .expect("PublicKeyAggregated in history");
@@ -1787,10 +1787,10 @@ async fn test_trbfv_actor() -> Result<()> {
         |d| {
             matches!(
                 d,
-                InterfoldEventData::PkAggregationProofPending(data) if data.e3_id == e3_id
+                LoxleyEventData::PkAggregationProofPending(data) if data.e3_id == e3_id
             )
         },
-        |d| matches!(d, InterfoldEventData::PublicKeyAggregated(data) if data.e3_id == e3_id),
+        |d| matches!(d, LoxleyEventData::PublicKeyAggregated(data) if data.e3_id == e3_id),
     ) {
         report.push_wall(
             "Aggregator P2: PkAggregation pending -> PublicKeyAggregated (wall)",
@@ -1812,7 +1812,7 @@ async fn test_trbfv_actor() -> Result<()> {
     // First we get the public key from the collector-visible gossip event.
     println!("Getting public key");
     let Some(pubkey_event) = h.iter().rev().find_map(|event| match event.get_data() {
-        InterfoldEventData::PublicKeyAggregated(data) => Some(data.clone()),
+        LoxleyEventData::PublicKeyAggregated(data) => Some(data.clone()),
         _ => None,
     }) else {
         panic!(
@@ -1914,7 +1914,7 @@ async fn test_trbfv_actor() -> Result<()> {
     let unique_ds_parties: HashSet<u64> = h
         .iter()
         .filter_map(|e| match e.get_data() {
-            InterfoldEventData::DecryptionshareCreated(d) => Some(d.party_id),
+            LoxleyEventData::DecryptionshareCreated(d) => Some(d.party_id),
             _ => None,
         })
         .collect();
@@ -1960,11 +1960,11 @@ async fn test_trbfv_actor() -> Result<()> {
         .take_while(|e| {
             !matches!(
                 e.get_data(),
-                InterfoldEventData::ShareVerificationDispatched(_)
+                LoxleyEventData::ShareVerificationDispatched(_)
             )
         })
         .filter_map(|e| match e.get_data() {
-            InterfoldEventData::DecryptionshareCreated(d) if d.e3_id == e3_id => Some(d.party_id),
+            LoxleyEventData::DecryptionshareCreated(d) if d.e3_id == e3_id => Some(d.party_id),
             _ => None,
         })
         .collect();
@@ -2062,10 +2062,10 @@ async fn test_trbfv_actor() -> Result<()> {
         |d| {
             matches!(
                 d,
-                InterfoldEventData::AggregationProofPending(data) if data.e3_id == e3_id
+                LoxleyEventData::AggregationProofPending(data) if data.e3_id == e3_id
             )
         },
-        |d| matches!(d, InterfoldEventData::PlaintextAggregated(data) if data.e3_id == e3_id),
+        |d| matches!(d, LoxleyEventData::PlaintextAggregated(data) if data.e3_id == e3_id),
     ) {
         report.push_wall(
             "Aggregator P4: Aggregation pending -> PlaintextAggregated (wall)",
@@ -2082,7 +2082,7 @@ async fn test_trbfv_actor() -> Result<()> {
         .iter()
         .rev()
         .find_map(|e| {
-            if let InterfoldEventData::PlaintextAggregated(PlaintextAggregated {
+            if let LoxleyEventData::PlaintextAggregated(PlaintextAggregated {
                 decrypted_output,
                 decryption_aggregator_proofs,
                 ..
@@ -2319,7 +2319,7 @@ async fn test_trbfv_actor() -> Result<()> {
 
 #[actix::test]
 async fn test_p2p_actor_forwards_events_to_network() -> Result<()> {
-    use e3_events::{CiphernodeSelected, InterfoldEvent, TakeEvents, Unsequenced};
+    use e3_events::{CiphernodeSelected, LoxleyEvent, TakeEvents, Unsequenced};
     use e3_net::events::GossipData;
     use e3_net::{events::NetEvent, NetEventTranslator};
     use std::sync::Arc;
@@ -2337,7 +2337,7 @@ async fn test_p2p_actor_forwards_events_to_network() -> Result<()> {
     NetEventTranslator::setup(&bus, &cmd_tx, &event_rx, "my-topic");
 
     // Capture messages from output on msgs vec
-    let msgs: Arc<Mutex<Vec<InterfoldEventData>>> = Arc::new(Mutex::new(Vec::new()));
+    let msgs: Arc<Mutex<Vec<LoxleyEventData>>> = Arc::new(Mutex::new(Vec::new()));
 
     let msgs_loop = msgs.clone();
 
@@ -2352,7 +2352,7 @@ async fn test_p2p_actor_forwards_events_to_network() -> Result<()> {
                 _ => None,
             } {
                 if let GossipData::GossipBytes(_) = msg {
-                    let event: InterfoldEvent<Unsequenced> = msg.clone().try_into().unwrap();
+                    let event: LoxleyEvent<Unsequenced> = msg.clone().try_into().unwrap();
                     let (data, _) = event.split();
                     msgs_loop.lock().await.push(data);
                     event_tx.send(NetEvent::GossipData(msg)).unwrap();
@@ -2390,7 +2390,7 @@ async fn test_p2p_actor_forwards_events_to_network() -> Result<()> {
 
     // check the history of the event bus
     let history = history_collector
-        .send(TakeEvents::<InterfoldEvent>::new(3))
+        .send(TakeEvents::<LoxleyEvent>::new(3))
         .await?;
 
     assert_eq!(
@@ -2440,7 +2440,7 @@ async fn test_p2p_actor_forwards_events_to_bus() -> Result<()> {
 
     // check the history of the event bus
     let history = history_collector
-        .send(TakeEvents::<InterfoldEvent>::new(1))
+        .send(TakeEvents::<LoxleyEvent>::new(1))
         .await?;
 
     assert_eq!(
@@ -2448,7 +2448,7 @@ async fn test_p2p_actor_forwards_events_to_bus() -> Result<()> {
             .events
             .into_iter()
             .map(|e| e.into_data())
-            .collect::<Vec<InterfoldEventData>>(),
+            .collect::<Vec<LoxleyEventData>>(),
         vec![event.into()]
     );
 
@@ -2566,7 +2566,7 @@ async fn test_stopped_keyshares_retain_state() -> Result<()> {
         let history_collector = cn1.history().unwrap();
         let error_collector = cn1.errors().unwrap();
         let history = history_collector
-            .send(TakeEvents::<e3_events::InterfoldEvent>::new(14))
+            .send(TakeEvents::<e3_events::LoxleyEvent>::new(14))
             .await?;
         let errors = error_collector.send(GetEvents::new()).await?;
 
@@ -2597,7 +2597,7 @@ async fn test_stopped_keyshares_retain_state() -> Result<()> {
 
     let bus = EventSystem::in_mem()
         .with_event_bus(
-            EventBus::<e3_events::InterfoldEvent>::new(EventBusConfig { deduplicate: true })
+            EventBus::<e3_events::LoxleyEvent>::new(EventBusConfig { deduplicate: true })
                 .start(),
         )
         .handle()?
@@ -2632,7 +2632,7 @@ async fn test_stopped_keyshares_retain_state() -> Result<()> {
         .events
         .iter()
         .filter_map(|evt| match evt.get_data() {
-            InterfoldEventData::KeyshareCreated(data) => {
+            LoxleyEventData::KeyshareCreated(data) => {
                 PublicKeyShare::deserialize(&data.pubkey, &params, crpoly.clone()).ok()
             }
             _ => None,
@@ -2653,14 +2653,14 @@ async fn test_stopped_keyshares_retain_state() -> Result<()> {
     })?;
 
     let history = history_collector
-        .send(TakeEvents::<e3_events::InterfoldEvent>::new(5))
+        .send(TakeEvents::<e3_events::LoxleyEvent>::new(5))
         .await?;
 
     let actual = history
         .events
         .into_iter()
         .filter_map(|e| match e.into_data() {
-            InterfoldEventData::PlaintextAggregated(data) => Some(data),
+            LoxleyEventData::PlaintextAggregated(data) => Some(data),
             _ => None,
         })
         .collect::<Vec<_>>()
@@ -2817,11 +2817,11 @@ async fn test_duplicate_e3_id_with_different_chain_id() -> Result<()> {
     )?)?;
     let history_collector = ciphernodes.last().unwrap().history().unwrap();
     let history = history_collector
-        .send(TakeEvents::<e3_events::InterfoldEvent>::new(28))
+        .send(TakeEvents::<e3_events::LoxleyEvent>::new(28))
         .await?;
 
     let actual_pubkey_agg_1 = match history.events.last().cloned().unwrap().into_data() {
-        e3_events::InterfoldEventData::PublicKeyAggregated(ev) => ev,
+        e3_events::LoxleyEventData::PublicKeyAggregated(ev) => ev,
         other => panic!("expected PublicKeyAggregated, got {other:?}"),
     };
     assert_eq!(
@@ -2861,11 +2861,11 @@ async fn test_duplicate_e3_id_with_different_chain_id() -> Result<()> {
     )?)?;
 
     let history = history_collector
-        .send(TakeEvents::<e3_events::InterfoldEvent>::new(8))
+        .send(TakeEvents::<e3_events::LoxleyEvent>::new(8))
         .await?;
 
     let actual_pubkey_agg_2 = match history.events.last().cloned().unwrap().into_data() {
-        e3_events::InterfoldEventData::PublicKeyAggregated(ev) => ev,
+        e3_events::LoxleyEventData::PublicKeyAggregated(ev) => ev,
         other => panic!("expected PublicKeyAggregated, got {other:?}"),
     };
     assert_eq!(

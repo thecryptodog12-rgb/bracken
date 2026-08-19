@@ -22,7 +22,7 @@ use actix::{Actor, ActorContext, Addr, Context, Handler};
 use anyhow::Result;
 use e3_data::{AutoPersist, DataStore, Persistable, RepositoriesFactory, Repository};
 use e3_events::prelude::*;
-use e3_events::{BusHandle, E3Stage, E3id, EventType, InterfoldEvent, InterfoldEventData};
+use e3_events::{BusHandle, E3Stage, E3id, EventType, LoxleyEvent, LoxleyEventData};
 use e3_utils::MAILBOX_LIMIT;
 use std::collections::HashMap;
 use tracing::{info, warn};
@@ -93,13 +93,13 @@ impl Actor for E3LifecycleCoordinator {
     }
 }
 
-impl Handler<InterfoldEvent> for E3LifecycleCoordinator {
+impl Handler<LoxleyEvent> for E3LifecycleCoordinator {
     type Result = ();
 
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (data, _ec) = msg.into_components();
 
-        if let InterfoldEventData::Shutdown(_) = data {
+        if let LoxleyEventData::Shutdown(_) = data {
             let active = self.service.active();
             if active.is_empty() {
                 info!("E3 lifecycle coordinator shutting down; no active E3s");

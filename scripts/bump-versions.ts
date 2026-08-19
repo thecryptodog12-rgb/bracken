@@ -60,10 +60,10 @@ class VersionBumper {
         console.log('   1. Update Rust workspace version in Cargo.toml')
         console.log('   2. Update NPM package versions in:')
         console.log('      - Root package.json')
-        console.log('      - packages/interfold-sdk')
-        console.log('      - packages/interfold-contracts')
-        console.log('      - packages/interfold-config')
-        console.log('      - packages/interfold-react')
+        console.log('      - packages/loxley-sdk')
+        console.log('      - packages/loxley-contracts')
+        console.log('      - packages/loxley-config')
+        console.log('      - packages/loxley-react')
         console.log('      - crates/wasm')
         console.log('   3. Update lock files (Cargo.lock, pnpm-lock.yaml)')
         console.log('   4. Generate/update CHANGELOG.md')
@@ -383,11 +383,11 @@ class VersionBumper {
 
     // Main packages to bump (excluding examples and templates)
     const packagesToBump = [
-      'packages/interfold-sdk',
-      'packages/interfold-contracts',
-      'packages/interfold-config',
-      'packages/interfold-react',
-      'packages/interfold-mcp',
+      'packages/loxley-sdk',
+      'packages/loxley-contracts',
+      'packages/loxley-config',
+      'packages/loxley-react',
+      'packages/loxley-mcp',
       'crates/wasm',
     ]
 
@@ -550,7 +550,7 @@ function showHelp() {
   console.log(`
 Usage: pnpm bump:versions [options] <version>
 
-Version Bump Script for Interfold Monorepo
+Version Bump Script for Loxley Monorepo
 Bumps all versions, generates changelog, commits, tags, and pushes to trigger release.
 
 Arguments:

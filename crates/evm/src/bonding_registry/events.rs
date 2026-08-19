@@ -4,7 +4,7 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-//! Pure translation of `BondingRegistry.sol` logs into `InterfoldEventData`.
+//! Pure translation of `BondingRegistry.sol` logs into `LoxleyEventData`.
 
 use crate::contracts::IBondingRegistry;
 use alloy::{
@@ -12,7 +12,7 @@ use alloy::{
     sol_types::SolEvent,
 };
 use e3_events::{
-    BondOwnerSet, CiphernodeBondUpdated, CiphernodeDeregistrationRequested, InterfoldEventData,
+    BondOwnerSet, CiphernodeBondUpdated, CiphernodeDeregistrationRequested, LoxleyEventData,
 };
 use tracing::{error, trace};
 
@@ -30,7 +30,7 @@ impl From<TicketBalanceUpdatedWithChainId> for e3_events::TicketBalanceUpdated {
     }
 }
 
-impl From<TicketBalanceUpdatedWithChainId> for InterfoldEventData {
+impl From<TicketBalanceUpdatedWithChainId> for LoxleyEventData {
     fn from(value: TicketBalanceUpdatedWithChainId) -> Self {
         let payload: e3_events::TicketBalanceUpdated = value.into();
         Self::from(payload)
@@ -60,7 +60,7 @@ impl From<ConfigurationUpdatedWithChainId> for e3_events::ConfigurationUpdated {
     }
 }
 
-impl From<ConfigurationUpdatedWithChainId> for InterfoldEventData {
+impl From<ConfigurationUpdatedWithChainId> for LoxleyEventData {
     fn from(value: ConfigurationUpdatedWithChainId) -> Self {
         let payload: e3_events::ConfigurationUpdated = value.into();
         Self::from(payload)
@@ -82,7 +82,7 @@ impl From<OperatorActivationChangedWithChainId> for e3_events::OperatorActivatio
     }
 }
 
-impl From<OperatorActivationChangedWithChainId> for InterfoldEventData {
+impl From<OperatorActivationChangedWithChainId> for LoxleyEventData {
     fn from(value: OperatorActivationChangedWithChainId) -> Self {
         let payload: e3_events::OperatorActivationChanged = value.into();
         Self::from(payload)
@@ -103,7 +103,7 @@ impl From<CiphernodeBondUpdatedWithChainId> for CiphernodeBondUpdated {
     }
 }
 
-impl From<CiphernodeBondUpdatedWithChainId> for InterfoldEventData {
+impl From<CiphernodeBondUpdatedWithChainId> for LoxleyEventData {
     fn from(value: CiphernodeBondUpdatedWithChainId) -> Self {
         CiphernodeBondUpdated::from(value).into()
     }
@@ -124,7 +124,7 @@ impl From<CiphernodeDeregistrationRequestedWithChainId> for CiphernodeDeregistra
     }
 }
 
-impl From<CiphernodeDeregistrationRequestedWithChainId> for InterfoldEventData {
+impl From<CiphernodeDeregistrationRequestedWithChainId> for LoxleyEventData {
     fn from(value: CiphernodeDeregistrationRequestedWithChainId) -> Self {
         CiphernodeDeregistrationRequested::from(value).into()
     }
@@ -142,7 +142,7 @@ impl From<BondOwnerSetWithChainId> for BondOwnerSet {
     }
 }
 
-impl From<BondOwnerSetWithChainId> for InterfoldEventData {
+impl From<BondOwnerSetWithChainId> for LoxleyEventData {
     fn from(value: BondOwnerSetWithChainId) -> Self {
         BondOwnerSet::from(value).into()
     }
@@ -152,14 +152,14 @@ pub(crate) fn extractor(
     data: &LogData,
     topics: &[B256],
     chain_id: u64,
-) -> Option<InterfoldEventData> {
+) -> Option<LoxleyEventData> {
     match topics.first() {
         Some(&IBondingRegistry::TicketBalanceUpdated::SIGNATURE_HASH) => {
             let Ok(event) = IBondingRegistry::TicketBalanceUpdated::decode_log_data(data) else {
                 error!("Error parsing event TicketBalanceUpdated after topic was matched!");
                 return None;
             };
-            Some(InterfoldEventData::from(TicketBalanceUpdatedWithChainId(
+            Some(LoxleyEventData::from(TicketBalanceUpdatedWithChainId(
                 event, chain_id,
             )))
         }
@@ -169,7 +169,7 @@ pub(crate) fn extractor(
                 error!("Error parsing event OperatorActivationChanged after topic was matched!");
                 return None;
             };
-            Some(InterfoldEventData::from(
+            Some(LoxleyEventData::from(
                 OperatorActivationChangedWithChainId(event, chain_id),
             ))
         }
@@ -194,7 +194,7 @@ pub(crate) fn extractor(
                 error!("Error parsing event ConfigurationUpdated after topic was matched!");
                 return None;
             };
-            Some(InterfoldEventData::from(ConfigurationUpdatedWithChainId(
+            Some(LoxleyEventData::from(ConfigurationUpdatedWithChainId(
                 event, chain_id,
             )))
         }
@@ -238,7 +238,7 @@ mod tests {
             55,
         );
         match out {
-            Some(InterfoldEventData::OperatorActivationChanged(data)) => {
+            Some(LoxleyEventData::OperatorActivationChanged(data)) => {
                 assert!(data.active);
                 assert_eq!(data.chain_id, 55);
             }
@@ -274,7 +274,7 @@ mod tests {
             55,
         );
         match out {
-            Some(InterfoldEventData::BondOwnerSet(data)) => {
+            Some(LoxleyEventData::BondOwnerSet(data)) => {
                 assert_eq!(data.operator, Address::repeat_byte(0x11).to_string());
                 assert_eq!(data.bond_owner, Address::repeat_byte(0x22).to_string());
                 assert_eq!(data.chain_id, 55);
@@ -288,7 +288,7 @@ mod tests {
         let log_data = LogData::default();
         assert!(matches!(
             extractor(&log_data, &[B256::ZERO], 1),
-            Some(InterfoldEventData::EvmLogObserved(_))
+            Some(LoxleyEventData::EvmLogObserved(_))
         ));
     }
 }

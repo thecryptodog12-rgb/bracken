@@ -1,8 +1,8 @@
 {
-  description = "Interfold";
+  description = "Loxley";
   nixConfig = {
-    extra-substituters = ["https://interfold.cachix.org"];
-    extra-trusted-public-keys = ["interfold.cachix.org-1:B5SynR85iX/TRueDpZu4dh1xVR8lNfKoAaVWZkux1ss="];
+    extra-substituters = ["https://loxley.cachix.org"];
+    extra-trusted-public-keys = ["loxley.cachix.org-1:B5SynR85iX/TRueDpZu4dh1xVR8lNfKoAaVWZkux1ss="];
   };
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";

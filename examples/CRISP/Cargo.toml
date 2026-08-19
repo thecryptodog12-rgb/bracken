@@ -1,7 +1,7 @@
 [workspace]
 members = [
   "server",
-  ".interfold/support/dev",
+  ".loxley/support/dev",
   "program",
   "crates/zk-inputs",
   "crates/zk-inputs-wasm",
@@ -14,8 +14,8 @@ resolver = "3"
 version = "0.1.0"
 edition = "2021"
 license = "LGPL-3.0-only"
-description = "CRISP — Voting Application on Interfold"
-repository = "https://github.com/theinterfold/interfold"
+description = "CRISP — Voting Application on Loxley"
+repository = "https://github.com/theloxley/loxley"
 
 [workspace.dependencies]
 e3-user-program = { path = "./program" }

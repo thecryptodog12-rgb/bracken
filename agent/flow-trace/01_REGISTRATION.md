@@ -20,7 +20,7 @@ tickets, signs DKG proofs, and is the identity targeted by bans and slashes.
 Before creating a position, the operator can run:
 
 ```text
-interfold ciphernode set-bond-owner --owner 0xCOLD_WALLET
+loxley ciphernode set-bond-owner --owner 0xCOLD_WALLET
 ```
 
 This sends `BondingRegistry.setBondOwner(owner)` from the operator key and emits the typed
@@ -41,7 +41,7 @@ it.
 
 ---
 
-## Step 1: `interfold ciphernode setup`
+## Step 1: `loxley ciphernode setup`
 
 **File:** `crates/cli/src/ciphernode/setup.rs` → delegates to
 `crates/entrypoint/src/config/setup.rs`
@@ -49,13 +49,13 @@ it.
 ### What happens call-by-call:
 
 ```
-User runs: interfold ciphernode setup
+User runs: loxley ciphernode setup
 │
 ├─ 1. Checks if config already exists → ABORTS if yes
 │
 ├─ 2. Prompts for PASSWORD (confirmed twice)
 │     └─ Stored encrypted via Cipher → written to local keystore
-│        File: ~/.config/interfold/<name>/password (encrypted blob)
+│        File: ~/.config/loxley/<name>/password (encrypted blob)
 │
 ├─ 3. Prompts for WEBSOCKET RPC URL
 │     └─ Default: wss://ethereum-sepolia-rpc.publicnode.com
@@ -67,14 +67,14 @@ User runs: interfold ciphernode setup
 │     └─ NEVER stored in plaintext
 │
 ├─ 5. Prompts for CONFIG DIRECTORY
-│     └─ Default: ~/.config/interfold
+│     └─ Default: ~/.config/loxley
 │
 ├─ 6. Creates config file (YAML):
 │     chains:
 │       - name: "default"
 │         rpc_url: <user's URL>
 │         contracts:
-│           interfold: <address>
+│           loxley: <address>
 │           bonding_registry: <address>
 │           ciphernode_registry: <address>
 │           slashing_manager: <address>
@@ -101,7 +101,7 @@ User runs: interfold ciphernode setup
 
 ```
 Operator runs:
-  interfold ciphernode set-bond-owner --owner 0xCOLD_WALLET
+  loxley ciphernode set-bond-owner --owner 0xCOLD_WALLET
 │
 └─ BondingRegistry.setBondOwner(owner)
    ├─ Rejects the zero address
@@ -149,7 +149,7 @@ Bond owner
 │  └─ Calls _updateOperatorStatus(operator)
 │     └─ Registered but inactive: the ticket threshold is not met yet
 ├─ CLI: ciphernode tickets --operator OP buy --amount N
-├─ stablecoin.approve(InterfoldTicketToken, ticketAmount)
+├─ stablecoin.approve(LoxleyTicketToken, ticketAmount)
 └─ BondingRegistry.addTicketBalanceFor(operator, ticketAmount)
    ├─ Reverts with NotRegistered() when registration has not happened
    ├─ Mints tFOLD to the operator from the owner's stablecoin
@@ -168,12 +168,12 @@ remains the committee and slashing identity.
 
 ---
 
-## Step 4: `interfold ciphernode status`
+## Step 4: `loxley ciphernode status`
 
 **File:** `crates/cli/src/ciphernode/lifecycle.rs` → `status()`
 
 ```
-User runs: interfold ciphernode status
+User runs: loxley ciphernode status
 │
 ├─ ChainContext::new()
 │
@@ -206,7 +206,7 @@ User runs: interfold ciphernode status
 
 ## Rust-Side: What Happens When a Running Node Detects Registration
 
-When a ciphernode is running (`interfold start`), its EVM readers are listening for on-chain events:
+When a ciphernode is running (`loxley start`), its EVM readers are listening for on-chain events:
 
 ```
 BondingRegistrySolReader detects OperatorActivationChanged event

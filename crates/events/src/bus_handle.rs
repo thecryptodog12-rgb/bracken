@@ -30,7 +30,7 @@ use crate::{
         EventFactory, EventPublisher, EventSubscriber,
     },
     EType, ErrorEvent, EventBus, EventBusBarrier, EventContextManager, EventSource, EventType,
-    FlushEventStores, HistoryCollector, InterfoldEvent, InterfoldEventData, Sequenced,
+    FlushEventStores, HistoryCollector, LoxleyEvent, LoxleyEventData, Sequenced,
     SequencerBarrier, Shutdown, Subscribe, Unsequenced, Unsubscribe,
 };
 
@@ -103,7 +103,7 @@ impl Drop for EventAdmissionGuard {
 )]
 pub struct BusHandle<S = Enabled> {
     /// EventBus that actors can consume sequenced events from
-    event_bus: Addr<EventBus<InterfoldEvent<Sequenced>>>,
+    event_bus: Addr<EventBus<LoxleyEvent<Sequenced>>>,
     /// Sequencer that new events should be produced from
     sequencer: Addr<Sequencer>,
     /// Hlc clock used to time all events created on this BusHandle
@@ -121,7 +121,7 @@ pub struct BusHandle<S = Enabled> {
 impl BusHandle<Disabled> {
     /// Create a new disabled BusHandle. Call `enable()` or `enable_with_hlc()` to activate it.
     pub fn new(
-        event_bus: Addr<EventBus<InterfoldEvent<Sequenced>>>,
+        event_bus: Addr<EventBus<LoxleyEvent<Sequenced>>>,
         sequencer: Addr<Sequencer>,
         hlc: HlcFactory,
     ) -> Self {
@@ -165,13 +165,13 @@ impl BusHandle<Disabled> {
 
 impl BusHandle<Enabled> {
     /// Return a HistoryCollector for examining events that have passed through on the events bus
-    pub fn history(&self) -> Addr<HistoryCollector<InterfoldEvent<Sequenced>>> {
-        EventBus::<InterfoldEvent<Sequenced>>::history(&self.event_bus)
+    pub fn history(&self) -> Addr<HistoryCollector<LoxleyEvent<Sequenced>>> {
+        EventBus::<LoxleyEvent<Sequenced>>::history(&self.event_bus)
     }
 
-    /// Return a HistoryCollector that is subscribed only to InterfoldError events.
-    pub fn errors(&self) -> Addr<HistoryCollector<InterfoldEvent<Sequenced>>> {
-        EventBus::<InterfoldEvent<Sequenced>>::error(&self.event_bus)
+    /// Return a HistoryCollector that is subscribed only to LoxleyError events.
+    pub fn errors(&self) -> Addr<HistoryCollector<LoxleyEvent<Sequenced>>> {
+        EventBus::<LoxleyEvent<Sequenced>>::error(&self.event_bus)
     }
 
     /// Access the sequencer to internally dispatch an event to
@@ -180,7 +180,7 @@ impl BusHandle<Enabled> {
     }
 
     /// Access the event_bus to internally subscribe to events
-    pub fn event_bus(&self) -> &Addr<EventBus<InterfoldEvent<Sequenced>>> {
+    pub fn event_bus(&self) -> &Addr<EventBus<LoxleyEvent<Sequenced>>> {
         &self.event_bus
     }
 
@@ -199,7 +199,7 @@ impl BusHandle<Enabled> {
     /// Pipe events from this handle to the other handle only when the predicate returns true
     pub fn pipe_to<F>(&self, other: &BusHandle<Enabled>, predicate: F)
     where
-        F: Fn(&InterfoldEvent<Sequenced>) -> bool + Unpin + 'static,
+        F: Fn(&LoxleyEvent<Sequenced>) -> bool + Unpin + 'static,
     {
         let pipe = BusHandlePipe::new(other.to_owned(), predicate).start();
         self.subscribe(EventType::All, pipe.into());
@@ -212,22 +212,22 @@ impl BusHandle<Enabled> {
     }
 }
 
-impl EventPublisher<InterfoldEvent<Unsequenced>> for BusHandle<Enabled> {
+impl EventPublisher<LoxleyEvent<Unsequenced>> for BusHandle<Enabled> {
     fn publish(
         &self,
-        data: impl Into<InterfoldEventData>,
+        data: impl Into<LoxleyEventData>,
         caused_by: impl Into<EventContext<Sequenced>>,
     ) -> Result<()> {
         self.publish_local(data, Some(caused_by.into()))
     }
 
-    fn publish_without_context(&self, data: impl Into<InterfoldEventData>) -> Result<()> {
+    fn publish_without_context(&self, data: impl Into<LoxleyEventData>) -> Result<()> {
         self.publish_local(data, None)
     }
 
     fn publish_from_remote(
         &self,
-        data: impl Into<InterfoldEventData>,
+        data: impl Into<LoxleyEventData>,
         remote_ts: u128,
         block: Option<u64>,
         source: EventSource,
@@ -237,7 +237,7 @@ impl EventPublisher<InterfoldEvent<Unsequenced>> for BusHandle<Enabled> {
 
     fn publish_from_remote_as_response(
         &self,
-        data: impl Into<InterfoldEventData>,
+        data: impl Into<LoxleyEventData>,
         remote_ts: u128,
         caused_by: impl Into<EventContext<Sequenced>>,
         block: Option<u64>,
@@ -246,7 +246,7 @@ impl EventPublisher<InterfoldEvent<Unsequenced>> for BusHandle<Enabled> {
         self.publish_from_remote_impl(data, remote_ts, Some(caused_by.into()), block, source)
     }
 
-    fn naked_dispatch(&self, event: InterfoldEvent<Unsequenced>) {
+    fn naked_dispatch(&self, event: LoxleyEvent<Unsequenced>) {
         let Ok(_admission) = self.admission.enter() else {
             warn!("Dropping an internal event because node shutdown has closed admission");
             return;
@@ -256,7 +256,7 @@ impl EventPublisher<InterfoldEvent<Unsequenced>> for BusHandle<Enabled> {
 }
 
 impl BusHandle<Enabled> {
-    pub async fn naked_dispatch_async(&self, event: InterfoldEvent<Unsequenced>) -> Result<()> {
+    pub async fn naked_dispatch_async(&self, event: LoxleyEvent<Unsequenced>) -> Result<()> {
         let _admission = self.admission.enter()?;
         self.sequencer.send(event).await?;
         Ok(())
@@ -264,8 +264,8 @@ impl BusHandle<Enabled> {
 
     /// Persist and broadcast `Shutdown`, waiting until every live EventBus
     /// subscriber has completed its shutdown handler.
-    pub async fn publish_shutdown_and_wait(&self) -> Result<InterfoldEvent<Sequenced>> {
-        let (recipient, response) = oneshot::<InterfoldEvent<Sequenced>>();
+    pub async fn publish_shutdown_and_wait(&self) -> Result<LoxleyEvent<Sequenced>> {
+        let (recipient, response) = oneshot::<LoxleyEvent<Sequenced>>();
         self.event_bus
             .send(Subscribe::new(EventType::Shutdown, recipient.clone()))
             .await?;
@@ -298,7 +298,7 @@ impl BusHandle<Enabled> {
 
     fn publish_from_remote_impl(
         &self,
-        data: impl Into<InterfoldEventData>,
+        data: impl Into<LoxleyEventData>,
         remote_ts: u128,
         caused_by: Option<EventContext<Sequenced>>,
         block: Option<u64>,
@@ -311,7 +311,7 @@ impl BusHandle<Enabled> {
     }
     fn publish_local(
         &self,
-        data: impl Into<InterfoldEventData>,
+        data: impl Into<LoxleyEventData>,
         caused_by: Option<EventContext<Sequenced>>,
     ) -> Result<()> {
         let _admission = self.admission.enter()?;
@@ -321,7 +321,7 @@ impl BusHandle<Enabled> {
     }
 }
 
-impl<S> ErrorDispatcher<InterfoldEvent<Unsequenced>> for BusHandle<S> {
+impl<S> ErrorDispatcher<LoxleyEvent<Unsequenced>> for BusHandle<S> {
     fn err(&self, err_type: EType, error: anyhow::Error) {
         let Ok(_admission) = self.admission.enter() else {
             error!(%error, "Error event not admitted because node shutdown has started");
@@ -334,14 +334,14 @@ impl<S> ErrorDispatcher<InterfoldEvent<Unsequenced>> for BusHandle<S> {
     }
 }
 
-impl EventFactory<InterfoldEvent<Unsequenced>> for BusHandle<Enabled> {
+impl EventFactory<LoxleyEvent<Unsequenced>> for BusHandle<Enabled> {
     fn event_from(
         &self,
-        data: impl Into<InterfoldEventData>,
+        data: impl Into<LoxleyEventData>,
         caused_by: Option<EventContext<Sequenced>>,
-    ) -> Result<InterfoldEvent<Unsequenced>> {
+    ) -> Result<LoxleyEvent<Unsequenced>> {
         let ts = self.hlc.tick()?;
-        Ok(InterfoldEvent::<Unsequenced>::new_with_timestamp(
+        Ok(LoxleyEvent::<Unsequenced>::new_with_timestamp(
             data.into(),
             caused_by,
             ts.into(),
@@ -352,14 +352,14 @@ impl EventFactory<InterfoldEvent<Unsequenced>> for BusHandle<Enabled> {
 
     fn event_from_remote_source(
         &self,
-        data: impl Into<InterfoldEventData>,
+        data: impl Into<LoxleyEventData>,
         caused_by: Option<EventContext<Sequenced>>,
         ts: u128,
         block: Option<u64>,
         source: EventSource,
-    ) -> Result<InterfoldEvent<Unsequenced>> {
+    ) -> Result<LoxleyEvent<Unsequenced>> {
         let ts = self.hlc.receive(&ts.into())?;
-        Ok(InterfoldEvent::<Unsequenced>::new_with_timestamp(
+        Ok(LoxleyEvent::<Unsequenced>::new_with_timestamp(
             data.into(),
             caused_by,
             ts.into(),
@@ -369,20 +369,20 @@ impl EventFactory<InterfoldEvent<Unsequenced>> for BusHandle<Enabled> {
     }
 }
 
-impl<S> ErrorFactory<InterfoldEvent<Unsequenced>> for BusHandle<S> {
+impl<S> ErrorFactory<LoxleyEvent<Unsequenced>> for BusHandle<S> {
     fn event_from_error(
         &self,
         err_type: EType,
         error: impl Into<anyhow::Error>,
         caused_by: Option<EventContext<Sequenced>>,
-    ) -> Result<InterfoldEvent<Unsequenced>> {
+    ) -> Result<LoxleyEvent<Unsequenced>> {
         let ts = self.hlc.tick()?;
-        InterfoldEvent::<Unsequenced>::from_error(err_type, error, ts.into(), caused_by)
+        LoxleyEvent::<Unsequenced>::from_error(err_type, error, ts.into(), caused_by)
     }
 }
 
-impl<S> EventSubscriber<InterfoldEvent<Sequenced>> for BusHandle<S> {
-    fn subscribe(&self, event_type: EventType, recipient: Recipient<InterfoldEvent<Sequenced>>) {
+impl<S> EventSubscriber<LoxleyEvent<Sequenced>> for BusHandle<S> {
+    fn subscribe(&self, event_type: EventType, recipient: Recipient<LoxleyEvent<Sequenced>>) {
         self.event_bus
             .do_send(Subscribe::new(event_type, recipient))
     }
@@ -390,7 +390,7 @@ impl<S> EventSubscriber<InterfoldEvent<Sequenced>> for BusHandle<S> {
     fn subscribe_all(
         &self,
         event_types: &[EventType],
-        recipient: Recipient<InterfoldEvent<Sequenced>>,
+        recipient: Recipient<LoxleyEvent<Sequenced>>,
     ) {
         for event_type in event_types.iter() {
             self.event_bus
@@ -398,7 +398,7 @@ impl<S> EventSubscriber<InterfoldEvent<Sequenced>> for BusHandle<S> {
         }
     }
 
-    fn unsubscribe(&self, event_type: &str, recipient: Recipient<InterfoldEvent<Sequenced>>) {
+    fn unsubscribe(&self, event_type: &str, recipient: Recipient<LoxleyEvent<Sequenced>>) {
         self.event_bus
             .do_send(Unsubscribe::new(event_type, recipient));
     }
@@ -406,8 +406,8 @@ impl<S> EventSubscriber<InterfoldEvent<Sequenced>> for BusHandle<S> {
     fn wait_for(
         &self,
         event_type: EventType,
-    ) -> Pin<Box<dyn Future<Output = Result<InterfoldEvent<Sequenced>>> + Send>> {
-        let (addr, rx) = oneshot::<InterfoldEvent<Sequenced>>();
+    ) -> Pin<Box<dyn Future<Output = Result<LoxleyEvent<Sequenced>>> + Send>> {
+        let (addr, rx) = oneshot::<LoxleyEvent<Sequenced>>();
         self.subscribe(event_type, addr.clone());
         let bus = self.event_bus.clone();
         Box::pin(async move {
@@ -433,7 +433,7 @@ impl<S> EventContextManager for BusHandle<S> {
 /// Actor for piping between BusHandles.
 pub struct BusHandlePipe<F>
 where
-    F: Fn(&InterfoldEvent<Sequenced>) -> bool + Unpin + 'static,
+    F: Fn(&LoxleyEvent<Sequenced>) -> bool + Unpin + 'static,
 {
     handle: BusHandle<Enabled>,
     predicate: F,
@@ -441,7 +441,7 @@ where
 
 impl<F> BusHandlePipe<F>
 where
-    F: Fn(&InterfoldEvent<Sequenced>) -> bool + Unpin + 'static,
+    F: Fn(&LoxleyEvent<Sequenced>) -> bool + Unpin + 'static,
 {
     /// Create a new BusHandlePipe only forwarding events to the wrapped handle when the predicate
     /// function returns true
@@ -452,7 +452,7 @@ where
 
 impl<F> Actor for BusHandlePipe<F>
 where
-    F: Fn(&InterfoldEvent<Sequenced>) -> bool + Unpin + 'static,
+    F: Fn(&LoxleyEvent<Sequenced>) -> bool + Unpin + 'static,
 {
     type Context = actix::Context<Self>;
     fn started(&mut self, ctx: &mut Self::Context) {
@@ -460,12 +460,12 @@ where
     }
 }
 
-impl<F> Handler<InterfoldEvent<Sequenced>> for BusHandlePipe<F>
+impl<F> Handler<LoxleyEvent<Sequenced>> for BusHandlePipe<F>
 where
-    F: Fn(&InterfoldEvent<Sequenced>) -> bool + Unpin + 'static,
+    F: Fn(&LoxleyEvent<Sequenced>) -> bool + Unpin + 'static,
 {
     type Result = ();
-    fn handle(&mut self, msg: InterfoldEvent<Sequenced>, _: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent<Sequenced>, _: &mut Self::Context) -> Self::Result {
         if (self.predicate)(&msg) {
             let source = msg.source();
             let block = msg.block();
@@ -485,7 +485,7 @@ mod tests {
     use e3_events::{
         hlc::{Hlc, HlcTimestamp},
         prelude::*,
-        BusHandle, EventPublisher, EventType, InterfoldEvent, InterfoldEventData, TestEvent,
+        BusHandle, EventPublisher, EventType, LoxleyEvent, LoxleyEventData, TestEvent,
     };
     use std::time::{Duration, SystemTime, UNIX_EPOCH};
     use tokio::time::sleep;
@@ -516,7 +516,7 @@ mod tests {
     #[actix::test]
     async fn test_hlc_events() -> anyhow::Result<()> {
         #[derive(Message)]
-        #[rtype("Vec<InterfoldEvent>")]
+        #[rtype("Vec<LoxleyEvent>")]
         struct GetEventsOrdered;
 
         // Setup forwarder
@@ -527,9 +527,9 @@ mod tests {
             type Context = actix::Context<Self>;
         }
 
-        impl Handler<InterfoldEvent> for Forwarder {
+        impl Handler<LoxleyEvent> for Forwarder {
             type Result = ();
-            fn handle(&mut self, msg: InterfoldEvent, _: &mut Self::Context) -> Self::Result {
+            fn handle(&mut self, msg: LoxleyEvent, _: &mut Self::Context) -> Self::Result {
                 let ts = msg.ts();
                 let block = msg.block();
                 let source = msg.source();
@@ -541,22 +541,22 @@ mod tests {
 
         // Setup saver
         struct Saver {
-            events: Vec<InterfoldEvent>,
+            events: Vec<LoxleyEvent>,
         }
 
         impl Actor for Saver {
             type Context = actix::Context<Self>;
         }
 
-        impl Handler<InterfoldEvent> for Saver {
+        impl Handler<LoxleyEvent> for Saver {
             type Result = ();
-            fn handle(&mut self, msg: InterfoldEvent, _: &mut Self::Context) -> Self::Result {
+            fn handle(&mut self, msg: LoxleyEvent, _: &mut Self::Context) -> Self::Result {
                 self.events.push(msg);
             }
         }
 
         impl Handler<GetEventsOrdered> for Saver {
-            type Result = Vec<InterfoldEvent>;
+            type Result = Vec<LoxleyEvent>;
             fn handle(&mut self, _: GetEventsOrdered, _: &mut Self::Context) -> Self::Result {
                 self.events.clone()
             }
@@ -613,7 +613,7 @@ mod tests {
         let ordered_names: Vec<_> = sorted_events
             .iter()
             .filter_map(|e| match e.get_data() {
-                InterfoldEventData::TestEvent(e) => Some(e.msg.clone()),
+                LoxleyEventData::TestEvent(e) => Some(e.msg.clone()),
                 _ => None,
             })
             .collect();

@@ -20,7 +20,7 @@ URL_FILE="./target/.program_url"
 
 if [ ! -f "$PROGRAM_PATH" ]; then
     echo "Error: Program not found at $PROGRAM_PATH"
-    echo "Run: interfold program compile"
+    echo "Run: loxley program compile"
     exit 1
 fi
 
@@ -103,7 +103,7 @@ echo "=========================================="
 echo ""
 echo "The URL has been saved to .program_url"
 echo ""
-echo "To use this in production, add to your interfold.config.yaml:"
+echo "To use this in production, add to your loxley.config.yaml:"
 echo ""
 echo "program:"
 echo "  risc0:"

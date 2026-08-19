@@ -53,7 +53,7 @@ pub(in crate::actors::evm_read_interface) async fn stream_from_evm<
         }
     };
 
-    next.do_send(InterfoldEvmEvent::HistoricalSyncComplete(
+    next.do_send(LoxleyEvmEvent::HistoricalSyncComplete(
         HistoricalSyncComplete::new(chain_id, last_id),
     ));
 

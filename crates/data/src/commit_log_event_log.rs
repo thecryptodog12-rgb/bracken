@@ -7,7 +7,7 @@
 use anyhow::{anyhow, Context, Result};
 use commitlog::message::{MessageBuf, MessageSet};
 use commitlog::{CommitLog, LogOptions, ReadLimit};
-use e3_events::{EventLog, InterfoldEvent, Unsequenced};
+use e3_events::{EventLog, LoxleyEvent, Unsequenced};
 use std::{
     collections::BTreeSet,
     fs::{self, File, OpenOptions},
@@ -69,7 +69,7 @@ impl CommitLogEventLog {
                     anyhow::bail!(
                         "recoverable uncommitted event-log tail detected in {}: {complete} complete \
                          unindexed record(s), {tail_bytes} physical tail byte(s); rerun with \
-                         `interfold node validate --repair` while the node is stopped",
+                         `loxley node validate --repair` while the node is stopped",
                         plan.segment_path.display()
                     );
                 }
@@ -123,7 +123,7 @@ impl CommitLogEventLog {
     /// from the state that existed before the crash and a later append would turn
     /// the same record into mid-log corruption. The [`EventLog`] adapter carries
     /// this error to startup and query callers instead of panicking an actor.
-    pub fn read_from_checked(&self, from: u64) -> Result<Vec<(u64, InterfoldEvent<Unsequenced>)>> {
+    pub fn read_from_checked(&self, from: u64) -> Result<Vec<(u64, LoxleyEvent<Unsequenced>)>> {
         self.read_from_checked_with_limit(from, None)
     }
 
@@ -131,7 +131,7 @@ impl CommitLogEventLog {
         &self,
         from: u64,
         limit: Option<usize>,
-    ) -> Result<Vec<(u64, InterfoldEvent<Unsequenced>)>> {
+    ) -> Result<Vec<(u64, LoxleyEvent<Unsequenced>)>> {
         // Convert 1-indexed sequence to 0-indexed offset.
         let mut current_offset = from.saturating_sub(1);
         let mut events = Vec::with_capacity(limit.unwrap_or_default().min(1024));
@@ -160,7 +160,7 @@ impl CommitLogEventLog {
                          log is corrupt"
                     );
                 }
-                let event = InterfoldEvent::<Unsequenced>::from_bytes(msg.payload()).with_context(
+                let event = LoxleyEvent::<Unsequenced>::from_bytes(msg.payload()).with_context(
                     || {
                         format!(
                             "commit log event at sequence {seq} failed to decode; log is corrupt"
@@ -332,7 +332,7 @@ fn inspect_active_tail(path: &Path) -> Result<Option<TailRecoveryPlan>> {
                  {offset}"
             );
         }
-        InterfoldEvent::<Unsequenced>::from_bytes(&payload).with_context(|| {
+        LoxleyEvent::<Unsequenced>::from_bytes(&payload).with_context(|| {
             format!("committed event-log record at sequence {expected_sequence} failed to decode")
         })?;
         indexed_end = end;
@@ -355,7 +355,7 @@ fn inspect_active_tail(path: &Path) -> Result<Option<TailRecoveryPlan>> {
                          {expected_offset}, got {offset}"
                     );
                 }
-                InterfoldEvent::<Unsequenced>::from_bytes(&payload).with_context(|| {
+                LoxleyEvent::<Unsequenced>::from_bytes(&payload).with_context(|| {
                     format!(
                         "CRC-valid unindexed event-log record at offset {offset} failed to decode; \
                          refusing to discard a potentially committed event"
@@ -472,7 +472,7 @@ fn apply_tail_recovery(plan: &TailRecoveryPlan) -> Result<()> {
 }
 
 impl EventLog for CommitLogEventLog {
-    fn append(&mut self, event: &InterfoldEvent<Unsequenced>) -> Result<u64> {
+    fn append(&mut self, event: &LoxleyEvent<Unsequenced>) -> Result<u64> {
         let bytes = bincode::serialize(event)?;
         self.append_bytes(&bytes)
     }
@@ -485,7 +485,7 @@ impl EventLog for CommitLogEventLog {
     fn read_from(
         &self,
         from: u64,
-    ) -> Result<Box<dyn Iterator<Item = (u64, InterfoldEvent<Unsequenced>)>>> {
+    ) -> Result<Box<dyn Iterator<Item = (u64, LoxleyEvent<Unsequenced>)>>> {
         Ok(Box::new(self.read_from_checked(from)?.into_iter()))
     }
 
@@ -493,7 +493,7 @@ impl EventLog for CommitLogEventLog {
         &self,
         from: u64,
         limit: usize,
-    ) -> Result<Box<dyn Iterator<Item = (u64, InterfoldEvent<Unsequenced>)>>> {
+    ) -> Result<Box<dyn Iterator<Item = (u64, LoxleyEvent<Unsequenced>)>>> {
         Ok(Box::new(
             self.read_from_checked_with_limit(from, Some(limit))?
                 .into_iter(),
@@ -509,7 +509,7 @@ impl EventLog for CommitLogEventLog {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use e3_events::{EventConstructorWithTimestamp, EventSource, InterfoldEventData, TestEvent};
+    use e3_events::{EventConstructorWithTimestamp, EventSource, LoxleyEventData, TestEvent};
     use std::io::{Seek, SeekFrom, Write};
     use tempfile::tempdir;
 
@@ -550,7 +550,7 @@ mod tests {
             signature: ArcBytes::from_bytes(&[0u8; 65]),
         };
 
-        let events: Vec<(&str, InterfoldEventData)> = vec![
+        let events: Vec<(&str, LoxleyEventData)> = vec![
             // Registration / sortition
             (
                 "CiphernodeAdded",
@@ -798,8 +798,8 @@ mod tests {
         }
     }
 
-    fn event_from(data: impl Into<InterfoldEventData>) -> InterfoldEvent<Unsequenced> {
-        InterfoldEvent::<Unsequenced>::new_with_timestamp(
+    fn event_from(data: impl Into<LoxleyEventData>) -> LoxleyEvent<Unsequenced> {
+        LoxleyEvent::<Unsequenced>::new_with_timestamp(
             data.into(),
             None,
             123,

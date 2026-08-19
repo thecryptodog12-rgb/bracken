@@ -11,7 +11,7 @@ witness data needed for CRISP's Noir circuits.
 
 `generateInputs` is the only entry point, and it covers all three operations: a first vote, a
 re-vote, and a masker contribution under the
-[vote masking](https://blog.theinterfold.com/vote-masking-receipt-freeness-secret-ballots/) scheme
+[vote masking](https://blog.theloxley.com/vote-masking-receipt-freeness-secret-ballots/) scheme
 that provides receipt-freeness.
 
 ```typescript

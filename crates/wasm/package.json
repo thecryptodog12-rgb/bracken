@@ -1,7 +1,7 @@
 {
-  "name": "@interfold/wasm",
+  "name": "@loxley/wasm",
   "version": "0.7.0",
-  "description": "Wasm modules for interfold.",
+  "description": "Wasm modules for loxley.",
   "main": "dist/node/e3_wasm.js",
   "module": "dist/web/e3_wasm.js",
   "types": "dist/web/e3_wasm.d.ts",
@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/theinterfold/interfold.git",
+    "url": "https://github.com/theloxley/loxley.git",
     "directory": "crates/wasm"
   },
   "exports": {

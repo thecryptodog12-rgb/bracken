@@ -11,7 +11,7 @@ deployments
 .cargo
 .next
 .cache-synpress
-.interfold
+.loxley
 
 # files
 *.env
@@ -19,7 +19,7 @@ deployments
 .DS_Store
 .pnp.*
 coverage.json
-interfold.config.yaml
+loxley.config.yaml
 
 # lock files
 package-lock.json

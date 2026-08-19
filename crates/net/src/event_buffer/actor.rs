@@ -7,8 +7,8 @@
 use actix::{Actor, ActorContext, AsyncContext, Handler, Message};
 use anyhow::{anyhow, Context, Result};
 use e3_events::{
-    BusHandle, EType, ErrorDispatcher, Event, EventSubscriber, EventType, InterfoldEvent,
-    InterfoldEventData,
+    BusHandle, EType, ErrorDispatcher, Event, EventSubscriber, EventType, LoxleyEvent,
+    LoxleyEventData,
 };
 use e3_utils::MAILBOX_LIMIT;
 use tokio::sync::broadcast::{self, error::RecvError};
@@ -70,14 +70,14 @@ impl NetEventBuffer {
 
         let addr = actor.start();
 
-        // Subscribe to InterfoldEvent on the bus
+        // Subscribe to LoxleyEvent on the bus
         bus.subscribe(EventType::SyncEnded, addr.clone().recipient());
 
         (output_rx, NetEventBufferHandle { readiness })
     }
 
-    fn handle_interfold_event(&mut self, msg: InterfoldEvent) -> Result<()> {
-        if let InterfoldEventData::SyncEnded(_) = msg.get_data() {
+    fn handle_loxley_event(&mut self, msg: LoxleyEvent) -> Result<()> {
+        if let LoxleyEventData::SyncEnded(_) = msg.get_data() {
             return self.process_sync_ended();
         }
         Ok(())

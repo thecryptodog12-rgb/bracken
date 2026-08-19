@@ -34,29 +34,29 @@ CIPHERNODE_ADDRESS_4="0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65"
 CIPHERNODE_ADDRESS_5="0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc"
 
 
-if [[ -n "${INTERFOLD_BIN:-}" ]]; then
-   if [[ ! -x "$INTERFOLD_BIN" ]]; then
-      echo "Configured INTERFOLD_BIN is not executable: $INTERFOLD_BIN" >&2
+if [[ -n "${LOXLEY_BIN:-}" ]]; then
+   if [[ ! -x "$LOXLEY_BIN" ]]; then
+      echo "Configured LOXLEY_BIN is not executable: $LOXLEY_BIN" >&2
       exit 1
    fi
 elif [[ "${CIPHERNODE_SKIP_PROOF_AGGREGATION:-false}" == "true" ]]; then
-   cargo build --locked --bin interfold --features e3-cli/test-only-skip-proof-aggregation
-   INTERFOLD_BIN="$ROOT_DIR/target/debug/interfold"
-elif command -v interfold >/dev/null 2>&1; then
-   INTERFOLD_BIN="interfold"
-elif [[ -f "$ROOT_DIR/target/debug/interfold" ]]; then
-   INTERFOLD_BIN="$ROOT_DIR/target/debug/interfold"
+   cargo build --locked --bin loxley --features e3-cli/test-only-skip-proof-aggregation
+   LOXLEY_BIN="$ROOT_DIR/target/debug/loxley"
+elif command -v loxley >/dev/null 2>&1; then
+   LOXLEY_BIN="loxley"
+elif [[ -f "$ROOT_DIR/target/debug/loxley" ]]; then
+   LOXLEY_BIN="$ROOT_DIR/target/debug/loxley"
 else
-   cargo build --locked --bin interfold
-   INTERFOLD_BIN="$ROOT_DIR/target/debug/interfold"
+   cargo build --locked --bin loxley
+   LOXLEY_BIN="$ROOT_DIR/target/debug/loxley"
 fi
-echo "Interfold binary: $INTERFOLD_BIN"
+echo "Loxley binary: $LOXLEY_BIN"
 
 # Function to clean up background processes
 cleanup() {
     echo "Cleaning up processes..."
     jobs -p | xargs -r kill -9 2>/dev/null || true
-    pkill -9 -f "target/debug/interfold" || true
+    pkill -9 -f "target/debug/loxley" || true
     pkill -9 -f "hardhat" || true
     pkill -9 -f "anvil" || true
     exit ${1:-1}
@@ -187,16 +187,16 @@ waiton-files() {
     esac
   }
 
-interfold_password_set() {
+loxley_password_set() {
   local name="$1"
   local password="$2"
-  $INTERFOLD_BIN password set \
+  $LOXLEY_BIN password set \
     --name $name \
-    --config "$SCRIPT_DIR/interfold.config.yaml" \
+    --config "$SCRIPT_DIR/loxley.config.yaml" \
     --password "$password"
 }
 
-interfold_start() {
+loxley_start() {
    local name="$1"
    heading "Launch ciphernode $name"
 
@@ -206,65 +206,65 @@ interfold_start() {
       extra_args="--otel=${OTEL}"
    fi
 
-   $INTERFOLD_BIN start -v \
+   $LOXLEY_BIN start -v \
      --name "$name" \
-     --config "$SCRIPT_DIR/interfold.config.yaml" $extra_args & 
+     --config "$SCRIPT_DIR/loxley.config.yaml" $extra_args & 
 }
 
-interfold_nodes_up() {
-   $INTERFOLD_BIN nodes up -v \
-     --config "$SCRIPT_DIR/interfold.config.yaml" & 
+loxley_nodes_up() {
+   $LOXLEY_BIN nodes up -v \
+     --config "$SCRIPT_DIR/loxley.config.yaml" & 
 }
 
-interfold_nodes_down() {
-  $INTERFOLD_BIN nodes down  
+loxley_nodes_down() {
+  $LOXLEY_BIN nodes down  
 }
 
-interfold_wallet_set() {
+loxley_wallet_set() {
   local name="$1"
   local private_key="$2"
 
-  $INTERFOLD_BIN wallet set \
+  $LOXLEY_BIN wallet set \
     --name $name \
-    --config "$SCRIPT_DIR/interfold.config.yaml" \
+    --config "$SCRIPT_DIR/loxley.config.yaml" \
     --private-key "$private_key"
 }
 
-interfold_net_set_key() {
+loxley_net_set_key() {
   local name="$1"
   local private_key="$2"
 
-  $INTERFOLD_BIN net set-key \
+  $LOXLEY_BIN net set-key \
     --name $name \
-    --config "$SCRIPT_DIR/interfold.config.yaml" \
+    --config "$SCRIPT_DIR/loxley.config.yaml" \
     --net-keypair "$private_key"
 }
 
-interfold_nodes_stop() {
+loxley_nodes_stop() {
   local name="$1"
 
-  $INTERFOLD_BIN nodes stop $name -v \
-    --config "$SCRIPT_DIR/interfold.config.yaml"
+  $LOXLEY_BIN nodes stop $name -v \
+    --config "$SCRIPT_DIR/loxley.config.yaml"
 }
 
-interfold_nodes_start() {
+loxley_nodes_start() {
   local name="$1"
 
-  $INTERFOLD_BIN nodes start $name -v \
-    --config "$SCRIPT_DIR/interfold.config.yaml"
+  $LOXLEY_BIN nodes start $name -v \
+    --config "$SCRIPT_DIR/loxley.config.yaml"
 }
 
 kill_proc() {
   local name=$1
-  local pid=$(ps aux | grep 'interfold' | grep "\--name $name" | awk '{ print $2 }')
+  local pid=$(ps aux | grep 'loxley' | grep "\--name $name" | awk '{ print $2 }')
   echo "Killing $pid"
   kill $pid
 }
 
 kill_em_all() {
-  echo "Killing interfold"
-  pkill -9 -f "target/debug/interfold" || true
-  pkill -9 -f "interfold start" || true
+  echo "Killing loxley"
+  pkill -9 -f "target/debug/loxley" || true
+  pkill -9 -f "loxley start" || true
   pkill -9 -f "anvil" || true
 }
 
@@ -281,10 +281,10 @@ ensure_process_count_equals() {
 }
 
 gracefull_shutdown() {
-  interfold_nodes_down
+  loxley_nodes_down
   echo "waiting 5 seconds for processes to shutdown"
   sleep 5
-  ensure_process_count_equals "target/debug/interfold" 0 || return 1
+  ensure_process_count_equals "target/debug/loxley" 0 || return 1
   kill_em_all
 }
 
@@ -292,9 +292,9 @@ daemon_query_events() {
   local name="$1"
   local output_file="${2:-$SCRIPT_DIR/output/events.txt}"
 
-  local ctrl_port=$($INTERFOLD_BIN config get ctrl_port \
+  local ctrl_port=$($LOXLEY_BIN config get ctrl_port \
     --name $name \
-    --config "$SCRIPT_DIR/interfold.config.yaml")
+    --config "$SCRIPT_DIR/loxley.config.yaml")
 
   local json_payload='{"command":{"EventsQuery":{"since":0,"limit":10}}}'
   curl -sf -X POST "http://127.0.0.1:${ctrl_port}" \

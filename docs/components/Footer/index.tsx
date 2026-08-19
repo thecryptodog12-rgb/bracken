@@ -13,7 +13,7 @@ const Footer = () => {
   return (
     <footer style={{ padding: '3rem', textAlign: 'center', color: '#B8B8B8' }}>
       {/* <img
-        src='/interfold-mark-glow.svg'
+        src='/loxley-mark-glow.svg'
         style={{
           opacity: 0.3,
           margin: '0 auto',
@@ -21,7 +21,7 @@ const Footer = () => {
           marginBottom: '1rem',
         }}
       /> */}
-      <p>{new Date().getFullYear()} © The Interfold</p>
+      <p>{new Date().getFullYear()} © The Loxley</p>
       <ul className={classes.socialLinks}>
         {socialLinks.map(({ name, icon, url }, i) => {
           return (

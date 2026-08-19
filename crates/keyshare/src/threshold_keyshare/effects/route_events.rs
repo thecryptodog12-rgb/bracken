@@ -4,54 +4,54 @@
 
 use super::*;
 
-impl Handler<InterfoldEvent> for ThresholdKeyshare {
+impl Handler<LoxleyEvent> for ThresholdKeyshare {
     type Result = ();
-    fn handle(&mut self, msg: InterfoldEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            InterfoldEventData::CiphernodeSelected(data) => {
+            LoxleyEventData::CiphernodeSelected(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::CiphertextOutputPublished(data) => {
+            LoxleyEventData::CiphertextOutputPublished(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::PublicKeyAggregated(data) => {
+            LoxleyEventData::PublicKeyAggregated(data) => {
                 let committee_hash =
                     e3_committee_hash::hash_committee_addresses(&data.committee_addresses);
                 let pk = ArcBytes::from_bytes(&data.pubkey);
                 let _ = self.state.try_mutate(&ec, |mut s| {
                     s.aggregated_pk = Some(pk);
                     s.decryption_domain = Some(e3_committee_hash::DecryptionDomainContext {
-                        interfold_address: self.interfold_address,
+                        loxley_address: self.loxley_address,
                         committee_hash,
                         committee_public_key: data.pk_commitment.into(),
                     });
                     Ok(s)
                 });
             }
-            InterfoldEventData::ThresholdShareCreated(data) => {
+            LoxleyEventData::ThresholdShareCreated(data) => {
                 let _ =
                     self.handle_threshold_share_created(TypedEvent::new(data, ec), ctx.address());
             }
-            InterfoldEventData::EncryptionKeyCreated(data) => {
+            LoxleyEventData::EncryptionKeyCreated(data) => {
                 let _ =
                     self.handle_encryption_key_created(TypedEvent::new(data, ec), ctx.address());
             }
-            InterfoldEventData::PkGenerationProofSigned(data) => {
+            LoxleyEventData::PkGenerationProofSigned(data) => {
                 let _ = self.handle_pk_generation_proof_signed(TypedEvent::new(data, ec));
             }
-            InterfoldEventData::DkgProofSigned(data) => {
+            LoxleyEventData::DkgProofSigned(data) => {
                 let _ = self.handle_share_computation_proof_signed(TypedEvent::new(data, ec));
             }
-            InterfoldEventData::E3RequestComplete(data) => self.notify_sync(ctx, data),
-            InterfoldEventData::E3Failed(data) => {
+            LoxleyEventData::E3RequestComplete(data) => self.notify_sync(ctx, data),
+            LoxleyEventData::E3Failed(data) => {
                 warn!(
                     "E3 failed: {:?}. Shutting down ThresholdKeyshare for e3_id={}",
                     data.reason, data.e3_id
                 );
                 self.notify_sync(ctx, E3RequestComplete { e3_id: data.e3_id });
             }
-            InterfoldEventData::E3StageChanged(data) => {
+            LoxleyEventData::E3StageChanged(data) => {
                 use e3_events::E3Stage;
                 match &data.new_stage {
                     E3Stage::Complete | E3Stage::Failed => {
@@ -67,7 +67,7 @@ impl Handler<InterfoldEvent> for ThresholdKeyshare {
                     }
                 }
             }
-            InterfoldEventData::DecryptionKeyShared(data) => {
+            LoxleyEventData::DecryptionKeyShared(data) => {
                 if data.external {
                     // Route based on current state
                     if let Some(state) = self.state.get() {
@@ -133,22 +133,22 @@ impl Handler<InterfoldEvent> for ThresholdKeyshare {
                     }
                 }
             }
-            InterfoldEventData::DecryptionShareProofSigned(data) => {
+            LoxleyEventData::DecryptionShareProofSigned(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ShareVerificationComplete(data) => {
+            LoxleyEventData::ShareVerificationComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::ComputeResponse(data) => {
+            LoxleyEventData::ComputeResponse(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            InterfoldEventData::CommitteeMemberExpelled(data) => {
+            LoxleyEventData::CommitteeMemberExpelled(data) => {
                 self.handle_committee_member_expelled(data, ec);
             }
-            InterfoldEventData::CommitteeMemberExcluded(data) => {
+            LoxleyEventData::CommitteeMemberExcluded(data) => {
                 self.handle_committee_member_excluded(data, ec);
             }
-            InterfoldEventData::EffectsEnabled(_) => {
+            LoxleyEventData::EffectsEnabled(_) => {
                 // Broadcast once at the end of boot sync. Re-drive any of this node's own
                 // in-flight work that a crash may have interrupted (idempotent downstream).
                 if let Err(err) = self.resume_in_flight_work(ec) {

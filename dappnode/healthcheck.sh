@@ -8,9 +8,9 @@ set -eu
 
 PROC_ROOT="${PROC_ROOT:-/proc}"
 CONFIG_FILE="${CONFIG_FILE:-/data/config.yaml}"
-PASSWORD_FILE="${PASSWORD_FILE:-/data/.interfold/config/_default/key}"
-DB_PATH="${DB_PATH:-/data/.interfold/data/_default/db}"
-EVENT_LOG_PATH="${EVENT_LOG_PATH:-/data/.interfold/data/_default/log.0}"
+PASSWORD_FILE="${PASSWORD_FILE:-/data/.loxley/config/_default/key}"
+DB_PATH="${DB_PATH:-/data/.loxley/data/_default/db}"
+EVENT_LOG_PATH="${EVENT_LOG_PATH:-/data/.loxley/data/_default/log.0}"
 QUIC_PORT="${QUIC_PORT:-37173}"
 SS_BIN="${SS_BIN:-ss}"
 STAT_BIN="${STAT_BIN:-stat}"
@@ -21,7 +21,7 @@ esac
 [ "$QUIC_PORT" -ge 1 ] && [ "$QUIC_PORT" -le 65535 ] || exit 1
 
 [ -r "$PROC_ROOT/1/cmdline" ] || exit 1
-[ "$(basename "$(readlink "$PROC_ROOT/1/exe")")" = "interfold" ] || exit 1
+[ "$(basename "$(readlink "$PROC_ROOT/1/exe")")" = "loxley" ] || exit 1
 
 cmdline=$(tr '\000' '\n' < "$PROC_ROOT/1/cmdline")
 printf '%s\n' "$cmdline" | grep -Fxq 'start' || exit 1

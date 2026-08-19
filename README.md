@@ -1,6 +1,6 @@
 <div align="center">
   <picture>
-    <img src="./docs/public/interfold-meta.jpg" alt="The Interfold" width="100%">
+    <img src="./docs/public/loxley-meta.jpg" alt="The Loxley" width="100%">
   </picture>
 
 [![Docs][docs-badge]][docs] [![Github Actions][gha-badge]][gha] [![Hardhat][hardhat-badge]][hardhat]
@@ -8,22 +8,22 @@
 
 </div>
 
-# The Interfold
+# The Loxley
 
-> **Note:** The Interfold was previously known as **Interfold**.  
-> Many repositories, packages, and CLI tools still use the `interfold` name while the project
+> **Note:** The Loxley was previously known as **Loxley**.  
+> Many repositories, packages, and CLI tools still use the `loxley` name while the project
 > transitions.
 
-This is the monorepo for **The Interfold**, an open-source protocol for confidential coordination.
+This is the monorepo for **The Loxley**, an open-source protocol for confidential coordination.
 
-The Interfold leverages a combination of Fully Homomorphic Encryption (FHE), Zero-Knowledge Proofs
+The Loxley leverages a combination of Fully Homomorphic Encryption (FHE), Zero-Knowledge Proofs
 (ZKPs), and Multi-Party Computation (MPC) to enable Encrypted Execution Environments (E3), with
 integrity and privacy guarantees rooted in cryptography and economics, rather than hardware and
 attestations.
 
 ## Documentation
 
-Full documentation is available at: https://docs.theinterfold.com
+Full documentation is available at: https://docs.theloxley.com
 
 ## Quick Start
 
@@ -41,7 +41,7 @@ See [CONTRIBUTING.md][contributing].
 
 ## Development
 
-This section covers the essential commands for setting up and working with the Interfold codebase
+This section covers the essential commands for setting up and working with the Loxley codebase
 locally.
 
 ```bash
@@ -74,9 +74,9 @@ The monorepo provides several test scripts for different components:
 - **`pnpm rust:test`** - Runs all Rust crate tests in the `crates/` directory. This script runs
   tests for all crates in the workspace, not just ciphernode-related crates.
 
-- **`pnpm evm:test`** - Runs tests for the EVM smart contracts in `packages/interfold-contracts`.
+- **`pnpm evm:test`** - Runs tests for the EVM smart contracts in `packages/loxley-contracts`.
 
-- **`pnpm sdk:test`** - Runs tests for the TypeScript SDK in `packages/interfold-sdk`.
+- **`pnpm sdk:test`** - Runs tests for the TypeScript SDK in `packages/loxley-sdk`.
 
 - **`pnpm noir:test`** - Runs tests for Noir circuits in the `circuits/` directory using
   `nargo test`. Requires the [Noir toolchain](https://noir-lang.org/docs/installation) (`nargo`) and
@@ -206,58 +206,58 @@ This workspace's minimum supported rustc version is 1.91.1.
 
 ## Architecture
 
-The Interfold employs a modular architecture involving numerous actors and participants. The
+The Loxley employs a modular architecture involving numerous actors and participants. The
 sequence diagram below offers a high-level overview of the protocol, but necessarily omits most
 detail.
 
 ```mermaid
 sequenceDiagram
     participant Users
-    participant Interfold
+    participant Loxley
     participant CiphernodeRegistry
     participant E3Program
     participant ComputeProvider
     participant DecryptionVerifier
 
-    Users->>Interfold: request(parameters)
-    Interfold->>E3Program: validate(e3ProgramParams)
-    Interfold->>ComputeProvider: validate(computeProviderParams)
-    ComputeProvider-->>Interfold: decryptionVerifier
-    Interfold->>CiphernodeRegistry: requestCommittee(e3Id, legacySeed, threshold)
+    Users->>Loxley: request(parameters)
+    Loxley->>E3Program: validate(e3ProgramParams)
+    Loxley->>ComputeProvider: validate(computeProviderParams)
+    ComputeProvider-->>Loxley: decryptionVerifier
+    Loxley->>CiphernodeRegistry: requestCommittee(e3Id, legacySeed, threshold)
     CiphernodeRegistry->>CiphernodeRegistry: commit future entropy block
-    CiphernodeRegistry-->>Interfold: success
-    Interfold-->>Users: e3Id, E3 struct
+    CiphernodeRegistry-->>Loxley: success
+    Loxley-->>Users: e3Id, E3 struct
 
-    Users->>Interfold: activate(e3Id)
-    Interfold->>CiphernodeRegistry: committeePublicKey(e3Id)
-    CiphernodeRegistry-->>Interfold: publicKey
-    Interfold->>Interfold: Set expiration and committeePublicKey
-    Interfold-->>Users: success
+    Users->>Loxley: activate(e3Id)
+    Loxley->>CiphernodeRegistry: committeePublicKey(e3Id)
+    CiphernodeRegistry-->>Loxley: publicKey
+    Loxley->>Loxley: Set expiration and committeePublicKey
+    Loxley-->>Users: success
 
-    Users->>Interfold: publishInput(e3Id, data)
-    Interfold->>E3Program: validateInput(msg.sender, data)
-    E3Program-->>Interfold: input, success
-    Interfold->>Interfold: Store input
-    Interfold-->>Users: success
+    Users->>Loxley: publishInput(e3Id, data)
+    Loxley->>E3Program: validateInput(msg.sender, data)
+    E3Program-->>Loxley: input, success
+    Loxley->>Loxley: Store input
+    Loxley-->>Users: success
 
-    Users->>Interfold: publishCiphertextOutput(e3Id, data)
-    Interfold->>DecryptionVerifier: verify(e3Id, data)
-    DecryptionVerifier-->>Interfold: output, success
-    Interfold->>Interfold: Store ciphertextOutput
-    Interfold-->>Users: success
+    Users->>Loxley: publishCiphertextOutput(e3Id, data)
+    Loxley->>DecryptionVerifier: verify(e3Id, data)
+    DecryptionVerifier-->>Loxley: output, success
+    Loxley->>Loxley: Store ciphertextOutput
+    Loxley-->>Users: success
 
-    Users->>Interfold: publishPlaintextOutput(e3Id, data)
-    Interfold->>E3Program: verify(e3Id, data)
-    E3Program-->>Interfold: output, success
-    Interfold->>Interfold: Store plaintextOutput
-    Interfold-->>Users: success
+    Users->>Loxley: publishPlaintextOutput(e3Id, data)
+    Loxley->>E3Program: verify(e3Id, data)
+    E3Program-->>Loxley: output, success
+    Loxley->>Loxley: Store plaintextOutput
+    Loxley-->>Users: success
 ```
 
 ## 🚀 Release Process
 
 ### Overview
 
-The Interfold uses a unified versioning strategy where all packages (Rust crates and npm packages)
+The Loxley uses a unified versioning strategy where all packages (Rust crates and npm packages)
 share the same version number. Releases are triggered by git tags and follow semantic versioning.
 
 ### Quick Release
@@ -358,7 +358,7 @@ Once the tag is pushed, GitHub Actions automatically:
 
 ### Version Format
 
-The Interfold follows [Semantic Versioning](https://semver.org/):
+The Loxley follows [Semantic Versioning](https://semver.org/):
 
 - **Stable**: `v1.0.0` - Production ready
 - **Pre-release**: `v1.0.0-beta.1` - Testing/preview versions
@@ -373,8 +373,8 @@ The Interfold follows [Semantic Versioning](https://semver.org/):
 Use stable versions only:
 
 ```bash
-interfoldup install              # Latest stable
-interfoldup install v1.0.0       # Specific stable version
+loxleyup install              # Latest stable
+loxleyup install v1.0.0       # Specific stable version
 ```
 
 #### For Testing (Testnet)
@@ -382,8 +382,8 @@ interfoldup install v1.0.0       # Specific stable version
 You can use pre-release versions:
 
 ```bash
-interfoldup install --pre-release # Latest pre-release
-interfoldup install v1.0.0-beta.1 # Specific pre-release
+loxleyup install --pre-release # Latest pre-release
+loxleyup install v1.0.0-beta.1 # Specific pre-release
 ```
 
 #### For Development
@@ -391,8 +391,8 @@ interfoldup install v1.0.0-beta.1 # Specific pre-release
 Build from source:
 
 ```bash
-git clone https://github.com/gnosisguild/interfold.git
-cd interfold
+git clone https://github.com/gnosisguild/loxley.git
+cd loxley
 cargo build --release
 ```
 
@@ -409,10 +409,10 @@ cargo build --release
 
 ```bash
 # Latest stable release (recommended for production)
-curl -fsSL https://raw.githubusercontent.com/gnosisguild/interfold/stable/install | bash
+curl -fsSL https://raw.githubusercontent.com/gnosisguild/loxley/stable/install | bash
 
 # Latest development version (may be unstable)
-curl -fsSL https://raw.githubusercontent.com/gnosisguild/interfold/main/install | bash
+curl -fsSL https://raw.githubusercontent.com/gnosisguild/loxley/main/install | bash
 ```
 
 ## 📋 Release Checklist
@@ -424,8 +424,8 @@ For maintainers doing a release:
 - [ ] Decide version number (major/minor/patch)
 - [ ] Run: `pnpm bump:versions X.Y.Z`
 - [ ] Monitor GitHub Actions for successful deployment
-- [ ] Verify packages on [npm](https://www.npmjs.com/org/interfold) and
-      [crates.io](https://crates.io/search?q=interfold)
+- [ ] Verify packages on [npm](https://www.npmjs.com/org/loxley) and
+      [crates.io](https://crates.io/search?q=loxley)
 - [ ] Check GitHub release page for binaries and changelog
 - [ ] Announce release (Discord/Twitter/etc)
 
@@ -457,13 +457,13 @@ If a release has issues:
 1. **Mark as deprecated on npm**:
 
    ```bash
-   npm deprecate @interfold/sdk@1.0.0 "Critical bug, use 1.0.1"
+   npm deprecate @loxley/sdk@1.0.0 "Critical bug, use 1.0.1"
    ```
 
 2. **Yank from crates.io** (if critical):
 
    ```bash
-   cargo yank --version 1.0.0 interfold
+   cargo yank --version 1.0.0 loxley
    ```
 
 3. **Fix and release patch**:
@@ -473,7 +473,7 @@ If a release has issues:
 
 ## 📊 Version History
 
-Check our [Releases page](https://github.com/gnosisguild/interfold/releases) for full version
+Check our [Releases page](https://github.com/gnosisguild/loxley/releases) for full version
 history and changelogs.
 
 ## Security and Liability
@@ -485,15 +485,15 @@ FITNESS FOR A PARTICULAR PURPOSE.
 
 This repo created under the [LGPL-3.0+ license](LICENSE.md).
 
-[gha]: https://github.com/gnosisguild/interfold/actions
-[gha-badge]: https://github.com/gnosisguild/interfold/actions/workflows/ci.yml/badge.svg
+[gha]: https://github.com/gnosisguild/loxley/actions
+[gha-badge]: https://github.com/gnosisguild/loxley/actions/workflows/ci.yml/badge.svg
 [hardhat]: https://hardhat.org/
 [hardhat-badge]: https://img.shields.io/badge/Built%20with-Hardhat-FFDB1C.svg
 [license]: https://opensource.org/license/lgpl-3-0
 [license-badge]: https://img.shields.io/badge/License-LGPLv3.0-blue.svg
-[docs]: https://docs.theinterfold.com
+[docs]: https://docs.theloxley.com
 [docs-badge]: https://img.shields.io/badge/Documentation-blue.svg
-[quick-start]: https://docs.theinterfold.com/quick-start
-[crisp]: https://docs.theinterfold.com/CRISP/introduction
+[quick-start]: https://docs.theloxley.com/quick-start
+[crisp]: https://docs.theloxley.com/CRISP/introduction
 [telegram]: https://t.me/+raYAZgrwgOw2ODJh
 [contributing]: CONTRIBUTING.md

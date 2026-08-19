@@ -8,7 +8,7 @@ importers:
 
   .:
     devDependencies:
-      '@interfold/config':
+      '@loxley/config':
         specifier: ^0
         version: 0.5.0(eslint@9.39.4)(tsup@8.5.0(typescript@5.8.3)(yaml@2.9.0))(typescript@5.8.3)
       '@playwright/test':
@@ -743,7 +743,7 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@interfold/config@0.5.0':
+  '@loxley/config@0.5.0':
     resolution: {integrity: sha512-KfR3XZq/NlfwBvacxZ2bpHCUKUkn9q24ZDuFTXqQNeqwTpGTh7CoeNOKZpvwm4eUOJjuBiyNWuiH7kbrsQf+Yg==}
     peerDependencies:
       eslint: ^9.0.0
@@ -3095,7 +3095,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@interfold/config@0.5.0(eslint@9.39.4)(tsup@8.5.0(typescript@5.8.3)(yaml@2.9.0))(typescript@5.8.3)':
+  '@loxley/config@0.5.0(eslint@9.39.4)(tsup@8.5.0(typescript@5.8.3)(yaml@2.9.0))(typescript@5.8.3)':
     dependencies:
       '@eslint/eslintrc': 3.3.5
       '@eslint/js': 9.39.4

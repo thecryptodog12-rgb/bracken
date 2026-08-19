@@ -9,7 +9,7 @@ use std::path::PathBuf;
 use super::write_file_with_dirs;
 use actix::{Actor, Addr, Context, Handler};
 use e3_bfv_client::decode_bytes_to_vec_u64;
-use e3_events::{prelude::*, BusHandle, EventType, InterfoldEvent, InterfoldEventData};
+use e3_events::{prelude::*, BusHandle, EventType, LoxleyEvent, LoxleyEventData};
 use e3_utils::MAILBOX_LIMIT;
 use tracing::{error, info};
 
@@ -35,10 +35,10 @@ impl Actor for PlaintextWriter {
     }
 }
 
-impl Handler<InterfoldEvent> for PlaintextWriter {
+impl Handler<LoxleyEvent> for PlaintextWriter {
     type Result = ();
-    fn handle(&mut self, msg: InterfoldEvent, _: &mut Self::Context) -> Self::Result {
-        if let InterfoldEventData::PlaintextAggregated(data) = msg.into_data() {
+    fn handle(&mut self, msg: LoxleyEvent, _: &mut Self::Context) -> Self::Result {
+        if let LoxleyEventData::PlaintextAggregated(data) = msg.into_data() {
             let Some(decrypted) = data.decrypted_output.first() else {
                 error!("Decrypted output must not be empty!");
                 return;

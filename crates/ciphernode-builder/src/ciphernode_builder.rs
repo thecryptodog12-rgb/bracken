@@ -20,11 +20,11 @@ use e3_data::{InMemStore, RepositoriesFactory};
 use e3_events::DkgFoldAttestationContext;
 use e3_events::{
     AggregateConfig, AggregateId, BusHandle, EventBus, EventBusConfig, EvmEventConfig,
-    InterfoldEvent,
+    LoxleyEvent,
 };
 use e3_evm::{
     fetch_accusation_vote_validity, BondingRegistrySolReader, CiphernodeRegistrySol,
-    CiphernodeRegistrySolReader, EvmChainGatewayHandle, InterfoldSolReader, InterfoldSolWriter,
+    CiphernodeRegistrySolReader, EvmChainGatewayHandle, LoxleySolReader, LoxleySolWriter,
     ProviderConfig, SlashingManagerSolReader, SlashingManagerSolWriter,
 };
 use e3_fhe::ext::FheExtension;
@@ -89,7 +89,7 @@ pub struct CiphernodeBuilder {
     pubkey_agg: bool,
     rng: SharedRng,
     sortition_backend: SortitionBackend,
-    source_bus: Option<BusMode<Addr<EventBus<InterfoldEvent>>>>,
+    source_bus: Option<BusMode<Addr<EventBus<LoxleyEvent>>>>,
     task_pool: Option<TaskPool>,
     threads: Option<usize>,
     signer: Option<alloy::signers::local::PrivateKeySigner>,
@@ -117,8 +117,8 @@ impl NetConfig {
 
 #[derive(Default, Debug)]
 pub struct ContractComponents {
-    interfold_reader: bool,
-    interfold: bool,
+    loxley_reader: bool,
+    loxley: bool,
     ciphernode_registry: bool,
     bonding_registry: bool,
     slashing_manager: bool,
@@ -173,7 +173,7 @@ impl CiphernodeBuilder {
     }
 
     /// Use the given bus for all events. No new bus is created.
-    pub fn with_source_bus(mut self, bus: &Addr<EventBus<InterfoldEvent>>) -> Self {
+    pub fn with_source_bus(mut self, bus: &Addr<EventBus<LoxleyEvent>>) -> Self {
         self.source_bus = Some(BusMode::Source(bus.clone()));
         self
     }
@@ -182,7 +182,7 @@ impl CiphernodeBuilder {
     /// source are forwarded to the local bus created for this instance.
     /// Useful for tests and monitoring subscribers that need an isolated
     /// event stream that mirrors the source.
-    pub fn with_forked_bus(mut self, bus: &Addr<EventBus<InterfoldEvent>>) -> Self {
+    pub fn with_forked_bus(mut self, bus: &Addr<EventBus<LoxleyEvent>>) -> Self {
         self.source_bus = Some(BusMode::Forked(bus.clone()));
         self
     }
@@ -212,7 +212,7 @@ impl CiphernodeBuilder {
         self
     }
 
-    /// Subscribe a [`HistoryCollector`] to only `InterfoldError` events.
+    /// Subscribe a [`HistoryCollector`] to only `LoxleyError` events.
     /// Useful for tests and debugging.
     pub fn with_error_collector(mut self) -> Self {
         self.collect_errors = true;
@@ -415,15 +415,15 @@ impl CiphernodeBuilder {
         self
     }
 
-    /// Setup an Interfold contract reader for every evm chain provided
-    pub fn with_contract_interfold_reader(mut self) -> Self {
-        self.contract_components.interfold_reader = true;
+    /// Setup an Loxley contract reader for every evm chain provided
+    pub fn with_contract_loxley_reader(mut self) -> Self {
+        self.contract_components.loxley_reader = true;
         self
     }
 
-    /// Setup an Interfold contract reader and writer for every evm chain provided
-    pub fn with_contract_interfold_full(mut self) -> Self {
-        self.contract_components.interfold = true;
+    /// Setup an Loxley contract reader and writer for every evm chain provided
+    pub fn with_contract_loxley_full(mut self) -> Self {
+        self.contract_components.loxley = true;
         self
     }
 
@@ -463,8 +463,8 @@ impl CiphernodeBuilder {
         self
     }
 
-    fn create_local_bus() -> Addr<EventBus<InterfoldEvent>> {
-        EventBus::<InterfoldEvent>::new(EventBusConfig { deduplicate: true }).start()
+    fn create_local_bus() -> Addr<EventBus<LoxleyEvent>> {
+        EventBus::<LoxleyEvent>::new(EventBusConfig { deduplicate: true }).start()
     }
 
     /// Create aggregate configuration from configured chains
@@ -500,13 +500,13 @@ impl CiphernodeBuilder {
         // Optional event collectors for debugging / testing.
         let history = if self.collect_history {
             info!("Setting up history collector");
-            Some(EventBus::<InterfoldEvent>::history(&local_bus))
+            Some(EventBus::<LoxleyEvent>::history(&local_bus))
         } else {
             None
         };
         let errors = if self.collect_errors {
             info!("Setting up error collector");
-            Some(EventBus::<InterfoldEvent>::error(&local_bus))
+            Some(EventBus::<LoxleyEvent>::error(&local_bus))
         } else {
             None
         };
@@ -578,7 +578,7 @@ impl CiphernodeBuilder {
         ciphernode_selector.do_send(EmitPersistedAggregatorState);
 
         // Setup networking
-        let topic = "interfold-gossip";
+        let topic = "loxley-gossip";
         let (peer_id, interface, net_kind) = self.setup_networking(&store, topic).await?;
         let network_status = interface.status();
         let net_buffer = setup_net_with_limits(
@@ -620,7 +620,7 @@ impl CiphernodeBuilder {
 
     // ── build() sub-functions ──────────────────────────────────────────
 
-    fn resolve_bus(&self) -> Addr<EventBus<InterfoldEvent>> {
+    fn resolve_bus(&self) -> Addr<EventBus<LoxleyEvent>> {
         match self.source_bus {
             Some(BusMode::Forked(ref bus)) => {
                 let local_bus = Self::create_local_bus();
@@ -635,7 +635,7 @@ impl CiphernodeBuilder {
 
     fn create_event_system(
         &self,
-        bus: Addr<EventBus<InterfoldEvent>>,
+        bus: Addr<EventBus<LoxleyEvent>>,
         aggregate_config: &AggregateConfig,
     ) -> EventSystem {
         let base = match self.event_system.clone() {
@@ -802,16 +802,16 @@ impl CiphernodeBuilder {
             backend.ensure_installed().await?;
             let _signer = provider_cache.ensure_signer().await?;
 
-            let mut interfold_addresses = HashMap::new();
+            let mut loxley_addresses = HashMap::new();
             for chain in self.chains.iter().filter(|c| c.enabled.unwrap_or(true)) {
                 let provider = provider_cache.ensure_read_provider(chain).await?;
                 let chain_id = provider.chain_id();
                 validate_chain_id(chain, chain_id)?;
-                interfold_addresses.insert(chain_id, chain.contracts.interfold.address()?);
+                loxley_addresses.insert(chain_id, chain.contracts.loxley.address()?);
             }
             for chain in self.chains.iter().filter(|c| !c.enabled.unwrap_or(true)) {
                 if let Some(chain_id) = chain.chain_id {
-                    interfold_addresses.insert(chain_id, chain.contracts.interfold.address()?);
+                    loxley_addresses.insert(chain_id, chain.contracts.loxley.address()?);
                 }
             }
 
@@ -820,7 +820,7 @@ impl CiphernodeBuilder {
                 bus,
                 &self.cipher,
                 addr,
-                interfold_addresses,
+                loxley_addresses,
             ));
 
             info!("Setting up ZK actors");
@@ -1054,20 +1054,20 @@ async fn setup_evm_system(
             .with_provider_factory(provider_factory.clone())
             .with_buffer_limit(max_buffered_evm_events);
 
-        if contract_components.interfold {
+        if contract_components.loxley {
             let write_provider = provider_cache.ensure_write_provider(chain).await?;
-            let contract = &chain.contracts.interfold;
-            InterfoldSolWriter::attach(bus, write_provider.clone(), contract.address()?);
+            let contract = &chain.contracts.loxley;
+            LoxleySolWriter::attach(bus, write_provider.clone(), contract.address()?);
             system.with_contract(contract.address()?, move |next| {
-                InterfoldSolReader::setup(&next).recipient()
+                LoxleySolReader::setup(&next).recipient()
             });
         }
 
-        if contract_components.interfold_reader {
-            let contract = &chain.contracts.interfold;
+        if contract_components.loxley_reader {
+            let contract = &chain.contracts.loxley;
 
             system.with_contract(contract.address()?, move |next| {
-                InterfoldSolReader::setup(&next).recipient()
+                LoxleySolReader::setup(&next).recipient()
             });
         }
 
@@ -1095,7 +1095,7 @@ async fn setup_evm_system(
             });
 
             // TODO: Should we not let this pass and just use '?'?
-            // Above if we include interfold in the config and we don't have a wallet it will fail
+            // Above if we include loxley in the config and we don't have a wallet it will fail
             match provider_cache
                     .ensure_write_provider(chain)
                     .await
@@ -1199,7 +1199,7 @@ mod tests {
             rpc_url: "http://127.0.0.1:8545".to_owned(),
             rpc_auth: RpcAuth::default(),
             contracts: ContractAddresses {
-                interfold: contract(),
+                loxley: contract(),
                 ciphernode_registry: contract(),
                 bonding_registry: contract(),
                 e3_program: None,
