@@ -42,6 +42,10 @@
      hij mag niet meekantelen zoals --ink/--paper dat doen. */
   --foot-bg: #15211b;
   --foot-ink: #f6f3e9;
+  /* De hero is in beide thema's donker, dus zijn accent mag niet meekantelen.
+     --accent-deep is in light #1c5c3f: donkergroen op een donker slab, en dus
+     onleesbaar. Dit blijft licht. */
+  --hero-accent: #7fd3a4;
 
   /* Display staat los van de leesserif: hoog contrast, alleen voor de paar
      plekken waar de pagina iets beweert. */
@@ -77,6 +81,7 @@
     --brass-bg: #2a2113;
     --foot-bg: #0b100a;
     --foot-ink: #e8eee6;
+    --hero-accent: #7fd3a4;
   }
 }
 
@@ -98,6 +103,7 @@
   --brass-bg: #2a2113;
   --foot-bg: #0b100a;
   --foot-ink: #e8eee6;
+  --hero-accent: #7fd3a4;
 }
 
 * {
@@ -2663,4 +2669,132 @@ button {
   --lxd-warn: var(--brass);
   --lxd-mono: var(--mono);
   --lxd-display: var(--display);
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────────────
+   Volledige breedte, eigen donkere grond in beide thema's. De pagina hoort
+   ergens te beginnen in plaats van meteen te gaan opsommen. */
+.hero {
+  position: relative;
+  isolation: isolate;
+  margin: 0 0 8px;
+  padding: 78px 0 62px;
+  background: var(--foot-bg);
+  overflow: hidden;
+}
+/* Een zachte greenwood-gloed onder het veld, zodat het slab niet als een
+   platte zwarte balk leest. */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(120% 78% at 50% 0%, color-mix(in oklab, var(--hero-accent) 20%, transparent) 0%, transparent 62%);
+}
+.hero__inner {
+  position: relative;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 34px;
+}
+.hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--foot-ink) 62%, transparent);
+  margin-bottom: 22px;
+}
+.hero__pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hero-accent);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--hero-accent) 70%, transparent);
+  animation: hero-pulse 2.8s ease-out infinite;
+}
+@keyframes hero-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--hero-accent) 70%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 9px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.hero__title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(46px, 7vw, 96px);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  margin: 0 0 22px;
+  color: var(--foot-ink);
+  text-wrap: balance;
+}
+.hero__title em {
+  font-style: italic;
+  color: var(--hero-accent);
+}
+.hero__lede {
+  max-width: 58ch;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.62;
+  color: color-mix(in oklab, var(--foot-ink) 72%, transparent);
+}
+
+.hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin: 40px 0 0;
+  padding-top: 26px;
+  border-top: 1px solid color-mix(in oklab, var(--foot-ink) 14%, transparent);
+}
+.hero__stats dt {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--foot-ink) 48%, transparent);
+  margin-bottom: 6px;
+}
+.hero__stats dd {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 26px;
+  line-height: 1;
+  color: var(--foot-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__pulse {
+    animation: none;
+  }
+}
+@media (max-width: 720px) {
+  .hero {
+    padding: 52px 0 44px;
+  }
+  .hero__inner {
+    padding: 0 20px;
+  }
+  .hero__stats {
+    gap: 26px;
+  }
+}
+
+/* Het canopy-veld in de hero leest tegen een donkere grond, dus krijgt het de
+   hero-kleuren in plaats van die van de pagina. */
+.hero .lxd-canopy {
+  --lxd-accent: var(--hero-accent);
+  --lxd-ink-faint: color-mix(in oklab, var(--foot-ink) 46%, transparent);
+  --lxd-warn: #d8a548;
 }

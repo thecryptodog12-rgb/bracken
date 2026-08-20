@@ -23,6 +23,7 @@ import { CONTRACTS } from './lib/chain'
 import { isE3Active, solidityStageToUiIdx, type E3FullDetails, type E3Summary } from './lib/e3'
 import { Wordmark } from './Wordmark'
 import ThemeToggle from './ThemeToggle'
+import Hero from './Hero'
 
 function Header({ density, view, onNav }: { density: string; view: string; onNav: (id: string) => void }) {
   const link = (id: string, label: string) => (
@@ -309,34 +310,47 @@ export default function App() {
           <Operator />
         </main>
       ) : view === 'inspector' ? (
-        <main className='main'>
-          {allE3s.status === 'error' ? (
-            <div className='inspector'>
-              <StatusNote>Couldn't load E3s from Sepolia. Retrying automatically…</StatusNote>
-            </div>
-          ) : !inspectorReady ? (
-            <div className='inspector'>
-              <Loader label='Loading E3s' sub='Reading from Sepolia…' />
-            </div>
-          ) : !hasE3s ? (
-            <div className='inspector'>
-              <StatusNote>No E3s on the network yet. They will appear here once one is requested on-chain.</StatusNote>
-              {/* Een lege lijst is de eerste indruk die de meeste bezoekers
+        <>
+          {/* De hero staat alleen op de inspector: dat is de landingsweergave.
+              De cijfers zijn dezelfde als in de footer-strip -- echte waarden,
+              geen opgeklopte. */}
+          <Hero
+            chainId={4663}
+            stats={[
+              { label: 'Active E3s', value: String(activePolls.length) },
+              { label: 'Encrypted ballots, 24h', value: recentBallots.toLocaleString() },
+              { label: 'CRISP polls, all-time', value: polls.length.toLocaleString() },
+            ]}
+          />
+          <main className='main'>
+            {allE3s.status === 'error' ? (
+              <div className='inspector'>
+                <StatusNote>Couldn't load E3s from Sepolia. Retrying automatically…</StatusNote>
+              </div>
+            ) : !inspectorReady ? (
+              <div className='inspector'>
+                <Loader label='Loading E3s' sub='Reading from Sepolia…' />
+              </div>
+            ) : !hasE3s ? (
+              <div className='inspector'>
+                <StatusNote>No E3s on the network yet. They will appear here once one is requested on-chain.</StatusNote>
+                {/* Een lege lijst is de eerste indruk die de meeste bezoekers
                   krijgen. In plaats van doodlopen: laten zien wat er straks in
                   die lijst verschijnt en waarom het bijzonder is. */}
-              <Lifecycle />
-            </div>
-          ) : (
-            <Inspector
-              e3List={inspectorList}
-              e3={inspectorE3}
-              selectedId={selectedInspectorId ? formatE3Id(selectedInspectorId) : undefined}
-              onSelect={(id) => setInspectorIdStr(id)}
-              loading={inspectorDetail.status === 'loading'}
-              error={inspectorDetail.status === 'error' ? inspectorDetail.error : null}
-            />
-          )}
-        </main>
+                <Lifecycle />
+              </div>
+            ) : (
+              <Inspector
+                e3List={inspectorList}
+                e3={inspectorE3}
+                selectedId={selectedInspectorId ? formatE3Id(selectedInspectorId) : undefined}
+                onSelect={(id) => setInspectorIdStr(id)}
+                loading={inspectorDetail.status === 'loading'}
+                error={inspectorDetail.status === 'error' ? inspectorDetail.error : null}
+              />
+            )}
+          </main>
+        </>
       ) : (
         <main className='main'>
           <Intro />

@@ -340,3 +340,19 @@
   outline: 2px solid var(--lxd-accent, #1c5c3f);
   outline-offset: 2px;
 }
+
+/* ── Canopy ────────────────────────────────────────────────────────────────
+   Het veld staat achter de inhoud en mag die nooit in de weg zitten: geen
+   pointer-events, en onderaan vervaagt hij zodat de pagina eronder doorademt
+   in plaats van tegen een harde rand te lopen. */
+.lxd-canopy {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 48%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 48%, transparent 100%);
+}
+.lxd-canopy canvas {
+  display: block;
+}
