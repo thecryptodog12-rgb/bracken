@@ -14,7 +14,7 @@ import Pulse from './Pulse'
 import Inspector from './Inspector'
 import Loader from './Loader'
 import Operator from './Operator'
-import { Lifecycle, TrustLadder } from '@loxley/diagrams'
+import { BallotPrivacy, Lifecycle, TrustLadder } from '@loxley/diagrams'
 import { useAllE3s, useCrispPolls, useE3Details, useRecentBallots } from './lib/useE3s'
 import { adaptHistoryEntries, adaptInspectorDetail, adaptInspectorE3List, adaptPoll } from './lib/adapt'
 import { formatE3Id } from './lib/pollMeta'
@@ -434,6 +434,12 @@ export default function App() {
                 />
               </>
             )}
+
+            {/* Waarom je een poll uberhaupt zou versleutelen. Staat na de
+                lopende poll: eerst zien wat het is, dan waarom het anders is. */}
+            <Reveal>
+              <BallotPrivacy />
+            </Reveal>
 
             {liveHistory.length > 0 && <History entries={liveHistory} onNavigate={navigate} />}
           </main>

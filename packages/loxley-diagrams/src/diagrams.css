@@ -672,3 +672,138 @@
     padding: 20px 0 0;
   }
 }
+
+/* ── Wie je stem kan zien ───────────────────────────────────────────────────
+   De rechterkolom is het argument, dus die krijgt de nadruk: eigen achtergrond,
+   accentrand, en gesloten markering waar de linkerkolom open staat. */
+.ballotpriv {
+  margin: 44px 0 0;
+  padding-top: 36px;
+  border-top: 1px solid var(--lxd-rule, #cfe0cb);
+}
+.ballotpriv__head {
+  max-width: 64ch;
+  margin-bottom: 24px;
+}
+.ballotpriv__title {
+  font-family: var(--lxd-display, Georgia, serif);
+  font-weight: 400;
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin: 0 0 10px;
+  color: var(--lxd-ink, #1d3527);
+  text-wrap: balance;
+}
+.ballotpriv__title em {
+  font-style: italic;
+  color: var(--lxd-accent, #1c5c3f);
+}
+.ballotpriv__lede {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--lxd-ink-soft, #5c7a65);
+}
+
+.ballotpriv__table {
+  display: grid;
+  border-top: 1px solid var(--lxd-rule, #cfe0cb);
+}
+.ballotpriv__row {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.85fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--lxd-rule, #cfe0cb);
+  align-items: start;
+}
+.ballotpriv__row--head {
+  padding: 12px 0;
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lxd-ink-faint, #8ba392);
+}
+.ballotpriv__ours {
+  color: var(--lxd-accent, #1c5c3f);
+}
+.ballotpriv__who {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lxd-ink, #1d3527);
+  line-height: 1.45;
+}
+.ballotpriv__cell {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--lxd-ink-soft, #5c7a65);
+}
+.ballotpriv__cell--crisp {
+  color: var(--lxd-ink, #1d3527);
+}
+
+/* De markering doet het werk zonder bijschrift: open oog versus gesloten. */
+.ballotpriv__mark {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  margin-top: 4px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+}
+.ballotpriv__mark--open {
+  border-color: var(--lxd-warn, #9a7328);
+  background: radial-gradient(circle, var(--lxd-warn, #9a7328) 0 34%, transparent 36%);
+}
+.ballotpriv__mark--sealed {
+  border-color: var(--lxd-accent, #1c5c3f);
+  background: transparent;
+  position: relative;
+}
+.ballotpriv__mark--sealed::after {
+  content: '';
+  position: absolute;
+  inset: 50% -3px auto -3px;
+  height: 1.5px;
+  background: var(--lxd-accent, #1c5c3f);
+  transform: rotate(-45deg);
+}
+.ballotpriv__cell--crisp.is-open .ballotpriv__mark--open {
+  border-color: var(--lxd-accent, #1c5c3f);
+  background: radial-gradient(circle, var(--lxd-accent, #1c5c3f) 0 34%, transparent 36%);
+}
+
+.ballotpriv__foot {
+  margin: 22px 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--lxd-ink-faint, #8ba392);
+  border-left: 2px solid var(--lxd-accent, #1c5c3f);
+  padding-left: 14px;
+}
+
+@media (max-width: 760px) {
+  .ballotpriv__row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .ballotpriv__row--head {
+    display: none;
+  }
+  .ballotpriv__cell::before {
+    font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--lxd-ink-faint, #8ba392);
+  }
+  .ballotpriv__cell--normal::before {
+    content: 'ordinary poll — ';
+  }
+  .ballotpriv__cell--crisp::before {
+    content: 'crisp — ';
+  }
+}
