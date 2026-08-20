@@ -14,7 +14,7 @@ import Pulse from './Pulse'
 import Inspector from './Inspector'
 import Loader from './Loader'
 import Operator from './Operator'
-import { BallotPrivacy, Lifecycle, TrustLadder } from '@loxley/diagrams'
+import { BallotPrivacy, KeyShares, Lifecycle, TrustLadder } from '@loxley/diagrams'
 import { useAllE3s, useCrispPolls, useE3Details, useRecentBallots } from './lib/useE3s'
 import { adaptHistoryEntries, adaptInspectorDetail, adaptInspectorE3List, adaptPoll } from './lib/adapt'
 import { formatE3Id } from './lib/pollMeta'
@@ -362,6 +362,12 @@ export default function App() {
                 </Reveal>
                 <Reveal band='sunk'>
                   <TrustLadder />
+                </Reveal>
+                {/* Het enige stuk dat je bedient. Staat na de ladder: die legt
+                    uit dat er nog vertrouwen overblijft, dit laat voelen waarom
+                    dat restje zo klein is. */}
+                <Reveal band='plain'>
+                  <KeyShares />
                 </Reveal>
               </div>
             ) : (

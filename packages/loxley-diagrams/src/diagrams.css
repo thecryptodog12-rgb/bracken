@@ -683,7 +683,8 @@
   padding-top: 36px;
   border-top: 1px solid var(--lxd-rule, #cfe0cb);
 }
-.ballotpriv__head {
+.ballotpriv__head,
+.keyshares__head {
   max-width: 64ch;
   margin-bottom: 24px;
 }
@@ -822,7 +823,8 @@
   .lxd.sortition,
   .lxd.slashing,
   .lxd.trustladder,
-  .lxd.ballotpriv {
+  .lxd.ballotpriv,
+  .lxd.keyshares {
     display: grid;
     grid-template-columns: minmax(230px, 300px) minmax(0, 1fr);
     column-gap: 56px;
@@ -845,7 +847,8 @@
   .lxd.sortition > *:not(.sortition__head),
   .lxd.slashing > *:not(.slashing__head),
   .lxd.trustladder > *:not(.trustladder__head),
-  .lxd.ballotpriv > *:not(.ballotpriv__head) {
+  .lxd.ballotpriv > *:not(.ballotpriv__head),
+  .lxd.keyshares > *:not(.keyshares__head) {
     grid-column: 2;
   }
 
@@ -854,13 +857,15 @@
   .sortition__title,
   .slashing__title,
   .trustladder__title,
-  .ballotpriv__title {
+  .ballotpriv__title,
+  .keyshares__title {
     font-size: clamp(24px, 2.1vw, 32px);
   }
   .sortition__lede,
   .slashing__lede,
   .trustladder__lede,
-  .ballotpriv__lede {
+  .ballotpriv__lede,
+  .keyshares__lede {
     font-size: 13.5px;
     line-height: 1.6;
   }
@@ -869,7 +874,8 @@
   .sortition__head::after,
   .slashing__head::after,
   .trustladder__head::after,
-  .ballotpriv__head::after {
+  .ballotpriv__head::after,
+  .keyshares__head::after {
     content: '';
     display: block;
     width: 34px;
@@ -885,5 +891,186 @@
   .trustladder__head,
   .ballotpriv__head {
     position: static;
+  }
+}
+
+/* ── Drempel ────────────────────────────────────────────────────────────────
+   Het enige diagram dat je bedient in plaats van leest. De sprong bij T+1 is
+   het onderwerp, dus die krijgt de enige harde kleurwissel op de pagina. */
+.keyshares {
+  margin: 44px 0 0;
+  padding-top: 36px;
+  border-top: 1px solid var(--lxd-rule, #cfe0cb);
+}
+.keyshares__head {
+  max-width: 58ch;
+  margin-bottom: 26px;
+}
+.keyshares__title {
+  font-family: var(--lxd-display, Georgia, serif);
+  font-weight: 400;
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin: 0 0 10px;
+  color: var(--lxd-ink, #1d3527);
+  text-wrap: balance;
+}
+.keyshares__title em {
+  font-style: italic;
+  color: var(--lxd-warn, #9a7328);
+}
+.keyshares.is-open .keyshares__title em {
+  color: var(--lxd-accent, #1c5c3f);
+}
+.keyshares__lede {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--lxd-ink-soft, #5c7a65);
+}
+
+.keyshares__stage {
+  display: grid;
+  grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
+  gap: 34px;
+  align-items: center;
+}
+.keyshares__svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.ks-link {
+  stroke: var(--lxd-ink-faint, #8ba392);
+  stroke-width: 1;
+  opacity: 0.28;
+  stroke-dasharray: 2 4;
+  transition:
+    opacity 240ms,
+    stroke 240ms;
+}
+.ks-link.is-held {
+  opacity: 0.85;
+  stroke: var(--lxd-warn, #9a7328);
+  stroke-dasharray: none;
+}
+.ks-link.is-held.is-open {
+  stroke: var(--lxd-accent, #1c5c3f);
+}
+
+.ks-node {
+  cursor: pointer;
+}
+.ks-node__hit {
+  fill: transparent;
+}
+.ks-node__dot {
+  fill: var(--lxd-surface, #fbfdfa);
+  stroke: var(--lxd-ink-faint, #8ba392);
+  stroke-width: 1.6;
+  transition:
+    fill 200ms,
+    stroke 200ms,
+    r 200ms;
+}
+.ks-node.is-held .ks-node__dot {
+  fill: var(--lxd-warn, #9a7328);
+  stroke: var(--lxd-warn, #9a7328);
+}
+.keyshares.is-open .ks-node.is-held .ks-node__dot {
+  fill: var(--lxd-accent, #1c5c3f);
+  stroke: var(--lxd-accent, #1c5c3f);
+}
+.ks-node:hover .ks-node__dot {
+  stroke: var(--lxd-accent, #1c5c3f);
+}
+.ks-node:focus-visible {
+  outline: none;
+}
+.ks-node:focus-visible .ks-node__dot {
+  stroke: var(--lxd-accent, #1c5c3f);
+  stroke-width: 3;
+}
+
+.ks-core__ring {
+  fill: none;
+  stroke: var(--lxd-ink-faint, #8ba392);
+  stroke-width: 1.6;
+  stroke-dasharray: 4 5;
+  transition:
+    stroke 300ms,
+    stroke-dasharray 300ms;
+}
+.keyshares.is-open .ks-core__ring {
+  stroke: var(--lxd-accent, #1c5c3f);
+  stroke-width: 2.4;
+  stroke-dasharray: none;
+}
+.ks-core__label {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 13px;
+  text-anchor: middle;
+  fill: var(--lxd-ink-faint, #8ba392);
+  letter-spacing: 0.06em;
+}
+.keyshares.is-open .ks-core__label {
+  fill: var(--lxd-accent, #1c5c3f);
+}
+
+.keyshares__side {
+  display: grid;
+  gap: 14px;
+  align-content: center;
+  justify-items: start;
+}
+.keyshares__verdict {
+  margin: 0;
+  font-family: var(--lxd-display, Georgia, serif);
+  font-size: 22px;
+  line-height: 1.25;
+  color: var(--lxd-warn, #9a7328);
+}
+.keyshares__verdict.is-open {
+  color: var(--lxd-accent, #1c5c3f);
+}
+.keyshares__note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--lxd-ink-soft, #5c7a65);
+}
+.lxd-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.keyshares__foot {
+  margin: 26px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--lxd-rule, #cfe0cb);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--lxd-ink-faint, #8ba392);
+}
+
+@media (max-width: 860px) {
+  .keyshares__stage {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ks-link,
+  .ks-node__dot,
+  .ks-core__ring {
+    transition: none;
+  }
+}
+
+/* In de redactionele indeling is de rechterkolom te smal voor twee kolommen
+   naast elkaar, dus de drempel-stage stapelt daar. */
+@media (min-width: 1000px) and (max-width: 1340px) {
+  .keyshares__stage {
+    grid-template-columns: 1fr;
   }
 }
