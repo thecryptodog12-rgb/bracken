@@ -16,9 +16,9 @@
 // the fields of SlashPolicy that decide the size of the hit.
 
 const W = 900
-const H = 176
-const LANE = 74
-const BRANCH = 140
+const H = 196
+const LANE = 86
+const BRANCH = 154
 
 type Node = { id: string; x: number; y: number; label: string; kind?: 'start' | 'bad' | 'good' | 'fork' }
 
@@ -101,8 +101,11 @@ export default function Slashing() {
           return (
             <g key={`${e.from}-${e.to}`}>
               <path d={d} className={`sl-edge ${e.tone ? `sl-edge--${e.tone}` : ''}`} />
+              {/* Label niet op het midden: daar raakt het het kader van de
+                  vertakking zodra de kolom smaller wordt. 64% schuift het naar
+                  de vrije ruimte voor de volgende knoop. */}
               {e.label && (
-                <text x={(a.x + b.x) / 2} y={straight ? a.y - 16 : b.y - 15} className={`sl-edge-label sl-edge-label--${e.tone}`}>
+                <text x={a.x + (b.x - a.x) * 0.64} y={straight ? a.y - 26 : b.y - 22} className={`sl-edge-label sl-edge-label--${e.tone}`}>
                   {e.label}
                 </text>
               )}

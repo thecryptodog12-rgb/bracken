@@ -543,7 +543,9 @@
 }
 .sl-edge-label {
   font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
-  font-size: 9px;
+  /* De sectie staat nu in een smallere kolom, dus de SVG schaalt verder terug.
+     9px werd daardoor onleesbaar klein op het scherm. */
+  font-size: 10.5px;
   letter-spacing: 0.06em;
   text-anchor: middle;
   fill: var(--lxd-ink-faint, #8ba392);
@@ -805,5 +807,83 @@
   }
   .ballotpriv__cell--crisp::before {
     content: 'crisp — ';
+  }
+}
+
+/* ── Redactionele kolomindeling ─────────────────────────────────────────────
+   Alles liep in een kolom van boven naar beneden: kop, lede, inhoud, kop,
+   lede, inhoud. Vier keer dezelfde vorm onder elkaar.
+
+   De kop verhuist naar een linkerrail en blijft daar staan terwijl de inhoud
+   ernaast doorloopt. Dat is de klassieke redactionele indeling, en het doet
+   twee dingen tegelijk: de pagina krijgt een tweede richting, en de kop blijft
+   in beeld bij een diagram dat je aan het lezen bent. */
+@media (min-width: 1000px) {
+  .lxd.sortition,
+  .lxd.slashing,
+  .lxd.trustladder,
+  .lxd.ballotpriv {
+    display: grid;
+    grid-template-columns: minmax(230px, 300px) minmax(0, 1fr);
+    column-gap: 56px;
+    align-items: start;
+  }
+
+  .sortition__head,
+  .slashing__head,
+  .trustladder__head,
+  .ballotpriv__head {
+    grid-column: 1;
+    grid-row: 1 / span 20;
+    position: sticky;
+    top: 92px;
+    max-width: none;
+    margin-bottom: 0;
+  }
+
+  /* Alles wat geen kop is, gaat rechts. */
+  .lxd.sortition > *:not(.sortition__head),
+  .lxd.slashing > *:not(.slashing__head),
+  .lxd.trustladder > *:not(.trustladder__head),
+  .lxd.ballotpriv > *:not(.ballotpriv__head) {
+    grid-column: 2;
+  }
+
+  /* De koppen worden smaller, dus de schaal moet omlaag -- anders breken ze in
+     losse letters. */
+  .sortition__title,
+  .slashing__title,
+  .trustladder__title,
+  .ballotpriv__title {
+    font-size: clamp(24px, 2.1vw, 32px);
+  }
+  .sortition__lede,
+  .slashing__lede,
+  .trustladder__lede,
+  .ballotpriv__lede {
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+
+  /* Een fijne rail scheidt de twee kolommen zonder een lijn te trekken. */
+  .sortition__head::after,
+  .slashing__head::after,
+  .trustladder__head::after,
+  .ballotpriv__head::after {
+    content: '';
+    display: block;
+    width: 34px;
+    height: 2px;
+    margin-top: 20px;
+    background: var(--lxd-accent, #1c5c3f);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sortition__head,
+  .slashing__head,
+  .trustladder__head,
+  .ballotpriv__head {
+    position: static;
   }
 }

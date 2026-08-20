@@ -2991,3 +2991,75 @@ button {
 .reqs__head {
   max-width: 58ch;
 }
+
+/* ── Requirements: van formulier naar compositie ────────────────────────────
+   Vier gelijke dozen naast elkaar met ongelijke inhoud leest als een
+   formulier: twee ervan stonden half leeg omdat het grid ze even hoog rekte
+   en de voetnoot naar onderen duwde.
+
+   Nu bepalen de kaarten hun eigen hoogte, en het collateral-paneel -- het enige
+   dat over geld gaat -- krijgt de ruimte die dat verdient in plaats van
+   dezelfde als "Platform". */
+.reqs__grid {
+  align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+}
+.reqs__card {
+  display: block;
+}
+.reqs__foot {
+  margin-top: 14px;
+}
+
+@media (min-width: 1000px) {
+  .reqs {
+    display: grid;
+    grid-template-columns: minmax(230px, 300px) minmax(0, 1fr);
+    column-gap: 56px;
+    align-items: start;
+  }
+  .reqs__head {
+    grid-column: 1;
+    grid-row: 1 / span 9;
+    position: sticky;
+    top: 92px;
+    max-width: none;
+    margin-bottom: 0;
+  }
+  .reqs__head::after {
+    content: '';
+    display: block;
+    width: 34px;
+    height: 2px;
+    margin-top: 20px;
+    background: var(--accent-deep);
+  }
+  .reqs__title {
+    font-size: clamp(24px, 2.1vw, 32px);
+  }
+  .reqs__lede {
+    font-size: 13.5px;
+  }
+  .reqs__grid {
+    grid-column: 2;
+  }
+
+  /* Collateral over de volle breedte van de rechterkolom, de rest in een
+     compacter raster eronder. Dat is de hierarchie die er inhoudelijk al was
+     maar visueel niet. */
+  .reqs__card--wide {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Drie kaarten in een kolom van 760px geeft ~240px per stuk, en dan breekt
+   "8+ modern cores (x86-64, AVX2)" over drie regels. Twee kolommen laat de
+   inhoud ademen. */
+@media (min-width: 1000px) {
+  .reqs__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .reqs__rows > div {
+    grid-template-columns: 92px 1fr;
+  }
+}
