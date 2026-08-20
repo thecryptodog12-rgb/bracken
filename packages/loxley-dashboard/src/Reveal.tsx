@@ -18,7 +18,18 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 
-export default function Reveal({ children, delay = 0, as: Tag = 'div' }: { children: ReactNode; delay?: number; as?: 'div' | 'section' }) {
+export default function Reveal({
+  children,
+  delay = 0,
+  as: Tag = 'div',
+  band,
+}: {
+  children: ReactNode
+  delay?: number
+  as?: 'div' | 'section'
+  /** Volle-breedte grond onder deze sectie. 'sunk' is de donkere variant. */
+  band?: 'plain' | 'sunk'
+}) {
   const ref = useRef<HTMLDivElement>(null)
   const [shown, setShown] = useState(false)
   const [armed, setArmed] = useState(false)
@@ -59,7 +70,7 @@ export default function Reveal({ children, delay = 0, as: Tag = 'div' }: { child
   return (
     <Tag
       ref={ref as never}
-      className={`reveal ${armed ? 'reveal--armed' : ''} ${shown ? 'is-in' : ''}`}
+      className={`reveal ${band ? `band band--${band}` : ''} ${armed ? 'reveal--armed' : ''} ${shown ? 'is-in' : ''}`}
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}
     >
       {children}

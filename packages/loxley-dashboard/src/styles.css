@@ -2806,9 +2806,11 @@ button {
 .reveal--armed {
   opacity: 0;
   transform: translateY(14px);
+  /* 620ms was te traag: wie doorscrollt ziet secties half-doorzichtig
+     langskomen in plaats van aankomen. 380ms leest als aanwezig-worden. */
   transition:
-    opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
 }
 .reveal--armed.is-in {
@@ -2931,4 +2933,61 @@ button {
   .hero--compact .hero__title {
     font-size: clamp(28px, 8vw, 38px);
   }
+}
+
+/* ── Banden ─────────────────────────────────────────────────────────────────
+   Het probleem was niet de inhoud van de secties maar hun vorm: drie keer
+   dezelfde rechthoek, dezelfde breedte, dezelfde interne opbouw, onder elkaar.
+   Dat leest als een document, niet als een pagina.
+
+   Secties breken nu uit de kolom en krijgen om en om een andere grond. De
+   inhoud blijft binnen dezelfde maat staan -- het is de achtergrond die
+   wisselt, niet de tekstbreedte. `overflow-x: clip` op de pagina vangt de
+   scrollbar-breedte die 100vw anders zou toevoegen. */
+.page {
+  overflow-x: clip;
+}
+
+.band {
+  margin-inline: calc(50% - 50vw);
+  padding-inline: calc(50vw - 50%);
+  padding-block: 64px;
+  border-top: 1px solid var(--rule);
+}
+/* Om en om: de tweede band zakt weg in een donkerder grond, wat na een lichte
+   sectie leest als een adempauze in plaats van een volgende alinea. */
+.band--sunk {
+  background: var(--paper-3);
+  border-top-color: transparent;
+}
+:root[data-theme='dark'] .band--sunk {
+  background: color-mix(in oklab, var(--paper-2) 62%, var(--paper));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .band--sunk {
+    background: color-mix(in oklab, var(--paper-2) 62%, var(--paper));
+  }
+}
+
+/* Binnen een band vervalt de eigen bovenrand van het diagram -- de band levert
+   die scheiding nu zelf. */
+.band > .lxd > .sortition,
+.band .sortition,
+.band .slashing,
+.band .trustladder,
+.band .ballotpriv,
+.band .lifecycle {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Maat. Lopende tekst blijft leesbaar smal; diagrammen mogen de volle kolom.
+   Dat verschil ontbrak volledig -- alles stond op dezelfde 1116px. */
+.sortition__head,
+.slashing__head,
+.trustladder__head,
+.ballotpriv__head,
+.reqs__head {
+  max-width: 58ch;
 }

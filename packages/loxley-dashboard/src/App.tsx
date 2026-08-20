@@ -357,10 +357,10 @@ export default function App() {
                 {/* Een lege lijst is de eerste indruk die de meeste bezoekers
                   krijgen. In plaats van doodlopen: laten zien wat er straks in
                   die lijst verschijnt en waarom het bijzonder is. */}
-                <Reveal>
+                <Reveal band='plain'>
                   <Lifecycle />
                 </Reveal>
-                <Reveal>
+                <Reveal band='sunk'>
                   <TrustLadder />
                 </Reveal>
               </div>
@@ -437,7 +437,7 @@ export default function App() {
 
             {/* Waarom je een poll uberhaupt zou versleutelen. Staat na de
                 lopende poll: eerst zien wat het is, dan waarom het anders is. */}
-            <Reveal>
+            <Reveal band='sunk'>
               <BallotPrivacy />
             </Reveal>
 

@@ -242,20 +242,20 @@ export default function Operator() {
       {/* Renders with or without a chain. The moment the RPC is down is exactly
           when someone is deciding whether running a node is worth their time --
           handing them a blank page is the worst possible answer. */}
-      <Reveal>
+      <Reveal band='plain'>
         <Requirements config={config ?? null} />
       </Reveal>
 
       {/* Waarom iemand tickets zou kopen is de vraag die de hele
           operator-pagina probeert te beantwoorden. Die hoort hier,
           direct na de kosten en voor de on-chain stappen. */}
-      <Reveal>
+      <Reveal band='sunk'>
         <Sortition />
       </Reveal>
 
       {/* Het risico hoort direct na de kans. Wie net gezien heeft waarom hij
           tickets zou kopen, moet meteen zien wat het kost als het misgaat. */}
-      <Reveal>
+      <Reveal band='plain'>
         <Slashing />
       </Reveal>
 
