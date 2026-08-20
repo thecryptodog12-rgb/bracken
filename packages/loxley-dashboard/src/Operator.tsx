@@ -17,7 +17,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { erc20Abi, formatUnits, isAddress, parseUnits, type Address, type Hash } from 'viem'
 import Loader from './Loader'
 import Requirements from './Requirements'
-import { Sortition } from '@loxley/diagrams'
+import { Slashing, Sortition } from '@loxley/diagrams'
 import Reveal from './Reveal'
 import { CONTRACTS, bondingRegistryAbi, faucetAbi } from './lib/chain'
 import { LINKS, explorerAddress, explorerTx } from './lib/links'
@@ -251,6 +251,12 @@ export default function Operator() {
           direct na de kosten en voor de on-chain stappen. */}
       <Reveal>
         <Sortition />
+      </Reveal>
+
+      {/* Het risico hoort direct na de kans. Wie net gezien heeft waarom hij
+          tickets zou kopen, moet meteen zien wat het kost als het misgaat. */}
+      <Reveal>
+        <Slashing />
       </Reveal>
 
       {config ? (

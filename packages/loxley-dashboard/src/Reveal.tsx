@@ -36,7 +36,13 @@ export default function Reveal({ children, delay = 0, as: Tag = 'div' }: { child
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
-          if (e.isIntersecting) {
+          // isIntersecting alleen is niet genoeg. IntersectionObserver
+          // rapporteert op frame-grenzen, dus een sprong -- een diepe anker-link,
+          // een snelle scroll, cmd+End -- kan een sectie compleet overslaan. Die
+          // bleef dan voorgoed op opacity 0 staan, wat precies de fout is die dit
+          // component zou voorkomen. top < 0 betekent "we zijn er al voorbij":
+          // ook tonen.
+          if (e.isIntersecting || e.boundingClientRect.top < 0) {
             setShown(true)
             io.disconnect()
           }

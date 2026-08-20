@@ -488,3 +488,187 @@
     grid-template-areas: 'label' 'meter' 'still';
   }
 }
+
+/* ── Slashing & exits ───────────────────────────────────────────────────────
+   De vertakking is het punt: er zijn twee uitkomsten en maar een ervan kost
+   geld. Groen en messing zeggen dat zonder bijschrift. */
+.slashing {
+  margin: 44px 0 0;
+  padding-top: 36px;
+  border-top: 1px solid var(--lxd-rule, #cfe0cb);
+}
+.slashing__head {
+  max-width: 64ch;
+  margin-bottom: 26px;
+}
+.slashing__title {
+  font-family: var(--lxd-display, Georgia, serif);
+  font-weight: 400;
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin: 0 0 10px;
+  color: var(--lxd-ink, #1d3527);
+  text-wrap: balance;
+}
+.slashing__title em {
+  font-style: italic;
+  color: var(--lxd-accent, #1c5c3f);
+}
+.slashing__lede {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--lxd-ink-soft, #5c7a65);
+}
+.slashing__svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+  margin-bottom: 30px;
+}
+
+.sl-edge {
+  fill: none;
+  stroke: var(--lxd-ink-faint, #8ba392);
+  stroke-width: 1.4;
+}
+.sl-edge--bad {
+  stroke: var(--lxd-warn, #9a7328);
+  stroke-width: 1.8;
+}
+.sl-edge--good {
+  stroke: var(--lxd-accent, #1c5c3f);
+  stroke-width: 1.8;
+}
+.sl-edge-label {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-anchor: middle;
+  fill: var(--lxd-ink-faint, #8ba392);
+}
+.sl-edge-label--bad {
+  fill: var(--lxd-warn, #9a7328);
+}
+.sl-edge-label--good {
+  fill: var(--lxd-accent, #1c5c3f);
+}
+
+.sl-node__box {
+  fill: var(--lxd-surface, #fbfdfa);
+  stroke: var(--lxd-rule, #cfe0cb);
+  stroke-width: 1.2;
+}
+.sl-node--bad .sl-node__box {
+  stroke: var(--lxd-warn, #9a7328);
+}
+.sl-node--good .sl-node__box {
+  stroke: var(--lxd-accent, #1c5c3f);
+}
+.sl-node--fork .sl-node__box {
+  stroke-dasharray: 3 3;
+}
+.sl-node__label {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  text-anchor: middle;
+  fill: var(--lxd-ink, #1d3527);
+}
+
+.slashing__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 34px;
+}
+.slashing__grid h3 {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin: 0 0 14px;
+  color: var(--lxd-ink, #1d3527);
+}
+.slashing__penalties dl {
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+.slashing__penalties dt {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 3px;
+}
+.slashing__penalties dt code {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 11px;
+  color: var(--lxd-ink-soft, #5c7a65);
+}
+.slashing__penalties dt span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lxd-warn, #9a7328);
+}
+.slashing__penalties dd {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--lxd-ink-soft, #5c7a65);
+}
+
+.slashing__clock {
+  border-left: 2px solid var(--lxd-warn, #9a7328);
+  padding-left: 20px;
+}
+.slashing__clock ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+.slashing__clock li {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 12px;
+}
+.slashing__step {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 11px;
+  color: var(--lxd-ink-faint, #8ba392);
+  line-height: 1.55;
+}
+.slashing__clock strong {
+  display: block;
+  font-size: 13px;
+  color: var(--lxd-ink, #1d3527);
+  margin-bottom: 2px;
+}
+.slashing__clock p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--lxd-ink-soft, #5c7a65);
+}
+.slashing__foot {
+  margin: 26px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--lxd-rule, #cfe0cb);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--lxd-ink-faint, #8ba392);
+}
+
+@media (max-width: 780px) {
+  .slashing__grid {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+  .slashing__clock {
+    border-left: 0;
+    border-top: 1px solid var(--lxd-rule, #cfe0cb);
+    padding: 20px 0 0;
+  }
+}

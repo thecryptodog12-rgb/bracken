@@ -68,7 +68,9 @@ export default function TrustLadder() {
     const io = new IntersectionObserver(
       (es) => {
         for (const e of es)
-          if (e.isIntersecting) {
+          // Zie Reveal.tsx: een sprong kan de sectie overslaan, en dan zouden
+          // de balken voorgoed op 100% blijven staan.
+          if (e.isIntersecting || e.boundingClientRect.top < 0) {
             setShown(true)
             io.disconnect()
           }
