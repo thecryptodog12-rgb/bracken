@@ -8,6 +8,7 @@ import React, { useEffect } from 'react'
 import type { AppProps } from 'next/app'
 import 'katex/dist/katex.min.css'
 import '../styles/globals.css'
+import '@loxley/diagrams/diagrams.css'
 
 const SIDEBAR_SCROLL_KEY = 'nextra-sidebar-scroll'
 

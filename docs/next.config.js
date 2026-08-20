@@ -14,6 +14,9 @@ const withNextra = nextra({
 })
 
 module.exports = withNextra({
+  // @loxley/diagrams is TypeScript-bron uit de workspace; zonder dit laat Next
+  // hem ongemoeid door webpack gaan en struikelt die over de type-syntax.
+  transpilePackages: ['@loxley/diagrams'],
   webpack: (config) => {
     // Nextra v2 skips addContextDependency in production, so webpack reuses
     // cached MDX compilations when only _meta.json changes. Disabling the

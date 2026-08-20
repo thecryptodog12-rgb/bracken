@@ -129,7 +129,14 @@ article h6 {
    geeft ze nauwelijks structuur; een getinte kop en fijne lijnen maken lange
    adreslijsten leesbaar. */
 article table {
-  width: 100%;
+  /* Nextra zet display:block zodat brede tabellen horizontaal scrollen. Met
+     alleen width:100% wordt dan wel het blok breed maar krimpt de interne
+     tabel naar de inhoud, en blijft er rand over rechts. max-content plus
+     min-width:100% houdt het scrollen en vult toch de breedte. */
+  display: block;
+  overflow-x: auto;
+  width: max-content;
+  min-width: 100%;
   border: 1px solid var(--lox-rule);
   border-radius: 10px;
   border-collapse: separate;
@@ -179,4 +186,28 @@ article blockquote {
 
 img {
   border-radius: 10px;
+}
+
+/* Tokens van de docs doorgeven aan @loxley/diagrams. Zelfde afspraak als in
+   het dashboard: het pakket leest --lxd-*, wij vullen die met onze eigen
+   namen. Daardoor komt hetzelfde diagram er hier in Nextra's donkere thema
+   uit en daar in dat van het dashboard, zonder dat een van de twee van de
+   ander hoeft te weten. */
+.lxd {
+  --lxd-ink: var(--lox-ink);
+  --lxd-ink-soft: var(--lox-ink-3);
+  --lxd-ink-faint: var(--lox-ink-3);
+  --lxd-surface: var(--lox-paper-2);
+  --lxd-rule: var(--lox-rule);
+  --lxd-accent: var(--lox-accent);
+  --lxd-accent-bg: color-mix(in oklab, var(--lox-accent) 12%, transparent);
+  --lxd-warn: var(--lox-brass);
+  --lxd-mono: var(--lox-mono);
+  --lxd-display: var(--lox-display);
+}
+/* Nextra's prose-regels zouden anders marges op de figuur en de lijst zetten. */
+.lxd figure,
+.lxd ol,
+.lxd p {
+  margin-inline: 0;
 }

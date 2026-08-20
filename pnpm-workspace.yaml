@@ -13,6 +13,7 @@ packages:
   - packages/loxley-mcp
   - packages/loxley-dashboard
   - packages/loxley-node
+  - packages/loxley-diagrams
   - templates/default
   - templates/default/client
 linkWorkspacePackages: true

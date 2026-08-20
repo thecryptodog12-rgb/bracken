@@ -87,9 +87,9 @@ export default function Sortition() {
   const redraw = useCallback(() => setSeed((s) => s + 1), [])
 
   return (
-    <section className={`sortition ${reduced ? 'is-still' : ''}`} aria-label='How sortition picks a committee'>
+    <section className={`lxd sortition ${reduced ? 'is-still' : ''}`} aria-label='How sortition picks a committee'>
       <div className='sortition__head'>
-        <span className='section__eyebrow'>Getting picked</span>
+        <span className='lxd-eyebrow'>Getting picked</span>
         <h2 className='sortition__title'>Every ticket is one draw. The lowest number wins.</h2>
         <p className='sortition__lede'>
           When an E3 is requested, a seed is fixed from a committed block hash. Each of your tickets hashes to a score —{' '}
@@ -142,7 +142,7 @@ export default function Sortition() {
           </span>
           <input type='range' min={1} max={30} value={yourTickets} onChange={(e) => setYourTickets(Number(e.target.value))} />
         </label>
-        <button className='btn' onClick={redraw}>
+        <button className='lxd-btn' onClick={redraw}>
           New seed — draw again
         </button>
       </div>

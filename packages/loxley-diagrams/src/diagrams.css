@@ -1,0 +1,342 @@
+/* SPDX-License-Identifier: LGPL-3.0-only
+ *
+ * This file is provided WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Diagram-styling. Draagt geen eigen kleuren: alles leest --lxd-*, dat de host
+ * op zijn eigen tokens mapt (zie README). Elke var heeft een leesbare fallback,
+ * zodat een host die er een vergeet degradeert in plaats van te verdwijnen.
+ */
+
+/* Eigen eyebrow: het dashboard heeft .section__eyebrow, de docs niet. Een
+ * gedeelde component mag niet leunen op een klasse van één van de twee. */
+.lxd-eyebrow {
+  display: block;
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lxd-ink-faint, #8ba392);
+  margin-bottom: 12px;
+}
+
+/* ── E3-levenscyclus ────────────────────────────────────────────────────────
+   Twee banen: publiek boven, verzegeld onder. De enige lijn die omhoog kruist
+   is de laatste -- dat is het hele punt van het plaatje. */
+.lifecycle {
+  margin: 34px 0 0;
+}
+.lifecycle__cap {
+  max-width: 64ch;
+  margin-bottom: 18px;
+}
+.lifecycle__cap p {
+  margin: 0;
+  color: var(--lxd-ink-soft, #5c7a65);
+  line-height: 1.55;
+}
+.lifecycle__svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.lc-band {
+  fill: var(--lxd-accent-bg, #e7f1e8);
+}
+.lc-band--sealed {
+  fill: color-mix(in oklab, var(--lxd-ink, #1d3527) 8%, transparent);
+}
+.lc-lane-label {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  fill: var(--lxd-ink-faint, #8ba392);
+}
+.lc-lane-label--sealed {
+  fill: var(--lxd-ink-faint, #8ba392);
+}
+
+.lc-link {
+  fill: none;
+  stroke: var(--lxd-ink-faint, #8ba392);
+  stroke-width: 1.4;
+  stroke-dasharray: 3 4;
+}
+/* De onthulling is de enige doorgetrokken, gekleurde lijn. */
+.lc-link--reveal {
+  stroke: var(--lxd-accent, #1c5c3f);
+  stroke-width: 2.2;
+  stroke-dasharray: none;
+}
+
+.lc-node__ring {
+  fill: var(--lxd-surface, #fbfdfa);
+  stroke: var(--lxd-ink-faint, #8ba392);
+  stroke-width: 1.4;
+}
+.lc-node--public .lc-node__ring {
+  stroke: var(--lxd-accent, #1c5c3f);
+}
+.lc-node__num {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 11px;
+  text-anchor: middle;
+  fill: var(--lxd-ink, #1d3527);
+}
+.lc-node__label {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-anchor: middle;
+  fill: var(--lxd-ink-soft, #5c7a65);
+}
+
+.lifecycle__steps {
+  list-style: none;
+  margin: 26px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+.lifecycle__step {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: var(--lxd-surface, #fbfdfa);
+  border: 1px solid var(--lxd-rule, #cfe0cb);
+}
+/* Verzegelde stappen krijgen een messing merkteken: hier gebeurt het werk dat
+   niemand kan inzien. */
+.lifecycle__step--sealed {
+  border-left: 2px solid var(--lxd-warn, #9a7328);
+}
+.lifecycle__step--public {
+  border-left: 2px solid var(--lxd-accent, #1c5c3f);
+}
+.lifecycle__step-num {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 12px;
+  color: var(--lxd-ink-faint, #8ba392);
+  line-height: 1.5;
+}
+.lifecycle__step h4 {
+  margin: 0 0 3px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lxd-ink, #1d3527);
+}
+.lifecycle__step p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--lxd-ink-soft, #5c7a65);
+}
+.lifecycle__foot {
+  margin: 18px 0 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--lxd-ink-faint, #8ba392);
+  border-top: 1px solid var(--lxd-rule, #cfe0cb);
+  padding-top: 14px;
+}
+
+@media (max-width: 720px) {
+  .lc-lane-label {
+    font-size: 8px;
+  }
+  .lc-node__label {
+    font-size: 8.5px;
+  }
+}
+
+/* ── Sortitie ───────────────────────────────────────────────────────────────
+   De stippen bewegen wanneer het zaad verandert; dat is het hele idee. Onder
+   prefers-reduced-motion springen ze in plaats van te glijden -- de informatie
+   blijft, de beweging niet. */
+.sortition {
+  margin: 40px 0 0;
+  padding-top: 34px;
+  border-top: 1px solid var(--lxd-rule, #cfe0cb);
+}
+.sortition__head {
+  max-width: 66ch;
+  margin-bottom: 22px;
+}
+.sortition__title {
+  font-family: var(--lxd-display, Georgia, serif);
+  font-weight: 400;
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin: 0 0 10px;
+  color: var(--lxd-ink, #1d3527);
+  text-wrap: balance;
+}
+.sortition__lede {
+  margin: 0;
+  color: var(--lxd-ink-soft, #5c7a65);
+  line-height: 1.6;
+}
+.sortition__svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.so-axis {
+  stroke: var(--lxd-rule, #cfe0cb);
+  stroke-width: 1;
+}
+.so-axis-label,
+.so-cut-label,
+.so-name {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  fill: var(--lxd-ink-faint, #8ba392);
+}
+.so-axis-label--end {
+  text-anchor: end;
+}
+.so-name {
+  text-anchor: end;
+  letter-spacing: 0.04em;
+}
+.so-cut {
+  stroke: var(--lxd-warn, #9a7328);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 3;
+}
+.so-cut-label {
+  fill: var(--lxd-warn, #9a7328);
+  text-anchor: middle;
+}
+
+/* Alle trekkingen van een node. */
+.so-dot {
+  fill: var(--lxd-ink-faint, #8ba392);
+  opacity: 0.42;
+  transition: cx 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Het ticket dat daadwerkelijk wordt ingediend. */
+.so-best {
+  fill: none;
+  stroke: var(--lxd-ink-soft, #5c7a65);
+  stroke-width: 1.6;
+  transition: cx 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.so-row--in .so-best {
+  stroke: var(--lxd-accent, #1c5c3f);
+  stroke-width: 2.2;
+}
+.so-row--you .so-dot {
+  fill: var(--lxd-warn, #9a7328);
+  opacity: 0.6;
+}
+.so-row--you .so-name {
+  fill: var(--lxd-warn, #9a7328);
+  letter-spacing: 0.1em;
+}
+.so-row--you .so-best {
+  stroke: var(--lxd-warn, #9a7328);
+  stroke-width: 2.4;
+}
+.sortition.is-still .so-dot,
+.sortition.is-still .so-best {
+  transition: none;
+}
+
+.sortition__controls {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin: 22px 0 0;
+}
+.sortition__slider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--lxd-ink-soft, #5c7a65);
+}
+.sortition__slider strong {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  color: var(--lxd-ink, #1d3527);
+  font-weight: 500;
+}
+.sortition__slider input[type='range'] {
+  width: 190px;
+  accent-color: var(--lxd-warn, #9a7328);
+}
+
+.sortition__readout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
+  margin: 24px 0 0;
+  padding: 18px 0 0;
+  border-top: 1px solid var(--lxd-rule, #cfe0cb);
+}
+.sortition__readout dt {
+  font-size: 12px;
+  color: var(--lxd-ink-faint, #8ba392);
+  margin-bottom: 5px;
+}
+.sortition__readout dd {
+  margin: 0;
+}
+.sortition__figure {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 22px;
+  line-height: 1.1;
+  color: var(--lxd-warn, #9a7328);
+}
+.sortition__verdict {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 13px;
+  color: var(--lxd-ink-faint, #8ba392);
+}
+.sortition__verdict.is-in {
+  color: var(--lxd-accent, #1c5c3f);
+}
+.sortition__foot {
+  margin: 20px 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--lxd-ink-faint, #8ba392);
+  border-left: 2px solid var(--lxd-warn, #9a7328);
+  padding-left: 14px;
+}
+
+/* Eigen knop. Het dashboard heeft .btn, de docs niet -- zelfde reden als bij
+   .lxd-eyebrow: een gedeelde component mag niet leunen op de stylesheet van
+   een van de twee hosts. */
+.lxd-btn {
+  font: inherit;
+  font-size: 13px;
+  padding: 8px 15px;
+  border-radius: 999px;
+  border: 1px solid var(--lxd-rule, #cfe0cb);
+  background: var(--lxd-surface, #fbfdfa);
+  color: var(--lxd-ink, #1d3527);
+  cursor: pointer;
+  transition:
+    border-color 120ms,
+    color 120ms;
+}
+.lxd-btn:hover {
+  border-color: var(--lxd-accent, #1c5c3f);
+  color: var(--lxd-accent, #1c5c3f);
+}
+.lxd-btn:focus-visible {
+  outline: 2px solid var(--lxd-accent, #1c5c3f);
+  outline-offset: 2px;
+}

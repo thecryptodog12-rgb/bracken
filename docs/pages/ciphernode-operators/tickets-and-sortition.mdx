@@ -3,6 +3,8 @@ title: 'Tickets & Sortition'
 description: 'How ticket balances influence committee selection'
 ---
 
+import { Sortition } from '@loxley/diagrams'
+
 # Tickets & Sortition
 
 Tickets determine your probability of being selected for E3 committees. This guide explains the
@@ -82,6 +84,11 @@ Look for the "Ticket balance" and "available" fields in the output.
 - Monitor `ticketPrice()` and `minTicketBalance()` before automating deposits on multiple networks
 
 ## Sortition Algorithm
+
+<Sortition />
+
+The rest of this section is the same mechanism written out.
+
 
 The sortition process selects committees deterministically from a committee seed that becomes
 available only after the paid E3 request is committed:

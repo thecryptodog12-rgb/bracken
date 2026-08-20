@@ -10,6 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@loxley/diagrams": "workspace:*",
     "katex": "^0.16.44",
     "next": "^14.2.1",
     "nextra": "^2.13.4",
