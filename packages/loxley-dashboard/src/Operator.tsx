@@ -18,6 +18,7 @@ import { erc20Abi, formatUnits, isAddress, parseUnits, type Address, type Hash }
 import Loader from './Loader'
 import Requirements from './Requirements'
 import { Sortition } from '@loxley/diagrams'
+import Reveal from './Reveal'
 import { CONTRACTS, bondingRegistryAbi, faucetAbi } from './lib/chain'
 import { LINKS, explorerAddress, explorerTx } from './lib/links'
 import { ZERO_ADDRESS, simulateAndWrite, useBonding, type BondingConfig, type OperatorStatus } from './lib/bonding'
@@ -224,19 +225,6 @@ export default function Operator() {
 
   return (
     <div className='opguide'>
-      <header className='opguide__head'>
-        <div className='section__eyebrow'>Ciphernode operators</div>
-        <h1 className='opguide__title'>Run a ciphernode on Loxley.</h1>
-        <p className='opguide__lede'>
-          Ciphernodes hold key shares for encrypted computations and are selected into committees by sortition. To take part, a node needs a
-          bonded ciphernode bond and a ticket balance. This guide walks the on-chain setup step by step, against the live{' '}
-          <a className='link-inline' href={explorerAddress(CONTRACTS.BondingRegistry)} target='_blank' rel='noreferrer'>
-            bonding registry
-          </a>
-          .
-        </p>
-      </header>
-
       {readError && !config ? (
         <div className='emptystate'>
           <div className='emptystate__note'>
@@ -254,12 +242,16 @@ export default function Operator() {
       {/* Renders with or without a chain. The moment the RPC is down is exactly
           when someone is deciding whether running a node is worth their time --
           handing them a blank page is the worst possible answer. */}
-      <Requirements config={config ?? null} />
+      <Reveal>
+        <Requirements config={config ?? null} />
+      </Reveal>
 
       {/* Waarom iemand tickets zou kopen is de vraag die de hele
           operator-pagina probeert te beantwoorden. Die hoort hier,
           direct na de kosten en voor de on-chain stappen. */}
-      <Sortition />
+      <Reveal>
+        <Sortition />
+      </Reveal>
 
       {config ? (
         <>

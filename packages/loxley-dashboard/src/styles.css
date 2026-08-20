@@ -2798,3 +2798,137 @@ button {
   --lxd-ink-faint: color-mix(in oklab, var(--foot-ink) 46%, transparent);
   --lxd-warn: #d8a548;
 }
+
+/* ── Aankomst ───────────────────────────────────────────────────────────────
+   De verborgen begintoestand hangt aan .reveal--armed, en die klasse zet de
+   component pas als hij weet dat hij kan animeren. Zonder JS, zonder
+   IntersectionObserver of met reduced-motion staat alles er gewoon. */
+.reveal--armed {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal--armed.is-in {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal--armed {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ── Materiaal ──────────────────────────────────────────────────────────────
+   Kaarten waren 1px rand op een egaal vlak: correct, maar het voelt nergens
+   als een oppervlak. Een fijne bovenrand vangt licht, een zachte schaduw tilt
+   het blad van het papier. In dark mode draait dat om -- daar komt licht niet
+   van boven maar zit het in het materiaal zelf, dus een lichte binnenrand en
+   nauwelijks schaduw. */
+.reqs__card,
+.lifecycle__step,
+.opstep,
+.opposition,
+.insp-stat {
+  position: relative;
+  box-shadow:
+    0 1px 2px rgb(20 40 28 / 0.04),
+    0 6px 18px -8px rgb(20 40 28 / 0.09);
+}
+.reqs__card::before,
+.opposition::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.7), transparent);
+  pointer-events: none;
+}
+:root[data-theme='dark'] .reqs__card,
+:root[data-theme='dark'] .lifecycle__step,
+:root[data-theme='dark'] .opstep,
+:root[data-theme='dark'] .opposition,
+:root[data-theme='dark'] .insp-stat {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+:root[data-theme='dark'] .reqs__card::before,
+:root[data-theme='dark'] .opposition::before {
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.09), transparent);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .reqs__card,
+  :root:not([data-theme='light']) .lifecycle__step,
+  :root:not([data-theme='light']) .opstep,
+  :root:not([data-theme='light']) .opposition,
+  :root:not([data-theme='light']) .insp-stat {
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+  }
+  :root:not([data-theme='light']) .reqs__card::before,
+  :root:not([data-theme='light']) .opposition::before {
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.09), transparent);
+  }
+}
+
+/* Kaarten die iets doen mogen reageren. Kaarten die alleen iets zeggen niet --
+   anders belooft de hele pagina interactie die er niet is. */
+.reqs__card {
+  transition:
+    border-color 200ms,
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reqs__card:hover {
+  border-color: color-mix(in oklab, var(--accent-deep) 34%, var(--rule));
+  transform: translateY(-2px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reqs__card {
+    transition: border-color 200ms;
+  }
+  .reqs__card:hover {
+    transform: none;
+  }
+}
+
+/* ── Ritme ──────────────────────────────────────────────────────────────────
+   Alles stond op dezelfde afstand. Een claim krijgt lucht, een tabel niet. */
+.main > * + * {
+  margin-top: 30px;
+}
+.main {
+  padding-block: 54px 78px;
+}
+
+/* Compacte opening: dezelfde stem, een derde van de hoogte. Aankomen op de
+   operator-gids moet aanvoelen als hetzelfde product, niet als een herhaling
+   van de hele stelling. */
+.hero--compact {
+  padding: 52px 0 44px;
+}
+.hero--compact .hero__title {
+  font-size: clamp(32px, 4.4vw, 56px);
+  margin-bottom: 16px;
+}
+.hero--compact .hero__lede {
+  font-size: 15px;
+  max-width: 62ch;
+}
+.hero--compact .hero__eyebrow {
+  margin-bottom: 16px;
+}
+.hero--compact .link-inline {
+  color: var(--hero-accent);
+  text-decoration-color: color-mix(in oklab, var(--hero-accent) 45%, transparent);
+}
+@media (max-width: 720px) {
+  .hero--compact {
+    padding: 38px 0 32px;
+  }
+  .hero--compact .hero__title {
+    font-size: clamp(28px, 8vw, 38px);
+  }
+}

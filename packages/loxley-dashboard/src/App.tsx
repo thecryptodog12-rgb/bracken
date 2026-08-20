@@ -24,6 +24,7 @@ import { isE3Active, solidityStageToUiIdx, type E3FullDetails, type E3Summary } 
 import { Wordmark } from './Wordmark'
 import ThemeToggle from './ThemeToggle'
 import Hero from './Hero'
+import Reveal from './Reveal'
 
 function Header({ density, view, onNav }: { density: string; view: string; onNav: (id: string) => void }) {
   const link = (id: string, label: string) => (
@@ -63,21 +64,6 @@ function Header({ density, view, onNav }: { density: string; view: string; onNav
   )
 }
 
-function Intro() {
-  return (
-    <section className='intro'>
-      <div className='intro__eyebrow'>
-        <span className='dot-live' /> Live · public poll
-      </div>
-      <h1 className='intro__title'>Watch an encrypted poll execute on the Loxley network.</h1>
-      <p className='intro__lede'>
-        CRISP is an example e3 running live. Ballots are encrypted on each voter's device, tallied without ever being decrypted, and only
-        the final result is revealed. This page shows the lifecycle as it happens — and the archive of every poll that came before.
-      </p>
-    </section>
-  )
-}
-
 function StatusNote({ children }: { children: ReactNode }) {
   return (
     <div className='emptystate'>
@@ -98,8 +84,8 @@ function SiteFooter() {
             <Wordmark variant='foot' />
           </div>
           <p className='site-foot__tag'>
-            Infrastructure for confidential coordination between independent parties. CRISP is one of the example applications running on
-            the network.
+            Infrastructure for confidential coordination between independent parties. An unreleased fork of The Interfold, targeting
+            Robinhood Chain.
           </p>
         </div>
         <div className='site-foot__cols'>
@@ -118,13 +104,18 @@ function SiteFooter() {
           <div>
             <div className='site-foot__col-head'>Project</div>
             <a href={LINKS.repo} target='_blank' rel='noreferrer'>
-              Github
+              Source
             </a>
-            <a href={LINKS.blog} target='_blank' rel='noreferrer'>
-              Blog
+          </div>
+          {/* Upstream apart, en ook zo benoemd. Dit is het werk waar deze fork
+              op leunt -- het onder "Project" zetten deed alsof het van ons was. */}
+          <div>
+            <div className='site-foot__col-head'>Upstream</div>
+            <a href={LINKS.upstreamSite} target='_blank' rel='noreferrer'>
+              The Interfold ↗
             </a>
-            <a href={LINKS.site} target='_blank' rel='noreferrer'>
-              Website
+            <a href={LINKS.upstreamBlog} target='_blank' rel='noreferrer'>
+              Their blog ↗
             </a>
           </div>
         </div>
@@ -306,16 +297,45 @@ export default function App() {
     <div className={`page page--${DENSITY}`}>
       <Header density={DENSITY} view={view} onNav={navigate} />
       {view === 'operator' ? (
-        <main className='main'>
-          <Operator />
-        </main>
+        <>
+          <Hero
+            size='compact'
+            eyebrow='Ciphernode operators'
+            title={
+              <>
+                Hold a share of every <em>secret</em>.
+              </>
+            }
+            lede={
+              <>
+                Ciphernodes are drawn into committees by sortition and hold key shares for computations they can never read on their own.
+                Everything below walks the on-chain setup step by step, against the live{' '}
+                <a className='link-inline' href={explorerAddress(CONTRACTS.BondingRegistry)} target='_blank' rel='noreferrer'>
+                  bonding registry
+                </a>
+                .
+              </>
+            }
+          />
+          <main className='main'>
+            <Operator />
+          </main>
+        </>
       ) : view === 'inspector' ? (
         <>
           {/* De hero staat alleen op de inspector: dat is de landingsweergave.
               De cijfers zijn dezelfde als in de footer-strip -- echte waarden,
               geen opgeklopte. */}
           <Hero
-            chainId={4663}
+            eyebrow='Encrypted execution environments · chain 4663'
+            title={
+              <>
+                Private inputs.
+                <br />
+                <em>Public outcomes.</em>
+              </>
+            }
+            lede='Loxley runs computations that nobody — not the requester, not a ciphernode, not whoever operates the network — can read the inputs of. What comes out is a single verified result, and a proof that it was produced correctly.'
             stats={[
               { label: 'Active E3s', value: String(activePolls.length) },
               { label: 'Encrypted ballots, 24h', value: recentBallots.toLocaleString() },
@@ -337,7 +357,9 @@ export default function App() {
                 {/* Een lege lijst is de eerste indruk die de meeste bezoekers
                   krijgen. In plaats van doodlopen: laten zien wat er straks in
                   die lijst verschijnt en waarom het bijzonder is. */}
-                <Lifecycle />
+                <Reveal>
+                  <Lifecycle />
+                </Reveal>
               </div>
             ) : (
               <Inspector
@@ -352,57 +374,67 @@ export default function App() {
           </main>
         </>
       ) : (
-        <main className='main'>
-          <Intro />
+        <>
+          <Hero
+            size='compact'
+            eyebrow={<>CRISP · live, public poll</>}
+            title={
+              <>
+                A poll nobody can <em>read</em>.
+              </>
+            }
+            lede='Ballots are encrypted on each voter’s device, tallied without ever being decrypted, and only the final result is revealed. Below is the lifecycle as it happens, and the archive of every poll that came before.'
+          />
+          <main className='main'>
+            {crispPolls.status === 'error' ? (
+              <StatusNote>Couldn't load CRISP polls from Sepolia. Retrying automatically…</StatusNote>
+            ) : !crispReady ? (
+              <Loader label='Loading CRISP polls' sub='Reading from Sepolia…' />
+            ) : activePolls.length > 0 ? (
+              <>
+                {activePolls.map((s) => {
+                  const poll = adaptPoll(s)
+                  const stageIdx = solidityStageToUiIdx(s.stage, s.inputWindow)
+                  return (
+                    <Fragment key={s.id.toString()}>
+                      <PollCard
+                        poll={poll}
+                        pollState={pollStateForStage(stageIdx, s.ballotCount)}
+                        currentStageIdx={stageIdx}
+                        ballotCount={s.ballotCount}
+                        onNavigate={navigate}
+                      />
+                      <Timeline stages={STAGES} currentStageIdx={stageIdx} pollId={poll.id} density={DENSITY} />
+                    </Fragment>
+                  )
+                })}
+              </>
+            ) : (
+              // No live polls — offer the lifecycle as an interactive demo.
+              <>
+                <StatusNote>No live CRISP polls right now. Here's how an encrypted poll moves through its lifecycle:</StatusNote>
+                <PollCard
+                  poll={DEMO_POLL}
+                  pollState={pollState}
+                  currentStageIdx={demoStage}
+                  liveMode={liveMode}
+                  onToggleLive={() => setLiveMode((v) => !v)}
+                  ballotCount={0}
+                  onNavigate={navigate}
+                />
+                <Timeline
+                  stages={STAGES}
+                  currentStageIdx={demoStage}
+                  pollId='demo'
+                  density={DENSITY}
+                  onStageClick={liveMode ? undefined : setStage}
+                />
+              </>
+            )}
 
-          {crispPolls.status === 'error' ? (
-            <StatusNote>Couldn't load CRISP polls from Sepolia. Retrying automatically…</StatusNote>
-          ) : !crispReady ? (
-            <Loader label='Loading CRISP polls' sub='Reading from Sepolia…' />
-          ) : activePolls.length > 0 ? (
-            <>
-              {activePolls.map((s) => {
-                const poll = adaptPoll(s)
-                const stageIdx = solidityStageToUiIdx(s.stage, s.inputWindow)
-                return (
-                  <Fragment key={s.id.toString()}>
-                    <PollCard
-                      poll={poll}
-                      pollState={pollStateForStage(stageIdx, s.ballotCount)}
-                      currentStageIdx={stageIdx}
-                      ballotCount={s.ballotCount}
-                      onNavigate={navigate}
-                    />
-                    <Timeline stages={STAGES} currentStageIdx={stageIdx} pollId={poll.id} density={DENSITY} />
-                  </Fragment>
-                )
-              })}
-            </>
-          ) : (
-            // No live polls — offer the lifecycle as an interactive demo.
-            <>
-              <StatusNote>No live CRISP polls right now. Here's how an encrypted poll moves through its lifecycle:</StatusNote>
-              <PollCard
-                poll={DEMO_POLL}
-                pollState={pollState}
-                currentStageIdx={demoStage}
-                liveMode={liveMode}
-                onToggleLive={() => setLiveMode((v) => !v)}
-                ballotCount={0}
-                onNavigate={navigate}
-              />
-              <Timeline
-                stages={STAGES}
-                currentStageIdx={demoStage}
-                pollId='demo'
-                density={DENSITY}
-                onStageClick={liveMode ? undefined : setStage}
-              />
-            </>
-          )}
-
-          {liveHistory.length > 0 && <History entries={liveHistory} onNavigate={navigate} />}
-        </main>
+            {liveHistory.length > 0 && <History entries={liveHistory} onNavigate={navigate} />}
+          </main>
+        </>
       )}
 
       <Pulse
