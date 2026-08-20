@@ -42,7 +42,9 @@ export default function Reveal({ children, delay = 0, as: Tag = 'div' }: { child
           }
         }
       },
-      { rootMargin: '0px 0px -12% 0px', threshold: 0.06 },
+      // threshold 0, niet een percentage: secties die hoger zijn dan het
+      // scherm halen zo'n drempel nooit en zouden dus onzichtbaar blijven.
+      { rootMargin: '0px 0px -12% 0px', threshold: 0 },
     )
     io.observe(el)
     return () => io.disconnect()

@@ -356,3 +356,135 @@
 .lxd-canopy canvas {
   display: block;
 }
+
+/* ── Vertrouwensladder ──────────────────────────────────────────────────────
+   De balken krimpen bij binnenkomst, met een stagger zodat je de afname leest
+   in plaats van hem in een keer te zien staan. Onder reduced-motion staat de
+   eindtoestand er meteen. */
+.trustladder {
+  margin: 44px 0 0;
+  padding-top: 36px;
+  border-top: 1px solid var(--lxd-rule, #cfe0cb);
+}
+.trustladder__head {
+  max-width: 64ch;
+  margin-bottom: 26px;
+}
+.trustladder__title {
+  font-family: var(--lxd-display, Georgia, serif);
+  font-weight: 400;
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin: 0 0 10px;
+  color: var(--lxd-ink, #1d3527);
+  text-wrap: balance;
+}
+.trustladder__lede {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--lxd-ink-soft, #5c7a65);
+}
+
+.trustladder__rungs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: rung;
+}
+.trustladder__rung {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(190px, 260px);
+  grid-template-areas:
+    'label meter'
+    'still still';
+  gap: 8px 28px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--lxd-rule, #cfe0cb);
+}
+.trustladder__rung.is-last {
+  border-bottom: 0;
+}
+.trustladder__label {
+  grid-area: label;
+}
+.trustladder__label h3 {
+  margin: 0 0 3px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--lxd-ink, #1d3527);
+}
+.trustladder__mech {
+  margin: 0;
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  color: var(--lxd-ink-faint, #8ba392);
+}
+
+.trustladder__meter {
+  grid-area: meter;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.trustladder__track {
+  flex: 1;
+  height: 7px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--lxd-ink-faint, #8ba392) 22%, transparent);
+  overflow: hidden;
+}
+.trustladder__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--lxd-warn, #9a7328);
+  transition: width 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.trustladder__rung.is-last .trustladder__fill {
+  background: var(--lxd-accent, #1c5c3f);
+}
+.trustladder__pct {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 12px;
+  color: var(--lxd-ink-faint, #8ba392);
+  min-width: 34px;
+  text-align: right;
+}
+
+.trustladder__still {
+  grid-area: still;
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--lxd-ink-soft, #5c7a65);
+  max-width: 78ch;
+}
+.trustladder__still span {
+  font-family: var(--lxd-mono, ui-monospace, Menlo, monospace);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lxd-ink-faint, #8ba392);
+  margin-right: 8px;
+}
+.trustladder__foot {
+  margin: 22px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--lxd-rule, #cfe0cb);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--lxd-ink-faint, #8ba392);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trustladder__fill {
+    transition: none;
+  }
+}
+@media (max-width: 700px) {
+  .trustladder__rung {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'label' 'meter' 'still';
+  }
+}

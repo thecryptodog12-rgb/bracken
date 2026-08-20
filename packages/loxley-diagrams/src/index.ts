@@ -7,4 +7,5 @@
 export { default as Lifecycle } from './Lifecycle'
 export { default as Sortition } from './Sortition'
 export { default as Canopy } from './Canopy'
+export { default as TrustLadder } from './TrustLadder'
 export { E3_STAGES, type E3StageValue } from './stages'
