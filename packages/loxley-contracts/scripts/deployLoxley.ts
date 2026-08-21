@@ -180,9 +180,25 @@ export const deployLoxley = async (
     feeTokenAddress = await mockStableToken.getAddress();
     console.log("MockFeeToken deployed to:", feeTokenAddress);
   } else {
-    throw new Error(
-      "Fee token address must be provided for production deployment",
-    );
+    // Upstream liet hier alleen een throw staan: er was geen enkele manier om
+    // zonder mocks te deployen, ook niet met een bestaand token. Voor een echte
+    // keten is dat precies de tak die je nodig hebt.
+    const configured = process.env.FEE_TOKEN_ADDRESS;
+    if (!configured || !/^0x[0-9a-fA-F]{40}$/.test(configured)) {
+      throw new Error(
+        "Fee token address must be provided for production deployment. " +
+          "Set FEE_TOKEN_ADDRESS to an existing ERC-20 on the target chain.",
+      );
+    }
+    const code = await ethers.provider.getCode(configured);
+    if (code === "0x") {
+      throw new Error(
+        `FEE_TOKEN_ADDRESS ${configured} has no contract code on this chain. ` +
+          "Refusing to deploy against a fee token that does not exist.",
+      );
+    }
+    feeTokenAddress = configured;
+    console.log("Using existing fee token:", feeTokenAddress);
   }
 
   // ── CCA window ──────────────────────────────────────────────────────────
@@ -379,8 +395,30 @@ export const deployLoxley = async (
   }
 
   const mockDeployments = shouldDeployMocks ? await deployMocks() : undefined;
-  if (!mockDeployments) {
-    throw new Error("An initial E3 Program deployment is required");
+
+  // Zonder mocks was er geen enkele manier om een bestaand E3-programma mee te
+  // geven; het script gooide er simpelweg uit. Dat is ook precies waarom
+  // upstream's mainnet een MockE3Program als eerste programma registreert.
+  let initialE3Program: string;
+  if (mockDeployments) {
+    initialE3Program = mockDeployments.e3ProgramAddress;
+  } else {
+    const configured = process.env.E3_PROGRAM_ADDRESS;
+    if (!configured || !/^0x[0-9a-fA-F]{40}$/.test(configured)) {
+      throw new Error(
+        "An initial E3 Program is required. Set E3_PROGRAM_ADDRESS to a " +
+          "deployed IE3Program on the target chain, or set DEPLOY_MOCKS=true " +
+          "to register a mock instead (which verifies nothing).",
+      );
+    }
+    const programCode = await ethers.provider.getCode(configured);
+    if (programCode === "0x") {
+      throw new Error(
+        `E3_PROGRAM_ADDRESS ${configured} has no contract code on this chain.`,
+      );
+    }
+    initialE3Program = configured;
+    console.log("Using existing E3 program:", initialE3Program);
   }
 
   console.log("Deploying Loxley...");
@@ -392,7 +430,7 @@ export const deployLoxley = async (
     e3RefundManager: addressOne, // placeholder, will be updated
     feeToken: feeTokenAddress,
     timeoutConfig: DEFAULT_TIMEOUT_CONFIG,
-    initialE3Program: mockDeployments.e3ProgramAddress,
+    initialE3Program,
     hre,
   });
   const loxleyAddress = await loxley.getAddress();
