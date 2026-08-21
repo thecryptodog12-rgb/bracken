@@ -86,8 +86,21 @@ const ZERO = '0x0000000000000000000000000000000000000000'
 //
 // Afwezigheid bewijst niets over een andere curve, en aanwezigheid bewijst niet
 // dat de verifier klopt. Beide voorbehouden staan in de UI.
+// Basisveld-modulus. Alleen dit getal wijst op pairing-rekenwerk -- de kern
+// van een Groth16/Honk-verificatie.
 const BN254_P = '30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47'
+// Scalarveld-modulus. Zwakker bewijs: een wrapper draagt dit vaak alleen om
+// publieke inputs op bereik te controleren, zonder zelf iets te verifieren.
+// Mijn eerste versie behandelde P en R als gelijkwaardig en noemde daardoor een
+// input-validerende wrapper "een echte verifier". Dat was te sterk.
 const BN254_R = '30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001'
+
+// Wrappers zoals BfvDecryptionVerifier doen de bereikcontroles zelf en laten
+// het pairing-werk over aan een circuitVerifier. Die volgen is geen heuristiek
+// maar de daadwerkelijke structuur.
+const CIRCUIT_VERIFIER_ABI = [
+  { name: 'circuitVerifier', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
+] as const
 
 // EIP-1967 implementatie-slot. Zonder deze stap zou elke proxy als "stub"
 // gelezen worden: die draagt zelf geen veldconstanten maar delegeert naar een
@@ -212,15 +225,40 @@ async function readSlot(client: ChainReader, loxley: Address, spec: (typeof SLOT
       via = ` It is a proxy to ${impl}, whose code could not be read.`
     }
   }
-  const hasFieldConstants = hex.includes(BN254_P) || hex.includes(BN254_R)
+  // Volg circuitVerifier() als het contract er een heeft.
+  let inner: Address | null = null
+  try {
+    inner = (await client.readContract({
+      address,
+      abi: CIRCUIT_VERIFIER_ABI,
+      functionName: 'circuitVerifier',
+      args: [],
+    })) as Address
+  } catch {
+    inner = null
+  }
+  let innerSize: number | null = null
+  if (inner && inner.toLowerCase() !== ZERO) {
+    try {
+      const ic = await client.getCode({ address: inner })
+      innerSize = ic && ic !== '0x' ? (ic.length - 2) / 2 : 0
+      hex += (ic || '').toLowerCase()
+      via += ` It delegates the proof check to ${inner} (${innerSize} bytes).`
+    } catch {
+      via += ` It delegates to ${inner}, whose code could not be read.`
+    }
+  }
 
-  if (hasFieldConstants) {
+  const doesPairing = hex.includes(BN254_P)
+  const onlyRangeChecks = !doesPairing && hex.includes(BN254_R)
+
+  if (doesPairing) {
     return {
       ...base,
       address,
       codeSize,
       verdict: 'present',
-      detail: `${codeSize} bytes, and the BN254 field modulus is embedded in the bytecode — this contract does real elliptic-curve arithmetic.${via} Whether it checks the right circuit is beyond what can be read from chain.`,
+      detail: `${codeSize} bytes, and the BN254 base-field modulus is present — pairing arithmetic, which is what verifying a proof actually costs.${via} Whether it checks the right circuit is beyond what can be read from chain.`,
     }
   }
   return {
@@ -228,7 +266,9 @@ async function readSlot(client: ChainReader, loxley: Address, spec: (typeof SLOT
     address,
     codeSize,
     verdict: 'stub',
-    detail: `${codeSize} bytes, and no BN254 field constants anywhere in the bytecode.${via} A Groth16-style verifier cannot work without them, so this is not verifying one.`,
+    detail: onlyRangeChecks
+      ? `${codeSize} bytes. It carries the BN254 scalar modulus but not the base-field one, so it range-checks inputs without ever doing pairing arithmetic.${via} Nothing here verifies a proof.`
+      : `${codeSize} bytes, and no BN254 constants at all.${via} A Groth16-style verifier cannot work without them, so this is not verifying one.`,
   }
 }
 

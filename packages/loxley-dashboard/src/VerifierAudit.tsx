@@ -104,9 +104,10 @@ export default function VerifierAudit() {
       <div className='vaudit__foot'>
         <h4>What this does and does not prove</h4>
         <p>
-          The test is not size but content: every Groth16-style verifier on the EVM works over the BN254 curve and therefore carries that
-          curve&apos;s field modulus in its bytecode. A contract without it cannot be checking such a proof. Proxies are followed through
-          their EIP-1967 implementation slot first, so a thin proxy in front of a real verifier is not mistaken for a stub.
+          The test is the BN254 <em>base-field</em> modulus, because that is what pairing arithmetic needs — and pairing arithmetic is what
+          verifying a proof actually costs. The scalar modulus is not enough: a wrapper carries that to range-check its inputs while
+          delegating, or not verifying at all. Wrappers are followed through their <code>circuitVerifier()</code>, and proxies through the
+          EIP-1967 slot, so neither is mistaken for a stub.
         </p>
         <p>
           The reverse does not follow. Field constants mean real curve arithmetic is happening; they do not tell you the verifier checks the
