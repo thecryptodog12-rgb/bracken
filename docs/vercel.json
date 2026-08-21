@@ -4,5 +4,13 @@
   "installCommand": "pnpm install",
   "buildCommand": "pnpm --filter loxley-docs build",
   "outputDirectory": "docs/out",
-  "redirects": [{ "source": "/", "destination": "/introduction", "permanent": false }]
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/introduction",
+      "permanent": false
+    }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
 }
