@@ -3194,3 +3194,166 @@ button {
     animation: none;
   }
 }
+
+/* ── Verifier-audit ─────────────────────────────────────────────────────────
+   De kleuren dragen hier het oordeel: leeg en stub in messing, aanwezig in
+   greenwood. Bewust geen groen vinkje bij "aanwezig" -- dat zou suggereren dat
+   het goedgekeurd is, en dat kan dit gereedschap niet vaststellen. */
+.vaudit__head {
+  max-width: 62ch;
+  margin-bottom: 30px;
+}
+.vaudit__title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(28px, 3.4vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -0.012em;
+  margin: 0 0 12px;
+  color: var(--ink);
+}
+.vaudit__title em {
+  font-style: italic;
+  color: var(--accent-deep);
+}
+.vaudit__lede {
+  margin: 0 0 18px;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+.vaudit__nets {
+  display: grid;
+  gap: 22px;
+}
+.vaudit__net {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--paper-2);
+  padding: 20px;
+}
+.vaudit__net-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.vaudit__net-head h3 {
+  margin: 0 0 4px;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--ink);
+}
+.vaudit__net-note {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-4);
+  max-width: 68ch;
+}
+.vaudit__net-meta {
+  font-size: 11px;
+  color: var(--ink-4);
+  white-space: nowrap;
+}
+
+.vaudit__slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 14px;
+}
+.vaudit__slot {
+  border-left: 2px solid var(--rule);
+  padding-left: 14px;
+}
+.vaudit__slot--empty,
+.vaudit__slot--stub {
+  border-left-color: var(--brass);
+}
+.vaudit__slot--present {
+  border-left-color: var(--accent-deep);
+}
+.vaudit__slot-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.vaudit__slot-head h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.vaudit__badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  white-space: nowrap;
+}
+.vaudit__slot--empty .vaudit__badge,
+.vaudit__slot--stub .vaudit__badge {
+  color: var(--brass);
+}
+.vaudit__slot--present .vaudit__badge {
+  color: var(--accent-deep);
+}
+.vaudit__covers {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-4);
+}
+.vaudit__detail {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.vaudit__addr {
+  font-size: 11px;
+  color: var(--ink-4);
+  word-break: break-all;
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+}
+.vaudit__addr:hover {
+  color: var(--accent-deep);
+}
+.vaudit__err {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-3);
+  border-left: 2px solid var(--brass);
+  padding-left: 14px;
+}
+
+.vaudit__foot {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  max-width: 76ch;
+}
+.vaudit__foot h4 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  font-weight: 400;
+}
+.vaudit__foot p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-3);
+}

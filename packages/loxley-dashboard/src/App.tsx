@@ -24,12 +24,14 @@ import { isE3Active, solidityStageToUiIdx, type E3FullDetails, type E3Summary } 
 import { Wordmark } from './Wordmark'
 import ThemeToggle from './ThemeToggle'
 import Hero from './Hero'
+import VerifierAudit from './VerifierAudit'
 import Reveal from './Reveal'
 
 const NAV: [string, string][] = [
   ['inspector', 'E3 inspector'],
   ['crisp', 'CRISP'],
   ['operator', 'Run a ciphernode'],
+  ['audit', 'Verifier audit'],
 ]
 
 function Header({ density, view, onNav }: { density: string; view: string; onNav: (id: string) => void }) {
@@ -201,7 +203,7 @@ const DENSITY = 'comfortable'
 
 // Linkable views. Anything else in the hash falls back to the inspector, so a
 // stale or hand-typed fragment can never render a blank page.
-const VIEWS = ['inspector', 'crisp', 'operator']
+const VIEWS = ['inspector', 'crisp', 'operator', 'audit']
 
 function viewFromHash(): string {
   const id = globalThis.location?.hash.replace(/^#/, '') ?? ''
@@ -362,7 +364,23 @@ export default function App() {
   return (
     <div className={`page page--${DENSITY}`}>
       <Header density={DENSITY} view={view} onNav={navigate} />
-      {view === 'operator' ? (
+      {view === 'audit' ? (
+        <>
+          <Hero
+            size='compact'
+            eyebrow='Verifier audit'
+            title={
+              <>
+                Publicly checkable, <em>checked</em>.
+              </>
+            }
+            lede='Every deployment claims its proofs are verifiable on chain. This reads the three verifier slots directly and reports what is in them — upstream Interfold’s networks, since Loxley has none of its own yet.'
+          />
+          <main className='main'>
+            <VerifierAudit />
+          </main>
+        </>
+      ) : view === 'operator' ? (
         <>
           <Hero
             size='compact'
