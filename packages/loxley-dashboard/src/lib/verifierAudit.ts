@@ -36,6 +36,9 @@ export type NetworkTarget = {
   /** Upstream Interfold's deployment. Loxley has none of its own yet. */
   loxley: Address
   explorer: string
+  /** Blockscout API, sleutelvrij. Levert de geverifieerde contractnaam en wie
+   *  hem deployde -- directer bewijs dan wat uit bytecode af te leiden valt. */
+  blockscout: string
   note: string
 }
 
@@ -48,6 +51,7 @@ export const NETWORKS: NetworkTarget[] = [
     label: 'Ethereum mainnet',
     loxley: '0x28cF63B459e6218C69EA97ea7D90541cf648c715',
     explorer: 'https://etherscan.io',
+    blockscout: 'https://eth.blockscout.com',
     note: 'The Interfold, upstream. Their docs describe the registered ciphertext verifier as a deployable mock for public-network rehearsal.',
   },
   {
@@ -55,6 +59,7 @@ export const NETWORKS: NetworkTarget[] = [
     label: 'Sepolia',
     loxley: '0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7',
     explorer: 'https://sepolia.etherscan.io',
+    blockscout: 'https://eth-sepolia.blockscout.com',
     note: 'The Interfold, upstream. Their docs state this was deployed with DEPLOY_MOCKS=true and without ENABLE_ZK_VERIFICATION.',
   },
 ]
@@ -64,7 +69,14 @@ export const SCHEME_ID = keccak256(toHex('fhe.rs:BFV'))
 
 export type SlotKey = 'ciphertext' | 'decryption' | 'pk'
 
-export type Verdict = 'empty' | 'stub' | 'present' | 'unreadable'
+export type Verdict = 'empty' | 'stub' | 'present' | 'inconclusive' | 'unreadable'
+
+export type Provenance = {
+  /** Geverifieerde contractnaam volgens de explorer, als de bron ingediend is. */
+  name: string | null
+  creator: string | null
+  creationTx: string | null
+}
 
 export type SlotResult = {
   slot: SlotKey
@@ -75,6 +87,26 @@ export type SlotResult = {
   codeSize: number | null
   verdict: Verdict
   detail: string
+  provenance: Provenance | null
+}
+
+// Wie zette dit contract erin, en hoe heet het volgens zijn eigen geverifieerde
+// broncode. Dat laatste is directer bewijs dan alles wat uit bytecode af te
+// leiden valt: een contract dat zichzelf DeployableMockCiphertextVerifier noemt
+// hoeft niet geinterpreteerd te worden.
+async function fetchProvenance(base: string, address: Address): Promise<Provenance | null> {
+  try {
+    const res = await fetch(`${base}/api/v2/addresses/${address}`)
+    if (!res.ok) return null
+    const d = (await res.json()) as Record<string, unknown>
+    return {
+      name: (d.name as string) || null,
+      creator: (d.creator_address_hash as string) || null,
+      creationTx: ((d.creation_transaction_hash || d.creation_tx_hash) as string) || null,
+    }
+  } catch {
+    return null
+  }
 }
 
 const ZERO = '0x0000000000000000000000000000000000000000'
@@ -159,8 +191,9 @@ export function clientFor(target: NetworkTarget, rpcOverride?: string): ChainRea
   return createPublicClient({ chain, transport: http(rpcOverride || fallback, { batch: true }) }) as unknown as ChainReader
 }
 
-async function readSlot(client: ChainReader, loxley: Address, spec: (typeof SLOTS)[number]): Promise<SlotResult> {
-  const base = { slot: spec.slot, label: spec.label, covers: spec.covers }
+async function readSlot(client: ChainReader, target: NetworkTarget, spec: (typeof SLOTS)[number]): Promise<SlotResult> {
+  const loxley = target.loxley
+  const base = { slot: spec.slot, label: spec.label, covers: spec.covers, provenance: null }
   let address: Address | null = null
 
   try {
@@ -190,6 +223,8 @@ async function readSlot(client: ChainReader, loxley: Address, spec: (typeof SLOT
     }
   }
 
+  const provenance = await fetchProvenance(target.blockscout, address)
+
   let codeSize: number | null = null
   let rawCode: string | undefined
   try {
@@ -200,7 +235,7 @@ async function readSlot(client: ChainReader, loxley: Address, spec: (typeof SLOT
   }
 
   if (codeSize === 0) {
-    return { ...base, address, codeSize, verdict: 'empty', detail: 'An address is registered, but there is no contract at it.' }
+    return { ...base, provenance, address, codeSize, verdict: 'empty', detail: 'An address is registered, but there is no contract at it.' }
   }
   if (codeSize === null) {
     return {
@@ -255,20 +290,43 @@ async function readSlot(client: ChainReader, loxley: Address, spec: (typeof SLOT
   if (doesPairing) {
     return {
       ...base,
+      provenance,
       address,
       codeSize,
       verdict: 'present',
       detail: `${codeSize} bytes, and the BN254 base-field modulus is present — pairing arithmetic, which is what verifying a proof actually costs.${via} Whether it checks the right circuit is beyond what can be read from chain.`,
     }
   }
+  // De geverifieerde naam is directer bewijs dan de bytecode-test. Heet het
+  // ding zelf "Mock", dan is de zaak rond. Heet het iets anders -- Sepolia's
+  // slot bevat een Risc0BfvCiphertextVerifier -- dan zegt het ontbreken van
+  // BN254 alleen dat er geen pairing plaatsvindt, niet dat er niets gebeurt.
+  // RISC Zero verifieert over een ander systeem. Dat als "stub" wegzetten zou
+  // precies de fout zijn waar dit gereedschap voor bedoeld is.
+  const nm = provenance?.name || ''
+  const namedMock = /mock/i.test(nm)
+  if (!namedMock && nm) {
+    return {
+      ...base,
+      provenance,
+      address,
+      codeSize,
+      verdict: 'inconclusive',
+      detail: `${codeSize} bytes and no BN254 base-field modulus, so no pairing arithmetic happens here. But its verified source is named ${nm}, which is not a mock — it may verify over a different proof system (RISC Zero, for one) that this check cannot see.${via}`,
+    }
+  }
+
   return {
     ...base,
+    provenance,
     address,
     codeSize,
     verdict: 'stub',
-    detail: onlyRangeChecks
-      ? `${codeSize} bytes. It carries the BN254 scalar modulus but not the base-field one, so it range-checks inputs without ever doing pairing arithmetic.${via} Nothing here verifies a proof.`
-      : `${codeSize} bytes, and no BN254 constants at all.${via} A Groth16-style verifier cannot work without them, so this is not verifying one.`,
+    detail: namedMock
+      ? `Its own verified source is named ${nm}. No interpretation needed: this slot holds a mock.${via}`
+      : onlyRangeChecks
+        ? `${codeSize} bytes. It carries the BN254 scalar modulus but not the base-field one, so it range-checks inputs without ever doing pairing arithmetic.${via} Nothing here verifies a proof.`
+        : `${codeSize} bytes, and no BN254 constants at all.${via} A Groth16-style verifier cannot work without them, so this is not verifying one.`,
   }
 }
 
@@ -282,10 +340,7 @@ export type AuditResult = {
 export async function auditNetwork(target: NetworkTarget, rpcOverride?: string): Promise<AuditResult> {
   const client = clientFor(target, rpcOverride)
   try {
-    const [blockNumber, slots] = await Promise.all([
-      client.getBlockNumber(),
-      Promise.all(SLOTS.map((s) => readSlot(client, target.loxley, s))),
-    ])
+    const [blockNumber, slots] = await Promise.all([client.getBlockNumber(), Promise.all(SLOTS.map((s) => readSlot(client, target, s)))])
     return { target, slots, blockNumber, error: null }
   } catch (e) {
     return { target, slots: [], blockNumber: null, error: (e as Error).message.split('\n')[0] }

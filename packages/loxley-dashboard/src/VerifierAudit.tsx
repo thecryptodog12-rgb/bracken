@@ -22,6 +22,7 @@ const VERDICT_LABEL: Record<Verdict, string> = {
   empty: 'Nothing here',
   stub: 'Stub',
   present: 'Contract present',
+  inconclusive: 'Cannot tell',
   unreadable: 'Could not read',
 }
 
@@ -34,10 +35,27 @@ function Slot({ r, explorer }: { r: SlotResult; explorer: string }) {
       </div>
       <p className='vaudit__covers'>{r.covers}</p>
       <p className='vaudit__detail'>{r.detail}</p>
+      {/* De geverifieerde naam staat vooraan: een contract dat zichzelf
+          DeployableMockCiphertextVerifier noemt hoeft niet geinterpreteerd te
+          worden. Wie hem deployde en met welke transactie erbij, want een
+          audit die alleen zegt "er staat een stub" laat de helft weg. */}
+      {r.provenance?.name && <p className='vaudit__vname mono'>verified as {r.provenance.name}</p>}
       {r.address && (
-        <a className='vaudit__addr mono' href={`${explorer}/address/${r.address}`} target='_blank' rel='noreferrer'>
-          {r.address}
-        </a>
+        <div className='vaudit__links'>
+          <a className='vaudit__addr mono' href={`${explorer}/address/${r.address}`} target='_blank' rel='noreferrer'>
+            {r.address}
+          </a>
+          {r.provenance?.creationTx && (
+            <a className='vaudit__addr mono' href={`${explorer}/tx/${r.provenance.creationTx}`} target='_blank' rel='noreferrer'>
+              deployed in {r.provenance.creationTx.slice(0, 10)}…
+            </a>
+          )}
+          {r.provenance?.creator && (
+            <a className='vaudit__addr mono' href={`${explorer}/address/${r.provenance.creator}`} target='_blank' rel='noreferrer'>
+              by {r.provenance.creator.slice(0, 10)}…
+            </a>
+          )}
+        </div>
       )}
     </div>
   )

@@ -3357,3 +3357,27 @@ button {
   line-height: 1.6;
   color: var(--ink-3);
 }
+
+/* Herkomst: naam uit geverifieerde bron, plus de deploy-transactie en wie hem
+   tekende. Dat is het verschil tussen "er staat een stub" en een bevinding. */
+.vaudit__vname {
+  margin: 0 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--accent-deep);
+}
+.vaudit__slot--stub .vaudit__vname,
+.vaudit__slot--empty .vaudit__vname {
+  color: var(--brass);
+}
+.vaudit__links {
+  display: grid;
+  gap: 3px;
+}
+.vaudit__slot--inconclusive {
+  border-left-color: var(--ink-4);
+}
+.vaudit__slot--inconclusive .vaudit__badge,
+.vaudit__slot--inconclusive .vaudit__vname {
+  color: var(--ink-4);
+}
