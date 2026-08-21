@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm --filter loxley-docs build",
+  "outputDirectory": "docs/out",
+  "redirects": [{ "source": "/", "destination": "/introduction", "permanent": false }]
+}

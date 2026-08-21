@@ -14,6 +14,11 @@ const withNextra = nextra({
 })
 
 module.exports = withNextra({
+  // Statische export: alle 49 pagina's zijn al static, en zonder server-kant
+  // hoeft Vercel geen framework te detecteren -- wat in deze pnpm-monorepo
+  // juist het probleem was. `images.unoptimized` is verplicht in export-modus.
+  output: 'export',
+  images: { unoptimized: true },
   // @loxley/diagrams is TypeScript-bron uit de workspace; zonder dit laat Next
   // hem ongemoeid door webpack gaan en struikelt die over de type-syntax.
   transpilePackages: ['@loxley/diagrams'],
@@ -23,14 +28,5 @@ module.exports = withNextra({
     // cache forces a full recompile on every build.
     config.cache = false
     return config
-  },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/introduction',
-        permanent: false,
-      },
-    ]
   },
 })

@@ -1,0 +1,20 @@
+# Wat Vercel niet hoeft te uploaden. Zonder dit gaat de hele monorepo mee --
+# 4,5 GB, waarvan 2,2 GB Rust-build en 2,1 GB node_modules -- en breekt de
+# upload af. Vercel installeert en bouwt zelf.
+node_modules
+target
+.next
+docs/.next
+**/dist
+**/artifacts
+**/cache
+**/.turbo
+
+# Zwaar en niet nodig voor een docs- of dashboard-build
+circuits
+crates
+agent
+dappnode
+tests
+examples/CRISP/server
+packages/loxley-contracts/audits
