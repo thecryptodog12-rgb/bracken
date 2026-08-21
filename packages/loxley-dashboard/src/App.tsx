@@ -26,7 +26,38 @@ import ThemeToggle from './ThemeToggle'
 import Hero from './Hero'
 import Reveal from './Reveal'
 
+const NAV: [string, string][] = [
+  ['inspector', 'E3 inspector'],
+  ['crisp', 'CRISP'],
+  ['operator', 'Run a ciphernode'],
+]
+
 function Header({ density, view, onNav }: { density: string; view: string; onNav: (id: string) => void }) {
+  // Onder 880px was .site-nav simpelweg verborgen, zonder iets ervoor in de
+  // plaats. Je landde op een pagina en kon nergens meer heen -- geen ontbrekend
+  // extraatje maar een doodlopende navigatie.
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    // Achtergrond niet mee laten scrollen zolang het paneel open staat.
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prev
+    }
+  }, [menuOpen])
+
+  const go = (id: string) => {
+    setMenuOpen(false)
+    onNav(id)
+  }
+
   const link = (id: string, label: string) => (
     <a
       className={`site-nav__link ${view === id ? 'site-nav__link--on' : ''}`}
@@ -54,12 +85,47 @@ function Header({ density, view, onNav }: { density: string; view: string; onNav
           <Wordmark />
         </a>
         <nav className='site-nav' aria-label='Primary'>
-          {link('inspector', 'E3 inspector')}
-          {link('crisp', 'CRISP')}
-          {link('operator', 'Run a ciphernode')}
+          {NAV.map(([id, label]) => (
+            <Fragment key={id}>{link(id, label)}</Fragment>
+          ))}
         </nav>
         <ThemeToggle />
+
+        <button
+          className='navtoggle'
+          aria-expanded={menuOpen}
+          aria-controls='site-menu'
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <span className={`navtoggle__bars ${menuOpen ? 'is-open' : ''}`} aria-hidden='true'>
+            <i />
+            <i />
+          </span>
+        </button>
       </div>
+
+      {menuOpen && (
+        <>
+          <div className='sitemenu__scrim' onClick={() => setMenuOpen(false)} aria-hidden='true' />
+          <div className='sitemenu' id='site-menu'>
+            {NAV.map(([id, label]) => (
+              <a
+                key={id}
+                className={`sitemenu__link ${view === id ? 'is-on' : ''}`}
+                href={`#${id}`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  go(id)
+                }}
+              >
+                {label}
+                {view === id && <span className='sitemenu__here'>here</span>}
+              </a>
+            ))}
+          </div>
+        </>
+      )}
     </header>
   )
 }
