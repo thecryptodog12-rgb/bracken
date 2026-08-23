@@ -277,7 +277,32 @@ export const deployLoxley = async (
   // the deployer as the one-time claim source placeholder; production sale
   // deployments set the actual auction after it exists.
   console.log("Deploying LOXLEY token...");
-  const { loxleyToken } = await deployAndSaveLoxleyToken({
+  // Een bestaande bond-token meegeven in plaats van LoxleyToken deployen.
+  //
+  // LoxleyToken bestaat om een CCA-veiling te draaien: CCA_START en CCA_END
+  // staan immutable in het contract, tge() kan pas 40 dagen na CCA_END, en tot
+  // die tijd zijn transfers geblokkeerd. Wie zijn token op een DEX lanceert
+  // heeft aan die machinerie niets -- die zit alleen in de weg.
+  //
+  // De BondingRegistry stelt geen enkele eis behalve IERC20: hij doet
+  // transferFrom en balanceOf, meer niet. Een gewone ERC-20 voldoet dus.
+  const externalBondToken = process.env.BOND_TOKEN_ADDRESS;
+  if (externalBondToken) {
+    if (!/^0x[0-9a-fA-F]{40}$/.test(externalBondToken)) {
+      throw new Error("BOND_TOKEN_ADDRESS is not a valid address");
+    }
+    const bondCode = await ethers.provider.getCode(externalBondToken);
+    if (bondCode === "0x") {
+      throw new Error(
+        `BOND_TOKEN_ADDRESS ${externalBondToken} has no contract code on this chain.`,
+      );
+    }
+    console.log("Using existing bond token:", externalBondToken);
+  }
+
+  const { loxleyToken } = externalBondToken
+    ? { loxleyToken: null }
+    : await deployAndSaveLoxleyToken({
     owner: ownerAddress,
     ccaStart,
     ccaEnd,
@@ -287,8 +312,10 @@ export const deployLoxley = async (
       ccaEnd + BigInt(TGE_COOLDOWN_SECONDS + LOCK_SUNSET_DELAY_SECONDS),
     hre,
   });
-  const loxleyTokenAddress = await loxleyToken.getAddress();
-  console.log("LoxleyToken deployed to:", loxleyTokenAddress);
+  const loxleyTokenAddress = externalBondToken ?? (await loxleyToken!.getAddress());
+  if (!externalBondToken) {
+    console.log("LoxleyToken deployed to:", loxleyTokenAddress);
+  }
 
   // Fix up BondingRegistry's ciphernode bond token now that LOXLEY exists.
   console.log("Setting ciphernode bond token in BondingRegistry...");
@@ -312,10 +339,15 @@ export const deployLoxley = async (
   }
 
   // Whitelist BondingRegistry so bonded transfers work pre-TGE.
-  console.log("Whitelisting BondingRegistry in LOXLEY...");
-  await (
-    await loxleyToken.setTransferWhitelisted(bondingRegistryAddress, true)
-  ).wait();
+  // setTransferWhitelisted bestaat alleen op LoxleyToken. Een externe ERC-20
+  // kent die functie niet -- en heeft hem ook niet nodig, want daar zijn
+  // transfers sowieso vrij.
+  if (!externalBondToken) {
+    console.log("Whitelisting BondingRegistry in LOXLEY...");
+    await (
+      await loxleyToken!.setTransferWhitelisted(bondingRegistryAddress, true)
+    ).wait();
+  }
 
   // ── Bonded voting ───────────────────────────────────────────────────────
   // Bonded LOXLEY is transferred to BondingRegistry and never delegated, so without a recorded
@@ -371,12 +403,12 @@ export const deployLoxley = async (
     // pre-TGE gate (transferWhitelist[from] short-circuits the restriction).
     console.log("Whitelisting Faucet in LOXLEY...");
     await (
-      await loxleyToken.setTransferWhitelisted(faucetAddress, true)
+      await loxleyToken!.setTransferWhitelisted(faucetAddress, true)
     ).wait();
 
     console.log("Minting LOXLEY to Faucet...");
     await (
-      await loxleyToken.mint(
+      await loxleyToken!.mint(
         faucetAddress,
         FAUCET_FOLD_SUPPLY,
         ethers.encodeBytes32String("faucet"),
