@@ -14,6 +14,7 @@ packages:
   - packages/loxley-dashboard
   - packages/loxley-node
   - packages/loxley-diagrams
+  - packages/loxley-site
   - templates/default
   - templates/default/client
 linkWorkspacePackages: true
