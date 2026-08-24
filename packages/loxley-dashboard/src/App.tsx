@@ -75,15 +75,10 @@ function Header({ density, view, onNav }: { density: string; view: string; onNav
   return (
     <header className={`site-head site-head--${density}`}>
       <div className='site-head__inner'>
-        <a
-          className='wordmark'
-          href='#'
-          onClick={(e) => {
-            e.preventDefault()
-            onNav('inspector')
-          }}
-          aria-label='Loxley home'
-        >
+        {/* Het merk wijst naar de begin-page, niet naar de eerste sectie van
+            deze pagina zelf. Dat is waar bezoekers het klikken, en het was tot
+            nu toe de enige plek waar de voordeur niet vandaan te bereiken was. */}
+        <a className='wordmark' href={LINKS.site} aria-label='Loxley home'>
           <Wordmark />
         </a>
         <nav className='site-nav' aria-label='Primary'>

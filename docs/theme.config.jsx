@@ -8,9 +8,20 @@ import { Link, useConfig } from 'nextra-theme-docs'
 import { useRouter } from 'next/router'
 import Footer from './components/Footer'
 
+// De begin-page. Deze docs zijn een statische export, dus dit wordt bij de
+// build ingebakken; wie zelf publiceert zet NEXT_PUBLIC_SITE_URL.
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:5174').replace(/\/$/, '')
+
+// Het pad naar de fork zelf. Stond op github.com/theloxley/loxley en
+// gnosisguild/loxley -- allebei 404: de hernoemslag heeft die namen verzonnen,
+// ze hebben nooit bestaan. "Edit this page" leidde dus nergens heen.
+const REPO = 'https://github.com/thecryptodog12-rgb/interfold'
+
 export default {
+  // Wijst naar buiten, naar de voordeur -- niet naar de docs-root, waar je al
+  // bent. target='_self' omdat dit een echte navigatie is, geen zijstap.
   logo: (
-    <Link href='/' target='_self' aria-label='Loxley'>
+    <Link href={SITE} target='_self' aria-label='Loxley'>
       {/* Inline i.p.v. <img src>: currentColor werkt niet binnen een img, dus
           een extern bestand kan niet meekleuren met light/dark. Het merk houdt
           zijn greenwood, de naam erft de tekstkleur van het thema. */}
@@ -53,9 +64,9 @@ export default {
   },
 
   project: {
-    link: 'https://github.com/gnosisguild/loxley',
+    link: REPO,
   },
-  docsRepositoryBase: 'https://github.com/theloxley/loxley/tree/main/docs',
+  docsRepositoryBase: `${REPO}/tree/rebrand/loxley/docs`,
   darkMode: false,
   nextThemes: {
     defaultTheme: 'light',

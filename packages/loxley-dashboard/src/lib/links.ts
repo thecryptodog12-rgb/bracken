@@ -23,8 +23,15 @@ const envStr = (key: string, fallback: string): string => {
 }
 
 const DOCS = envStr('VITE_DOCS_URL', 'http://localhost:3000').replace(/\/$/, '')
+const SITE = envStr('VITE_SITE_URL', 'http://localhost:5174').replace(/\/$/, '')
 
 export const LINKS = {
+  // De voordeur. Het dashboard en de docs bedienen wie al binnen is; geen van
+  // beide vertelt een vreemde wat dit is. Het merk hoort daarheen terug te
+  // wijzen, zoals overal -- anders is de begin-page alleen te vinden door de
+  // URL te kennen, en dat is geen ingang maar een geheim.
+  site: SITE,
+
   docs: `${DOCS}/introduction`,
   architecture: `${DOCS}/architecture-overview`,
   crisp: `${DOCS}/CRISP/introduction`,
