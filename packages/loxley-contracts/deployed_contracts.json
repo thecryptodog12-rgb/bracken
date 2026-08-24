@@ -352,7 +352,7 @@
   },
   "robinhood": {
     "PoseidonT3": {
-      "blockNumber": 45089325,
+      "blockNumber": 45092407,
       "address": "0x3333333C0A88F9BE4fd23ed0536F9B6c427e3B93"
     },
     "LoxleyTicketToken": {
@@ -546,6 +546,23 @@
     "MockE3Program": {
       "address": "0x3E507b20FD0563bc5953A72625D975921a6278C4",
       "constructorArgs": []
+    },
+    "DkgAggregatorVerifier": {
+      "blockNumber": 45092904,
+      "address": "0x66f504B8C06f75820aaE1639727e74480484E35b",
+      "bytecodeHash": "0x40fc2843380850c0e7aa1156d7238ae93206062a81f6a256d5586e3013a4b629"
+    },
+    "BfvDecryptionVerifier": {
+      "blockNumber": 45092935,
+      "address": "0xCAC5284b33303e1218C1E58311E5b896a17B2c4C"
+    },
+    "BfvPkVerifier": {
+      "blockNumber": 45092995,
+      "address": "0xf262E07deb78CfCd743B13cE249Ffff4B9394c59"
+    },
+    "DkgFoldAttestationVerifier": {
+      "address": "0x92e3A2490c32236894078405e385F97F88CC8CD7",
+      "blockNumber": 45093049
     }
   }
 }

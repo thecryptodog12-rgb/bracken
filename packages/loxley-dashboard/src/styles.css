@@ -3759,3 +3759,16 @@ button {
 .main--flush {
   padding-top: 26px;
 }
+
+/* Lege staat in een ops-paneel. Een leeg paneel zonder tekst laat de lezer
+   raden of er niets is of dat het scherm stuk is. */
+.ops__empty {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ops-ink-3);
+}
+.ops__empty .ops__link {
+  margin: 0;
+  font-size: 12.5px;
+}

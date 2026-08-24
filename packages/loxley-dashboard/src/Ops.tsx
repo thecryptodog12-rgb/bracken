@@ -17,6 +17,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { DEMO, DEMO_E3S, DEMO_LOG, DEMO_NODES, DEMO_SLOTS, type DemoLogLine } from './lib/demo'
 import { E3Stage } from './lib/chain'
+import { useAllE3s } from './lib/useE3s'
 
 const STAGE_LABEL: Record<number, string> = {
   0: 'none',
@@ -68,12 +69,27 @@ function useClock() {
 export default function Ops({ onNav }: { onNav: (id: string) => void }) {
   const log = useLogStream(DEMO_LOG)
   const clock = useClock()
+  const live = useAllE3s()
 
-  const seated = DEMO_NODES.filter((n) => n.state === 'seated').length
-  const slashed = DEMO_NODES.filter((n) => n.state === 'slashed').length
-  const complete = DEMO_E3S.filter((e) => e.stage === E3Stage.Complete).length
-  const running = DEMO_E3S.filter((e) => e.stage > 0 && e.stage < E3Stage.Complete).length
-  const ballots = DEMO_E3S.reduce((s, e) => s + e.ballotCount, 0)
+  // Welke bron dit scherm toont.
+  //
+  // Dit ging eerder mis en het is de ergste vorm waarin het mis kon gaan: de
+  // statusbalk sprong op 'live' zodra er een contractadres geconfigureerd was,
+  // maar de panelen bleven onvoorwaardelijk DEMO_* lezen. Het scherm beweerde
+  // dus dat een verzonnen netwerk op keten 4663 draaide, zonder enig teken dat
+  // het verzonnen was -- precies wat het demo-label moest voorkomen.
+  //
+  // Eén bron, één keer gekozen, en niets in dit bestand mag er nog omheen.
+  const e3s = DEMO ? DEMO_E3S : (live.data ?? [])
+  const nodes = DEMO ? DEMO_NODES : []
+  const slots = DEMO ? DEMO_SLOTS : []
+  const loading = !DEMO && live.status === 'loading'
+
+  const seated = nodes.filter((n) => n.state === 'seated').length
+  const slashed = nodes.filter((n) => n.state === 'slashed').length
+  const complete = e3s.filter((e) => e.stage === E3Stage.Complete).length
+  const running = e3s.filter((e) => e.stage > 0 && e.stage < E3Stage.Complete).length
+  const ballots = e3s.reduce((s, e) => s + e.ballotCount, 0)
 
   return (
     <section className='ops'>
@@ -95,7 +111,7 @@ export default function Ops({ onNav }: { onNav: (id: string) => void }) {
         <Stat k='chain' v='4663' />
         <Stat k='e3 complete' v={String(complete)} />
         <Stat k='running' v={String(running)} />
-        <Stat k='seated' v={`${seated}/${DEMO_NODES.length}`} />
+        <Stat k='seated' v={`${seated}/${nodes.length}`} />
         <Stat k='inputs' v={ballots.toLocaleString('en-GB')} />
         <span className='ops__bar-spacer' />
         <span className={`ops__pulse ${DEMO ? 'is-demo' : 'is-live'}`} aria-hidden='true' />
@@ -104,7 +120,7 @@ export default function Ops({ onNav }: { onNav: (id: string) => void }) {
       </div>
 
       <div className='ops__grid'>
-        <Panel title='E3 queue' meta={`${DEMO_E3S.length} recent`} span={2}>
+        <Panel title='E3 queue' meta={loading ? 'reading chain…' : `${e3s.length} recent`} span={2}>
           <table className='ops__table'>
             <thead>
               <tr>
@@ -115,7 +131,7 @@ export default function Ops({ onNav }: { onNav: (id: string) => void }) {
               </tr>
             </thead>
             <tbody>
-              {DEMO_E3S.map((e) => (
+              {e3s.map((e) => (
                 <tr key={String(e.id)}>
                   <td className='mono'>#{String(e.id).padStart(4, '0')}</td>
                   <td>
@@ -128,11 +144,12 @@ export default function Ops({ onNav }: { onNav: (id: string) => void }) {
               ))}
             </tbody>
           </table>
+          {!e3s.length && <p className='ops__empty'>{loading ? 'Reading chain…' : 'No E3 has been requested yet.'}</p>}
         </Panel>
 
         <Panel title='Committee pool' meta={`${seated} seated · ${slashed} slashed`}>
           <ul className='ops__nodes'>
-            {DEMO_NODES.map((n) => (
+            {nodes.map((n) => (
               <li key={n.label}>
                 <span
                   className={`ops__dot is-${n.state === 'seated' ? 'ok' : n.state === 'slashed' ? 'bad' : 'idle'}`}
@@ -144,11 +161,20 @@ export default function Ops({ onNav }: { onNav: (id: string) => void }) {
               </li>
             ))}
           </ul>
+          {!nodes.length && (
+            <p className='ops__empty'>
+              No ciphernode has bonded yet. Committee membership needs operators; see{' '}
+              <button className='ops__link' onClick={() => onNav('operator')}>
+                Run a ciphernode
+              </button>
+              .
+            </p>
+          )}
         </Panel>
 
         <Panel title='Verifier slots' meta='three proofs'>
           <ul className='ops__slots'>
-            {DEMO_SLOTS.map((s) => (
+            {slots.map((s) => (
               <li key={s.label}>
                 <span className='ops__dot is-ok' aria-hidden='true' />
                 <span className='ops__slot-name'>{s.label}</span>
@@ -156,21 +182,26 @@ export default function Ops({ onNav }: { onNav: (id: string) => void }) {
               </li>
             ))}
           </ul>
+          {!slots.length && <p className='ops__empty'>Read directly off chain, not summarised here.</p>}
           <button className='ops__link' onClick={() => onNav('audit')}>
-            Read the real slots on chain →
+            {slots.length ? 'Read the real slots on chain →' : 'Open the verifier audit →'}
           </button>
         </Panel>
 
-        <Panel title='Event log' meta='live' span={3}>
-          <ul className='ops__log'>
-            {log.map((l, i) => (
-              <li key={`${l.tag}-${i}`} className={i === 0 ? 'is-new' : ''}>
-                <span className={`ops__log-tag is-${l.kind}`}>{l.tag}</span>
-                <span className='ops__log-text'>{l.text}</span>
-              </li>
-            ))}
-          </ul>
-        </Panel>
+        {/* De logstroom is gefabriceerd, dus die hoort alleen bij de demo. Een
+            verzonnen log onder een 'live'-balk is een verzonnen bewering. */}
+        {DEMO && (
+          <Panel title='Event log' meta='demo' span={3}>
+            <ul className='ops__log'>
+              {log.map((l, i) => (
+                <li key={`${l.tag}-${i}`} className={i === 0 ? 'is-new' : ''}>
+                  <span className={`ops__log-tag is-${l.kind}`}>{l.tag}</span>
+                  <span className='ops__log-text'>{l.text}</span>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        )}
       </div>
     </section>
   )

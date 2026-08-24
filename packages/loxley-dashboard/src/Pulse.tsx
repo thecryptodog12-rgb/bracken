@@ -38,7 +38,11 @@ export default function Pulse({ data }: { data: { activeNow: number; ballots24h:
         </div>
         <div className='pulse__status'>
           <span className={`pulse__status-dot ${empty ? 'is-idle' : ''}`} />
-          <span>{DEMO ? 'Demo data · nothing deployed' : empty ? 'Nothing deployed yet' : 'All systems nominal'}</span>
+          {/* "Nothing deployed" en "geen activiteit" zijn twee verschillende
+              dingen. Buiten demo-modus staat er per definitie een contractadres
+              geconfigureerd, dus nul betekent hier: het staat er, er is alleen
+              nog niets gebeurd. */}
+          <span>{DEMO ? 'Demo data · nothing deployed' : empty ? 'Deployed · no activity yet' : 'All systems nominal'}</span>
         </div>
       </div>
     </section>
