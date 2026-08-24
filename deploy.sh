@@ -105,7 +105,26 @@ printf "Typ 'deploy' om door te gaan: "
 read -r CONFIRM
 [ "$CONFIRM" = "deploy" ] || die "Afgebroken."
 
+# ── Hervatten ───────────────────────────────────────────────────────────────
+# De stack schrijft elk adres weg zodra het gedeployed is en hergebruikt wat er
+# staat, dus opnieuw draaien hervat in plaats van dubbel te betalen. Het bond
+# token en het E3-programma staan daar echter NIET in -- die worden los
+# gedeployed -- dus zonder deze twee variabelen zou een tweede poging een
+# tweede token maken met opnieuw de volledige voorraad.
+if [ -n "${BOND_TOKEN_ADDRESS:-}" ] && [ -n "${E3_PROGRAM_ADDRESS:-}" ]; then
+  BOND="$BOND_TOKEN_ADDRESS"
+  PROG="$E3_PROGRAM_ADDRESS"
+  echo
+  bold "Hervatten met bestaande adressen"
+  echo "  LOXLEY        : $BOND"
+  echo "  MockE3Program : $PROG"
+  SKIP_TOKENS=1
+else
+  SKIP_TOKENS=0
+fi
+
 # ── Stap 1 ──────────────────────────────────────────────────────────────────
+if [ "$SKIP_TOKENS" = "0" ]; then
 echo
 bold "[1/3] Bond token"
 BOND_LOG=$(BOND_TOKEN_NAME="${BOND_TOKEN_NAME:-Loxley}" \
@@ -131,6 +150,7 @@ if [ -z "$PROG" ]; then
   die "E3-programma niet gedeployed. Bond token staat er wel: $BOND"
 fi
 grn "  MockE3Program: $PROG"
+fi
 
 # ── Stap 3 ──────────────────────────────────────────────────────────────────
 echo

@@ -100,6 +100,18 @@ function getRobinhoodConfig() {
       process.env.ROBINHOOD_RPC_URL ?? "https://rpc.mainnet.chain.robinhood.com",
     type: "http" as const,
     chainType: "l1" as const,
+    // Vaste gaslimiet, want de schatting klopt hier niet.
+    //
+    // DkgAggregatorVerifier kreeg 4.011.385 gas mee en verbruikte precies dat
+    // -- de handtekening van out-of-gas, niet van een revert. Dezelfde
+    // deployment tegen dezelfde keten schat 8.155.218. De schatting kwam dus
+    // op ongeveer de helft uit van wat nodig was, en de transactie was al
+    // betaald voordat dat bleek.
+    //
+    // Het blok-gaslimiet van 4663 is 2^50, dus hier is geen ruimtegebrek; een
+    // ruime vaste waarde is veiliger dan een schatting die stil te laag kan
+    // uitvallen. Je betaalt alleen wat werkelijk verbruikt wordt.
+    gas: 20_000_000,
     blockExplorers: {
       etherscan: {
         apiUrl: "https://robinhoodchain.blockscout.com/api",
