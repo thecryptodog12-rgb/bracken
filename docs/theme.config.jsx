@@ -19,7 +19,7 @@ const REPO = 'https://github.com/thecryptodog12-rgb/loxley'
 // Waar deze docs zelf staan. Stond hardgecodeerd op een vreemd domein in elke
 // og:- en twitter:-tag, dus elke gedeelde link kondigde dat aan als de
 // canonieke plek van onze pagina's.
-const DOCS_URL = (process.env.NEXT_PUBLIC_DOCS_URL || 'https://loxley-docs-solplay.vercel.app').replace(/\/$/, '')
+const DOCS_URL = (process.env.NEXT_PUBLIC_DOCS_URL || 'https://docs.loxley-rh.com').replace(/\/$/, '')
 
 export default {
   // Wijst naar buiten, naar de voordeur -- niet naar de docs-root, waar je al
@@ -58,11 +58,15 @@ export default {
   logoLink: false,
 
   banner: {
-    key: 'loxley-predeploy',
+    key: 'loxley-live-2026-08',
     text: (
       <span>
-        <strong>Loxley</strong> is not deployed yet. Contract addresses in these docs are placeholders, and there is no token, no sale and
-        no operator set.
+        <strong>Loxley is live</strong> on Robinhood Chain. No operator set yet, and the registered E3 program enforces no application rules
+        — see{' '}
+        <a href='/deployments' style={{ textDecoration: 'underline' }}>
+          Deployments
+        </a>
+        .
       </span>
     ),
   },

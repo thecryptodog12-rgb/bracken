@@ -1,76 +1,66 @@
 ---
-title: 'Deploy to Sepolia'
+title: 'Deploy to Robinhood Chain'
 description:
-  'Move your E3 program from local development to the Sepolia testnet — contracts, server
-  configuration, and BFV parameter switching'
+  'Move your E3 program from local development to the live network on Robinhood Chain — contracts,
+  server configuration, and BFV parameter switching'
 ---
 
 import { Callout } from 'nextra/components'
 
-# Deploy Your E3 to Sepolia
+# Deploy your E3 to Robinhood Chain
 
-<Callout type='warning'>
-  **Loxley is not deployed yet.** Contract addresses on this page are placeholders. Loxley targets
-  Robinhood Chain (chain id `4663`); no address here has been deployed, and none should be sent
-  funds or configured into anything.
+<Callout type='info'>
+  **Loxley is live on Robinhood Chain** (chain id `4663`). Any address shown inline below is an
+  example unless it appears on [Deployments](/deployments) — that page is generated from the
+  deployment record and is the one to configure against.
 </Callout>
 
-This tutorial takes you from a working local E3 (from [Quick Start](/quick-start) or CRISP) to a
-live deployment on Sepolia testnet.
+This tutorial takes you from a working local E3 (from [Quick Start](/quick-start) or CRISP) to the
+live deployment on Robinhood Chain.
 
-> **What you'll build:** Your E3 program contract deployed to Sepolia, a coordination server pointed
-> at a Sepolia RPC, and a verified end-to-end E3 round against the live testnet ciphernode
-> committee.
+> **What you'll build:** your E3 program contract on chain 4663, a coordination server pointed at
+> the Robinhood RPC, and an end-to-end E3 round against the live protocol contracts.
 >
-> **Prerequisites:** A working local E3, Sepolia ETH for gas, a WebSocket RPC endpoint (e.g.
-> Alchemy, Infura), and your deployer private key funded.
+> **Prerequisites:** a working local E3, ETH on chain 4663 for gas, and a funded deployer key.
+
+<Callout type='warning'>
+  There is no committee yet. No ciphernode has bonded, so an E3 you request will sit at the
+  sortition step until operators exist. You can deploy and wire everything up; you cannot yet get a
+  result back. That is the honest state of the network, not a fault in this tutorial.
+</Callout>
 
 ---
 
-## 1. Get Testnet Tokens
+## 1. What you need on chain
 
-You'll need:
+- **ETH on chain 4663** for gas. The full protocol deploy cost about 0.0015 ETH; deploying a single
+  program contract is a fraction of that.
+- **USDG** for E3 fees and ticket collateral — `0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168`, six
+  decimals. This is an existing token on the chain, not one this project issues.
+- **LOXLEY** only if you intend to run a ciphernode — `0x12BE21fafF941622806b770a3a6c0aAEc23cff20`.
+  Requesting computation does not need it.
 
-- **Sepolia ETH** — for gas. Any public Sepolia faucet works, e.g.
-  [sepoliafaucet.com](https://sepoliafaucet.com),
-  [Google Cloud faucet](https://cloud.google.com/application/web3/faucet/ethereum/sepolia), or
-  [PoW faucet](https://sepolia-faucet.pk910.de).
-- **Test LOXLEY** — for ciphernode bonding (only if you're running your own nodes). LoxleyToken
-  (LOXLEY) is deployed at `0xTBD_NOT_DEPLOYED`.
-- **Test USDC** — for E3 fees and tickets. Mock USDC at `0xTBD_NOT_DEPLOYED`.
-
-> **Faucet:** the quickest way to get both test tokens is the on-chain faucet at
-> `0xTBD_NOT_DEPLOYED`. Run `loxley faucet` (with the `faucet` address set in your config) and it
-> sends a fixed amount of LOXLEY and mock USDC to your signer. Each token is only topped up if your
-> balance is below the per-token threshold. If the faucet runs dry, open
-> [an issue](https://github.com/thecryptodog12-rgb/loxley/issues).
-
-> The full list of deployed Sepolia addresses lives in
-
-> [Ciphernode Operators → Sepolia Contract Addresses](/ciphernode-operators#sepolia-contract-addresses)
-> and in `packages/loxley-contracts/deployed_contracts.json` inside the repo.
+There is no faucet. Every address is on [Deployments](/deployments).
 
 ---
 
 ## 2. Configure Environment
 
-Create or update your `.env` file with Sepolia settings:
+Create or update your `.env` file:
 
 ```bash
-# Sepolia RPC (WebSocket required for event listening)
-WS_RPC_URL=wss://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
-HTTP_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
+HTTP_RPC_URL=https://rpc.mainnet.chain.robinhood.com
 
-# Deployer private key (has Sepolia ETH)
+# Deployer key. Keep it out of your shell history:
+#   read -rs "PRIVATE_KEY?key: " && export PRIVATE_KEY
 PRIVATE_KEY=0x...
 
-# Chain
-CHAIN_ID=11155111
+CHAIN_ID=4663
 
-# Deployed Loxley contract addresses (Sepolia)
-LOXLEY_ADDRESS=0xTBD_NOT_DEPLOYED
-CIPHERNODE_REGISTRY_ADDRESS=0xTBD_NOT_DEPLOYED
-FEE_TOKEN_ADDRESS=0xTBD_NOT_DEPLOYED
+# Live Loxley contracts on Robinhood Chain
+LOXLEY_ADDRESS=0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12
+CIPHERNODE_REGISTRY_ADDRESS=0x7d6e460B1704B5B1cd5570E62a3c450a9611C346
+FEE_TOKEN_ADDRESS=0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168
 ```
 
 ---
@@ -161,11 +151,10 @@ Update your coordination server to point to Sepolia:
 
 ```bash
 # .env for the server
-WS_RPC_URL=wss://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
-HTTP_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
-LOXLEY_ADDRESS=0xTBD_NOT_DEPLOYED
+HTTP_RPC_URL=https://rpc.mainnet.chain.robinhood.com
+LOXLEY_ADDRESS=0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12
 E3_PROGRAM_ADDRESS=<your deployed program address>
-CHAIN_ID=11155111
+CHAIN_ID=4663
 ```
 
 Start the server:

@@ -7,10 +7,10 @@ import { Callout } from 'nextra/components'
 
 # Ciphernode Operators
 
-<Callout type='warning'>
-  **Loxley is not deployed yet.** Contract addresses on this page are placeholders. Loxley targets
-  Robinhood Chain (chain id `4663`); no address here has been deployed, and none should be sent
-  funds or configured into anything.
+<Callout type='info'>
+  **Loxley is live on Robinhood Chain** (chain id `4663`). Any address shown inline below is an
+  example unless it appears on [Deployments](/deployments) — that page is generated from the
+  deployment record and is the one to configure against.
 </Callout>
 
 Ciphernodes are the distributed workers that power the Loxley network. They participate in threshold
@@ -19,7 +19,7 @@ access the underlying plaintext data.
 
 > **Interactive setup:** the dashboard has a step-by-step operator guide. It reads the live bonding
 > registry and sends each on-chain step from your wallet. Open
-> [Run a ciphernode](https://loxley-dashboard-solplay.vercel.app/#operator).
+> [Run a ciphernode](https://app.loxley-rh.com/#operator).
 
 ## What is a Ciphernode?
 
@@ -49,74 +49,46 @@ Loxley protocol uses several contracts that work together:
 | **LoxleyToken**        | LOXLEY token used for ciphernode bonding                            |
 | **LoxleyTicketToken**  | Non-transferable tLOXLEY token representing ticket balances         |
 
-### Mainnet Contract Addresses
+### Contract addresses
 
-| Contract                  | Address              | Deploy block |
-| ------------------------- | -------------------- | ------------ |
-| Loxley                    | `0xTBD_NOT_DEPLOYED` | —            |
-| CiphernodeRegistry        | `0xTBD_NOT_DEPLOYED` | —            |
-| BondingRegistry           | `0xTBD_NOT_DEPLOYED` | —            |
-| SlashingManager           | `0xTBD_NOT_DEPLOYED` | —            |
-| E3RefundManager           | `0xTBD_NOT_DEPLOYED` | —            |
-| LoxleyTicketToken         | `0xTBD_NOT_DEPLOYED` | —            |
-| LoxleyToken (LOXLEY)      | `0xTBD_NOT_DEPLOYED` | —            |
-| USDS (fee token)          | `0xTBD_NOT_DEPLOYED` | —            |
-| sUSDS (ticket collateral) | `0xTBD_NOT_DEPLOYED` | —            |
+Loxley runs on **Robinhood Chain**, chain id `4663`. These are the addresses an operator needs; the
+full set is on [Deployments](/deployments).
 
-Mainnet E3 requests can remain paused during operator onboarding. Check `requestsPaused()` on the
-Loxley contract before you ask requesters to submit E3s. Ciphernodes can still bond, register, and
-add ticket collateral while requests are paused.
+| Contract            | Address                                      |
+| ------------------- | -------------------------------------------- |
+| Loxley              | `0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12` |
+| CiphernodeRegistry  | `0x7d6e460B1704B5B1cd5570E62a3c450a9611C346` |
+| BondingRegistry     | `0x54921442e3f4272A899D6b647efB18f761a12CF6` |
+| SlashingManager     | `0xd6f9AeEF1d419c5F2722157b73e2a4faBCd80d42` |
+| E3RefundManager     | `0xa79BfE33F1cB1925F55ECCDBf50c7B0175BD9cF5` |
+| LoxleyTicketToken   | `0x03427Eb710120028f2C713d4e2De5E0AC07AC2B6` |
+| LOXLEY (bond token) | `0x12BE21fafF941622806b770a3a6c0aAEc23cff20` |
+| USDG (fee token)    | `0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168` |
 
-### Sepolia Contract Addresses
+The bonding registry reads the bond token, ticket wrapper and ticket underlying back from itself at
+runtime, so `BondingRegistry` is the only address the operator guide needs hardcoded.
 
-| Contract             | Address              | Deploy block |
-| -------------------- | -------------------- | ------------ |
-| Loxley               | `0xTBD_NOT_DEPLOYED` | —            |
-| CiphernodeRegistry   | `0xTBD_NOT_DEPLOYED` | —            |
-| BondingRegistry      | `0xTBD_NOT_DEPLOYED` | —            |
-| SlashingManager      | `0xTBD_NOT_DEPLOYED` | —            |
-| E3RefundManager      | `0xTBD_NOT_DEPLOYED` | —            |
-| LoxleyTicketToken    | `0xTBD_NOT_DEPLOYED` | —            |
-| LoxleyToken (LOXLEY) | `0xTBD_NOT_DEPLOYED` | —            |
-| MockUSDC (fee token) | `0xTBD_NOT_DEPLOYED` | —            |
-| Faucet               | `0xTBD_NOT_DEPLOYED` | —            |
+E3 requests are currently **enabled** — `requestsPaused()` returns false. Ciphernodes can bond,
+register and add ticket collateral at any time, paused or not.
 
-### Proof Verification
+### Proof verification
 
-The mainnet launch registers `MockE3Program` as the first E3 program and
-`DeployableMockCiphertextVerifier` as the ciphertext verifier. The mock E3 program applies no
-application-specific rules. The deployable mock ciphertext verifier accepts ciphertext proofs and is
-intended for public-network rehearsal. Replace it before enabling production CRISP workloads.
+Two of the three proof slots are filled with real verifiers:
 
-| Mainnet bootstrap contract       | Address                                      | Deploy block |
-| -------------------------------- | -------------------------------------------- | ------------ |
-| MockE3Program                    | `0xTBD_NOT_DEPLOYED`                         | —            |
-| DeployableMockCiphertextVerifier | `0xB568e5aD762F7a75F1EC65A985ec4038F6409297` | 25786403     |
+| Slot       | Contract                                     | State                                  |
+| ---------- | -------------------------------------------- | -------------------------------------- |
+| Decryption | `0xCAC5284b33303e1218C1E58311E5b896a17B2c4C` | real, delegates to the Honk aggregator |
+| Public key | `0xf262E07deb78CfCd743B13cE249Ffff4B9394c59` | real, delegates to the Honk aggregator |
+| Ciphertext | —                                            | **empty**                              |
 
-> **The current Sepolia deployment does not verify proofs.** It was deployed with
-> `DEPLOY_MOCKS=true` and without `ENABLE_ZK_VERIFICATION`, so the verifier addresses below are
-> mocks that accept any proof. Use this network to wire up and operate a node, not to test proving
-> correctness.
+The ciphertext slot is empty because the verifier for it is RISC Zero based and no RISC Zero
+verifier exists on this chain. Nothing checks that submitted inputs are well-formed rather than junk
+that could corrupt a computation. The verifier audit in the dashboard reads all three slots directly
+off the chain and will tell you the same thing.
 
-| Mock contract          | Address              | Deploy block |
-| ---------------------- | -------------------- | ------------ |
-| MockE3Program          | `0xTBD_NOT_DEPLOYED` | —            |
-| MockComputeProvider    | `0xTBD_NOT_DEPLOYED` | —            |
-| MockDecryptionVerifier | `0xTBD_NOT_DEPLOYED` | —            |
-| MockCiphertextVerifier | `0xTBD_NOT_DEPLOYED` | —            |
-| MockPkVerifier         | `0xTBD_NOT_DEPLOYED` | —            |
-
-`loxley config check` reports this too, so you do not have to remember which deployment you are
-pointed at.
-
-On a deployment built with `ENABLE_ZK_VERIFICATION`, these mocks are replaced by the DKG and
-decryption aggregator circuits, which are the sole on-chain verifiers for BFV public-key publication
-and plaintext decryption respectively (each aggregator internally verifies the underlying
-node-fold/C5 and C6-fold/C7 sub-proofs). Their addresses appear in `deployed_contracts.json` as
-`DkgAggregatorVerifier` and `DecryptionAggregatorVerifier`; neither is present on Sepolia today.
-
-> Always verify addresses from `packages/loxley-contracts/deployed_contracts.json` or your
-> deployment output. Addresses differ per network.
+The registered E3 program is `MockE3Program` (`0x3E507b20FD0563bc5953A72625D975921a6278C4`), which
+applies no application-specific rules. It is what makes the pipeline run; it is not what makes a
+result trustworthy.
 
 ### BondingRegistry Operator Functions
 
@@ -220,5 +192,4 @@ Follow these guides in order to become an active ciphernode operator:
 4. **[Exits, Rewards & Slashing](./exits-and-slashing)** - Learn about rewards and exit procedures
 
 To do the on-chain steps in a browser instead of the CLI, use the
-[interactive operator guide](https://loxley-dashboard-solplay.vercel.app/#operator) on the
-dashboard.
+[interactive operator guide](https://app.loxley-rh.com/#operator) on the dashboard.

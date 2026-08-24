@@ -16,7 +16,7 @@
   },
   "interactive-guide": {
     "title": "Interactive Setup Guide",
-    "href": "https://loxley-dashboard-solplay.vercel.app/#operator",
+    "href": "https://app.loxley-rh.com/#operator",
     "newWindow": true
   }
 }

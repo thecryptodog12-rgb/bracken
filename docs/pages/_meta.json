@@ -9,6 +9,9 @@
   "introduction": {
     "title": "Introduction"
   },
+  "deployments": {
+    "title": "Deployments"
+  },
   "what-is-e3": {
     "title": "What is an E3?"
   },

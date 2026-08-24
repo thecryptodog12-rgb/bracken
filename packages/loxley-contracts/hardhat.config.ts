@@ -147,6 +147,23 @@ const config: HardhatUserConfig = {
     cleanDeploymentsTask,
     updateSubmissionWindow,
   ],
+  // Keten 4663 staat niet in het register van hardhat-verify, dus verify gaf
+  // "The network robinhood with chain id 4663 is not supported" en de contracten
+  // bleven ongeverifieerde bytecode op de explorer. Deze beschrijving voegt hem
+  // toe. Blockscout vraagt geen sleutel.
+  chainDescriptors: {
+    4663: {
+      name: "Robinhood Chain",
+      chainType: "l1" as const,
+      blockExplorers: {
+        blockscout: {
+          url: "https://robinhoodchain.blockscout.com",
+          apiUrl: "https://robinhoodchain.blockscout.com/api",
+        },
+      },
+    },
+  },
+
   networks: {
     hardhat: {
       chainId: chainIds.hardhat,
@@ -232,8 +249,13 @@ const config: HardhatUserConfig = {
     etherscan: {
       apiKey: process.env.ETHERSCAN_API_KEY || "",
     },
+    // Robinhood Chain draait Blockscout, niet Etherscan. Dit stond uit, dus de
+    // verify-taak had geen bruikbaar doel op 4663 en de contracten bleven daar
+    // ongeverifieerde bytecode. Voor een protocol waarvan de hele belofte
+    // "publiek controleerbaar" is, is dat het verkeerde vakje om uit te laten
+    // staan. Blockscout vraagt geen sleutel.
     blockscout: {
-      enabled: false,
+      enabled: true,
     },
   },
   paths: {

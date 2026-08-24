@@ -12,17 +12,19 @@
 //
 // So this page does two things the others do not. It says what Loxley does in
 // one sentence a non-cryptographer can hold, and it states its own status
-// plainly — nothing deployed, no token, no operator set — near the top rather
-// than in a footnote. A project whose entire pitch is verifiability cannot open
-// by being vague about itself.
+// plainly — what is deployed, and what is still missing (no independent
+// operators, an E3 program that enforces nothing) — near the top rather than in
+// a footnote. A project whose entire pitch is verifiability cannot open by being
+// vague about itself, and "live" is exactly the moment that gets tempting.
 
 import { Canopy, Lifecycle, TrustLadder } from '@loxley/diagrams'
 import Reveal from './Reveal'
 import ThemeToggle from './ThemeToggle'
 import { Wordmark } from './Wordmark'
 
-const DOCS = 'https://loxley-docs-solplay.vercel.app/introduction'
-const DASHBOARD = 'https://loxley-dashboard-solplay.vercel.app'
+const DOCS_BASE = 'https://docs.loxley-rh.com'
+const DOCS = `${DOCS_BASE}/introduction`
+const DASHBOARD = 'https://app.loxley-rh.com'
 const REPO = 'https://github.com/thecryptodog12-rgb/loxley'
 
 type Path = { eyebrow: string; title: string; body: string; cta: string; href: string; ready: boolean }
@@ -110,13 +112,13 @@ export default function App() {
         <div className='status__inner'>
           <span className='status__tag'>Where this stands</span>
           <p>
-            Loxley targets Robinhood Chain (chain 4663). <strong>Nothing is deployed yet.</strong> The protocol runs end to end on a local
-            network — sortition, distributed key generation, threshold decryption, a plaintext published on chain — and no contract exists
-            on a public one. There is no token, no sale, and no operator set. Everything on this page is checkable in{' '}
-            <a href={REPO} target='_blank' rel='noreferrer'>
-              the source
+            Loxley is <strong>live on Robinhood Chain</strong> (chain 4663). The protocol runs end to end — sortition, distributed key
+            generation, threshold decryption, a plaintext published on chain — and every contract address is{' '}
+            <a href={`${DOCS_BASE}/deployments`} target='_blank' rel='noreferrer'>
+              published and readable
             </a>
-            .
+            . Two things are not there yet, and they matter: <strong>no independent operators are running</strong>, and the registered E3
+            program enforces no application rules. Both are stated in the docs rather than left for you to discover.
           </p>
         </div>
       </section>
@@ -131,9 +133,9 @@ export default function App() {
         </Reveal>
 
         {/* Het dashboard krijgt een eigen doorklik in plaats van een link
-            tussen de rest. Het is een aparte toepassing die in een eigen
-            tabblad opent, en wat je daar aantreft is nu demo-data -- dat hoort
-            hier te staan, vóór de klik, niet pas erna. */}
+            tussen de rest: aparte toepassing, eigen tabblad. Wat je daar
+            aantreft -- een netwerk dat draait maar nog leeg is -- staat hier
+            vóór de klik, niet pas erna. */}
         <Reveal band='plain'>
           <section className='appcard'>
             <div className='appcard__text'>
@@ -146,9 +148,9 @@ export default function App() {
                 operator keeps open on a second monitor.
               </p>
               <p className='appcard__note'>
-                <strong>It currently runs on demo data.</strong> Nothing is deployed on chain 4663 yet, so the dashboard shows a fabricated
-                network to make the shape of a live one legible. It says so on every screen, and it reads the real chain the moment a
-                deployment exists.
+                <strong>It reads chain 4663 directly.</strong> Right now that means empty panels: the contracts are deployed but no E3 has
+                been requested and no ciphernode has bonded. An empty network is what an empty network looks like — the dashboard does not
+                dress it up.
               </p>
               <a className='btn btn--primary' href={DASHBOARD} target='_blank' rel='noreferrer'>
                 Open the dashboard <span aria-hidden='true'>↗</span>
@@ -164,7 +166,7 @@ export default function App() {
                 <span className='shot__stat'>seated 3/7</span>
                 <span className='shot__spacer' />
                 <span className='shot__dot' />
-                <span className='shot__stat'>demo</span>
+                <span className='shot__stat'>live</span>
               </div>
               <div className='shot__grid'>
                 <div className='shot__panel'>

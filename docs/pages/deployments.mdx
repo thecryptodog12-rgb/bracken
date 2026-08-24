@@ -1,0 +1,102 @@
+---
+title: 'Deployments'
+description: 'Every Loxley contract on Robinhood Chain, with its address and what it does'
+---
+
+import { Callout } from 'nextra/components'
+
+# Deployments
+
+Loxley runs on **Robinhood Chain**, chain id `4663`. Every address below is live and readable on
+[Blockscout](https://robinhoodchain.blockscout.com).
+
+<Callout type='warning'>
+  **The registered E3 program enforces no application rules.** `MockE3Program` accepts whatever
+  reaches it. That is enough to bring a network up and run the protocol end to end; it is not enough
+  for anything to depend on the result. A real program needs a RISC Zero verifier, which does not
+  exist on this chain today.
+</Callout>
+
+<Callout type='info'>
+  **No ciphernode operators are running yet.** Threshold cryptography with one participant is
+  theatre: whoever runs every node can decrypt every input. The contracts are deployed and the
+  sortition works, but a committee needs independent parties with their own bonded collateral. See
+  [Run a ciphernode](/ciphernode-operators).
+</Callout>
+
+## Core
+
+| Contract                    | Address                                                                                                                                  |                                                       |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `Loxley`                    | [`0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12`](https://robinhoodchain.blockscout.com/address/0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12) | The protocol. Requests, lifecycle, verifier registry. |
+| `CiphernodeRegistryOwnable` | [`0x7d6e460B1704B5B1cd5570E62a3c450a9611C346`](https://robinhoodchain.blockscout.com/address/0x7d6e460B1704B5B1cd5570E62a3c450a9611C346) | Committee selection and key publication.              |
+| `E3RefundManager`           | [`0xa79BfE33F1cB1925F55ECCDBf50c7B0175BD9cF5`](https://robinhoodchain.blockscout.com/address/0xa79BfE33F1cB1925F55ECCDBf50c7B0175BD9cF5) | Fee refunds when an E3 fails.                         |
+
+## Tokens
+
+| Contract            | Address                                                                                                                                  |                                           |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `LoxleyBondToken`   | [`0x12BE21fafF941622806b770a3a6c0aAEc23cff20`](https://robinhoodchain.blockscout.com/address/0x12BE21fafF941622806b770a3a6c0aAEc23cff20) | LOXLEY. Operator collateral, 18 decimals. |
+| `LoxleyTicketToken` | [`0x03427Eb710120028f2C713d4e2De5E0AC07AC2B6`](https://robinhoodchain.blockscout.com/address/0x03427Eb710120028f2C713d4e2De5E0AC07AC2B6) | Ticket collateral wrapper, 6 decimals.    |
+
+## Bonding and slashing
+
+| Contract            | Address                                                                                                                                  |                                          |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| `BondingRegistry`   | [`0x54921442e3f4272A899D6b647efB18f761a12CF6`](https://robinhoodchain.blockscout.com/address/0x54921442e3f4272A899D6b647efB18f761a12CF6) | Bonds, eligibility, slashing accounting. |
+| `BondedCheckpoints` | [`0xFDE2cB0EC7EA3C33d22D671843edF03Dc8d599F7`](https://robinhoodchain.blockscout.com/address/0xFDE2cB0EC7EA3C33d22D671843edF03Dc8d599F7) | Checkpointed bonded balances.            |
+| `BondedVotes`       | [`0x80cb3e64B66984C4B11750F1A3C47552aFdd1343`](https://robinhoodchain.blockscout.com/address/0x80cb3e64B66984C4B11750F1A3C47552aFdd1343) | Voting power over bonded stake.          |
+| `SlashingManager`   | [`0xd6f9AeEF1d419c5F2722157b73e2a4faBCd80d42`](https://robinhoodchain.blockscout.com/address/0xd6f9AeEF1d419c5F2722157b73e2a4faBCd80d42) | Proposals, appeals, execution.           |
+
+## Proof verifiers
+
+| Contract                       | Address                                                                                                                                  |                              |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `BfvDecryptionVerifier`        | [`0xCAC5284b33303e1218C1E58311E5b896a17B2c4C`](https://robinhoodchain.blockscout.com/address/0xCAC5284b33303e1218C1E58311E5b896a17B2c4C) | Threshold decryption proof.  |
+| `BfvPkVerifier`                | [`0xf262E07deb78CfCd743B13cE249Ffff4B9394c59`](https://robinhoodchain.blockscout.com/address/0xf262E07deb78CfCd743B13cE249Ffff4B9394c59) | DKG public-key proof.        |
+| `DkgFoldAttestationVerifier`   | [`0x92e3A2490c32236894078405e385F97F88CC8CD7`](https://robinhoodchain.blockscout.com/address/0x92e3A2490c32236894078405e385F97F88CC8CD7) | Fold attestation.            |
+| `DecryptionAggregatorVerifier` | [`0x2b642B370eCf155FE72a84e220458aaB6c71e2A1`](https://robinhoodchain.blockscout.com/address/0x2b642B370eCf155FE72a84e220458aaB6c71e2A1) | Honk aggregator, decryption. |
+| `DkgAggregatorVerifier`        | [`0x66f504B8C06f75820aaE1639727e74480484E35b`](https://robinhoodchain.blockscout.com/address/0x66f504B8C06f75820aaE1639727e74480484E35b) | Honk aggregator, DKG.        |
+
+## Programs
+
+| Contract        | Address                                                                                                                                  |                                                                                   |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `MockE3Program` | [`0x3E507b20FD0563bc5953A72625D975921a6278C4`](https://robinhoodchain.blockscout.com/address/0x3E507b20FD0563bc5953A72625D975921a6278C4) | The registered E3 program. Enforces no application rules — see the warning below. |
+
+## Libraries
+
+| Contract                 | Address                                                                                                                                  |                       |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| `PoseidonT3`             | [`0x3333333C0A88F9BE4fd23ed0536F9B6c427e3B93`](https://robinhoodchain.blockscout.com/address/0x3333333C0A88F9BE4fd23ed0536F9B6c427e3B93) | Poseidon hash.        |
+| `LoxleyPricing`          | [`0x5E9D11d3f82AE4022130e55958AEf4BAb916e516`](https://robinhoodchain.blockscout.com/address/0x5E9D11d3f82AE4022130e55958AEf4BAb916e516) | Fee validation.       |
+| `LoxleyLifecycle`        | [`0x779C94680F1A6020d417602e38Bfd933aB3F506d`](https://robinhoodchain.blockscout.com/address/0x779C94680F1A6020d417602e38Bfd933aB3F506d) | Lifecycle validation. |
+| `RegistrySortitionLib`   | [`0x9869F5a86Fc76feBE5e6b8de9e9B620a64DbF933`](https://robinhoodchain.blockscout.com/address/0x9869F5a86Fc76feBE5e6b8de9e9B620a64DbF933) | Sortition scoring.    |
+| `BondingAssetLib`        | [`0x3c49cfb0A1e7DbeF40E3d05996297F33CcE28612`](https://robinhoodchain.blockscout.com/address/0x3c49cfb0A1e7DbeF40E3d05996297F33CcE28612) | Bonding asset checks. |
+| `BondingEligibilityLib`  | [`0xb98b10672Cf89D4CFa6cD8194e4eDa8cEFe98A3a`](https://robinhoodchain.blockscout.com/address/0xb98b10672Cf89D4CFa6cD8194e4eDa8cEFe98A3a) | Eligibility checks.   |
+| `BondingSlashingLib`     | [`0xdA6eec32a75Fed703E9Aa9bb99c959a9444bb796`](https://robinhoodchain.blockscout.com/address/0xdA6eec32a75Fed703E9Aa9bb99c959a9444bb796) | Slashing accounting.  |
+| `BondingRegistrationLib` | [`0x449e01f1Be250C71b42fE4bF1c24F9BCf82f3e95`](https://robinhoodchain.blockscout.com/address/0x449e01f1Be250C71b42fE4bF1c24F9BCf82f3e95) | Registration.         |
+| `BondingOwnershipLib`    | [`0x59D7f243C253E25869D2764556074640A53de612`](https://robinhoodchain.blockscout.com/address/0x59D7f243C253E25869D2764556074640A53de612) | Bond ownership.       |
+| `SlashingEvidenceLib`    | [`0x2Fe413D9967a9359375A71e9CeFc6F61066850D9`](https://robinhoodchain.blockscout.com/address/0x2Fe413D9967a9359375A71e9CeFc6F61066850D9) | Evidence handling.    |
+| `ZKTranscriptLib`        | [`0x744aF197A4C3Ca59b6C071C2f8C885EDEAAA003F`](https://robinhoodchain.blockscout.com/address/0x744aF197A4C3Ca59b6C071C2f8C885EDEAAA003F) | Honk transcript.      |
+| `RelationsLib`           | [`0x0Cc78204c524DbC99c35462212dC84D85834D095`](https://robinhoodchain.blockscout.com/address/0x0Cc78204c524DbC99c35462212dC84D85834D095) | Honk relations.       |
+
+## Fee token
+
+Loxley charges for computation in **USDG**, not in LOXLEY:
+
+|          |                                                                                                                                          |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Address  | [`0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168`](https://robinhoodchain.blockscout.com/address/0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168) |
+| Decimals | 6                                                                                                                                        |
+
+The width matters: `BondingRegistry` stores `expectedTicketDecimals: 6` and rejects a fee token
+whose `decimals()` disagrees. The bond token is 18. See
+[Tokenomics](/tokenomics#two-tokens-two-widths).
+
+## Verifying the source
+
+Most contracts have their source published on Blockscout, so you can read what runs rather than
+trusting this page. Where a contract still shows as unverified, the source is in
+[the repository](https://github.com/thecryptodog12-rgb/loxley/tree/main/packages/loxley-contracts/contracts)
+and can be matched against the deployed bytecode yourself.

@@ -141,7 +141,7 @@ Addresses land in `packages/loxley-contracts/deployed_contracts.json` under
 
 ```bash
 # packages/loxley-dashboard/.env
-VITE_DOCS_URL=https://loxley-docs-solplay.vercel.app
+VITE_DOCS_URL=https://docs.loxley-rh.com
 ```
 
 Then update `src/lib/chain.ts` to read chain 4663 and the new addresses, and
