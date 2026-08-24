@@ -144,7 +144,33 @@ export const deployLoxley = async (
   // test network. Override via `ALLOW_MOCKS_ON_PRODUCTION=true` only for
   // explicit dry-runs.
   if (shouldDeployMocks) {
-    const network = await ethers.provider.getNetwork();
+    // ── Sleutel-slot ────────────────────────────────────────────────────────
+  // hardhat.config valt terug op de publieke test-mnemonic
+  // ("test test ... junk") wanneer PRIVATE_KEY niet gezet is. Op een lokale
+  // node is dat handig; op een echte keten deploy je dan vanaf een wallet
+  // waarvan iedereen de sleutel heeft.
+  //
+  // Dat is geen theoretisch risico: op Robinhood Chain (4663) staat op
+  // 0x46b142DD1E924FAb83eCc3c08e4D46E82f005e0E al een contract dat door
+  // precies dat testaccount is aangemaakt. Dezelfde sleutel en dezelfde nonce
+  // geven op elke keten hetzelfde adres, dus zulke botsingen zijn de regel,
+  // niet de uitzondering.
+  {
+    const LOCAL_IDS = new Set([31337n, 1337n]);
+    const net = await ethers.provider.getNetwork();
+    const signers = await ethers.getSigners();
+    const deployer = (await signers[0]?.getAddress())?.toLowerCase();
+    const WELL_KNOWN = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266";
+    if (!LOCAL_IDS.has(net.chainId) && deployer === WELL_KNOWN) {
+      throw new Error(
+        `Refusing to deploy to chainId ${net.chainId} from the public hardhat ` +
+          `test account (${WELL_KNOWN}). Its private key is in every tutorial ` +
+          "on the internet. Set PRIVATE_KEY to a key you control.",
+      );
+    }
+  }
+
+  const network = await ethers.provider.getNetwork();
     const chainId = Number(network.chainId);
     const LOCAL_CHAIN_IDS = new Set<number>([
       31337, // hardhat
