@@ -71,7 +71,15 @@ async function main(): Promise<void> {
   // voorraad -- en het eerste bleef achter als een geldig ogend contract met
   // 1,2 miljard erin dat nergens meer bij hoort.
   storeDeploymentArgs(
-    { address, constructorArgs: [name, symbol, supply.toString(), recipient] },
+    {
+      address,
+      constructorArgs: {
+        name_: name,
+        symbol_: symbol,
+        initialSupply: supply.toString(),
+        recipient,
+      },
+    },
     "LoxleyBondToken",
     hre.globalOptions.network ?? "localhost",
   );

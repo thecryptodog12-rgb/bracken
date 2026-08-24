@@ -59,7 +59,7 @@ async function main(): Promise<void> {
   // Zelfde reden als bij het bond token: zonder dit weet een tweede poging niet
   // dat dit programma er al staat.
   storeDeploymentArgs(
-    { address, constructorArgs: [] },
+    { address, constructorArgs: {} },
     "MockE3Program",
     hre.globalOptions.network ?? "localhost",
   );

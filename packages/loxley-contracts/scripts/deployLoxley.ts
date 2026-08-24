@@ -312,8 +312,14 @@ export const deployLoxley = async (
   const bondingRegistryAddress = await bondingRegistry.getAddress();
   console.log("BondingRegistry deployed to:", bondingRegistryAddress);
 
-  console.log("Setting BondingRegistry address in LoxleyTicketToken...");
-  await loxleyTicketToken.setRegistry(bondingRegistryAddress);
+  // Zelfde reden: setRegistry revert met SameRegistry() als het adres al klopt.
+  const currentTicketRegistry = await loxleyTicketToken.registry();
+  if (currentTicketRegistry.toLowerCase() === bondingRegistryAddress.toLowerCase()) {
+    console.log("LoxleyTicketToken already points at BondingRegistry");
+  } else {
+    console.log("Setting BondingRegistry address in LoxleyTicketToken...");
+    await (await loxleyTicketToken.setRegistry(bondingRegistryAddress)).wait();
+  }
 
   // LOXLEY is deployed with BondingRegistry's real address. Local deployments set
   // the deployer as the one-time claim source placeholder; production sale
@@ -412,10 +418,23 @@ export const deployLoxley = async (
   const bondedVotesAddress = await bondedVotes.getAddress();
   console.log("BondedVotes deployed to:", bondedVotesAddress);
 
-  console.log("Attaching BondedCheckpoints to BondingRegistry...");
-  await (
-    await bondingRegistry.setBondedCheckpoints(bondedCheckpointsAddress)
-  ).wait();
+  // Eenmalig: setBondedCheckpoints eist dat het slot nog leeg is, want
+  // herwijzen zou de opgebouwde geschiedenis achterlaten en elke stem die er
+  // doorheen leest stilzwijgend van antwoord laten veranderen. Terecht -- maar
+  // het betekent ook dat een hervatte deploy hierop stukloopt met
+  // InvalidConfiguration(), terwijl er niets mis is: het staat er al goed.
+  //
+  // Lezen voor schrijven, hetzelfde patroon dat dit script al gebruikt voor
+  // setInitialDkgFoldAttestationVerifier.
+  const currentCheckpoints = await bondingRegistry.bondedCheckpoints();
+  if (currentCheckpoints.toLowerCase() === bondedCheckpointsAddress.toLowerCase()) {
+    console.log("BondedCheckpoints already attached to BondingRegistry");
+  } else {
+    console.log("Attaching BondedCheckpoints to BondingRegistry...");
+    await (
+      await bondingRegistry.setBondedCheckpoints(bondedCheckpointsAddress)
+    ).wait();
+  }
 
   // ── Testnet faucet (sepolia only) ───────────────────────────────────────
   // Deploy a public Faucet pre-funded with LOXLEY + mock USDC so testers can
