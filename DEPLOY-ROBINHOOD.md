@@ -76,6 +76,11 @@ is not solved.
 Ethereum mainnet. It applies no application-specific rules and verifies
 nothing. Fastest path to something that stands up; be honest about what it is.
 
+```bash
+pnpm --filter @loxley/contracts exec hardhat run \
+  scripts/deployE3Program.ts --network robinhood
+```
+
 **Option B — `CRISPProgram`.** A real program, in
 `examples/CRISP/packages/crisp-contracts/`. Its constructor needs a RISC Zero
 verifier and two Honk verifiers on chain, and no RISC Zero verifier exists on
