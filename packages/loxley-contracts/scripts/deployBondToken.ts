@@ -25,10 +25,26 @@ async function main(): Promise<void> {
   const recipient = process.env.BOND_TOKEN_RECIPIENT ?? (await signer.getAddress());
 
   const network = await ethers.provider.getNetwork();
-  const balance = await ethers.provider.getBalance(await signer.getAddress());
+  const deployerAddress = await signer.getAddress();
+  const balance = await ethers.provider.getBalance(deployerAddress);
+
+  // Zelfde slot als in deployLoxley en deployE3Program. Die hadden hem al; dit
+  // script niet, en dat was precies de verkeerde plek om hem te missen: dit
+  // contract draagt de volledige voorraad en is het enige dat verhandeld wordt.
+  // Deployen vanaf de publieke test-sleutel betekent dat iedereen die de
+  // tutorial kent bij de voorraad kan.
+  const LOCAL_IDS = new Set([31337n, 1337n]);
+  const WELL_KNOWN = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266";
+  if (!LOCAL_IDS.has(network.chainId) && deployerAddress.toLowerCase() === WELL_KNOWN) {
+    throw new Error(
+      `Refusing to deploy to chainId ${network.chainId} from the public hardhat ` +
+        `test account (${WELL_KNOWN}). Its private key is in every tutorial on ` +
+        "the internet. Set PRIVATE_KEY to a key you control.",
+    );
+  }
 
   console.log("Network      :", network.name, `(chainId ${network.chainId})`);
-  console.log("Deployer     :", await signer.getAddress());
+  console.log("Deployer     :", deployerAddress);
   console.log("Balance      :", ethers.formatEther(balance), "native");
   console.log("Token        :", `${name} (${symbol})`);
   console.log("Supply       :", supply.toString(), "whole tokens, 18 decimals");

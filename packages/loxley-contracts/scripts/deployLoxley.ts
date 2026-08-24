@@ -228,21 +228,37 @@ export const deployLoxley = async (
   }
 
   // ── CCA window ──────────────────────────────────────────────────────────
-  // For local dev the CCA window starts soon after deployment and runs for
-  // 7 days.  Production deployments must set LOXLEY_CCA_START.
+  // Alleen van belang als we LoxleyToken zelf deployen. Die draagt de veiling:
+  // CCA_START en CCA_END staan immutable in het contract en blokkeren transfers
+  // tot na afloop. Wie een eigen bond-token meegeeft (BOND_TOKEN_ADDRESS) raakt
+  // die machinerie nooit aan, en ccaStart wordt hieronder dan ook nergens
+  // gelezen.
+  //
+  // Deze eis vuurde eerder onvoorwaardelijk. Dat maakte de gedocumenteerde
+  // route -- eigen token deployen, adres meegeven -- onmogelijk: stap 4 brak af
+  // op een veiling die niet plaatsvindt, nadat stap 1 en 3 al gas hadden gekost.
+  const deployingOwnToken = !process.env.BOND_TOKEN_ADDRESS?.trim();
   const ccaStartEnv = process.env.LOXLEY_CCA_START;
   let ccaStart: bigint;
   if (ccaStartEnv?.trim()) {
     ccaStart = parseRequiredUint64(ccaStartEnv.trim(), "LOXLEY_CCA_START");
-  } else if (isLocalDeploymentChain(networkName) || networkName === "sepolia") {
+  } else if (
+    !deployingOwnToken ||
+    isLocalDeploymentChain(networkName) ||
+    networkName === "sepolia"
+  ) {
     const now = BigInt(latestBlock.timestamp);
     ccaStart = now + 3600n; // 1 hour from now
-    console.warn(
-      `[WARN] LOXLEY_CCA_START not set; using ${ccaStart} (block.timestamp + 1h) for ${networkName} deployment.`,
-    );
+    if (deployingOwnToken) {
+      console.warn(
+        `[WARN] LOXLEY_CCA_START not set; using ${ccaStart} (block.timestamp + 1h) for ${networkName} deployment.`,
+      );
+    }
   } else {
     throw new Error(
-      "LOXLEY_CCA_START must be set for non-local token-lock deployment",
+      "LOXLEY_CCA_START must be set when deploying LoxleyToken (the auction token) " +
+        "to a non-local chain. Set BOND_TOKEN_ADDRESS instead to use your own ERC-20 " +
+        "and skip the auction entirely.",
     );
   }
   const ccaEnd = ccaStart + BigInt(SEVEN_DAYS_IN_SECONDS);

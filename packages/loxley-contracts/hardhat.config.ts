@@ -187,6 +187,34 @@ const config: HardhatUserConfig = {
     sepolia: getChainConfig("sepolia", process.env.ETHERSCAN_API_KEY || ""),
     goerli: getChainConfig("goerli", process.env.ETHERSCAN_API_KEY || ""),
     robinhood: getRobinhoodConfig(),
+    // Fork van keten 4663. Draait de echte deploy tegen de echte ketenstaat --
+    // inclusief het echte USDG-contract, dat de BondingRegistry op decimals
+    // controleert -- zonder gas uit te geven. Bedoeld om te ontdekken dat er
+    // iets misgaat vóórdat de helft van negentien contracten al gedeployed is
+    // en het geld weg is.
+    // De drie deploy-stappen zijn drie losse processen tegen één keten. Een
+    // in-process fork geeft elk proces zijn eigen verse staat, waardoor stap 4
+    // het token uit stap 1 niet ziet. Deze wijst naar een draaiende
+    // `hardhat node --fork`, zodat de staat blijft staan zoals op de echte keten.
+    robinhoodLocal: {
+      type: "http",
+      chainType: "l1",
+      chainId: chainIds.robinhood,
+      url: "http://127.0.0.1:8545",
+      timeout: 120000,
+      ...(privateKey ? { accounts: [privateKey] } : {}),
+    },
+    robinhoodFork: {
+      type: "edr-simulated",
+      chainType: "l1",
+      chainId: chainIds.robinhood,
+      blockGasLimit: 1_000_000_000,
+      forking: {
+        url:
+          process.env.ROBINHOOD_RPC_URL ??
+          "https://rpc.mainnet.chain.robinhood.com",
+      },
+    },
   },
   verify: {
     etherscan: {

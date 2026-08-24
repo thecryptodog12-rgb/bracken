@@ -35,6 +35,27 @@ The circuits are already built. Rebuild only after changing anything under
 
 ---
 
+## Step 0 — Dry run (do this first)
+
+```bash
+./scripts/dry-run-robinhood.sh
+```
+
+Runs all three steps below against a local fork of chain 4663 — the real chain
+state, including the real USDG contract the registry reads `decimals()` from —
+without spending anything. Takes a few minutes and ends with the measured gas
+cost.
+
+Do this before every real deployment. It is not ceremony: the first time it ran
+it found two blockers that would each have stopped the real deploy at step 4,
+with the gas from steps 1 and 3 already spent and half a system on chain.
+
+**Measured on 2026-08-24:** 55 transactions, 67,744,901 gas. At the then-current
+0.0216 gwei that is **0.0015 ETH**. Fund the deployer with at least 0.015 ETH so
+a price move cannot strand you mid-deploy.
+
+---
+
 ## Step 1 — Deploy the bond token
 
 This is the token that goes on Pons and that operators bond. It has to exist
@@ -126,6 +147,20 @@ VITE_DOCS_URL=https://loxley-docs-solplay.vercel.app
 Then update `src/lib/chain.ts` to read chain 4663 and the new addresses, and
 add 4663 to `src/lib/verifierAudit.ts` so the audit page reads your deployment
 alongside upstream's.
+
+---
+
+## If a step fails halfway
+
+`deployed_contracts.json` records every address as it is deployed, and the
+scripts **reuse** what they find there. That is what makes a retry resume
+instead of paying twice — but it also means a failed attempt leaves state that
+changes what the next run does.
+
+So after a failure: check the file, and delete the entries for contracts that
+did not actually make it on chain. Reusing an address that does not exist gives
+errors far from the cause — the dry run hit exactly this and reported a
+`circuitVerifier()` returning `0x`, three contracts away from the real problem.
 
 ---
 
