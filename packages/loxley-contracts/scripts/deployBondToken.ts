@@ -13,6 +13,7 @@
 // own transaction rather than being a line item in a nineteen-contract script.
 
 import hre from "hardhat";
+import { storeDeploymentArgs } from "./utils";
 
 async function main(): Promise<void> {
   const { ethers } = await hre.network.connect();
@@ -60,6 +61,21 @@ async function main(): Promise<void> {
   await token.waitForDeployment();
 
   const address = await token.getAddress();
+
+  // Vastleggen in deployed_contracts.json, net als de stack met zijn eigen
+  // contracten doet.
+  //
+  // Dit ontbrak, en dat had gevolgen. De stack hergebruikt wat er in dat
+  // bestand staat, dus een tweede poging hervat. Het bond token stond er niet
+  // in, dus een tweede poging maakte een TWEEDE token met opnieuw de volledige
+  // voorraad -- en het eerste bleef achter als een geldig ogend contract met
+  // 1,2 miljard erin dat nergens meer bij hoort.
+  storeDeploymentArgs(
+    { address, constructorArgs: [name, symbol, supply.toString(), recipient] },
+    "LoxleyBondToken",
+    hre.globalOptions.network ?? "localhost",
+  );
+
   console.log("\n============================================");
   console.log("LoxleyBondToken:", address);
   console.log("============================================");

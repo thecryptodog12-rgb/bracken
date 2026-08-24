@@ -20,6 +20,7 @@
 // on chain, which does not exist on Robinhood Chain today.
 
 import hre from "hardhat";
+import { storeDeploymentArgs } from "./utils";
 
 async function main(): Promise<void> {
   const { ethers } = await hre.network.connect();
@@ -54,6 +55,14 @@ async function main(): Promise<void> {
   const program = await factory.deploy();
   await program.waitForDeployment();
   const address = await program.getAddress();
+
+  // Zelfde reden als bij het bond token: zonder dit weet een tweede poging niet
+  // dat dit programma er al staat.
+  storeDeploymentArgs(
+    { address, constructorArgs: [] },
+    "MockE3Program",
+    hre.globalOptions.network ?? "localhost",
+  );
 
   console.log("\n============================================");
   console.log("MockE3Program:", address);

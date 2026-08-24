@@ -89,28 +89,28 @@ ENOUGH=$(python3 -c "print(1 if $WEI/1e18 >= $MIN_ETH else 0)")
 [ "$ENOUGH" = "1" ] || die "Te weinig saldo. Stuur minstens $MIN_ETH ETH naar $ADDR op chain 4663 en draai dit opnieuw."
 grn "  saldo volstaat"
 
-# ── Bevestiging ─────────────────────────────────────────────────────────────
-echo
-bold "Wat er nu gebeurt"
-cat <<TXT
-  1. LoxleyBondToken   -- 1.200.000.000 LOXLEY, volledige voorraad naar
-                          $ADDR
-  2. MockE3Program     -- dwingt GEEN applicatieregels af
-  3. de stack          -- negentien contracten, echte ZK-verifiers
-
-  Dit is onomkeerbaar en kost echt gas. Geschat 0,0015 ETH.
-TXT
-echo
-printf "Typ 'deploy' om door te gaan: "
-read -r CONFIRM
-[ "$CONFIRM" = "deploy" ] || die "Afgebroken."
-
 # ── Hervatten ───────────────────────────────────────────────────────────────
 # De stack schrijft elk adres weg zodra het gedeployed is en hergebruikt wat er
 # staat, dus opnieuw draaien hervat in plaats van dubbel te betalen. Het bond
 # token en het E3-programma staan daar echter NIET in -- die worden los
 # gedeployed -- dus zonder deze twee variabelen zou een tweede poging een
 # tweede token maken met opnieuw de volledige voorraad.
+FOUND=$(python3 - <<'PYFIND'
+import json, pathlib
+p = pathlib.Path("packages/loxley-contracts/deployed_contracts.json")
+try:
+    r = json.load(open(p)).get("robinhood", {})
+except Exception:
+    r = {}
+def addr(k):
+    v = r.get(k)
+    return (v.get("address") if isinstance(v, dict) else v) or ""
+print(addr("LoxleyBondToken"), addr("MockE3Program"))
+PYFIND
+)
+BOND_TOKEN_ADDRESS="${BOND_TOKEN_ADDRESS:-${FOUND%% *}}"
+E3_PROGRAM_ADDRESS="${E3_PROGRAM_ADDRESS:-${FOUND##* }}"
+
 if [ -n "${BOND_TOKEN_ADDRESS:-}" ] && [ -n "${E3_PROGRAM_ADDRESS:-}" ]; then
   BOND="$BOND_TOKEN_ADDRESS"
   PROG="$E3_PROGRAM_ADDRESS"
@@ -122,6 +122,31 @@ if [ -n "${BOND_TOKEN_ADDRESS:-}" ] && [ -n "${E3_PROGRAM_ADDRESS:-}" ]; then
 else
   SKIP_TOKENS=0
 fi
+
+# ── Bevestiging ─────────────────────────────────────────────────────────────
+echo
+bold "Wat er nu gebeurt"
+if [ "$SKIP_TOKENS" = "1" ]; then
+  # Belooft geen nieuw token als er al een staat. Anders leest de bevestiging
+  # als "1,2 miljard wordt gemunt" terwijl dat juist wordt overgeslagen -- en
+  # dan weet je bij het typen van 'deploy' niet waar je ja tegen zegt.
+  cat <<TXT
+  Token en E3-programma staan er al; die worden overgeslagen.
+  Alleen de resterende contracten van de stack worden gedeployed.
+TXT
+else
+  cat <<TXT
+  1. LoxleyBondToken   -- 1.200.000.000 LOXLEY, volledige voorraad naar
+                          $ADDR
+  2. MockE3Program     -- dwingt GEEN applicatieregels af
+  3. de stack          -- negentien contracten, echte ZK-verifiers
+TXT
+fi
+echo "  Dit is onomkeerbaar en kost echt gas."
+echo
+printf "Typ 'deploy' om door te gaan: "
+read -r CONFIRM
+[ "$CONFIRM" = "deploy" ] || die "Afgebroken."
 
 # ── Stap 1 ──────────────────────────────────────────────────────────────────
 if [ "$SKIP_TOKENS" = "0" ]; then
