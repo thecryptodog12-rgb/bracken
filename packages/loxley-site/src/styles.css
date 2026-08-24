@@ -25,6 +25,9 @@
 
   --brass: #9a7328;
   --brass-bg: #f7efdd;
+  --brass-ink: #5c451a;
+  --brass-ink-strong: #3d2d0f;
+  --brass-line: rgba(154, 115, 40, 0.28);
 
   /* De footer is een volle balk en moet in BEIDE thema's donker blijven --
      hij mag niet meekantelen zoals --ink/--paper dat doen. */
@@ -67,6 +70,9 @@
     --accent-ink: #d3f0de;
     --brass: #d8a548;
     --brass-bg: #2a2113;
+    --brass-ink: #e8d9b8;
+    --brass-ink-strong: #fff3d8;
+    --brass-line: #4a3a1c;
     --foot-bg: #0b100a;
     --foot-ink: #e8eee6;
     --hero-accent: #7fd3a4;
@@ -89,6 +95,9 @@
   --accent-ink: #d3f0de;
   --brass: #d8a548;
   --brass-bg: #2a2113;
+  --brass-ink: #e8d9b8;
+  --brass-ink-strong: #fff3d8;
+  --brass-line: #4a3a1c;
   --foot-bg: #0b100a;
   --foot-ink: #e8eee6;
   --hero-accent: #7fd3a4;
@@ -736,5 +745,177 @@ a {
   .nav {
     gap: 16px;
     font-size: 13px;
+  }
+}
+
+/* ── Dashboard-doorklik ─────────────────────────────────────────────────────
+   Het dashboard is een aparte toepassing, dus het krijgt een eigen blok in
+   plaats van een link tussen de rest. De weergave rechts is geen screenshot
+   maar dezelfde panelen in miniatuur -- een screenshot veroudert stilletjes
+   zodra het dashboard verandert, dit niet. */
+.appcard {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: 44px;
+  align-items: center;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.appcard__text h2 {
+  font-family: var(--display);
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  margin: 12px 0 16px;
+  color: var(--ink);
+}
+.appcard__text h2 em {
+  font-style: italic;
+  color: var(--accent-deep);
+}
+.appcard__text p {
+  margin: 0 0 14px;
+  font-size: 16px;
+  line-height: 1.62;
+  color: var(--ink-2);
+  max-width: 46ch;
+}
+/* Het voorbehoud staat vóór de klik, niet erna. */
+.appcard__note {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--brass-bg);
+  border: 1px solid var(--brass-line);
+  font-size: 14.5px !important;
+  color: var(--brass-ink) !important;
+}
+.appcard__note strong {
+  color: var(--brass-ink-strong);
+}
+.appcard .btn {
+  margin-top: 6px;
+}
+
+/* Miniatuur. Donker in beide thema's, net als het dashboard zelf. */
+.appcard__shot {
+  --s-bg: #101a15;
+  --s-panel: #16241c;
+  --s-line: #263b2f;
+  --s-ink: #dfe9e0;
+  --s-ink-2: #92a698;
+  background: var(--s-bg);
+  border: 1px solid var(--s-line);
+  border-radius: var(--radius);
+  padding: 12px;
+  box-shadow: 0 22px 50px -28px rgba(16, 26, 21, 0.7);
+}
+.shot__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  background: var(--s-panel);
+  border: 1px solid var(--s-line);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.shot__brand {
+  font: 600 10.5px/1 var(--mono);
+  letter-spacing: 0.16em;
+  color: #6fcb9a;
+}
+.shot__stat {
+  font: 400 10.5px/1 var(--mono);
+  color: var(--s-ink-2);
+}
+.shot__spacer {
+  flex: 1 1 auto;
+}
+.shot__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e5b45c;
+}
+.shot__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.shot__panel {
+  background: var(--s-panel);
+  border: 1px solid var(--s-line);
+  border-radius: 8px;
+  padding: 8px 10px 10px;
+  min-width: 0;
+}
+.shot__head {
+  font: 600 9.5px/1 var(--sans);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--s-ink);
+  padding-bottom: 7px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--s-line);
+}
+.shot__row {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 3.5px 0;
+  font: 400 11px/1.4 var(--mono);
+  color: var(--s-ink-2);
+  min-width: 0;
+}
+.shot__id {
+  color: var(--s-ink);
+  flex: none;
+}
+.shot__st {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.shot__tag {
+  flex: none;
+  width: 52px;
+  font-size: 9.5px;
+  letter-spacing: 0.05em;
+  color: #6fcb9a;
+}
+.shot__d {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+}
+.shot__d.is-ok {
+  background: #6fcb9a;
+}
+.shot__d.is-live {
+  background: #e5b45c;
+}
+.shot__d.is-bad {
+  background: #e08b7a;
+}
+
+/* De ↗ in de hoofdnavigatie: het dashboard verlaat deze site. */
+.nav__app {
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .appcard {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .appcard__shot {
+    order: -1;
+  }
+}
+@media (max-width: 520px) {
+  .shot__grid {
+    grid-template-columns: 1fr;
   }
 }

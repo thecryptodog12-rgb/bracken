@@ -24,10 +24,12 @@ import { isE3Active, solidityStageToUiIdx, type E3FullDetails, type E3Summary } 
 import { Wordmark } from './Wordmark'
 import ThemeToggle from './ThemeToggle'
 import Hero from './Hero'
+import Ops from './Ops'
 import VerifierAudit from './VerifierAudit'
 import Reveal from './Reveal'
 
 const NAV: [string, string][] = [
+  ['ops', 'Ops'],
   ['inspector', 'E3 inspector'],
   ['crisp', 'CRISP'],
   ['operator', 'Run a ciphernode'],
@@ -182,11 +184,11 @@ const DENSITY = 'comfortable'
 
 // Linkable views. Anything else in the hash falls back to the inspector, so a
 // stale or hand-typed fragment can never render a blank page.
-const VIEWS = ['inspector', 'crisp', 'operator', 'audit']
+const VIEWS = ['ops', 'inspector', 'crisp', 'operator', 'audit']
 
 function viewFromHash(): string {
   const id = globalThis.location?.hash.replace(/^#/, '') ?? ''
-  return VIEWS.includes(id) ? id : 'inspector'
+  return VIEWS.includes(id) ? id : 'ops'
 }
 
 // Derive the poll-card state from the UI stage + ballot count. Specifically,
@@ -343,7 +345,14 @@ export default function App() {
   return (
     <div className={`page page--${DENSITY}`}>
       <Header density={DENSITY} view={view} onNav={navigate} />
-      {view === 'audit' ? (
+      {view === 'ops' ? (
+        // Geen hero. Elke andere view opent met een claim en dat klopt daar --
+        // maar een ops-scherm dat je eerst moet wegscrollen om iets te zien, is
+        // geen ops-scherm. Het paneel is de kop.
+        <main className='main main--flush'>
+          <Ops onNav={navigate} />
+        </main>
+      ) : view === 'audit' ? (
         <>
           <Hero
             size='compact'

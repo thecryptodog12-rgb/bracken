@@ -64,7 +64,12 @@ export default function App() {
           </a>
           <nav className='nav' aria-label='Primary'>
             <a href={DOCS}>Docs</a>
-            <a href={DASHBOARD}>Dashboard</a>
+            {/* Het dashboard is een aparte toepassing, geen pagina van deze
+                site. Het opent daarom in een eigen tabblad: wie het aanklikt
+                gaat er bewust heen en raakt deze pagina niet kwijt. */}
+            <a href={DASHBOARD} target='_blank' rel='noreferrer' className='nav__app'>
+              Dashboard <span aria-hidden='true'>↗</span>
+            </a>
             <a href={REPO}>Source</a>
           </nav>
           <ThemeToggle />
@@ -125,6 +130,77 @@ export default function App() {
           <TrustLadder />
         </Reveal>
 
+        {/* Het dashboard krijgt een eigen doorklik in plaats van een link
+            tussen de rest. Het is een aparte toepassing die in een eigen
+            tabblad opent, en wat je daar aantreft is nu demo-data -- dat hoort
+            hier te staan, vóór de klik, niet pas erna. */}
+        <Reveal band='plain'>
+          <section className='appcard'>
+            <div className='appcard__text'>
+              <span className='eyebrow'>The dashboard</span>
+              <h2>
+                Watch the network <em>work</em>.
+              </h2>
+              <p>
+                Every E3 in flight, every committee seat, every proof slot — on one screen, updating as the protocol runs. It is the view an
+                operator keeps open on a second monitor.
+              </p>
+              <p className='appcard__note'>
+                <strong>It currently runs on demo data.</strong> Nothing is deployed on chain 4663 yet, so the dashboard shows a fabricated
+                network to make the shape of a live one legible. It says so on every screen, and it reads the real chain the moment a
+                deployment exists.
+              </p>
+              <a className='btn btn--primary' href={DASHBOARD} target='_blank' rel='noreferrer'>
+                Open the dashboard <span aria-hidden='true'>↗</span>
+              </a>
+            </div>
+
+            {/* Geen screenshot: een statische weergave van dezelfde panelen,
+                zodat hij niet veroudert zodra het dashboard verandert. */}
+            <div className='appcard__shot' aria-hidden='true'>
+              <div className='shot__bar'>
+                <span className='shot__brand'>LOXLEY</span>
+                <span className='shot__stat'>chain 4663</span>
+                <span className='shot__stat'>seated 3/7</span>
+                <span className='shot__spacer' />
+                <span className='shot__dot' />
+                <span className='shot__stat'>demo</span>
+              </div>
+              <div className='shot__grid'>
+                <div className='shot__panel'>
+                  <div className='shot__head'>E3 queue</div>
+                  {[
+                    ['#0042', 'key published', 'live'],
+                    ['#0041', 'ciphertext', 'live'],
+                    ['#0040', 'complete', 'ok'],
+                    ['#0038', 'failed', 'bad'],
+                  ].map(([id, st, k]) => (
+                    <div className='shot__row' key={id}>
+                      <span className={`shot__d is-${k}`} />
+                      <span className='shot__id'>{id}</span>
+                      <span className='shot__st'>{st}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className='shot__panel'>
+                  <div className='shot__head'>Event log</div>
+                  {[
+                    ['DKG', 'aggregate key published'],
+                    ['PROOF', 'share_encryption 3/3'],
+                    ['DECRYPT', 'plaintext on chain'],
+                    ['SLASH', 'cn-07 missed duty'],
+                  ].map(([t, x]) => (
+                    <div className='shot__row' key={t + x}>
+                      <span className='shot__tag'>{t}</span>
+                      <span className='shot__st'>{x}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        </Reveal>
+
         <Reveal band='sunk'>
           <section className='paths'>
             <div className='paths__head'>
@@ -137,7 +213,7 @@ export default function App() {
                   <span className='path__eyebrow'>{p.eyebrow}</span>
                   <h3>{p.title}</h3>
                   <p>{p.body}</p>
-                  <a className='path__cta' href={p.href}>
+                  <a className='path__cta' href={p.href} target='_blank' rel='noreferrer'>
                     {p.cta} <span aria-hidden='true'>→</span>
                   </a>
                 </article>

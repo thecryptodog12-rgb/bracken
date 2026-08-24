@@ -3381,3 +3381,381 @@ button {
 .vaudit__slot--inconclusive .vaudit__vname {
   color: var(--ink-4);
 }
+
+/* ── Ops-view ───────────────────────────────────────────────────────────────
+   Een terminal-oppervlak. Het kantelt bewust NIET mee met light/dark: net als
+   de footer en de hero is dit een vol vlak dat in beide thema's donker hoort te
+   zijn. Zou het meekantelen, dan wordt in light mode elke kleur hieronder een
+   ander ding -- en de statuskleuren (ok/bad/live) moeten juist overal hetzelfde
+   betekenen. Eigen tokens dus, geen hergebruik van --ink/--paper. */
+.ops {
+  --ops-bg: #101a15;
+  --ops-panel: #16241c;
+  --ops-panel-2: #1b2c22;
+  --ops-line: #263b2f;
+  --ops-ink: #dfe9e0;
+  --ops-ink-2: #9db0a3;
+  --ops-ink-3: #6e8377;
+  --ops-ok: #6fcb9a;
+  --ops-live: #e5b45c;
+  --ops-bad: #e08b7a;
+  --ops-idle: #55695d;
+
+  background: var(--ops-bg);
+  color: var(--ops-ink);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  margin: 0 0 34px;
+  border: 1px solid var(--ops-line);
+}
+
+/* Het demo-label. Staat boven alles, is niet te sluiten, en gebruikt messing --
+   de kleur die in dit dashboard al "let op, dit betekent iets" betekent. */
+.ops__demo {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border-radius: var(--radius-sm);
+  background: #2a2113;
+  border: 1px solid #4a3a1c;
+}
+.ops__demo-tag {
+  flex: none;
+  font: 600 11px/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #1a1409;
+  background: var(--ops-live);
+  padding: 5px 8px;
+  border-radius: 5px;
+}
+.ops__demo p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #e8d9b8;
+}
+.ops__demo strong {
+  color: #fff3d8;
+}
+
+/* Statusbalk */
+.ops__bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  background: var(--ops-panel);
+  border: 1px solid var(--ops-line);
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+}
+.ops__brand {
+  font: 600 13px/1 var(--mono);
+  letter-spacing: 0.16em;
+  color: var(--ops-ok);
+}
+.ops__bar-spacer {
+  flex: 1 1 auto;
+}
+.ops__stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+}
+.ops__stat-k {
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ops-ink-3);
+}
+.ops__stat-v {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ops-ink);
+}
+.ops__mode {
+  font: 500 11px/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ops-ink-2);
+}
+.ops__clock {
+  font-size: 13px;
+  color: var(--ops-ink-2);
+}
+.ops__pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.ops__pulse.is-live {
+  background: var(--ops-ok);
+  animation: ops-pulse 2s ease-in-out infinite;
+}
+.ops__pulse.is-demo {
+  background: var(--ops-live);
+  animation: ops-pulse 2s ease-in-out infinite;
+}
+@keyframes ops-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* Panelenraster */
+.ops__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.ops__panel {
+  background: var(--ops-panel);
+  border: 1px solid var(--ops-line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  min-width: 0;
+}
+.ops__panel--2 {
+  grid-column: span 2;
+}
+.ops__panel--3 {
+  grid-column: span 4;
+}
+.ops__panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--ops-line);
+  background: var(--ops-panel-2);
+}
+.ops__panel-head h3 {
+  margin: 0;
+  font: 600 11.5px/1 var(--sans);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ops-ink);
+  white-space: nowrap;
+}
+/* Kop en meta mogen niet over twee regels breken -- dan verspringt de hoogte
+   van dit paneel en loopt de rij panelen niet meer gelijk. De meta krimpt en
+   kapt af; de titel blijft heel. */
+.ops__panel-meta {
+  font-size: 11px;
+  color: var(--ops-ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.ops__panel-body {
+  padding: 10px 12px 12px;
+  overflow-x: auto;
+}
+
+/* Statusstip. Eén betekenis per kleur, overal in deze view. */
+.ops__dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 7px;
+  vertical-align: 1px;
+  flex: none;
+}
+.ops__dot.is-ok {
+  background: var(--ops-ok);
+}
+.ops__dot.is-live {
+  background: var(--ops-live);
+}
+.ops__dot.is-bad {
+  background: var(--ops-bad);
+}
+.ops__dot.is-wait,
+.ops__dot.is-idle {
+  background: var(--ops-idle);
+}
+
+/* Tabel */
+.ops__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.ops__table th {
+  text-align: left;
+  font: 500 10.5px/1 var(--sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ops-ink-3);
+  padding: 0 8px 7px 0;
+  white-space: nowrap;
+}
+.ops__table td {
+  padding: 6px 8px 6px 0;
+  border-top: 1px solid var(--ops-line);
+  color: var(--ops-ink-2);
+  white-space: nowrap;
+}
+.ops__table td:first-child {
+  color: var(--ops-ink);
+}
+.ops__table .num {
+  text-align: right;
+  padding-right: 0;
+}
+
+/* Knopenlijst */
+.ops__nodes,
+.ops__slots,
+.ops__log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ops__nodes li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  border-top: 1px solid var(--ops-line);
+  font-size: 13px;
+}
+.ops__nodes li:first-child {
+  border-top: 0;
+}
+.ops__node-id {
+  color: var(--ops-ink);
+}
+.ops__node-state {
+  flex: 1 1 auto;
+  color: var(--ops-ink-3);
+  font-size: 12px;
+}
+.ops__node-bond {
+  color: var(--ops-ink-2);
+  font-size: 12.5px;
+}
+
+/* Verifier-slots */
+.ops__slots li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid var(--ops-line);
+  font-size: 13px;
+}
+.ops__slots li:first-child {
+  border-top: 0;
+}
+.ops__slot-name {
+  color: var(--ops-ink);
+}
+.ops__slot-note {
+  color: var(--ops-ink-3);
+  font-size: 12px;
+}
+.ops__link {
+  margin-top: 10px;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: 500 12.5px/1.4 var(--sans);
+  color: var(--ops-ok);
+  cursor: pointer;
+  text-align: left;
+}
+.ops__link:hover {
+  text-decoration: underline;
+}
+
+/* Logstroom */
+.ops__log li {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 4px 0;
+  font-size: 12.5px;
+  color: var(--ops-ink-2);
+}
+.ops__log li.is-new {
+  animation: ops-in 0.4s ease-out;
+}
+@keyframes ops-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.ops__log-tag {
+  flex: none;
+  width: 76px;
+  font: 500 10.5px/1.5 var(--mono);
+  letter-spacing: 0.06em;
+  color: var(--ops-ink-3);
+}
+.ops__log-tag.is-ok {
+  color: var(--ops-ok);
+}
+.ops__log-tag.is-warn {
+  color: var(--ops-live);
+}
+.ops__log-tag.is-bad {
+  color: var(--ops-bad);
+}
+.ops__log-text {
+  font-family: var(--mono);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ops__pulse.is-live,
+  .ops__pulse.is-demo,
+  .ops__log li.is-new {
+    animation: none;
+  }
+}
+
+@media (max-width: 1000px) {
+  .ops__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .ops__panel--2,
+  .ops__panel--3 {
+    grid-column: span 2;
+  }
+}
+@media (max-width: 640px) {
+  .ops {
+    padding: 12px;
+  }
+  .ops__grid {
+    grid-template-columns: 1fr;
+  }
+  .ops__panel--2,
+  .ops__panel--3 {
+    grid-column: span 1;
+  }
+  .ops__bar {
+    gap: 12px;
+  }
+  .ops__log-tag {
+    width: 64px;
+  }
+}
+
+/* De ops-view heeft geen hero, dus de main moet zelf de ruimte onder de
+   plakkende kop maken die de hero anders levert. */
+.main--flush {
+  padding-top: 26px;
+}

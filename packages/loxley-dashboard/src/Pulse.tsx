@@ -4,8 +4,17 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 // Network pulse — small, low-emphasis footer strip.
+//
+// Deze strook stond onder elke view "All systems nominal" te melden terwijl er
+// nul van alles was. Bij een leeg netwerk is dat geen geruststelling maar een
+// onwaarheid, en pal onder de ops-view sprak hij de demo tegen: druk scherm
+// boven, drie nullen eronder. Nu volgt hij dezelfde bron als de rest.
+
+import { DEMO, DEMO_ACTIVE, DEMO_BALLOTS, DEMO_POLLS } from './lib/demo'
 
 export default function Pulse({ data }: { data: { activeNow: number; ballots24h: number; pollsAllTime: number } }) {
+  const empty = data.activeNow === 0 && data.ballots24h === 0 && data.pollsAllTime === 0
+  if (DEMO) data = { activeNow: DEMO_ACTIVE, ballots24h: DEMO_BALLOTS, pollsAllTime: DEMO_POLLS }
   return (
     <section className='pulse' aria-label='Network activity'>
       <div className='pulse__inner'>
@@ -28,8 +37,8 @@ export default function Pulse({ data }: { data: { activeNow: number; ballots24h:
           </div>
         </div>
         <div className='pulse__status'>
-          <span className='pulse__status-dot' />
-          <span>All systems nominal</span>
+          <span className={`pulse__status-dot ${empty ? 'is-idle' : ''}`} />
+          <span>{DEMO ? 'Demo data · nothing deployed' : empty ? 'Nothing deployed yet' : 'All systems nominal'}</span>
         </div>
       </div>
     </section>
