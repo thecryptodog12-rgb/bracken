@@ -124,12 +124,5 @@
   },
   "faq": {
     "title": "Frequently Asked Questions"
-  },
-  "-- Reference": {
-    "type": "separator",
-    "title": "Reference"
-  },
-  "whitepaper": {
-    "title": "Whitepaper"
   }
 }

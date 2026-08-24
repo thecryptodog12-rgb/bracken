@@ -11,9 +11,9 @@
 // you which contract sits in each proof slot and whether that contract is big
 // enough to be doing any work.
 //
-// It reads upstream Interfold's live deployments, because Loxley has none. That
-// is stated on screen rather than glossed — a tool whose whole value is candour
-// cannot start by being vague about whose chain it is looking at.
+// It reads Loxley's own deployment on chain 4663. Until that exists there is
+// nothing to read, and the page says so — a tool whose whole value is candour
+// cannot start by filling the silence with someone else's contracts.
 
 import { useCallback, useEffect, useState } from 'react'
 import { NETWORKS, auditNetwork, type AuditResult, type SlotResult, type Verdict } from './lib/verifierAudit'
@@ -103,7 +103,12 @@ export default function VerifierAudit() {
               <div className='vaudit__net-meta mono'>{res.blockNumber !== null ? `block ${res.blockNumber.toString()}` : '—'}</div>
             </header>
 
-            {res.error ? (
+            {res.target.loxley === null ? (
+              <p className='vaudit__err'>
+                Nothing deployed on this chain yet, so there is nothing to read. This is not a finding about the proofs — it is the absence
+                of anything to have a finding about. Deploy, set <code>VITE_LOXLEY_ADDRESS</code>, and this page starts answering.
+              </p>
+            ) : res.error ? (
               <p className='vaudit__err'>
                 Could not reach this network: {res.error}. That is a failure of this tool, not a finding about the deployment.
               </p>
@@ -116,7 +121,7 @@ export default function VerifierAudit() {
             )}
           </article>
         ))}
-        {loading && results.length === 0 && <p className='vaudit__err'>Reading three verifier slots on two networks…</p>}
+        {loading && results.length === 0 && <p className='vaudit__err'>Reading three verifier slots…</p>}
       </div>
 
       <div className='vaudit__foot'>

@@ -8,11 +8,9 @@ import { Callout } from 'nextra/components'
 # Running a Ciphernode
 
 <Callout type='warning'>
-  **Loxley is not deployed yet.** Contract addresses on this page are placeholders. Loxley is a fork
-  of [theinterfold/interfold](https://github.com/theinterfold/interfold) targeting Robinhood Chain
-  (chain id `4663`); the addresses that used to sit here belonged to the upstream Interfold
-  deployment on Ethereum and would have sent you to someone else's contracts. They are archived in
-  `packages/loxley-contracts/upstream-interfold-deployments.reference.json`.
+  **Loxley is not deployed yet.** Contract addresses on this page are placeholders. Loxley targets
+  Robinhood Chain (chain id `4663`); no address here has been deployed, and none should be sent
+  funds or configured into anything.
 </Callout>
 
 This guide covers three methods to run a ciphernode, from easiest to most flexible. Choose the
@@ -59,7 +57,7 @@ Loxley CLI provides the most control and is recommended for production deploymen
 
 ```bash
 # Quick install
-curl -fsSL https://raw.githubusercontent.com/theloxley/loxley/main/install | bash
+curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/interfold/rebrand/loxley/install | bash
 
 # Then install the CLI
 loxleyup install

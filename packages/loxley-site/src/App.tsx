@@ -12,9 +12,9 @@
 //
 // So this page does two things the others do not. It says what Loxley does in
 // one sentence a non-cryptographer can hold, and it states its own status
-// plainly — unreleased, nothing deployed, a fork — near the top rather than in
-// a footnote. A project whose entire pitch is verifiability cannot open by
-// being vague about itself.
+// plainly — nothing deployed, no token, no operator set — near the top rather
+// than in a footnote. A project whose entire pitch is verifiability cannot open
+// by being vague about itself.
 
 import { Canopy, Lifecycle, TrustLadder } from '@loxley/diagrams'
 import Reveal from './Reveal'
@@ -24,7 +24,6 @@ import { Wordmark } from './Wordmark'
 const DOCS = 'https://loxley-docs-solplay.vercel.app/introduction'
 const DASHBOARD = 'https://loxley-dashboard-solplay.vercel.app'
 const REPO = 'https://github.com/thecryptodog12-rgb/interfold'
-const UPSTREAM = 'https://theinterfold.com/'
 
 type Path = { eyebrow: string; title: string; body: string; cta: string; href: string; ready: boolean }
 
@@ -106,13 +105,9 @@ export default function App() {
         <div className='status__inner'>
           <span className='status__tag'>Where this stands</span>
           <p>
-            Loxley is an unreleased fork of{' '}
-            <a href={UPSTREAM} target='_blank' rel='noreferrer'>
-              The Interfold
-            </a>{' '}
-            (LGPL-3.0), retargeted at Robinhood Chain. <strong>Nothing is deployed yet.</strong> The protocol runs end to end on a local
-            network — sortition, distributed key generation, threshold decryption, a plaintext published on chain — and no contract of ours
-            exists on a public one. There is no token and no operator set. Everything on this page is checkable in{' '}
+            Loxley targets Robinhood Chain (chain 4663). <strong>Nothing is deployed yet.</strong> The protocol runs end to end on a local
+            network — sortition, distributed key generation, threshold decryption, a plaintext published on chain — and no contract exists
+            on a public one. There is no token, no sale, and no operator set. Everything on this page is checkable in{' '}
             <a href={REPO} target='_blank' rel='noreferrer'>
               the source
             </a>
@@ -168,15 +163,6 @@ export default function App() {
               <a href={DOCS}>Documentation</a>
               <a href={DASHBOARD}>Dashboard</a>
               <a href={REPO}>Source</a>
-            </div>
-            <div>
-              <h4>Upstream</h4>
-              <a href={UPSTREAM} target='_blank' rel='noreferrer'>
-                The Interfold ↗
-              </a>
-              <a href='https://blog.theinterfold.com/' target='_blank' rel='noreferrer'>
-                Their blog ↗
-              </a>
             </div>
           </div>
         </div>

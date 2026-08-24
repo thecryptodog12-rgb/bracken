@@ -51,5 +51,5 @@ It exposes two main functions:
   providers (the ones submitting the inputs) are the voters, and the input submitted is the vote
   itself. The logic checks that gating conditions are satisfied and that the ciphertext is
   constructed correctly using
-  [Greco](https://github.com/gnosisguild/loxley/tree/main/circuits/crates/libs/greco). See the Greco
+  [Greco](https://github.com/thecryptodog12-rgb/interfold/tree/rebrand/loxley/circuits/crates/libs/greco). See the Greco
   [paper](https://eprint.iacr.org/2024/594).

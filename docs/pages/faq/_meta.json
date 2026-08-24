@@ -1,11 +1,5 @@
 {
   "loxley-token": {
     "title": "LOXLEY Token"
-  },
-  "auction": {
-    "title": "The LOXLEY Auction"
-  },
-  "transferability": {
-    "title": "LOXLEY Transferability"
   }
 }

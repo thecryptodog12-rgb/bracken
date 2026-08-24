@@ -12,10 +12,15 @@ import Footer from './components/Footer'
 // build ingebakken; wie zelf publiceert zet NEXT_PUBLIC_SITE_URL.
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:5174').replace(/\/$/, '')
 
-// Het pad naar de fork zelf. Stond op github.com/theloxley/loxley en
+// Het pad naar de fork zelf. Stond op github.com/thecryptodog12-rgb/interfold en
 // gnosisguild/loxley -- allebei 404: de hernoemslag heeft die namen verzonnen,
 // ze hebben nooit bestaan. "Edit this page" leidde dus nergens heen.
 const REPO = 'https://github.com/thecryptodog12-rgb/interfold'
+
+// Waar deze docs zelf staan. Stond hardgecodeerd op docs.theinterfold.com in
+// elke og:- en twitter:-tag, dus elke gedeelde link kondigde andermans domein
+// aan als de canonieke plek van onze pagina's.
+const DOCS_URL = (process.env.NEXT_PUBLIC_DOCS_URL || 'https://loxley-docs-solplay.vercel.app').replace(/\/$/, '')
 
 export default {
   // Wijst naar buiten, naar de voordeur -- niet naar de docs-root, waar je al
@@ -54,11 +59,11 @@ export default {
   logoLink: false,
 
   banner: {
-    key: 'loxley-fork-preview',
+    key: 'loxley-predeploy',
     text: (
       <span>
-        <strong>Loxley</strong> is an unreleased fork of The Interfold, targeting Robinhood Chain. Nothing is deployed; addresses in these
-        docs are placeholders.
+        <strong>Loxley</strong> is not deployed yet. Contract addresses in these docs are placeholders, and there is no token, no sale and
+        no operator set.
       </span>
     ),
   },
@@ -103,7 +108,7 @@ export default {
         />
 
         <meta property='og:type' content='website' />
-        <meta property='og:url' content='https://docs.theinterfold.com' />
+        <meta property='og:url' content={DOCS_URL} />
         <meta property='og:title' content={title ? title : 'Loxley'} />
         <meta
           property='og:description'
@@ -113,10 +118,10 @@ export default {
               : 'Infrastructure for confidential coordination powered by Encrypted Execution Environments (E3).'
           }
         />
-        <meta property='og:image' content='https://docs.theinterfold.com/loxley-meta.jpg' />
+        <meta property='og:image' content={`${DOCS_URL}/loxley-meta.jpg`} />
 
         <meta property='twitter:card' content='summary_large_image' />
-        <meta property='twitter:url' content='https://docs.theinterfold.com' />
+        <meta property='twitter:url' content={DOCS_URL} />
         <meta property='twitter:title' content={title ? title : 'Loxley'} />
         <meta
           property='twitter:description'

@@ -43,10 +43,8 @@ Additionally proves:
 1. **Correct signature** — the submission was signed by the voter (ECDSA recovery)
 2. **Within balance** — the vote amount does not exceed the voter's token balance
 
-**Mask vote** (for
-[receipt-freeness](https://blog.theinterfold.com/vote-masking-receipt-freeness-secret-ballots/)) —
-the addend is the ciphertext already in the slot, so the vote there is unchanged. Additionally
-proves:
+**Mask vote** (for receipt-freeness) — the addend is the ciphertext already in the slot, so the vote
+there is unchanged. Additionally proves:
 
 1. **Encryption of zero** — the plaintext is zero in every coefficient, so a mask can neither change
    the tally nor carry a payload
@@ -121,9 +119,7 @@ published ciphertext = addend + ballot ciphertext
   ciphertext, so a vote replaces what the slot holds rather than adding to it
 - **Mask vote**: Verifies a zero-value ballot, in every plaintext coefficient. The addend is the
   ciphertext already in the slot, so the vote there is unchanged. Anyone can submit mask votes to
-  any slot, which provides
-  [receipt-freeness](https://blog.theinterfold.com/vote-masking-receipt-freeness-secret-ballots/) —
-  voters cannot prove which ciphertext is theirs
+  any slot, which provides receipt-freeness — voters cannot prove which ciphertext is theirs
 
 Because both branches return the same commitment and publish the same shape of ciphertext, an
 observer cannot tell them apart. Doing so would mean distinguishing a fresh BFV ciphertext from a
@@ -237,7 +233,7 @@ const { encryptedVote, inputs } = generator.generateInputs(
 
 The WASM module handles BFV encryption and produces the exact polynomial decompositions the Noir
 circuits expect. See the
-[crisp-zk-inputs README](https://github.com/theloxley/loxley/tree/main/examples/CRISP/packages/crisp-zk-inputs)
+[crisp-zk-inputs README](https://github.com/thecryptodog12-rgb/interfold/tree/rebrand/loxley/examples/CRISP/packages/crisp-zk-inputs)
 for the full API.
 
 ---

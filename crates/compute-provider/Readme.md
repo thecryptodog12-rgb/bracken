@@ -17,7 +17,7 @@ To use this library, add it to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-e3-compute-provider = { git = "https://github.com/gnosisguild/loxley.git", path = "crates/compute-provider"}
+e3-compute-provider = { git = "https://github.com/thecryptodog12-rgb/interfold.git", path = "crates/compute-provider"}
 ```
 
 ## Usage

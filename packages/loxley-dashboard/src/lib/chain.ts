@@ -10,8 +10,23 @@
 // ABIs are imported from the canonical typechain factories in
 // @loxley/contracts so they cannot drift from the deployed contracts.
 
-import { createPublicClient, http, type Address } from 'viem'
-import { sepolia } from 'viem/chains'
+import { createPublicClient, defineChain, http, type Address } from 'viem'
+
+// Robinhood Chain. Het dashboard stond op Sepolia en las daar contracten die
+// niet van ons waren -- vier van de vijf adressen hieronder kwamen letterlijk
+// uit upstream-interfold-deployments.reference.json. Zolang die als
+// standaardwaarde bleven staan, toonde deze pagina andermans E3's, comites en
+// operators als de onze. Ze zijn vervangen door het nul-adres: leeg tot er
+// werkelijk iets van ons staat.
+export const ROBINHOOD = defineChain({
+  id: 4663,
+  name: 'Robinhood Chain',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: { default: { http: ['https://rpc.mainnet.chain.robinhood.com'] } },
+  blockExplorers: { default: { name: 'Explorer', url: 'https://explorer.mainnet.chain.robinhood.com' } },
+})
+
+const NOT_DEPLOYED = '0x0000000000000000000000000000000000000000'
 import {
   BondingRegistry__factory,
   CiphernodeRegistryOwnable__factory,
@@ -56,18 +71,18 @@ const faucetAddress = (): string => {
 const RPC_URL = envStr('VITE_SEPOLIA_RPC', 'https://ethereum-sepolia.publicnode.com')
 
 export const publicClient = createPublicClient({
-  chain: sepolia,
+  chain: ROBINHOOD,
   transport: http(RPC_URL, { batch: true }),
 })
 
 export const CONTRACTS = {
-  Loxley: envStr('VITE_LOXLEY_ADDRESS', '0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7') as Address,
-  CiphernodeRegistry: envStr('VITE_CIPHERNODE_REGISTRY_ADDRESS', '0xCD571e311c11a6259ad95b7F95C1f2AF2b60ae6A') as Address,
-  CRISPProgram: envStr('VITE_CRISP_PROGRAM_ADDRESS', '0xF8D438bDFA099bFD8a17d8f31172DD26cFD574dC') as Address,
+  Loxley: envStr('VITE_LOXLEY_ADDRESS', NOT_DEPLOYED) as Address,
+  CiphernodeRegistry: envStr('VITE_CIPHERNODE_REGISTRY_ADDRESS', NOT_DEPLOYED) as Address,
+  CRISPProgram: envStr('VITE_CRISP_PROGRAM_ADDRESS', NOT_DEPLOYED) as Address,
   // Operator-guide contracts. The bonding registry is the only address the guide
   // needs hardcoded — the ciphernode bond token, ticket wrapper, and ticket underlying
   // are all read back from it at runtime so they cannot drift.
-  BondingRegistry: envStr('VITE_BONDING_REGISTRY_ADDRESS', '0x77384A924C18FfE00A9325815723121534105Abd') as Address,
+  BondingRegistry: envStr('VITE_BONDING_REGISTRY_ADDRESS', NOT_DEPLOYED) as Address,
   // Testnet-only convenience faucet (LOXLEY + fee token). The zero address or an
   // empty string disables the faucet card in the operator guide.
   Faucet: faucetAddress() as Address,
@@ -75,13 +90,13 @@ export const CONTRACTS = {
 
 // The chain the dashboard writes to. Reads use `publicClient`; the operator guide
 // refuses to send a transaction unless the wallet is on this chain.
-export const CHAIN = sepolia
+export const CHAIN = ROBINHOOD
 
 // First block to scan from — lower bound for getLogs. This bounds queries against
 // Loxley, CiphernodeRegistry and CRISPProgram, so it must be the earliest of
 // those three deploy blocks (CiphernodeRegistry), not Loxley's: a later value
 // would silently drop registry events emitted before Loxley was deployed.
-export const DEPLOY_BLOCK = BigInt(envStr('VITE_DEPLOY_BLOCK', '11458978'))
+export const DEPLOY_BLOCK = BigInt(envStr('VITE_DEPLOY_BLOCK', '0'))
 
 // E3 timeout windows (seconds), matching the deployment's timeoutConfig. Used to
 // decide whether an E3 is still genuinely active vs. expired without completing.

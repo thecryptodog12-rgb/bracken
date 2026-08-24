@@ -146,10 +146,7 @@ function SiteFooter() {
           <div className='wordmark wordmark--foot'>
             <Wordmark variant='foot' />
           </div>
-          <p className='site-foot__tag'>
-            Infrastructure for confidential coordination between independent parties. An unreleased fork of The Interfold, targeting
-            Robinhood Chain.
-          </p>
+          <p className='site-foot__tag'>Infrastructure for confidential coordination between independent parties, on Robinhood Chain.</p>
         </div>
         <div className='site-foot__cols'>
           <div>
@@ -170,24 +167,11 @@ function SiteFooter() {
               Source
             </a>
           </div>
-          {/* Upstream apart, en ook zo benoemd. Dit is het werk waar deze fork
-              op leunt -- het onder "Project" zetten deed alsof het van ons was. */}
-          <div>
-            <div className='site-foot__col-head'>Upstream</div>
-            <a href={LINKS.upstreamSite} target='_blank' rel='noreferrer'>
-              The Interfold ↗
-            </a>
-            <a href={LINKS.upstreamBlog} target='_blank' rel='noreferrer'>
-              Their blog ↗
-            </a>
-          </div>
         </div>
       </div>
       <div className='site-foot__rule'>
         <span>© 2026 Loxley · Built in the open</span>
-        <a className='mono' href={explorerAddress(CONTRACTS.Loxley)} target='_blank' rel='noreferrer'>
-          Loxley on Sepolia ↗
-        </a>
+        <span className='mono'>chain 4663</span>
       </div>
     </footer>
   )
@@ -369,7 +353,7 @@ export default function App() {
                 Publicly checkable, <em>checked</em>.
               </>
             }
-            lede='Every deployment claims its proofs are verifiable on chain. This reads the three verifier slots directly and reports what is in them — upstream Interfold’s networks, since Loxley has none of its own yet.'
+            lede='Every deployment claims its proofs are verifiable on chain. This reads the three verifier slots directly on Robinhood Chain and reports what is in them — including when the answer is that nothing is being checked.'
           />
           <main className='main'>
             <VerifierAudit />

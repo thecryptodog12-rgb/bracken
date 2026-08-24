@@ -4,7 +4,7 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-import { TelegramLogo, XLogo } from './SocialIcons'
+import { GitHubLogo } from './SocialIcons'
 import { ReactElement } from 'react'
 
 interface SocialLinksProps {
@@ -13,15 +13,14 @@ interface SocialLinksProps {
   url: string
 }
 
+// Alleen kanalen die bestaan en van ons zijn. Hier stonden x.com/theloxley --
+// door de hernoemslag verzonnen, geeft 404 -- en een Telegram-groep die wel
+// bestaat maar niet de onze is. Een dode link is vervelend; een link naar
+// andermans kanaal onder je eigen merk is erger.
 export const socialLinks: SocialLinksProps[] = [
   {
-    name: 'twitter',
-    icon: <XLogo size={24} />,
-    url: 'https://x.com/theloxley',
-  },
-  {
-    name: 'telegram',
-    icon: <TelegramLogo size={24} />,
-    url: 'https://t.me/enclave_e3',
+    name: 'github',
+    icon: <GitHubLogo size={24} />,
+    url: 'https://github.com/thecryptodog12-rgb/interfold',
   },
 ]

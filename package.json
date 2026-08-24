@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/theloxley/loxley"
+    "url": "https://github.com/thecryptodog12-rgb/interfold"
   },
   "scripts": {
     "bump:versions": "tsx scripts/bump-versions.ts",

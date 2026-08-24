@@ -101,12 +101,12 @@ We had a way to save bytes data with the `DataStore` and had a way to specify wh
 saved but actors need to be restartable and be able to be hydrated and we needed a standard way to
 accomplish this. To do this in typical Rust fashion we created a set of traits:
 
-- [`Snapshot`](https://github.com/theloxley/loxley/blob/main/crates/data/src/snapshot.rs) for
+- [`Snapshot`](https://github.com/thecryptodog12-rgb/interfold/blob/rebrand/loxley/crates/data/src/snapshot.rs) for
   defining how an object can create a snapshot of it's state
-- [`Checkpoint`](https://github.com/theloxley/loxley/blob/main/crates/data/src/snapshot.rs) for
+- [`Checkpoint`](https://github.com/thecryptodog12-rgb/interfold/blob/rebrand/loxley/crates/data/src/snapshot.rs) for
   defining how to save that snapshot to a repository
-- [`FromSnapshot`](https://github.com/theloxley/loxley/blob/main/crates/data/src/snapshot.rs) and
-  [`FromSnapshotWithParams`](https://github.com/theloxley/loxley/blob/main/crates/data/src/snapshot.rs)
+- [`FromSnapshot`](https://github.com/thecryptodog12-rgb/interfold/blob/rebrand/loxley/crates/data/src/snapshot.rs) and
+  [`FromSnapshotWithParams`](https://github.com/thecryptodog12-rgb/interfold/blob/rebrand/loxley/crates/data/src/snapshot.rs)
   for defining how an object could be reconstituted from a snapshot
 
 This worked well especially for objects who's persistable state needs to be derived from a subset of
@@ -169,6 +169,6 @@ struct MyActor {
 ```
 
 We have also extracted the key calculation mechanism to a
-[`StoreKeys`](https://github.com/theloxley/loxley/blob/main/crates/events/src/store_keys.rs) struct.
+[`StoreKeys`](https://github.com/thecryptodog12-rgb/interfold/blob/rebrand/loxley/crates/events/src/store_keys.rs) struct.
 This is used in various places when creating repsitory factories for example
-[here](https://github.com/theloxley/loxley/blob/main/crates/aggregator/src/repo.rs)
+[here](https://github.com/thecryptodog12-rgb/interfold/blob/rebrand/loxley/crates/aggregator/src/repo.rs)

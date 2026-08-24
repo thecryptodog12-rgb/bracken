@@ -24,17 +24,26 @@
 //           that returns true cannot be right. Only the second conclusion is
 //           safe to draw, and that is the only one drawn below.
 
-import { createPublicClient, http, keccak256, toHex, type Address } from 'viem'
-import { mainnet, sepolia } from 'viem/chains'
+import { createPublicClient, defineChain, http, keccak256, toHex, type Address } from 'viem'
+
+const ROBINHOOD_RPC = 'https://rpc.mainnet.chain.robinhood.com'
+
+const ROBINHOOD = defineChain({
+  id: 4663,
+  name: 'Robinhood Chain',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: { default: { http: [ROBINHOOD_RPC] } },
+  blockExplorers: { default: { name: 'Explorer', url: 'https://explorer.mainnet.chain.robinhood.com' } },
+})
 import { Loxley__factory } from '@loxley/contracts/types'
 
-export type NetworkKey = 'sepolia' | 'mainnet'
+export type NetworkKey = 'robinhood'
 
 export type NetworkTarget = {
   key: NetworkKey
   label: string
-  /** Upstream Interfold's deployment. Loxley has none of its own yet. */
-  loxley: Address
+  /** Loxley's own core contract. Null until a deployment exists. */
+  loxley: Address | null
   explorer: string
   /** Blockscout API, sleutelvrij. Levert de geverifieerde contractnaam en wie
    *  hem deployde -- directer bewijs dan wat uit bytecode af te leiden valt. */
@@ -42,25 +51,22 @@ export type NetworkTarget = {
   note: string
 }
 
-// Deze adressen zijn upstream Interfold, niet die van ons -- Loxley is nergens
-// gedeployed. Ze staan hier zodat de checker vandaag iets echts te controleren
-// heeft; ze worden in de UI ook als zodanig benoemd.
+// Alleen onze eigen keten. Hier stonden twee Ethereum-deployments van een ander
+// project: de checker had daarmee vandaag iets echts te lezen, maar het maakte
+// van deze pagina een analyse van andermans contracten onder ons merk. Nu leest
+// hij Loxley, of hij zegt dat er nog niets te lezen valt.
+const env = ((import.meta as any).env ?? {}) as Record<string, string | undefined>
+const CORE = (env.VITE_LOXLEY_ADDRESS ?? '').trim()
+const DEPLOYED = /^0x[0-9a-fA-F]{40}$/.test(CORE) && !/^0x0{40}$/.test(CORE)
+
 export const NETWORKS: NetworkTarget[] = [
   {
-    key: 'mainnet',
-    label: 'Ethereum mainnet',
-    loxley: '0x28cF63B459e6218C69EA97ea7D90541cf648c715',
-    explorer: 'https://etherscan.io',
-    blockscout: 'https://eth.blockscout.com',
-    note: 'The Interfold, upstream. Their docs describe the registered ciphertext verifier as a deployable mock for public-network rehearsal.',
-  },
-  {
-    key: 'sepolia',
-    label: 'Sepolia',
-    loxley: '0x782ed907c3141e4b49BB9CBb34E83a820e12B2D7',
-    explorer: 'https://sepolia.etherscan.io',
-    blockscout: 'https://eth-sepolia.blockscout.com',
-    note: 'The Interfold, upstream. Their docs state this was deployed with DEPLOY_MOCKS=true and without ENABLE_ZK_VERIFICATION.',
+    key: 'robinhood',
+    label: 'Robinhood Chain',
+    loxley: DEPLOYED ? (CORE as Address) : null,
+    explorer: 'https://explorer.mainnet.chain.robinhood.com',
+    blockscout: 'https://explorer.mainnet.chain.robinhood.com',
+    note: 'Loxley on chain 4663.',
   },
 ]
 
@@ -185,10 +191,8 @@ type ChainReader = {
   getBlockNumber: () => Promise<bigint>
 }
 
-export function clientFor(target: NetworkTarget, rpcOverride?: string): ChainReader {
-  const chain = target.key === 'mainnet' ? mainnet : sepolia
-  const fallback = target.key === 'mainnet' ? 'https://ethereum-rpc.publicnode.com' : 'https://ethereum-sepolia.publicnode.com'
-  return createPublicClient({ chain, transport: http(rpcOverride || fallback, { batch: true }) }) as unknown as ChainReader
+export function clientFor(_target: NetworkTarget, rpcOverride?: string): ChainReader {
+  return createPublicClient({ chain: ROBINHOOD, transport: http(rpcOverride || ROBINHOOD_RPC, { batch: true }) }) as unknown as ChainReader
 }
 
 async function readSlot(client: ChainReader, target: NetworkTarget, spec: (typeof SLOTS)[number]): Promise<SlotResult> {
@@ -338,6 +342,9 @@ export type AuditResult = {
 }
 
 export async function auditNetwork(target: NetworkTarget, rpcOverride?: string): Promise<AuditResult> {
+  // Geen deployment, niets te lezen. Dat is een antwoord, geen fout -- de
+  // pagina hoort het te zeggen in plaats van een RPC-fout te tonen.
+  if (!target.loxley) return { target, slots: [], blockNumber: null, error: null }
   const client = clientFor(target, rpcOverride)
   try {
     const [blockNumber, slots] = await Promise.all([client.getBlockNumber(), Promise.all(SLOTS.map((s) => readSlot(client, target, s)))])

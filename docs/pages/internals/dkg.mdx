@@ -19,9 +19,8 @@ without seeing secret data. The pipeline uses **Noir** circuits compiled to **Ul
 [Barretenberg](https://github.com/AztecProtocol/aztec-packages/tree/master/barretenberg) (`bb`).
 
 The scheme is built on **threshold BFV**, which extends the standard BFV fully-homomorphic
-encryption scheme to a threshold setting where no single party holds the full secret key. For the
-full cryptographic specification, see the
-[PVDKG article](https://blog.theinterfold.com/verifiability-in-the-coordination-trilemma/).
+encryption scheme to a threshold setting where no single party holds the full secret key. This page
+is the specification: the protocol, the circuits and the failure modes are all documented below.
 
 ---
 
@@ -276,10 +275,9 @@ This circuit runs once, executed by the aggregator.
 ## P3: User Encryption
 
 With the threshold public key published, users encrypt their private inputs using a specialisation
-of the [GRECO](https://blog.theinterfold.com/enclave-cryptography-greco-fhe-zk/) circuit. This
-proves each ciphertext was formed correctly under the threshold public key without revealing the
-plaintext or encryption randomness. The circuit verifies `commit(pk_threshold)` from C5 before
-validating the encryption.
+of the GRECO circuit. This proves each ciphertext was formed correctly under the threshold public
+key without revealing the plaintext or encryption randomness. The circuit verifies
+`commit(pk_threshold)` from C5 before validating the encryption.
 
 The resulting ciphertexts are collected and passed to the compute provider, which executes the E3
 program homomorphically over the encrypted data (e.g. a private vote tally). Only the encrypted
@@ -381,17 +379,17 @@ The DKG aggregator proof surfaces, as public outputs, the array of `party_ids`, 
 ### `publishCommittee` verification
 
 When the aggregator calls
-[`CiphernodeRegistry.publishCommittee`](https://github.com/theloxley/loxley/blob/main/packages/loxley-contracts/contracts/registry/CiphernodeRegistryOwnable.sol),
+[`CiphernodeRegistry.publishCommittee`](https://github.com/thecryptodog12-rgb/interfold/blob/rebrand/loxley/packages/loxley-contracts/contracts/registry/CiphernodeRegistryOwnable.sol),
 the registry runs two checks in order:
 
 1. **Honk proof verification** via
-   [`BfvPkVerifier`](https://github.com/theloxley/loxley/blob/main/packages/loxley-contracts/contracts/verifiers/bfv/BfvPkVerifier.sol).
+   [`BfvPkVerifier`](https://github.com/thecryptodog12-rgb/interfold/blob/rebrand/loxley/packages/loxley-contracts/contracts/verifiers/bfv/BfvPkVerifier.sol).
    It checks the recursive VK hashes for `node_fold` and `pk_aggregation` (so the underlying
    circuits are the deployed ones), the committee-hash hi/lo limbs match
    `CommitteeHashLib.hash(c.topNodes)`, the surfaced `pkCommitment` equals the caller-supplied
    value, and the raw Honk proof verifies.
 2. **Fold-attestation verification** via
-   [`DkgFoldAttestationVerifier`](https://github.com/theloxley/loxley/blob/main/packages/loxley-contracts/contracts/verifiers/DkgFoldAttestationVerifier.sol).
+   [`DkgFoldAttestationVerifier`](https://github.com/thecryptodog12-rgb/interfold/blob/rebrand/loxley/packages/loxley-contracts/contracts/verifiers/DkgFoldAttestationVerifier.sol).
    It walks the bundle's `(partyId, node)` bindings — strictly ascending by `partyId`, no duplicates
    — and for each binding: requires `canonicalCommitteeNodeAt(e3Id, partyId) == node` (slot
    binding), requires `isCommitteeMemberActive(e3Id, node)`, recovers the signer via `ecrecover` on
@@ -487,7 +485,7 @@ The repo enforces sync with two modes of `pnpm generate:verifiers`:
 The version pinning lives in `crates/zk-prover/versions.json` (consumed by `loxley noir setup` and
 by the integration test prebuild). If `--check` fails after a clean
 `pnpm build:circuits --preset insecure-512`, your local toolchain is out of sync with that pin. See
-[`scripts/README.md`](https://github.com/theloxley/loxley/blob/main/scripts/README.md#verifier-generator)
+[`scripts/README.md`](https://github.com/thecryptodog12-rgb/interfold/blob/rebrand/loxley/scripts/README.md#verifier-generator)
 for the full contract.
 
 ### Decryption recursive proof
@@ -505,7 +503,7 @@ coefficient each, packed into bytes).
 ### Slashing-evidence binding
 
 When fault attribution leads to a slash, the off-chain accusation quorum produces a payload that
-[`SlashingManager.proposeSlash`](https://github.com/theloxley/loxley/blob/main/packages/loxley-contracts/contracts/slashing/SlashingManager.sol)
+[`SlashingManager.proposeSlash`](https://github.com/thecryptodog12-rgb/interfold/blob/rebrand/loxley/packages/loxley-contracts/contracts/slashing/SlashingManager.sol)
 decodes as
 `(uint256 proofType, address[] voters, bytes32[] dataHashes, bytes evidence, uint256 issuedAt, uint256 deadline, bytes[] signatures)`.
 `_verifyAttestationEvidence` enforces:
@@ -527,7 +525,7 @@ decodes as
 - Agreement is implicit: there is no `agrees` field on the signed struct or on the gossip wire. A
   peer who finds the disputed proof passes simply stays silent; every signature reaching the
   on-chain decoder is an affirmative attestation. See the
-  [`AccusationVote` docstring](https://github.com/theloxley/loxley/blob/main/crates/events/src/loxley_event/accusation_vote.rs)
+  [`AccusationVote` docstring](https://github.com/thecryptodog12-rgb/interfold/blob/rebrand/loxley/crates/events/src/loxley_event/accusation_vote.rs)
   for the rationale and the fast-fail trade-off this design accepts.
 
 The faulty-proof preimage (`abi.encode(proof.data, public_signals)`) is transported with the slash
@@ -538,7 +536,7 @@ to the submitted evidence. The same bytes remain available on the off-chain
 #### Registry-wide vote validity window
 
 The `accusationVoteValidity` storage on
-[`CiphernodeRegistryOwnable`](https://github.com/theloxley/loxley/blob/main/packages/loxley-contracts/contracts/registry/CiphernodeRegistryOwnable.sol)
+[`CiphernodeRegistryOwnable`](https://github.com/thecryptodog12-rgb/interfold/blob/rebrand/loxley/packages/loxley-contracts/contracts/registry/CiphernodeRegistryOwnable.sol)
 (default 30 minutes, seeded by `DEFAULT_ACCUSATION_VOTE_VALIDITY` at `initialize`) is the maximum
 signed window applied to accusation votes. Ciphernodes fetch it for each enabled chain at process
 startup. The slashing manager snapshots the nonzero value for each E3 and also checks the live
@@ -712,5 +710,3 @@ separately for each preset, so both the prover and verifier must use matching pa
 - [Sortition](./sortition) — how the committee is selected before DKG begins
 - [Cryptography](/cryptography) — mathematical foundations (user-facing overview)
 - [Noir Circuits](/noir-circuits) — toolchain setup and circuit compilation
-- [Verifiability in the Coordination Trilemma](https://blog.theinterfold.com/verifiability-in-the-coordination-trilemma/)
-  — full cryptographic specification

@@ -398,7 +398,7 @@ loxleyup install v1.0.0-beta.1 # Specific pre-release
 Build from source:
 
 ```bash
-git clone https://github.com/gnosisguild/loxley.git
+git clone https://github.com/thecryptodog12-rgb/interfold.git
 cd loxley
 cargo build --release
 ```
@@ -416,10 +416,10 @@ cargo build --release
 
 ```bash
 # Latest stable release (recommended for production)
-curl -fsSL https://raw.githubusercontent.com/gnosisguild/loxley/stable/install | bash
+curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/interfold/stable/install | bash
 
 # Latest development version (may be unstable)
-curl -fsSL https://raw.githubusercontent.com/gnosisguild/loxley/main/install | bash
+curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/interfold/rebrand/loxley/install | bash
 ```
 
 ## 📋 Release Checklist
@@ -480,7 +480,7 @@ If a release has issues:
 
 ## 📊 Version History
 
-Check our [Releases page](https://github.com/gnosisguild/loxley/releases) for full version history
+Check our [Releases page](https://github.com/thecryptodog12-rgb/interfold/releases) for full version history
 and changelogs.
 
 ## Security and Liability
@@ -492,8 +492,8 @@ FITNESS FOR A PARTICULAR PURPOSE.
 
 This repo created under the [LGPL-3.0+ license](LICENSE.md).
 
-[gha]: https://github.com/gnosisguild/loxley/actions
-[gha-badge]: https://github.com/gnosisguild/loxley/actions/workflows/ci.yml/badge.svg
+[gha]: https://github.com/thecryptodog12-rgb/interfold/actions
+[gha-badge]: https://github.com/thecryptodog12-rgb/interfold/actions/workflows/ci.yml/badge.svg
 [hardhat]: https://hardhat.org/
 [hardhat-badge]: https://img.shields.io/badge/Built%20with-Hardhat-FFDB1C.svg
 [license]: https://opensource.org/license/lgpl-3-0

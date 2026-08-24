@@ -1,75 +1,75 @@
 ---
 title: 'LOXLEY Token'
 description:
-  'Frequently asked questions about the LOXLEY token — its purpose, utility, and role in the Loxley
-  network'
+  'Frequently asked questions about the LOXLEY token — what it does, how it launches, and what it
+  does not promise'
 ---
 
 import { Callout } from 'nextra/components'
 
 # LOXLEY Token
 
-<Callout type='error'>
-  **This page describes upstream Interfold's FOLD token, not Loxley's.** Loxley is a fork of
-  [theinterfold/interfold](https://github.com/theinterfold/interfold); no LOXLEY token has been
-  issued, no auction has been held, and none of the fundraising, valuations, allocations or unlock
-  schedules below belong to this project. The text survives here as inherited documentation and must
-  be rewritten or removed before Loxley makes any claim of its own.
+<Callout type='warning'>
+  **LOXLEY is not deployed.** No token exists at any address on any chain, and no sale of any kind
+  has been held. Nothing below is an offer.
 </Callout>
 
-## What role does LOXLEY play in the Loxley network?
+## What is LOXLEY for?
 
-Loxley is a distributed network for confidential coordination. Applications request Encrypted
-Execution Environments (E3s), while ciphernodes coordinate and secure each computation.
+It is the collateral ciphernode operators bond in order to be eligible for committee selection, and
+the stake that gets slashed when an operator misses a duty. Bonding is the whole job.
 
-LOXLEY supports the economic operation of the network.
+## Do I need LOXLEY to use Loxley?
 
-## What is the utility of the LOXLEY token?
+No. Requesting a computation is paid for in the fee token — USDG, six decimals — not in LOXLEY. If
+you are building on the network rather than securing it, you never touch LOXLEY.
 
-LOXLEY has three main, interlocking functions:
+## How does it launch?
 
-- **Ciphernode bonding** — Ciphernode operators bond LOXLEY to become eligible for network duties.
-  Bonded LOXLEY remains locked while the operator is registered and may be subject to
-  protocol-defined withdrawal periods and penalties for provable misbehavior or failure to fulfill
-  assigned responsibilities. These mechanisms align operational responsibility with economic
-  accountability.
-- **Protocol incentives** — Alongside a share of completed E3 fees, ciphernode operators may receive
-  LOXLEY incentives for successfully completing protocol-defined duties as members of an E3
-  committee.
-- **Governance** — LOXLEY is expected to support governance participation via the Loxley DAO.
-  Governance may include decisions related to network parameters, protocol upgrades, and treasury
-  administration. Governance processes may include secret-ballot mechanisms powered by the Loxley
-  network.
+Through a Pons pool on Robinhood Chain. There is no auction, no allowlist, no claim page, and no
+sale run by this project.
 
-## When does LOXLEY become generally transferable?
+<Callout type='error'>
+  There is no official sale, presale, or claim portal for LOXLEY, and there will not be one before
+  the token exists on chain. Anything presenting itself as one today is a scam, regardless of what
+  it looks like or who appears to be running it.
+</Callout>
 
-General LOXLEY transferability can be enabled at or after Aug 19 at **14:00 UTC (10 AM ET)**.
+## When can I transfer it?
 
-At or after Unix timestamp **`1787148000`**, anyone can call the `tge()` function on the LOXLEY
-contract to enable general transferability.
+Immediately, always. There is no TGE gate, no cliff, no vesting contract and no transfer lock — not
+as a policy, but because the contract has no code that could impose one. `lockedBalanceOf` returns
+zero for every address, at every timestamp.
 
-Once that transaction is executed, LOXLEY becomes generally transferable.
+## Can supply increase?
 
-General LOXLEY transferability and Network Alpha are distinct milestones within the broader Loxley
-launch sequence.
+No. The full supply is minted once inside the constructor and there is no `mint` function. This is
+not a promise not to mint; there is no code path that mints.
 
-## How can I use LOXLEY to operate a ciphernode?
+## Who controls the contract?
 
-Operating a ciphernode is designed to be permissionless. The setup involves provisioning cloud-based
-or personal hardware, running the ciphernode software, bonding the ciphernode, and completing
-onchain registration.
+Nobody. It stores no owner and no admin role, and it is not behind a proxy. There is no upgrade, no
+pause, no blocklist, and no fee switch — so there is also no key whose loss or misuse could reach
+your balance.
 
-Once registered, operators can participate in E3 committees when selected under protocol rules.
+## What is the total supply?
 
-For current setup requirements, bonding instructions, and operator documentation, see
-[Ciphernode Operators](/ciphernode-operators).
+1,200,000,000 LOXLEY, at 18 decimals.
 
-## Can I delegate my LOXLEY to a ciphernode operator?
+## Is it a governance token?
 
-No. Loxley's bonding model is deliberately operator-only. Every LOXLEY bonded to a ciphernode
-represents capital at risk to the operator running it.
+It carries `ERC20Votes`, so balance history is checkpointed and delegable, and the protocol uses
+that history for bonded-stake accounting. No governance system is deployed that consumes those votes
+today. If one is built, it gets documented here when it exists.
 
-Delegated capital would allow operators to run partially-owned ciphernodes, diluting accountability
-and weakening the network's economic security guarantees.
+## How do I verify any of this?
 
-If you need support, join the designated [Telegram group](https://t.me/enclave_e3).
+Read `packages/loxley-contracts/contracts/token/LoxleyBondToken.sol`. Once a deployment exists,
+verify the on-chain bytecode against that source rather than taking this page's word for it — the
+point of the design is that you do not have to trust the description.
+
+## Where do I bond it?
+
+See [Ciphernode registration](/ciphernode-operators/registration) for the bonding flow, and
+[Tickets and sortition](/ciphernode-operators/tickets-and-sortition) for how a bonded stake turns
+into committee eligibility.

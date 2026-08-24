@@ -1,83 +1,106 @@
 ---
 title: 'Loxley Tokenomics'
 description:
-  'An overview of the Loxley token: total supply, allocation across categories, and the vesting
-  schedule'
+  'The LOXLEY token — supply, decimals, powers the contract does not have, and its role as
+  ciphernode bonding collateral'
 ---
 
 import { Callout } from 'nextra/components'
 
-import { KeyParameters, AllocationPie, VestingSchedule } from '../components/Tokenomics'
-
 # LOXLEY Tokenomics
 
-<Callout type='error'>
-  **This page describes upstream Interfold's FOLD token, not Loxley's.** Loxley is a fork of
-  [theinterfold/interfold](https://github.com/theinterfold/interfold); no LOXLEY token has been
-  issued, no auction has been held, and none of the fundraising, valuations, allocations or unlock
-  schedules below belong to this project. The text survives here as inherited documentation and must
-  be rewritten or removed before Loxley makes any claim of its own.
+<Callout type='warning'>
+  **LOXLEY is not deployed.** No token exists at any address on any chain. The parameters below
+  describe what `LoxleyBondToken` does when it is deployed, taken from the contract source, not from
+  a launch that has happened.
 </Callout>
 
-<div style={{ margin: '1.5rem 0 2rem', borderRadius: '12px', overflow: 'hidden' }}>
-  <img
-    src='/tokenomics-banner.webp'
-    alt='Loxley tokenomics banner'
-    width={1500}
-    height={500}
-    style={{ width: '100%', height: 'auto', display: 'block' }}
-  />
-</div>
+## What the token is for
 
-<KeyParameters />
+LOXLEY is collateral. Ciphernode operators bond it to join the pool that sortition draws committees
+from, and it is what gets slashed when an operator fails a duty. That is its function in the
+protocol — everything else the token does is a consequence of being ordinary enough to trade.
 
-## Token Distribution
+It is deliberately **not** the token that pays for computation. Requesters pay fees in a separate
+token with a different width; see [Two tokens, two widths](#two-tokens-two-widths).
 
-The total supply of LOXLEY is 1.2 billion.
+## Parameters
 
-The chart below illustrates how total supply is distributed:
+|                 |                                                 |
+| --------------- | ----------------------------------------------- |
+| Name / symbol   | Loxley / LOXLEY                                 |
+| Total supply    | 1,200,000,000                                   |
+| Decimals        | 18                                              |
+| Chain           | Robinhood Chain (`4663`)                        |
+| Standard        | ERC-20, plus ERC-2612 permit and ERC-5805 votes |
+| Supply schedule | none — minted once, in the constructor          |
+| Launch          | a Pons pool, not an auction                     |
 
-<AllocationPie />
+## Powers the contract does not have
 
-## Community Allocations
+The interesting part of this token is what is missing from it. Every power a token contract holds is
+a promise somebody has to trust, and collateral is the worst place to ask for that trust: a token
+that can freeze a balance can freeze a bond.
 
-### Foundation Treasury
+So `LoxleyBondToken` has:
 
-Loxley has been built in the open and is freely available as open-source software under the LGPLv3
-license. A portion of supply is allocated to Loxley Foundation. Grants may be awarded proactively to
-support priority work or retroactively to recognize meaningful contributions.
+- **No `mint`.** Supply is minted once, inside the constructor. There is no function that can
+  increase it afterwards, so no amount of key compromise can dilute a holder.
+- **No owner.** No `Ownable`, no admin role, no upgrade path. There is nothing to renounce, because
+  there was never anything to hold.
+- **No pause, no blocklist, no transfer hook, no fee.** Transfers cannot be stopped, taxed, or
+  singled out.
+- **No lock, no cliff, no vesting.** `lockedBalanceOf` and `lockedBalanceAt` return zero, and they
+  return it because it is true, not as a stub. Every balance is fully transferable from the moment
+  it exists.
 
-### Unsold CCA Tokens
+These are not claims about intent. They are claims about the bytecode, and they are checkable: read
+the source at `packages/loxley-contracts/contracts/token/LoxleyBondToken.sol`, then verify the
+deployed contract matches once it exists.
 
-Tokens that were allocated to the Uniswap CCA that were not sold are to be returned back to the
-foundation for further fundraising and/or liquidity support.
+## Distribution
 
-### Airdrop
+The entire supply is minted to a single recipient at deployment. Where it goes after that — the Pons
+pool, an operator incentive reserve, anything else — is not enforced by the contract and is not
+claimed here.
 
-This allocation is reserved for eligible community participants and ecosystem contributors.
-Distribution criteria, eligibility requirements, and timing will be announced separately.
+<Callout type='info'>
+  This page does not publish an allocation chart. A pie with percentages implies commitments that
+  are encoded somewhere and can be checked; nothing in this contract encodes them. When allocations
+  are decided and locked in a contract that can be read, they get documented here, and not before.
+</Callout>
 
-## Other
+## Two tokens, two widths
 
-### Gnosis Guild
+Loxley uses two different tokens, and the registry checks both:
 
-This allocation recognises Gnosis Guild's early role and is subject to a 48-month release schedule.
+|              | Token  | Decimals | Used for                                  |
+| ------------ | ------ | -------- | ----------------------------------------- |
+| Bond         | LOXLEY | **18**   | operator collateral, slashing             |
+| Fee / ticket | USDG   | **6**    | paying for computation, ticket collateral |
 
-### Investors
+The width difference is not cosmetic. `BondingRegistry` stores `expectedCiphernodeBondDecimals: 18`
+and `expectedTicketDecimals: 6`, and rejects a token whose `decimals()` disagrees. Configuring an
+18-decimal token as the fee token fails with a custom error carrying only `(address, 6, 18)` — which
+tells you nothing at all unless you already knew to look here.
 
-Loxley, previously developed under the name Enclave, has completed the following fundraising rounds.
+## Votes and the clock
 
-- Pre-seed | $20m valuation
-- Seed | $25.8m valuation
-- A Legion round | $25.8m valuation
-- Uniswap Continuous Clearing Auction | ETH 14.4k valuation (~$25.8m at time of close)
+The token extends `ERC20Votes`, which gives it checkpointed balance history. It is wired to
+**timestamps**, not block numbers:
 
-All investor allocations will become transferable at the TGE date.
+```solidity
+function clock() public view override returns (uint48) {
+  return uint48(block.timestamp);
+}
 
-### Team and Advisors
+function CLOCK_MODE() public pure override returns (string memory) {
+  return 'mode=timestamp';
+}
+```
 
-Allocated to the core team and advisors who supported Loxley's early development.
-
-## Unlock Schedule
-
-<VestingSchedule />
+OpenZeppelin's default is block numbers, and the default is wrong here. `BondedCheckpoints` keeps
+its own history keyed by `block.timestamp`, and `BondedVotes` refuses to bind two histories whose
+clocks disagree — summing a timestamp-keyed history with a block-numbered one produces a number for
+two unrelated points in time, and nothing downstream could detect it. A plain `ERC20Votes` token
+reverts with `ClockMismatch` at deployment. That revert is the design working.

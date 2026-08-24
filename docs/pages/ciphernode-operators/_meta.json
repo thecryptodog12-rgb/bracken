@@ -16,7 +16,7 @@
   },
   "interactive-guide": {
     "title": "Interactive Setup Guide",
-    "href": "https://dashboard.theinterfold.com/#operator",
+    "href": "https://loxley-dashboard-solplay.vercel.app/#operator",
     "newWindow": true
   }
 }
