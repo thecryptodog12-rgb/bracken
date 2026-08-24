@@ -678,11 +678,21 @@ export const deployLoxley = async (
   console.log("Registering BFV param sets...");
   const activeParams =
     ACTIVE_BFV_PARAM_SET === 0 ? encodedInsecure : encodedSecure;
-  await send(
-    loxley.setParamSet(ACTIVE_BFV_PARAM_SET, activeParams),
-    "loxley.setParamSet",
-  );
-  console.log(`Active BFV parameter set ${ACTIVE_BFV_PARAM_SET} registered`);
+  // Eenmalig: setParamSet revert met ParamSetAlreadyRegistered zodra het slot
+  // gevuld is, ook met identieke parameters. paramSetRegistry is public, dus
+  // de vraag "staat het er al" is gewoon te stellen.
+  const existingParams = await loxley.paramSetRegistry(ACTIVE_BFV_PARAM_SET);
+  if (existingParams && existingParams !== "0x") {
+    console.log(
+      `BFV parameter set ${ACTIVE_BFV_PARAM_SET} already registered`,
+    );
+  } else {
+    await send(
+      loxley.setParamSet(ACTIVE_BFV_PARAM_SET, activeParams),
+      "loxley.setParamSet",
+    );
+    console.log(`Active BFV parameter set ${ACTIVE_BFV_PARAM_SET} registered`);
+  }
 
   const encryptionSchemeId = ethers.keccak256(ethers.toUtf8Bytes("fhe.rs:BFV"));
 
