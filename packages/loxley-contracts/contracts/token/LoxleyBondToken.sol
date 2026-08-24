@@ -9,6 +9,7 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { ERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import { ERC20Votes } from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import { Nonces } from "@openzeppelin/contracts/utils/Nonces.sol";
+import { ILockAwareCiphernodeBondToken } from "../interfaces/ILockAwareCiphernodeBondToken.sol";
 
 /// @title LoxleyBondToken
 /// @notice A plain, fixed-supply ERC-20 for ciphernode bonding.
@@ -38,7 +39,7 @@ import { Nonces } from "@openzeppelin/contracts/utils/Nonces.sol";
 ///
 ///      18 decimals: the BondingRegistry's bond amounts assume it. The fee and
 ///      ticket collateral token is a separate contract and needs 6.
-contract LoxleyBondToken is ERC20, ERC20Permit, ERC20Votes {
+contract LoxleyBondToken is ERC20, ERC20Permit, ERC20Votes, ILockAwareCiphernodeBondToken {
     /// @param name_ Token name, e.g. "Loxley".
     /// @param symbol_ Token symbol, e.g. "LOXLEY".
     /// @param initialSupply Whole tokens minted to `recipient` (scaled by 1e18).
@@ -52,6 +53,41 @@ contract LoxleyBondToken is ERC20, ERC20Permit, ERC20Votes {
         require(recipient != address(0), "recipient is zero");
         require(initialSupply > 0, "supply is zero");
         _mint(recipient, initialSupply * 10 ** decimals());
+    }
+
+    // ── Clock ───────────────────────────────────────────────────────────────
+    // Timestamps, not block numbers.
+    //
+    // OpenZeppelin's ERC20Votes defaults to block numbers. BondedCheckpoints
+    // uses block.timestamp, and BondedVotes refuses to bind two histories whose
+    // clocks disagree -- summing a timestamp-keyed history with a block-numbered
+    // one would produce a number for two unrelated points in time, and nothing
+    // downstream could tell. It checks once at deployment and reverts with
+    // ClockMismatch, which is exactly what a plain ERC20Votes token hits.
+
+    /// @notice EIP-6372 clock: unix timestamp.
+    function clock() public view override returns (uint48) {
+        return uint48(block.timestamp);
+    }
+
+    /// @notice EIP-6372 clock mode.
+    // solhint-disable-next-line func-name-mixedcase
+    function CLOCK_MODE() public pure override returns (string memory) {
+        return "mode=timestamp";
+    }
+
+    // ── Lock reporting ──────────────────────────────────────────────────────
+    // This token has no vesting, no cliffs and no locks: every balance is fully
+    // transferable the moment it exists. Zero is the honest answer, not a stub.
+
+    /// @inheritdoc ILockAwareCiphernodeBondToken
+    function lockedBalanceOf(address) external pure returns (uint256) {
+        return 0;
+    }
+
+    /// @inheritdoc ILockAwareCiphernodeBondToken
+    function lockedBalanceAt(address, uint64) external pure returns (uint256) {
+        return 0;
     }
 
     // ── Diamond-resolution overrides ────────────────────────────────────────
