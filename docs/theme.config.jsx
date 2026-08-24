@@ -12,14 +12,13 @@ import Footer from './components/Footer'
 // build ingebakken; wie zelf publiceert zet NEXT_PUBLIC_SITE_URL.
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:5174').replace(/\/$/, '')
 
-// Het pad naar de fork zelf. Stond op github.com/thecryptodog12-rgb/interfold en
-// gnosisguild/loxley -- allebei 404: de hernoemslag heeft die namen verzonnen,
-// ze hebben nooit bestaan. "Edit this page" leidde dus nergens heen.
-const REPO = 'https://github.com/thecryptodog12-rgb/interfold'
+// De repo. Stond eerder op twee namen die de hernoemslag had verzonnen en die
+// allebei 404 gaven, waardoor "Edit this page" nergens heen leidde.
+const REPO = 'https://github.com/thecryptodog12-rgb/loxley'
 
-// Waar deze docs zelf staan. Stond hardgecodeerd op docs.theinterfold.com in
-// elke og:- en twitter:-tag, dus elke gedeelde link kondigde andermans domein
-// aan als de canonieke plek van onze pagina's.
+// Waar deze docs zelf staan. Stond hardgecodeerd op een vreemd domein in elke
+// og:- en twitter:-tag, dus elke gedeelde link kondigde dat aan als de
+// canonieke plek van onze pagina's.
 const DOCS_URL = (process.env.NEXT_PUBLIC_DOCS_URL || 'https://loxley-docs-solplay.vercel.app').replace(/\/$/, '')
 
 export default {
@@ -71,7 +70,7 @@ export default {
   project: {
     link: REPO,
   },
-  docsRepositoryBase: `${REPO}/tree/rebrand/loxley/docs`,
+  docsRepositoryBase: `${REPO}/tree/main/docs`,
   darkMode: false,
   nextThemes: {
     defaultTheme: 'light',

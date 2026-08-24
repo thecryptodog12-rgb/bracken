@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thecryptodog12-rgb/interfold.git",
+    "url": "https://github.com/thecryptodog12-rgb/loxley.git",
     "directory": "crates/wasm"
   },
   "exports": {

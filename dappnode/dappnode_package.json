@@ -3,7 +3,7 @@
   "version": "0.2.3",
   "upstreamVersion": "0.2.3",
   "upstreamArg": "UPSTREAM_VERSION",
-  "upstreamRepo": "thecryptodog12-rgb/interfold",
+  "upstreamRepo": "thecryptodog12-rgb/loxley",
   "shortDescription": "Loxley Ciphernode - Run a node for confidential computing",
   "description": "Run an Loxley ciphernode to participate in the E3 (Encrypted Execution Environments) network.",
   "type": "service",
@@ -14,15 +14,15 @@
   "links": {
     "homepage": "https://loxley.network",
     "docs": "https://docs.loxley.network",
-    "repository": "https://github.com/thecryptodog12-rgb/interfold"
+    "repository": "https://github.com/thecryptodog12-rgb/loxley"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thecryptodog12-rgb/interfold.git",
+    "url": "https://github.com/thecryptodog12-rgb/loxley.git",
     "directory": "dappnode"
   },
   "bugs": {
-    "url": "https://github.com/thecryptodog12-rgb/interfold/issues"
+    "url": "https://github.com/thecryptodog12-rgb/loxley/issues"
   },
   "license": "LGPL-3.0-only",
   "requirements": {

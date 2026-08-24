@@ -51,10 +51,10 @@ You can add Metamask as an extension to your browser following the official
 ### Install the Loxley CLI
 
 The easiest way to install the Loxley CLI is using our installer script:
-`curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/interfold/rebrand/loxley/install | bash`
+`curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash`
 
 Or if you prefer wget:
-`wget -qO- https://raw.githubusercontent.com/thecryptodog12-rgb/interfold/rebrand/loxley/install | bash`
+`wget -qO- https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash`
 
 This script will download and install loxleyup, which is the standalone installer for the Loxley
 CLI.

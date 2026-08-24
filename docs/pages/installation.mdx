@@ -20,13 +20,13 @@ For full hardware and software requirements, see [System Requirements](/requirem
 The easiest way to install the Loxley CLI is using our installer script:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/interfold/rebrand/loxley/install | bash
+curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash
 ```
 
 Or if you prefer `wget`:
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/thecryptodog12-rgb/interfold/rebrand/loxley/install | bash
+wget -qO- https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash
 ```
 
 This script will download and install `loxleyup`, which is the standalone installer for the Loxley
@@ -77,7 +77,7 @@ with no additional dependencies — Nix handles everything including installing 
 Get a devshell directly without installing it:
 
 ```bash
-nix develop github:thecryptodog12-rgb/interfold/{branch,tag,commit}
+nix develop github:thecryptodog12-rgb/loxley/{branch,tag,commit}
 ```
 
 This will build from source using the nix package manager and provide a runtime environemnt for
@@ -85,7 +85,7 @@ loxley. It might take some time but the result will be cached on your local nix 
 execution.
 
 ```bash
-❯ nix develop github:thecryptodog12-rgb/interfold/v0.2.2
+❯ nix develop github:thecryptodog12-rgb/loxley/v0.2.2
 ❯ loxley --version
 loxley 0.2.2
 ❯ bb --version
@@ -108,7 +108,7 @@ If you decline, everything still works — it just builds from source, which tak
 
 If you prefer to install manually:
 
-1. Visit the [releases page](https://github.com/thecryptodog12-rgb/interfold/releases)
+1. Visit the [releases page](https://github.com/thecryptodog12-rgb/loxley/releases)
 2. Download the appropriate release archive for your platform:
    - Linux: `loxley-linux-x86_64.tar.gz`
    - macOS: `loxley-macos-aarch64.tar.gz`
@@ -133,7 +133,7 @@ If you need to build `loxley` from source:
 2. Clone the repository
 
 ```bash
-git clone https://github.com/thecryptodog12-rgb/interfold.git
+git clone https://github.com/thecryptodog12-rgb/loxley.git
 cd loxley
 ```
 

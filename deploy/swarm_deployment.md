@@ -56,7 +56,7 @@ sudo systemctl restart docker
 Clone the repo
 
 ```
-git clone https://github.com/thecryptodog12-rgb/interfold.git
+git clone https://github.com/thecryptodog12-rgb/loxley.git
 ```
 
 Move to the new folder:

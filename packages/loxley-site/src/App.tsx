@@ -23,7 +23,7 @@ import { Wordmark } from './Wordmark'
 
 const DOCS = 'https://loxley-docs-solplay.vercel.app/introduction'
 const DASHBOARD = 'https://loxley-dashboard-solplay.vercel.app'
-const REPO = 'https://github.com/thecryptodog12-rgb/interfold'
+const REPO = 'https://github.com/thecryptodog12-rgb/loxley'
 
 type Path = { eyebrow: string; title: string; body: string; cta: string; href: string; ready: boolean }
 
