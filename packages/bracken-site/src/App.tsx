@@ -25,7 +25,7 @@ import { Wordmark } from './Wordmark'
 const DOCS_BASE = 'https://docs.loxley-rh.com'
 const DOCS = `${DOCS_BASE}/introduction`
 const DASHBOARD = 'https://app.loxley-rh.com'
-const REPO = 'https://github.com/thecryptodog12-rgb/loxley'
+const REPO = 'https://github.com/thecryptodog12-rgb/bracken'
 
 type Path = { eyebrow: string; title: string; body: string; cta: string; href: string; ready: boolean }
 

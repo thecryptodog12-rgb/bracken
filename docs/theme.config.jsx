@@ -14,7 +14,7 @@ const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:5174').repla
 
 // De repo. Stond eerder op twee namen die de hernoemslag had verzonnen en die
 // allebei 404 gaven, waardoor "Edit this page" nergens heen leidde.
-const REPO = 'https://github.com/thecryptodog12-rgb/loxley'
+const REPO = 'https://github.com/thecryptodog12-rgb/bracken'
 
 // Waar deze docs zelf staan. Stond hardgecodeerd op een vreemd domein in elke
 // og:- en twitter:-tag, dus elke gedeelde link kondigde dat aan als de

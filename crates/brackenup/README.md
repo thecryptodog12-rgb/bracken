@@ -9,19 +9,19 @@ A standalone installer for the Bracken CLI tool.
 Use the provided install script to download and install `brackenup`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash
+curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/bracken/main/install | bash
 ```
 
 Or with wget:
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash
+wget -qO- https://raw.githubusercontent.com/thecryptodog12-rgb/bracken/main/install | bash
 ```
 
 ### Manual Installation
 
 1. Download the appropriate binary for your platform from the
-   [releases page](https://github.com/thecryptodog12-rgb/loxley/releases)
+   [releases page](https://github.com/thecryptodog12-rgb/bracken/releases)
 2. Extract the binary and place it in your PATH (e.g., `~/.local/bin` or `/usr/local/bin`)
 3. Make sure the binary is executable: `chmod +x brackenup`
 

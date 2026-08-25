@@ -31,7 +31,7 @@ use tokio::fs;
 use crate::logging::TaskSpinner;
 
 const DEFAULT_TEMPLATE_URL: &str =
-    "https://github.com/thecryptodog12-rgb/loxley.git#v{{VERSION}}:templates/default";
+    "https://github.com/thecryptodog12-rgb/bracken.git#v{{VERSION}}:templates/default";
 const TEMP_DIR: &str = "/tmp/__bracken-tmp-folder.1";
 const DEFAULT_TEMPLATE_PATH: &str = ".";
 const DEFAULT_BRANCH: &str = "main";
@@ -126,22 +126,22 @@ async fn install_bracken(cwd: &PathBuf, template: Option<String>, verbose: bool)
                     Filter::new(
                         "**/Cargo.toml",
                         r"(?m)^e3-program-server =.*\n?",
-                        &format!("e3-program-server = {{ git = \"https://github.com/thecryptodog12-rgb/loxley\", rev = \"{}\" }}\n",commit_hash),
+                        &format!("e3-program-server = {{ git = \"https://github.com/thecryptodog12-rgb/bracken\", rev = \"{}\" }}\n",commit_hash),
                     ),
                     Filter::new(
                        "**/Cargo.toml",
                        r"(?m)^e3-bfv-client =.*\n?",
-                       &format!("e3-bfv-client = {{ git = \"https://github.com/thecryptodog12-rgb/loxley\", rev = \"{}\" }}\n",commit_hash),
+                       &format!("e3-bfv-client = {{ git = \"https://github.com/thecryptodog12-rgb/bracken\", rev = \"{}\" }}\n",commit_hash),
                     ),
                     Filter::new(
                        "**/Cargo.toml",
                        r"(?m)^e3-fhe-params =.*\n?",
-                       &format!("e3-fhe-params = {{ git = \"https://github.com/thecryptodog12-rgb/loxley\", rev = \"{}\" }}\n",commit_hash),
+                       &format!("e3-fhe-params = {{ git = \"https://github.com/thecryptodog12-rgb/bracken\", rev = \"{}\" }}\n",commit_hash),
                     ),
                     Filter::new(
                        "**/Cargo.toml",
                        r"(?m)^e3-compute-provider =.*\n?",
-                       &format!("e3-compute-provider = {{ git = \"https://github.com/thecryptodog12-rgb/loxley\", rev = \"{}\" }}\n",commit_hash),
+                       &format!("e3-compute-provider = {{ git = \"https://github.com/thecryptodog12-rgb/bracken\", rev = \"{}\" }}\n",commit_hash),
                     ),
                 ],
             )
@@ -374,7 +374,7 @@ pub async fn execute(
             }
             eprintln!("❌ Sorry about this but there was an error running the installer. ");
             eprintln!("❌ Error: {}\n", e);
-            eprintln!("Bracken is currently under active development please share this with our team:\n\n  https://github.com/thecryptodog12-rgb/loxley/issues/new\n");
+            eprintln!("Bracken is currently under active development please share this with our team:\n\n  https://github.com/thecryptodog12-rgb/bracken/issues/new\n");
             exit(1);
         }
     }

@@ -544,7 +544,7 @@ jobs:
 
           Install the installer:
           \`\`\`bash
-          curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash
+          curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/bracken/main/install | bash
           \`\`\`
 
           Then use it to install bracken:

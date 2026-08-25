@@ -51,10 +51,10 @@ You can add Metamask as an extension to your browser following the official
 ### Install the Bracken CLI
 
 The easiest way to install the Bracken CLI is using our installer script:
-`curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash`
+`curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/bracken/main/install | bash`
 
 Or if you prefer wget:
-`wget -qO- https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash`
+`wget -qO- https://raw.githubusercontent.com/thecryptodog12-rgb/bracken/main/install | bash`
 
 This script will download and install brackenup, which is the standalone installer for the Bracken
 CLI.

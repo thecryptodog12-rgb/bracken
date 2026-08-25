@@ -21,6 +21,6 @@ export const socialLinks: SocialLinksProps[] = [
   {
     name: 'github',
     icon: <GitHubLogo size={24} />,
-    url: 'https://github.com/thecryptodog12-rgb/loxley',
+    url: 'https://github.com/thecryptodog12-rgb/bracken',
   },
 ]

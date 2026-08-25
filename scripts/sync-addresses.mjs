@@ -133,7 +133,7 @@ rejects a fee token whose \`decimals()\` disagrees. The bond token is 18. See
 Most contracts have their source published on Blockscout, so you can read what
 runs rather than trusting this page. Where a contract still shows as unverified,
 the source is in
-[the repository](https://github.com/thecryptodog12-rgb/loxley/tree/main/packages/bracken-contracts/contracts)
+[the repository](https://github.com/thecryptodog12-rgb/bracken/tree/main/packages/bracken-contracts/contracts)
 and can be matched against the deployed bytecode yourself.
 `);
 

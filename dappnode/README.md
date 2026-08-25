@@ -281,4 +281,4 @@ new package version.
 - [DAppNode Package Development – Single Configuration](https://docs.dappnode.io/docs/dev/package-development/single-configuration/)
 - [DAppNode Docker Compose Reference](https://docs.dappnode.io/docs/dev/references/docker-compose/)
 - [DAppNode Setup Wizard Reference](https://docs.dappnode.io/docs/dev/references/setup-wizard/)
-- [Bracken GitHub Repository](https://github.com/thecryptodog12-rgb/loxley)
+- [Bracken GitHub Repository](https://github.com/thecryptodog12-rgb/bracken)

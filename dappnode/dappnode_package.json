@@ -3,7 +3,7 @@
   "version": "0.2.3",
   "upstreamVersion": "0.2.3",
   "upstreamArg": "UPSTREAM_VERSION",
-  "upstreamRepo": "thecryptodog12-rgb/loxley",
+  "upstreamRepo": "thecryptodog12-rgb/bracken",
   "shortDescription": "Bracken Ciphernode - Run a node for confidential computing",
   "description": "Run an Bracken ciphernode to participate in the E3 (Encrypted Execution Environments) network.",
   "type": "service",
@@ -14,15 +14,15 @@
   "links": {
     "homepage": "https://bracken.network",
     "docs": "https://docs.bracken.network",
-    "repository": "https://github.com/thecryptodog12-rgb/loxley"
+    "repository": "https://github.com/thecryptodog12-rgb/bracken"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thecryptodog12-rgb/loxley.git",
+    "url": "https://github.com/thecryptodog12-rgb/bracken.git",
     "directory": "dappnode"
   },
   "bugs": {
-    "url": "https://github.com/thecryptodog12-rgb/loxley/issues"
+    "url": "https://github.com/thecryptodog12-rgb/bracken/issues"
   },
   "license": "LGPL-3.0-only",
   "requirements": {

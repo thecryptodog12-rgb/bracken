@@ -30,7 +30,7 @@ export const LINKS = {
   docs: `${DOCS}/introduction`,
   architecture: `${DOCS}/architecture-overview`,
   crisp: `${DOCS}/CRISP/introduction`,
-  repo: envStr('VITE_REPO_URL', 'https://github.com/thecryptodog12-rgb/loxley'),
+  repo: envStr('VITE_REPO_URL', 'https://github.com/thecryptodog12-rgb/bracken'),
 
   explorer: 'https://explorer.mainnet.chain.robinhood.com',
 } as const

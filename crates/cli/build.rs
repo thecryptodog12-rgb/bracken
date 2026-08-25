@@ -40,7 +40,7 @@ fn get_remote_commit_hash() -> Option<String> {
     let output = Command::new("git")
         .args([
             "ls-remote",
-            "https://github.com/thecryptodog12-rgb/loxley",
+            "https://github.com/thecryptodog12-rgb/bracken",
             "refs/heads/main",
         ])
         .output()

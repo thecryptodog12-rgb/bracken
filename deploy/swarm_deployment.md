@@ -56,7 +56,7 @@ sudo systemctl restart docker
 Clone the repo
 
 ```
-git clone https://github.com/thecryptodog12-rgb/loxley.git
+git clone https://github.com/thecryptodog12-rgb/bracken.git
 ```
 
 Move to the new folder:

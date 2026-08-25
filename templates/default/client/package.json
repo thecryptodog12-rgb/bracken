@@ -7,7 +7,7 @@
     "name": "gnosisguild",
     "url": "https://github.com/gnosisguild"
   },
-  "homepage": "https://github.com/thecryptodog12-rgb/loxley",
+  "homepage": "https://github.com/thecryptodog12-rgb/bracken",
   "scripts": {
     "dev": "vite --no-open --host",
     "build": "tsc && vite build",

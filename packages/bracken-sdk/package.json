@@ -36,7 +36,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thecryptodog12-rgb/loxley.git",
+    "url": "https://github.com/thecryptodog12-rgb/bracken.git",
     "directory": "packages/bracken-sdk"
   },
   "scripts": {

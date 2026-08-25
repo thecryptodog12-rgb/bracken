@@ -379,17 +379,17 @@ The DKG aggregator proof surfaces, as public outputs, the array of `party_ids`, 
 ### `publishCommittee` verification
 
 When the aggregator calls
-[`CiphernodeRegistry.publishCommittee`](https://github.com/thecryptodog12-rgb/loxley/blob/main/packages/bracken-contracts/contracts/registry/CiphernodeRegistryOwnable.sol),
+[`CiphernodeRegistry.publishCommittee`](https://github.com/thecryptodog12-rgb/bracken/blob/main/packages/bracken-contracts/contracts/registry/CiphernodeRegistryOwnable.sol),
 the registry runs two checks in order:
 
 1. **Honk proof verification** via
-   [`BfvPkVerifier`](https://github.com/thecryptodog12-rgb/loxley/blob/main/packages/bracken-contracts/contracts/verifiers/bfv/BfvPkVerifier.sol).
+   [`BfvPkVerifier`](https://github.com/thecryptodog12-rgb/bracken/blob/main/packages/bracken-contracts/contracts/verifiers/bfv/BfvPkVerifier.sol).
    It checks the recursive VK hashes for `node_fold` and `pk_aggregation` (so the underlying
    circuits are the deployed ones), the committee-hash hi/lo limbs match
    `CommitteeHashLib.hash(c.topNodes)`, the surfaced `pkCommitment` equals the caller-supplied
    value, and the raw Honk proof verifies.
 2. **Fold-attestation verification** via
-   [`DkgFoldAttestationVerifier`](https://github.com/thecryptodog12-rgb/loxley/blob/main/packages/bracken-contracts/contracts/verifiers/DkgFoldAttestationVerifier.sol).
+   [`DkgFoldAttestationVerifier`](https://github.com/thecryptodog12-rgb/bracken/blob/main/packages/bracken-contracts/contracts/verifiers/DkgFoldAttestationVerifier.sol).
    It walks the bundle's `(partyId, node)` bindings — strictly ascending by `partyId`, no duplicates
    — and for each binding: requires `canonicalCommitteeNodeAt(e3Id, partyId) == node` (slot
    binding), requires `isCommitteeMemberActive(e3Id, node)`, recovers the signer via `ecrecover` on
@@ -485,7 +485,7 @@ The repo enforces sync with two modes of `pnpm generate:verifiers`:
 The version pinning lives in `crates/zk-prover/versions.json` (consumed by `bracken noir setup` and
 by the integration test prebuild). If `--check` fails after a clean
 `pnpm build:circuits --preset insecure-512`, your local toolchain is out of sync with that pin. See
-[`scripts/README.md`](https://github.com/thecryptodog12-rgb/loxley/blob/main/scripts/README.md#verifier-generator)
+[`scripts/README.md`](https://github.com/thecryptodog12-rgb/bracken/blob/main/scripts/README.md#verifier-generator)
 for the full contract.
 
 ### Decryption recursive proof
@@ -503,7 +503,7 @@ coefficient each, packed into bytes).
 ### Slashing-evidence binding
 
 When fault attribution leads to a slash, the off-chain accusation quorum produces a payload that
-[`SlashingManager.proposeSlash`](https://github.com/thecryptodog12-rgb/loxley/blob/main/packages/bracken-contracts/contracts/slashing/SlashingManager.sol)
+[`SlashingManager.proposeSlash`](https://github.com/thecryptodog12-rgb/bracken/blob/main/packages/bracken-contracts/contracts/slashing/SlashingManager.sol)
 decodes as
 `(uint256 proofType, address[] voters, bytes32[] dataHashes, bytes evidence, uint256 issuedAt, uint256 deadline, bytes[] signatures)`.
 `_verifyAttestationEvidence` enforces:
@@ -525,7 +525,7 @@ decodes as
 - Agreement is implicit: there is no `agrees` field on the signed struct or on the gossip wire. A
   peer who finds the disputed proof passes simply stays silent; every signature reaching the
   on-chain decoder is an affirmative attestation. See the
-  [`AccusationVote` docstring](https://github.com/thecryptodog12-rgb/loxley/blob/main/crates/events/src/bracken_event/accusation_vote.rs)
+  [`AccusationVote` docstring](https://github.com/thecryptodog12-rgb/bracken/blob/main/crates/events/src/bracken_event/accusation_vote.rs)
   for the rationale and the fast-fail trade-off this design accepts.
 
 The faulty-proof preimage (`abi.encode(proof.data, public_signals)`) is transported with the slash
@@ -536,7 +536,7 @@ to the submitted evidence. The same bytes remain available on the off-chain
 #### Registry-wide vote validity window
 
 The `accusationVoteValidity` storage on
-[`CiphernodeRegistryOwnable`](https://github.com/thecryptodog12-rgb/loxley/blob/main/packages/bracken-contracts/contracts/registry/CiphernodeRegistryOwnable.sol)
+[`CiphernodeRegistryOwnable`](https://github.com/thecryptodog12-rgb/bracken/blob/main/packages/bracken-contracts/contracts/registry/CiphernodeRegistryOwnable.sol)
 (default 30 minutes, seeded by `DEFAULT_ACCUSATION_VOTE_VALIDITY` at `initialize`) is the maximum
 signed window applied to accusation votes. Ciphernodes fetch it for each enabled chain at process
 startup. The slashing manager snapshots the nonzero value for each E3 and also checks the live
