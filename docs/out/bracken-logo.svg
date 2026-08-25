@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 232 44" width="232" height="44" role="img" aria-label="Loxley">
-  <title>Loxley</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 232 44" width="232" height="44" role="img" aria-label="Bracken">
+  <title>Bracken</title>
   <!--
-    Hood-merk + woordmerk, gelijk aan packages/loxley-dashboard/src/Wordmark.tsx.
+    Hood-merk + woordmerk, gelijk aan packages/bracken-dashboard/src/Wordmark.tsx.
     De cowl met het gezicht leeg gelaten: de identiteit is verborgen, het
     silhouet niet.
 
@@ -17,5 +17,5 @@
       fill="#1c5c3f" fill-opacity="0.28" />
   </g>
   <text x="34" y="31" fill="#15211b" font-size="27" letter-spacing="-0.4"
-    font-family="'Iowan Old Style','Palatino Linotype',Palatino,Georgia,'Times New Roman',serif">Loxley</text>
+    font-family="'Iowan Old Style','Palatino Linotype',Palatino,Georgia,'Times New Roman',serif">Bracken</text>
 </svg>

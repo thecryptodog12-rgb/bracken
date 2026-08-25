@@ -44,9 +44,9 @@ deployments
 test-results/
 playwright-report/
 .cache-synpress/
-.loxley/data/ 
-.loxley/config/ 
-.loxley/caches/
-.loxley/ready
-.loxley/noir/
+.bracken/data/ 
+.bracken/config/ 
+.bracken/caches/
+.bracken/ready
+.bracken/noir/
 cache_hardhat/

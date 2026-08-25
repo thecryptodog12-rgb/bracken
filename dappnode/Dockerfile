@@ -1,4 +1,4 @@
-# DAppNode Loxley Ciphernode Dockerfile
+# DAppNode Bracken Ciphernode Dockerfile
 # Uses official upstream image from GitHub Container Registry
 
 ARG UPSTREAM_VERSION
@@ -25,8 +25,8 @@ RUN install -d -o ciphernode -g ciphernode -m 0750 /data \
     && install -d -o ciphernode -g ciphernode -m 0700 /run/secrets
 
 # Copy binary from upstream
-COPY --from=upstream /usr/local/bin/loxley /usr/local/bin/loxley
-RUN chmod +x /usr/local/bin/loxley
+COPY --from=upstream /usr/local/bin/bracken /usr/local/bin/bracken
+RUN chmod +x /usr/local/bin/bracken
 
 # Copy entrypoint and config template
 COPY --chmod=755 entrypoint.sh /usr/local/bin/entrypoint.sh
@@ -36,8 +36,8 @@ COPY --chmod=444 provision-credentials.exp /opt/provision-credentials.exp
 
 # Labels
 LABEL maintainer="Gnosis Guild <https://gnosisguild.org>"
-LABEL org.opencontainers.image.source="https://github.com/gnosisguild/loxley"
-LABEL org.opencontainers.image.description="Loxley Ciphernode for DAppNode"
+LABEL org.opencontainers.image.source="https://github.com/gnosisguild/bracken"
+LABEL org.opencontainers.image.description="Bracken Ciphernode for DAppNode"
 
 USER ciphernode
 WORKDIR /data

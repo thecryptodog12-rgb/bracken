@@ -2,8 +2,8 @@
 
 set -e
 
-GITHUB_REPO="gnosisguild/loxley"
-BINARY_NAME="loxleyup"
+GITHUB_REPO="gnosisguild/bracken"
+BINARY_NAME="brackenup"
 INSTALL_DIR="$HOME/.local/bin"
 
 log_info() {
@@ -133,7 +133,7 @@ get_download_url() {
 }
 
 main() {
-    log_info "Loxley Installer"
+    log_info "Bracken Installer"
     local platform
     platform=$(detect_platform)
     log_info "Detected platform: $platform"
@@ -191,11 +191,11 @@ main() {
     echo ""
     log_success "Installation complete!"
     echo ""
-    echo "You can now use $BINARY_NAME to install the Loxley CLI:"
+    echo "You can now use $BINARY_NAME to install the Bracken CLI:"
     echo ""
-    echo "  $BINARY_NAME install    # Install the latest loxley CLI"
+    echo "  $BINARY_NAME install    # Install the latest bracken CLI"
     echo "  $BINARY_NAME update     # Update to the latest version"
-    echo "  $BINARY_NAME uninstall  # Remove the loxley CLI"
+    echo "  $BINARY_NAME uninstall  # Remove the bracken CLI"
     echo "  $BINARY_NAME --help     # Show help"
     echo ""
 }

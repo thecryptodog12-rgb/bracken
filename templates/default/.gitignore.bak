@@ -3,7 +3,7 @@ node_modules
 
 .direnv
 
-/.loxley
+/.bracken
 
 # Hardhat files
 /cache

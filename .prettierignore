@@ -11,7 +11,7 @@ deployments
 .cargo
 .next
 .cache-synpress
-.loxley
+.bracken
 
 # files
 *.env
@@ -19,7 +19,7 @@ deployments
 .DS_Store
 .pnp.*
 coverage.json
-loxley.config.yaml
+bracken.config.yaml
 
 # lock files
 package-lock.json

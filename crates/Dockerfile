@@ -2,10 +2,10 @@ FROM node:22 AS evm-builder
 
 WORKDIR /build
 COPY crates/wasm/package.json ./crates/wasm/package.json
-COPY packages/loxley-react ./packages/loxley-react
-COPY packages/loxley-sdk ./packages/loxley-sdk
-COPY packages/loxley-config ./packages/loxley-config
-COPY packages/loxley-contracts ./packages/loxley-contracts
+COPY packages/bracken-react ./packages/bracken-react
+COPY packages/bracken-sdk ./packages/bracken-sdk
+COPY packages/bracken-config ./packages/bracken-config
+COPY packages/bracken-contracts ./packages/bracken-contracts
 COPY package.json .
 COPY pnpm-workspace.yaml .
 COPY pnpm-lock.yaml .
@@ -14,7 +14,7 @@ RUN npm install -g corepack
 RUN corepack enable
 
 # We just need the contracts to be compiled here
-RUN cd packages/loxley-contracts && pnpm install && pnpm compile:contracts
+RUN cd packages/bracken-contracts && pnpm install && pnpm compile:contracts
 
 # Build stage
 FROM rust:1.91 AS ciphernode-builder
@@ -39,8 +39,8 @@ COPY Cargo.toml ./Cargo.toml
 COPY ./rust-toolchain.toml .
 
 WORKDIR /build/crates
-COPY --from=evm-builder /build/packages/loxley-contracts/artifacts ../packages/loxley-contracts/artifacts
-COPY --from=evm-builder /build/packages/loxley-contracts/deployed_contracts.json ../packages/loxley-contracts/deployed_contracts.json
+COPY --from=evm-builder /build/packages/bracken-contracts/artifacts ../packages/bracken-contracts/artifacts
+COPY --from=evm-builder /build/packages/bracken-contracts/deployed_contracts.json ../packages/bracken-contracts/deployed_contracts.json
 
 # find crates/* -name "Cargo.toml" -not -path "*/support/*" -printf "COPY %p %p\n" | sed 's|COPY \(.*\) crates/|COPY \1 ./|'
 COPY crates/aggregator/Cargo.toml ./aggregator/Cargo.toml
@@ -53,7 +53,7 @@ COPY crates/config/Cargo.toml ./config/Cargo.toml
 COPY crates/console/Cargo.toml ./console/Cargo.toml
 COPY crates/crypto/Cargo.toml ./crypto/Cargo.toml
 COPY crates/data/Cargo.toml ./data/Cargo.toml
-COPY crates/loxleyup/Cargo.toml ./loxleyup/Cargo.toml
+COPY crates/brackenup/Cargo.toml ./brackenup/Cargo.toml
 COPY crates/entrypoint/Cargo.toml ./entrypoint/Cargo.toml
 COPY crates/events/Cargo.toml ./events/Cargo.toml
 COPY crates/evm/Cargo.toml ./evm/Cargo.toml
@@ -94,7 +94,7 @@ RUN echo 'fn main() { println!("cargo:warning=dependency cache build"); }' > ./e
 RUN echo 'fn main() { println!("cargo:warning=dependency cache build"); }' > ./cli/build.rs
 RUN for d in ./*/ ; do \
         if [ -f "$d/Cargo.toml" ]; then \
-          if [ "$d" = "./cli/" ] || [ "$d" = "./loxleyup/" ]; then \
+          if [ "$d" = "./cli/" ] || [ "$d" = "./brackenup/" ]; then \
             mkdir -p "$d/src" && \
             echo "fn main() {}" > "$d/src/main.rs"; \
           elif [ "$d" = "./utils-derive/" ]; then \
@@ -131,8 +131,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends iptables dnsuti
 RUN useradd -m -u 1000 -s /bin/bash ciphernode
 
 # Create necessary directories with proper permissions
-RUN mkdir -p /home/ciphernode/.config/loxley \
-    /home/ciphernode/.local/share/loxley \
+RUN mkdir -p /home/ciphernode/.config/bracken \
+    /home/ciphernode/.local/share/bracken \
     /run/secrets && \
     chown -R ciphernode:ciphernode /home/ciphernode /run/secrets
 
@@ -141,12 +141,12 @@ USER ciphernode
 WORKDIR /home/ciphernode
 
 # Copy binary from builder
-COPY --from=ciphernode-builder --chown=ciphernode:ciphernode /build/target/release/loxley /usr/local/bin/
+COPY --from=ciphernode-builder --chown=ciphernode:ciphernode /build/target/release/bracken /usr/local/bin/
 COPY --from=ciphernode-builder --chmod=755 --chown=ciphernode:ciphernode /build/crates/ciphernode-entrypoint.sh /usr/local/bin/
 
 # Environment variables for configuration
-ENV CONFIG_DIR=/home/ciphernode/.config/loxley
-ENV DATA_DIR=/home/ciphernode/.local/share/loxley
+ENV CONFIG_DIR=/home/ciphernode/.config/bracken
+ENV DATA_DIR=/home/ciphernode/.local/share/bracken
 
 # Add entrypoint script
 ENTRYPOINT ["ciphernode-entrypoint.sh"]

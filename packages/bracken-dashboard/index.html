@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Loxley Dashboard</title>
+    <title>Bracken Dashboard</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,7 +16,7 @@
       // Zet het thema voor de eerste paint, anders flitst de standaard-stand
       // even door voordat React gemount is.
       try {
-        var t = localStorage.getItem('loxley.theme')
+        var t = localStorage.getItem('bracken.theme')
         if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t)
       } catch (e) {}
     </script>

@@ -13,17 +13,17 @@
 
 # Contracts
 !/artifacts/contracts/registry/CiphernodeRegistryOwnable.sol/CiphernodeRegistryOwnable.json
-!/artifacts/contracts/Loxley.sol/Loxley.json
+!/artifacts/contracts/Bracken.sol/Bracken.json
 
 # Interfaces
 
 # Interfaces
 !/artifacts/contracts/interfaces/
-!/artifacts/contracts/interfaces/ILoxley.sol/
+!/artifacts/contracts/interfaces/IBracken.sol/
 !/artifacts/contracts/interfaces/ICiphernodeRegistry.sol/
 !/artifacts/contracts/interfaces/IBondingRegistry.sol/
 !/artifacts/contracts/interfaces/ISlashingManager.sol/
-!/artifacts/contracts/interfaces/ILoxley.sol/ILoxley.json
+!/artifacts/contracts/interfaces/IBracken.sol/IBracken.json
 !/artifacts/contracts/interfaces/ICiphernodeRegistry.sol/ICiphernodeRegistry.json
 !/artifacts/contracts/interfaces/IBondingRegistry.sol/IBondingRegistry.json
 !/artifacts/contracts/interfaces/ISlashingManager.sol/ISlashingManager.json
@@ -33,8 +33,8 @@
 
 # Token
 !/artifacts/contracts/token/
-!/artifacts/contracts/token/LoxleyTicketToken.sol/
-!/artifacts/contracts/token/LoxleyTicketToken.sol/LoxleyTicketToken.json
+!/artifacts/contracts/token/BrackenTicketToken.sol/
+!/artifacts/contracts/token/BrackenTicketToken.sol/BrackenTicketToken.json
 
 # Verifier build artifacts under artifacts/contracts/verifiers/ stay ignored (see /artifacts/**).
 

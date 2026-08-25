@@ -17,4 +17,4 @@ agent
 dappnode
 tests
 examples/CRISP/server
-packages/loxley-contracts/audits
+packages/bracken-contracts/audits

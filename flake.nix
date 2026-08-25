@@ -1,8 +1,8 @@
 {
-  description = "Loxley";
+  description = "Bracken";
   nixConfig = {
-    extra-substituters = ["https://loxley.cachix.org"];
-    extra-trusted-public-keys = ["loxley.cachix.org-1:B5SynR85iX/TRueDpZu4dh1xVR8lNfKoAaVWZkux1ss="];
+    extra-substituters = ["https://bracken.cachix.org"];
+    extra-trusted-public-keys = ["bracken.cachix.org-1:B5SynR85iX/TRueDpZu4dh1xVR8lNfKoAaVWZkux1ss="];
   };
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
