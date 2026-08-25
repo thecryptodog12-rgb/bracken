@@ -3,7 +3,7 @@ title: 'Exits, Rewards & Slashing'
 description: 'Collect rewards, respond to slashing, and exit safely'
 ---
 
-import { Slashing } from '@loxley/diagrams'
+import { Slashing } from '@bracken/diagrams'
 
 # Exits, Rewards & Slashing
 
@@ -31,7 +31,7 @@ Watch for reward events and ensure your wallet can receive the reward token:
 
 ```bash
 # Check your status including any pending rewards
-loxley ciphernode status
+bracken ciphernode status
 ```
 
 > Keep the bond-owner wallet funded with ETH for gas when it claims rewards or exits. Keep the
@@ -64,7 +64,7 @@ Each slash reason has an associated policy:
 ```solidity
 struct SlashPolicy {
   uint256 ticketPenalty; // Tickets to burn
-  uint256 ciphernodeBondPenalty; // LOXLEY to confiscate
+  uint256 ciphernodeBondPenalty; // BRACKEN to confiscate
   bool requiresProof; // Whether on-chain proof verification is needed
   address proofVerifier; // ISlashVerifier contract for proof validation
   bool banNode; // Whether to permanently ban the node
@@ -92,8 +92,8 @@ struct SlashPolicy {
 
 | Penalty Type            | Effect                                           |
 | ----------------------- | ------------------------------------------------ |
-| Ticket penalty          | Burns tLOXLEY from your balance                  |
-| Ciphernode bond penalty | Confiscates LOXLEY from your bond                |
+| Ticket penalty          | Burns tBRACKEN from your balance                 |
+| Ciphernode bond penalty | Confiscates BRACKEN from your bond               |
 | Ban                     | Prevents re-registration until governance clears |
 
 > Some policies have an `appealWindow` of 0, meaning execution is immediate with no appeal. Always
@@ -108,7 +108,7 @@ To safely exit the ciphernode registry:
 The bond owner or operator emergency key can request deregistration:
 
 ```bash
-loxley ciphernode deregister --operator 0xOPERATOR
+bracken ciphernode deregister --operator 0xOPERATOR
 ```
 
 ### Step 2: Wait for Exit Delay
@@ -118,12 +118,12 @@ Assets enter a queue with a delay period (7 days on Sepolia):
 | Asset           | Behavior                                           |
 | --------------- | -------------------------------------------------- |
 | Tickets         | Burned immediately, ticket collateral enters queue |
-| Ciphernode bond | LOXLEY enters exit queue                           |
+| Ciphernode bond | BRACKEN enters exit queue                          |
 
 Check your exit status:
 
 ```bash
-loxley ciphernode status
+bracken ciphernode status
 ```
 
 Look for "Exit pending" and "Pending exits" fields.
@@ -133,11 +133,11 @@ Look for "Exit pending" and "Pending exits" fields.
 After the delay period, the bond owner claims both assets:
 
 ```bash
-loxley --config /path/to/owner.yaml ciphernode bond \
+bracken --config /path/to/owner.yaml ciphernode bond \
   --operator 0xOPERATOR claim
 ```
 
-The ticket collateral and LOXLEY are paid to the bond owner, while the exit queue and any slashing
+The ticket collateral and BRACKEN are paid to the bond owner, while the exit queue and any slashing
 remain keyed to the operator.
 
 ### Re-register
@@ -153,10 +153,10 @@ bondingRegistry.registerOperatorFor(operator);
 
 | Action                                                  | Signer         | Description                                           |
 | ------------------------------------------------------- | -------------- | ----------------------------------------------------- |
-| `loxley ciphernode status`                              | Operator       | Check registration and exit status                    |
+| `bracken ciphernode status`                             | Operator       | Check registration and exit status                    |
 | `deregisterOperatorFor(operator)`                       | Owner/operator | Start the full exit process                           |
 | `removeTicketBalanceFor(operator, amount)`              | Bond owner     | Queue ticket collateral for exit                      |
-| `unbondCiphernodeFor(operator, amount)`                 | Bond owner     | Queue LOXLEY for exit                                 |
+| `unbondCiphernodeFor(operator, amount)`                 | Bond owner     | Queue BRACKEN for exit                                |
 | `claimExitsFor(operator, maxTicket, 0)`                 | Anyone         | Settle unlocked tickets to the bond owner             |
 | `claimExitsFor(operator, maxTicket, maxCiphernodeBond)` | Bond owner     | Claim unlocked tickets and ciphernode bond collateral |
 
@@ -164,7 +164,7 @@ bondingRegistry.registerOperatorFor(operator);
 
 | Check                 | Command / Event                                 |
 | --------------------- | ----------------------------------------------- |
-| Exit queue status     | `loxley ciphernode status`                      |
+| Exit queue status     | `bracken ciphernode status`                     |
 | Pending exits amounts | `pendingExits(address)` on BondingRegistry      |
 | Exit in progress      | `hasExitInProgress(address)` on BondingRegistry |
 | Claimable amounts     | `previewClaimable(address)` on BondingRegistry  |
@@ -187,7 +187,7 @@ After successfully claiming exits:
 1. **Wipe local secrets**:
 
    ```bash
-   loxley purge-all
+   bracken purge-all
    ```
 
 2. **Revoke access**:

@@ -25,7 +25,7 @@ export default {
   // Wijst naar buiten, naar de voordeur -- niet naar de docs-root, waar je al
   // bent. target='_self' omdat dit een echte navigatie is, geen zijstap.
   logo: (
-    <Link href={SITE} target='_self' aria-label='Loxley'>
+    <Link href={SITE} target='_self' aria-label='Bracken'>
       {/* Inline i.p.v. <img src>: currentColor werkt niet binnen een img, dus
           een extern bestand kan niet meekleuren met light/dark. Het merk houdt
           zijn greenwood, de naam erft de tekstkleur van het thema. */}
@@ -50,7 +50,7 @@ export default {
             color: 'var(--lox-ink)',
           }}
         >
-          Loxley
+          Bracken
         </span>
       </span>
     </Link>
@@ -58,11 +58,11 @@ export default {
   logoLink: false,
 
   banner: {
-    key: 'loxley-live-2026-08',
+    key: 'bracken-live-2026-08',
     text: (
       <span>
-        <strong>Loxley is live</strong> on Robinhood Chain. No operator set yet, and the registered E3 program enforces no application rules
-        — see{' '}
+        <strong>Bracken is live</strong> on Robinhood Chain. No operator set yet, and the registered E3 program enforces no application
+        rules — see{' '}
         <a href='/deployments' style={{ textDecoration: 'underline' }}>
           Deployments
         </a>
@@ -89,7 +89,7 @@ export default {
     const { asPath } = useRouter()
     if (asPath !== '/') {
       return {
-        titleTemplate: '%s - Loxley',
+        titleTemplate: '%s - Bracken',
       }
     }
   },
@@ -99,8 +99,8 @@ export default {
     } = useConfig()
     return (
       <>
-        <title>{title ? title : 'Loxley'}</title>
-        <meta name='title' content={title ? title : 'Loxley'} />
+        <title>{title ? title : 'Bracken'}</title>
+        <meta name='title' content={title ? title : 'Bracken'} />
         <meta
           name='description'
           content={
@@ -112,7 +112,7 @@ export default {
 
         <meta property='og:type' content='website' />
         <meta property='og:url' content={DOCS_URL} />
-        <meta property='og:title' content={title ? title : 'Loxley'} />
+        <meta property='og:title' content={title ? title : 'Bracken'} />
         <meta
           property='og:description'
           content={
@@ -121,11 +121,11 @@ export default {
               : 'Infrastructure for confidential coordination powered by Encrypted Execution Environments (E3).'
           }
         />
-        <meta property='og:image' content={`${DOCS_URL}/loxley-meta.jpg`} />
+        <meta property='og:image' content={`${DOCS_URL}/bracken-meta.jpg`} />
 
         <meta property='twitter:card' content='summary_large_image' />
         <meta property='twitter:url' content={DOCS_URL} />
-        <meta property='twitter:title' content={title ? title : 'Loxley'} />
+        <meta property='twitter:title' content={title ? title : 'Bracken'} />
         <meta
           property='twitter:description'
           content={
@@ -134,7 +134,7 @@ export default {
               : 'Infrastructure for confidential coordination powered by Encrypted Execution Environments (E3).'
           }
         />
-        <meta property='twitter:image' content='/loxley-meta.jpg' />
+        <meta property='twitter:image' content='/bracken-meta.jpg' />
 
         {/* SVG eerst: dat is het enige icoon dat al vervangen is. De PNG's
             eronder zijn nog Interfold's beeldmerk en blijven staan als

@@ -3,7 +3,7 @@
 // This file is provided WITHOUT ANY WARRANTY;
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
-import { deployLoxley, getDeploymentChain, readDeploymentArgs, updateE3Config } from '@loxley/contracts/scripts'
+import { deployBracken, getDeploymentChain, readDeploymentArgs, updateE3Config } from '@bracken/contracts/scripts'
 import { deployCRISPContracts } from './crisp'
 import { syncCrispEnvFromDeployments } from './syncCrispEnv'
 import path from 'path'
@@ -14,7 +14,7 @@ import { fileURLToPath } from 'url'
 // Map contract names to config keys
 const contractMapping: Record<string, string> = {
   CRISPProgram: 'e3_program',
-  Loxley: 'loxley',
+  Bracken: 'bracken',
   CiphernodeRegistryOwnable: 'ciphernode_registry',
   BondingRegistry: 'bonding_registry',
   SlashingManager: 'slashing_manager',
@@ -26,20 +26,20 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 /**
- * Deploys the Loxley and CRISP contracts
+ * Deploys the Bracken and CRISP contracts
  */
 export const deploy = async () => {
   const chain = getDeploymentChain(hre)
 
-  const shouldDeployLoxley = Boolean(process.env.DEPLOY_LOXLEY)
+  const shouldDeployBracken = Boolean(process.env.DEPLOY_BRACKEN)
   const withZkVerification = process.env.ENABLE_ZK_VERIFICATION === 'true'
 
-  if (shouldDeployLoxley) {
-    await deployLoxley(true, withZkVerification)
+  if (shouldDeployBracken) {
+    await deployBracken(true, withZkVerification)
   }
   const { governanceComplete } = await deployCRISPContracts()
 
-  if (!readDeploymentArgs('Loxley', chain)?.address) {
+  if (!readDeploymentArgs('Bracken', chain)?.address) {
     console.log('CRISP prerequisites deployed. Bind the program during protocol governance wiring.')
     return
   }
@@ -48,8 +48,8 @@ export const deploy = async () => {
     return
   }
 
-  const loxleyConfigPath = path.join(__dirname, '..', '..', '..', 'loxley.config.yaml')
-  updateE3Config(chain, loxleyConfigPath, contractMapping)
+  const brackenConfigPath = path.join(__dirname, '..', '..', '..', 'bracken.config.yaml')
+  updateE3Config(chain, brackenConfigPath, contractMapping)
 
   syncCrispEnvFromDeployments(chain)
 }

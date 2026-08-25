@@ -258,7 +258,7 @@ export function Countdown({ targetMs }: { targetMs: number }) {
    ============================================================ */
 export function EditorialShell({
   children,
-  palette = 'loxley',
+  palette = 'bracken',
   mode = 'light',
   density = 'comfortable',
   className = '',

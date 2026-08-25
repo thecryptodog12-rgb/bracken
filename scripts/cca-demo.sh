@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════════════════════════════
-# Loxley CCA Demo — LOXLEY Token + CCA Auction Rehearsal on Sepolia
+# Bracken CCA Demo — BRACKEN Token + CCA Auction Rehearsal on Sepolia
 # ═══════════════════════════════════════════════════════════════════════════════
 #
 # What this shows:
 #   1. One script deploys MockBondingRegistry proxy + sale deployer
-#   2. Deterministic address prediction (LOXLEY + CCA auction)
-#   3. ONE transaction: deploySale() creates LOXLEY + Uniswap CCA atomically
-#   4. Safe SDK proposes LOXLEY.acceptOwnership() to the Foundation Safe
+#   2. Deterministic address prediction (BRACKEN + CCA auction)
+#   3. ONE transaction: deploySale() creates BRACKEN + Uniswap CCA atomically
+#   4. Safe SDK proposes BRACKEN.acceptOwnership() to the Foundation Safe
 #   5. ~20 on-chain validation assertions all pass
-#   6. Bid → checkpoint → exit → claim flow with locked LOXLEY
+#   6. Bid → checkpoint → exit → claim flow with locked BRACKEN
 #   7. Sale UI shows live phases (Virtual → CCA → Cooldown)
 #
 # Total duration: ~7-8 minutes (5 min auction + 2 min setup)
@@ -18,15 +18,15 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-CONTRACTS_DIR="$REPO_ROOT/packages/loxley-contracts"
-SALE_UI_DIR="$REPO_ROOT/packages/loxley-sale"
+CONTRACTS_DIR="$REPO_ROOT/packages/bracken-contracts"
+SALE_UI_DIR="$REPO_ROOT/packages/bracken-sale"
 
 # ── Config ───────────────────────────────────────────────────────────────────
 SAFE="0x27853b4E771061390477AD8d40826276b1F4BF2F"
 NETWORK="sepolia"
 CCA_BLOCKS="25"              # ~5 minutes on Sepolia
-CCA_OFFSET_SECONDS="60"      # LOXLEY CCA phase starts 60s after deploy
-CCA_DURATION_SECONDS="600"   # LOXLEY CCA phase lasts 10 minutes
+CCA_OFFSET_SECONDS="60"      # BRACKEN CCA phase starts 60s after deploy
+CCA_DURATION_SECONDS="600"   # BRACKEN CCA phase lasts 10 minutes
 
 # ── Load .env (RPC_URL, PRIVATE_KEY, SAFE_API_KEY) ───────────────────────────
 ENV_FILE="$CONTRACTS_DIR/.env"
@@ -79,9 +79,9 @@ echo ""
 say "Step 2/4: Running full rehearsal..."
 say "  - Deploying MockBondingRegistry proxy (Safe-owned)"
 say "  - Deploying sale deployer"
-say "  - Predicting LOXLEY + CCA addresses"
+say "  - Predicting BRACKEN + CCA addresses"
 say "  - Submitting deploySale() — ONE transaction"
-say "  - Proposing LOXLEY.acceptOwnership() to Safe"
+say "  - Proposing BRACKEN.acceptOwnership() to Safe"
 say "  - Validating ~20 on-chain invariants"
 say "  - Bidding → checkpoint → exit → claim"
 echo ""
@@ -111,7 +111,7 @@ say "Sale UI starting at http://localhost:5173"
 say "Open this in your browser NOW."
 echo ""
 say "What to show in the UI:"
-say "  Overview tab:  LOXLEY phases (Virtual → CCA), CCA blocks, metrics"
+say "  Overview tab:  BRACKEN phases (Virtual → CCA), CCA blocks, metrics"
 say "  Auction tab:   Submit a bid, watch checkpoint/exit/claim"
 say "  Token Lab:     Mint allocations, create lock policies, trigger TGE"
 say "  Events:        All on-chain events in real time"
@@ -125,7 +125,7 @@ echo ""
 # ── Step 4: Safe UI link ────────────────────────────────────────────────────
 say "Step 4/4: Safe transaction to execute"
 echo ""
-say "Open the Safe UI to show the pending LOXLEY.acceptOwnership() transaction."
+say "Open the Safe UI to show the pending BRACKEN.acceptOwnership() transaction."
 say "Look for the URL printed after 'Safe transaction proposed' above."
 say "It should be: https://app.safe.global/transactions/tx?safe=sep:${SAFE}&id=..."
 echo ""

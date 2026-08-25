@@ -30,8 +30,8 @@ import { expect } from 'chai'
 import { mkdirSync, writeFileSync } from 'fs'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { deployCRISPProgram, deployHonkVerifier, deployMockLoxley, ethers } from './utils'
-import type { CRISPProgram, HonkVerifier, MockLoxley } from '../types'
+import { deployCRISPProgram, deployHonkVerifier, deployMockBracken, ethers } from './utils'
+import type { CRISPProgram, HonkVerifier, MockBracken } from '../types'
 
 const keys = generateBFVKeys()
 const publicKey = keys.publicKey
@@ -70,7 +70,7 @@ describe('CRISPProgram input tree (e2e)', function () {
   this.timeout(1_200_000)
 
   let honkVerifier: HonkVerifier
-  let mockLoxley: MockLoxley
+  let mockBracken: MockBracken
   let crispProgram: CRISPProgram
   let address: string
   let leaves: bigint[]
@@ -185,17 +185,17 @@ describe('CRISPProgram input tree (e2e)', function () {
   }
 
   before(async function () {
-    mockLoxley = await deployMockLoxley()
+    mockBracken = await deployMockBracken()
     honkVerifier = await deployHonkVerifier()
-    crispProgram = await deployCRISPProgram({ mockLoxley, honkVerifier })
+    crispProgram = await deployCRISPProgram({ mockBracken, honkVerifier })
 
     const [signer] = await ethers.getSigners()
     const signature = (await signer.signMessage(SIGNATURE_MESSAGE)) as `0x${string}`
     address = await getAddressFromSignature(signature, SIGNATURE_MESSAGE_HASH)
     leaves = [...[10n, 20n, 30n], hashLeaf(address, balance)]
 
-    e3Id = await mockLoxley.nextE3Id()
-    await mockLoxley.request(await crispProgram.getAddress())
+    e3Id = await mockBracken.nextE3Id()
+    await mockBracken.request(await crispProgram.getAddress())
   })
 
   after(() => {
@@ -205,7 +205,7 @@ describe('CRISPProgram input tree (e2e)', function () {
   it('reproduces the on-chain root in Rust, over real ciphertexts', async function () {
     const ballot = await buildBallot([10, 0])
 
-    await mockLoxley.setCommitteePublicKey(ballot.publicInputs[8])
+    await mockBracken.setCommitteePublicKey(ballot.publicInputs[8])
     await crispProgram.setMerkleRoot(e3Id, generateMerkleTree(leaves).root)
 
     await crispProgram.publishInput(e3Id, encodeSolidityProof(ballot))
@@ -267,14 +267,14 @@ describe('CRISPProgram input tree (e2e)', function () {
   it('accepts an input whose bytes are not the ciphertext that was proven', async function () {
     // Its own round: a second input from the same slot would be a re-vote, and the ballot here is
     // built as a first vote.
-    const forgedE3Id = await mockLoxley.nextE3Id()
-    await mockLoxley.request(await crispProgram.getAddress())
+    const forgedE3Id = await mockBracken.nextE3Id()
+    await mockBracken.request(await crispProgram.getAddress())
     const previous = e3Id
     e3Id = forgedE3Id
 
     try {
       const ballot = await buildBallot([5, 0])
-      await mockLoxley.setCommitteePublicKey(ballot.publicInputs[8])
+      await mockBracken.setCommitteePublicKey(ballot.publicInputs[8])
       await crispProgram.setMerkleRoot(forgedE3Id, generateMerkleTree(leaves).root)
 
       const [, , , , rootBefore] = await crispProgram.getRoundData(forgedE3Id)
@@ -314,14 +314,14 @@ describe('CRISPProgram input tree (e2e)', function () {
   /// every later input is provably its owner voting again, which is exactly the receipt masks exist
   /// to destroy.
   it('lets an honest mask follow a poisoned one, over the same parent', async function () {
-    const appendE3Id = await mockLoxley.nextE3Id()
-    await mockLoxley.request(await crispProgram.getAddress())
+    const appendE3Id = await mockBracken.nextE3Id()
+    await mockBracken.request(await crispProgram.getAddress())
     const previous = e3Id
     e3Id = appendE3Id
 
     try {
       const ballot = await buildBallot([6, 0])
-      await mockLoxley.setCommitteePublicKey(ballot.publicInputs[8])
+      await mockBracken.setCommitteePublicKey(ballot.publicInputs[8])
       await crispProgram.setMerkleRoot(appendE3Id, generateMerkleTree(leaves).root)
       await crispProgram.publishInput(appendE3Id, encodeSolidityProof(ballot))
 
@@ -392,14 +392,14 @@ describe('CRISPProgram input tree (e2e)', function () {
   /// selects. The published bytes and the stored commitment have to describe the same ciphertext,
   /// or the re-vote is excluded and the voter is silently stuck with their first choice.
   it('publishes a real re-vote to a slot that already holds a ballot', async function () {
-    const revoteE3Id = await mockLoxley.nextE3Id()
-    await mockLoxley.request(await crispProgram.getAddress())
+    const revoteE3Id = await mockBracken.nextE3Id()
+    await mockBracken.request(await crispProgram.getAddress())
     const previous = e3Id
     e3Id = revoteE3Id
 
     try {
       const first = await buildBallot([4, 0])
-      await mockLoxley.setCommitteePublicKey(first.publicInputs[8])
+      await mockBracken.setCommitteePublicKey(first.publicInputs[8])
       await crispProgram.setMerkleRoot(revoteE3Id, generateMerkleTree(leaves).root)
       await crispProgram.publishInput(revoteE3Id, encodeSolidityProof(first))
 

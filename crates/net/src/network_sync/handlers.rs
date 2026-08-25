@@ -12,12 +12,12 @@ impl Actor for NetSyncManager {
 }
 
 /// Event broadcast from event bus
-impl Handler<LoxleyEvent> for NetSyncManager {
+impl Handler<BrackenEvent> for NetSyncManager {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         // We are making a sync request of another node
-        if let LoxleyEventData::HistoricalNetSyncStart(data) = msg {
+        if let BrackenEventData::HistoricalNetSyncStart(data) = msg {
             // Capture the snapshot-cursor map so we can bound the post-restart re-broadcast of our
             // own forwardable artifacts to the in-flight window (H3/H11).
             self.rebroadcast_since = Some(data.since.clone().into_iter().collect());

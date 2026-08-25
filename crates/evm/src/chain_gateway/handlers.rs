@@ -19,14 +19,14 @@ impl Actor for EvmChainGateway {
     }
 }
 
-impl Handler<LoxleyEvent> for EvmChainGateway {
+impl Handler<BrackenEvent> for EvmChainGateway {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let result = (|| {
             match msg.into_data() {
-                LoxleyEventData::HistoricalEvmSyncStart(e) => self.handle_sync_start(e)?,
-                LoxleyEventData::SyncEnded(e) => self.handle_sync_ended(e)?,
+                BrackenEventData::HistoricalEvmSyncStart(e) => self.handle_sync_start(e)?,
+                BrackenEventData::SyncEnded(e) => self.handle_sync_ended(e)?,
                 _ => (),
             }
             Ok(())
@@ -37,10 +37,10 @@ impl Handler<LoxleyEvent> for EvmChainGateway {
     }
 }
 
-impl Handler<LoxleyEvmEvent> for EvmChainGateway {
+impl Handler<BrackenEvmEvent> for EvmChainGateway {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvmEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvmEvent, ctx: &mut Self::Context) -> Self::Result {
         if let Err(error) = self.handle_evm_event(msg) {
             self.fail_closed(error, ctx);
         }

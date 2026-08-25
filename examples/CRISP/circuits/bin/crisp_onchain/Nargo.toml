@@ -2,8 +2,8 @@
 name = "crisp_onchain"
 type = "bin"
 version = "0.1.0"
-authors = ["Gnosis Guild / Loxley"]
+authors = ["Gnosis Guild / Bracken"]
 
 [dependencies]
-loxley_lib = { path = "../../../../../circuits/lib" }
+bracken_lib = { path = "../../../../../circuits/lib" }
 crisp_lib = { path = "../../lib" }

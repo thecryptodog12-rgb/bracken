@@ -6,7 +6,7 @@ export CARGO_INCREMENTAL=1
 
 cleanup() {
   echo "Cleaning up processes..."
-  pkill -9 -f "loxley start"
+  pkill -9 -f "bracken start"
   sleep 1
 
   pkill -9 -f "anvil" 2>/dev/null || true

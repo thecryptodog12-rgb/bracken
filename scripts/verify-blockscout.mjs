@@ -20,7 +20,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 
-const ROOT = path.resolve(import.meta.dirname, '..', 'packages', 'loxley-contracts')
+const ROOT = path.resolve(import.meta.dirname, '..', 'packages', 'bracken-contracts')
 const BASE = 'https://robinhoodchain.blockscout.com'
 const STATE = path.join(ROOT, 'deployed_contracts.json')
 
@@ -163,7 +163,7 @@ async function verifyOne(name, address, art) {
   // library en die wordt pas bij het deployen ingevuld. De standard-input van
   // de compiler bevat die adressen dus niet, en zonder komt de bytecode die de
   // verifier zelf compileert nooit overeen met wat er op de keten staat --
-  // precies de contracten met libraries (Loxley, BondingRegistry) bleven hangen.
+  // precies de contracten met libraries (Bracken, BondingRegistry) bleven hangen.
   const libs = {}
   for (const [file, names] of Object.entries(art.linkReferences ?? {})) {
     for (const lib of Object.keys(names)) {
@@ -176,7 +176,7 @@ async function verifyOne(name, address, art) {
   if (Object.keys(libs).length) {
     input.settings = { ...input.settings, libraries: libs }
   }
-  const tmp = path.join(os.tmpdir(), `loxley-si-${name}.json`)
+  const tmp = path.join(os.tmpdir(), `bracken-si-${name}.json`)
   fs.writeFileSync(tmp, JSON.stringify(input))
 
   // Via curl, niet via fetch.

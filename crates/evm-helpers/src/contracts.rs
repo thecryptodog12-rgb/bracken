@@ -124,7 +124,7 @@ sol! {
 
     #[derive(Debug)]
     #[sol(rpc)]
-    contract Loxley {
+    contract Bracken {
         uint256 public nexte3Id = 0;
         mapping(address e3Program => bool allowed) public e3Programs;
         function request(E3RequestParams calldata requestParams) external returns (uint256 e3Id, E3 memory e3);
@@ -145,9 +145,9 @@ sol! {
     }
 }
 
-/// Trait for read-only operations on the Loxley contract
+/// Trait for read-only operations on the Bracken contract
 #[async_trait]
-pub trait LoxleyRead {
+pub trait BrackenRead {
     /// Get the next E3 ID
     async fn get_e3_id(&self) -> Result<U256>;
 
@@ -187,10 +187,10 @@ pub trait LoxleyRead {
     async fn get_param_set_registry(&self, param_set: u8) -> Result<Bytes>;
 }
 
-/// Trait for write operations on the Loxley contract
+/// Trait for write operations on the Bracken contract
 #[async_trait]
 #[allow(clippy::too_many_arguments)]
-pub trait LoxleyWrite {
+pub trait BrackenWrite {
     /// Request a new E3
     async fn request_e3(
         &self,
@@ -232,25 +232,25 @@ pub trait ProviderType: Clone + Send + Sync + 'static {
 #[derive(Clone)]
 pub struct ReadOnly;
 impl ProviderType for ReadOnly {
-    type Provider = LoxleyReadOnlyProvider;
+    type Provider = BrackenReadOnlyProvider;
 }
 /// Marker type for read-write provider
 #[derive(Clone)]
 pub struct ReadWrite;
 impl ProviderType for ReadWrite {
-    type Provider = LoxleyWriteProvider;
+    type Provider = BrackenWriteProvider;
 }
 
-/// Generic Loxley contract
+/// Generic Bracken contract
 #[derive(Clone)]
-pub struct LoxleyContract<T: ProviderType> {
+pub struct BrackenContract<T: ProviderType> {
     pub provider: Arc<T::Provider>,
     pub contract_address: Address,
     pub wallet_address: Option<Address>,
     _marker: PhantomData<T>,
 }
 
-impl<R: ProviderType> LoxleyContract<R> {
+impl<R: ProviderType> BrackenContract<R> {
     pub fn address(&self) -> &Address {
         &self.contract_address
     }
@@ -259,27 +259,27 @@ impl<R: ProviderType> LoxleyContract<R> {
     }
 }
 
-impl LoxleyContract<ReadWrite> {
+impl BrackenContract<ReadWrite> {
     pub async fn new(
         http_rpc_url: &str,
         private_key: &str,
         contract_address: &str,
-    ) -> Result<LoxleyContract<ReadWrite>> {
-        LoxleyContractFactory::create_write(http_rpc_url, contract_address, private_key).await
+    ) -> Result<BrackenContract<ReadWrite>> {
+        BrackenContractFactory::create_write(http_rpc_url, contract_address, private_key).await
     }
 }
 
-impl LoxleyContract<ReadOnly> {
+impl BrackenContract<ReadOnly> {
     pub async fn read_only(
         http_rpc_url: &str,
         contract_address: &str,
-    ) -> Result<LoxleyContract<ReadOnly>> {
-        LoxleyContractFactory::create_read(http_rpc_url, contract_address).await
+    ) -> Result<BrackenContract<ReadOnly>> {
+        BrackenContractFactory::create_read(http_rpc_url, contract_address).await
     }
 }
 
 /// Type alias for read-only provider
-pub type LoxleyReadOnlyProvider = FillProvider<
+pub type BrackenReadOnlyProvider = FillProvider<
     JoinFill<
         Identity,
         JoinFill<GasFiller, JoinFill<BlobGasFiller, JoinFill<NonceFiller, ChainIdFiller>>>,
@@ -288,7 +288,7 @@ pub type LoxleyReadOnlyProvider = FillProvider<
 >;
 
 /// Type alias for read-write provider
-pub type LoxleyWriteProvider = FillProvider<
+pub type BrackenWriteProvider = FillProvider<
     JoinFill<
         JoinFill<
             Identity,
@@ -301,19 +301,19 @@ pub type LoxleyWriteProvider = FillProvider<
 >;
 
 /// Type aliases for the two contract variants
-pub type LoxleyReadContract = LoxleyContract<ReadOnly>;
-pub type LoxleyWriteContract = LoxleyContract<ReadWrite>;
+pub type BrackenReadContract = BrackenContract<ReadOnly>;
+pub type BrackenWriteContract = BrackenContract<ReadWrite>;
 
 // Factory for creating contract instances
-pub struct LoxleyContractFactory;
+pub struct BrackenContractFactory;
 
-impl LoxleyContractFactory {
+impl BrackenContractFactory {
     /// Create a write-capable contract
     pub async fn create_write(
         rpc_url: &str,
         contract_address: &str,
         private_key: &str,
-    ) -> Result<LoxleyContract<ReadWrite>> {
+    ) -> Result<BrackenContract<ReadWrite>> {
         let contract_address = contract_address.parse()?;
 
         let signer: PrivateKeySigner = private_key.parse()?;
@@ -324,7 +324,7 @@ impl LoxleyContractFactory {
             .connect(rpc_url)
             .await?;
 
-        Ok(LoxleyContract::<ReadWrite> {
+        Ok(BrackenContract::<ReadWrite> {
             provider: Arc::new(provider),
             contract_address,
             wallet_address: Some(wallet_address),
@@ -336,12 +336,12 @@ impl LoxleyContractFactory {
     pub async fn create_read(
         rpc_url: &str,
         contract_address: &str,
-    ) -> Result<LoxleyContract<ReadOnly>> {
+    ) -> Result<BrackenContract<ReadOnly>> {
         let contract_address = contract_address.parse()?;
 
         let provider = ProviderBuilder::new().connect(rpc_url).await?;
 
-        Ok(LoxleyContract::<ReadOnly> {
+        Ok(BrackenContract::<ReadOnly> {
             provider: Arc::new(provider),
             contract_address,
             wallet_address: None,
@@ -350,20 +350,20 @@ impl LoxleyContractFactory {
     }
 }
 
-// Implement LoxleyRead for any LoxleyContract regardless of provider type
+// Implement BrackenRead for any BrackenContract regardless of provider type
 #[async_trait]
-impl<T: Send + Sync> LoxleyRead for LoxleyContract<T>
+impl<T: Send + Sync> BrackenRead for BrackenContract<T>
 where
     T: ProviderType,
 {
     async fn get_e3_id(&self) -> Result<U256> {
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let e3_id = contract.nexte3Id().call().await?;
         Ok(e3_id)
     }
 
     async fn get_e3(&self, e3_id: U256) -> Result<E3> {
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let e3_return = contract.getE3(e3_id).call().await?;
         Ok(e3_return)
     }
@@ -374,7 +374,7 @@ where
     }
 
     async fn is_e3_program_enabled(&self, e3_program: Address) -> Result<bool> {
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let enabled = contract.e3Programs(e3_program).call().await?;
         Ok(enabled)
     }
@@ -399,56 +399,56 @@ where
             maxFee: U256::ZERO,
         };
 
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let fee = contract.getE3Quote(e3_request).call().await?;
         Ok(fee)
     }
 
     async fn get_e3_stage(&self, e3_id: U256) -> Result<E3Stage> {
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let stage = contract.getE3Stage(e3_id).call().await?;
         Ok(stage)
     }
 
     async fn get_failure_reason(&self, e3_id: U256) -> Result<FailureReason> {
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let reason = contract.getFailureReason(e3_id).call().await?;
         Ok(reason)
     }
 
     async fn get_requester(&self, e3_id: U256) -> Result<Address> {
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let requester = contract.getRequester(e3_id).call().await?;
         Ok(requester)
     }
 
     async fn get_deadlines(&self, e3_id: U256) -> Result<E3Deadlines> {
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let deadlines = contract.getDeadlines(e3_id).call().await?;
         Ok(deadlines)
     }
 
     async fn get_timeout_config(&self) -> Result<E3TimeoutConfig> {
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let config = contract.getTimeoutConfig().call().await?;
         Ok(config)
     }
 
     async fn get_e3_crypto_config_id(&self, e3_id: U256) -> Result<B256> {
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         Ok(contract.e3CryptoConfigIds(e3_id).call().await?)
     }
 
     async fn get_param_set_registry(&self, param_set: u8) -> Result<Bytes> {
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let params = contract.paramSetRegistry(param_set).call().await?;
         Ok(params)
     }
 }
 
-// Implement LoxleyWrite only for contracts with ReadWrite marker
+// Implement BrackenWrite only for contracts with ReadWrite marker
 #[async_trait]
-impl LoxleyWrite for LoxleyContract<ReadWrite> {
+impl BrackenWrite for BrackenContract<ReadWrite> {
     async fn request_e3(
         &self,
         committee_size: CommitteeSize,
@@ -464,7 +464,7 @@ impl LoxleyWrite for LoxleyContract<ReadWrite> {
             .ok_or_else(|| eyre::eyre!("No wallet address configured"))?;
         let nonce = get_next_nonce(&*self.provider, wallet_addr).await?;
 
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let fee_token = contract.feeToken().call().await?;
         let crypto_config_id = contract.activeCryptoConfigId().call().await?;
 
@@ -513,7 +513,7 @@ impl LoxleyWrite for LoxleyContract<ReadWrite> {
             .ok_or_else(|| eyre::eyre!("No wallet address configured"))?;
         let nonce = get_next_nonce(&*self.provider, wallet_addr).await?;
 
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let builder = contract.registerE3Program(e3_program).nonce(nonce);
         let receipt = builder.send().await?.get_receipt().await?;
         e3_utils::require_successful_receipt("register E3 program", &receipt)?;
@@ -534,7 +534,7 @@ impl LoxleyWrite for LoxleyContract<ReadWrite> {
             .ok_or_else(|| eyre::eyre!("No wallet address configured"))?;
         let nonce = get_next_nonce(&*self.provider, wallet_addr).await?;
 
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let builder = contract
             .publishCiphertextOutput(e3_id, data, ciphertext_commitment, proof)
             .nonce(nonce);
@@ -556,7 +556,7 @@ impl LoxleyWrite for LoxleyContract<ReadWrite> {
             .ok_or_else(|| eyre::eyre!("No wallet address configured"))?;
         let nonce = get_next_nonce(&*self.provider, wallet_addr).await?;
 
-        let contract = Loxley::new(self.contract_address, &self.provider);
+        let contract = Bracken::new(self.contract_address, &self.provider);
         let builder = contract
             .publishPlaintextOutput(e3_id, data, proof)
             .nonce(nonce);

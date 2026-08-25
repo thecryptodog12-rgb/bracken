@@ -43,21 +43,21 @@ impl Contract {
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Deserialize, Serialize)]
 pub struct ContractAddresses {
-    pub loxley: Contract,
+    pub bracken: Contract,
     pub ciphernode_registry: Contract,
     pub bonding_registry: Contract,
     pub e3_program: Option<Contract>,
     pub fee_token: Option<Contract>,
     pub slashing_manager: Option<Contract>,
     pub dkg_fold_attestation_verifier: Option<Contract>,
-    /// Testnet faucet (sepolia). Distributes LOXLEY + fee tokens to callers.
+    /// Testnet faucet (sepolia). Distributes BRACKEN + fee tokens to callers.
     pub faucet: Option<Contract>,
 }
 
 impl ContractAddresses {
     pub fn contracts(&self) -> Vec<&Contract> {
         [
-            Some(&self.loxley),
+            Some(&self.bracken),
             Some(&self.ciphernode_registry),
             Some(&self.bonding_registry),
             self.e3_program.as_ref(),

@@ -1,6 +1,6 @@
 ---
 title: 'Running a Ciphernode'
-description: 'Three ways to run a ciphernode: DappNode, Loxley CLI, or Docker'
+description: 'Three ways to run a ciphernode: DappNode, Bracken CLI, or Docker'
 ---
 
 import { Callout } from 'nextra/components'
@@ -8,7 +8,7 @@ import { Callout } from 'nextra/components'
 # Running a Ciphernode
 
 <Callout type='info'>
-  **Loxley is live on Robinhood Chain** (chain id `4663`). Any address shown inline below is an
+  **Bracken is live on Robinhood Chain** (chain id `4663`). Any address shown inline below is an
   example unless it appears on [Deployments](/deployments) — that page is generated from the
   deployment record and is the one to configure against.
 </Callout>
@@ -23,7 +23,7 @@ DappNode provides a user-friendly interface for running a ciphernode with minima
 ### Installation
 
 1. Open your DappNode UI (`http://my.dappnode`)
-2. Search for **"Loxley Ciphernode"** (the current package name for the Loxley ciphernode) and
+2. Search for **"Bracken Ciphernode"** (the current package name for the Bracken ciphernode) and
    install the package
 3. The setup wizard will prompt you for:
    - `RPC_URL` - WebSocket RPC endpoint (e.g., `wss://ethereum-sepolia-rpc.publicnode.com`)
@@ -32,7 +32,7 @@ DappNode provides a user-friendly interface for running a ciphernode with minima
    - Optional: encryption password, network key, private key
 
 4. Confirm and complete the installation
-5. Check **Packages → loxley-ciphernode → Logs** to verify the node started
+5. Check **Packages → bracken-ciphernode → Logs** to verify the node started
 
 ### Configuration via Environment Variables
 
@@ -49,9 +49,9 @@ DappNode provides a user-friendly interface for running a ciphernode with minima
 
 ---
 
-## Method 2: Loxley CLI (Recommended)
+## Method 2: Bracken CLI (Recommended)
 
-Loxley CLI provides the most control and is recommended for production deployments.
+Bracken CLI provides the most control and is recommended for production deployments.
 
 ### Install the CLI
 
@@ -60,43 +60,43 @@ Loxley CLI provides the most control and is recommended for production deploymen
 curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash
 
 # Then install the CLI
-loxleyup install
+brackenup install
 ```
 
 ### Initialize Configuration
 
 ```bash
-loxley ciphernode setup
+bracken ciphernode setup
 ```
 
-This creates `~/.config/loxley/loxley.config.yaml`. You'll be prompted for a password to encrypt
+This creates `~/.config/bracken/bracken.config.yaml`. You'll be prompted for a password to encrypt
 sensitive data.
 
 ### Set Up Credentials
 
 ```bash
 # Set encryption password (encrypts local keystore)
-loxley password set
+bracken password set
 
 # Generate or set network keypair (for libp2p)
-loxley net keypair generate
+bracken net keypair generate
 # Or import an existing key:
-# loxley net keypair set --net-keypair 0x...
+# bracken net keypair set --net-keypair 0x...
 
 # Set your wallet private key (for on-chain transactions)
-loxley wallet set --private-key 0xYourPrivateKey
+bracken wallet set --private-key 0xYourPrivateKey
 ```
 
 ### Configure Your Node
 
-Edit `~/.config/loxley/loxley.config.yaml`:
+Edit `~/.config/bracken/bracken.config.yaml`:
 
 ```yaml
 node:
   address: '0xYourAddress'
   quic_port: 9091
   peers:
-    - '/dnsaddr/bootstrap.loxley.network'
+    - '/dnsaddr/bootstrap.bracken.network'
   autonetkey: true
   autopassword: true
 
@@ -105,7 +105,7 @@ chains:
     rpc_url: 'https://rpc.mainnet.chain.robinhood.com'
     chain_id: 4663
     contracts:
-      loxley:
+      bracken:
         address: '0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12'
         deploy_block: 45075164
       ciphernode_registry:
@@ -129,13 +129,13 @@ fails silently — it syncs nothing and reports no error. Before starting, and a
 announcement, compare your config against the published deployment manifest:
 
 ```bash
-loxley config check
+bracken config check
 ```
 
 ```
 Deployment manifest: release v0.6.0
 sepolia:
-  STALE loxley: config has 0x64Cd2d88…, published is 0xd49990bc…
+  STALE bracken: config has 0x64Cd2d88…, published is 0xd49990bc…
   warn  ciphernode_registry: deploy_block 11124526, published is 11458978
 ```
 
@@ -148,42 +148,42 @@ a specific manifest instead of the latest release.
 
 ```bash
 # Start in foreground with verbose logging
-loxley start -v
+bracken start -v
 
 # Or use the node supervisor for multiple nodes
-loxley nodes up --detach
-loxley nodes ps          # Check status
-loxley nodes logs cn1    # View logs
-loxley nodes down        # Stop all nodes
+bracken nodes up --detach
+bracken nodes ps          # Check status
+bracken nodes logs cn1    # View logs
+bracken nodes down        # Stop all nodes
 ```
 
 ### CLI Commands Reference
 
-| Command                       | Description                                         |
-| ----------------------------- | --------------------------------------------------- |
-| `loxley start`                | Start the node in foreground                        |
-| `loxley start -v`             | Start with INFO logging (`-vv`=DEBUG, `-vvv`=TRACE) |
-| `loxley nodes up`             | Start all configured nodes                          |
-| `loxley nodes up --detach`    | Start all nodes in background                       |
-| `loxley nodes up --exclude x` | Start all nodes except `x`                          |
-| `loxley nodes down`           | Stop all nodes                                      |
-| `loxley nodes ps`             | List running nodes and their status                 |
-| `loxley nodes start <name>`   | Start an individual node                            |
-| `loxley nodes stop <name>`    | Stop an individual node                             |
-| `loxley nodes status <name>`  | Check specific node status                          |
-| `loxley nodes restart <name>` | Restart a specific node                             |
-| `loxley nodes purge`          | Purge all local ciphernode data                     |
-| `loxley ciphernode status`    | Show on-chain registration status                   |
-| `loxley config check`         | Compare configured addresses against the manifest   |
-| `loxley net get-peer-id`      | Show your libp2p peer ID                            |
-| `loxley wallet get`           | Show your wallet address                            |
-| `loxley rev`                  | Show the git SHA the CLI was built from             |
-| `loxley purge-all`            | Wipe all local data (use with caution)              |
-| `loxley print-env`            | Print contract addresses as env vars                |
-| `loxley print-env --vite`     | Print env vars with `VITE_` prefix                  |
-| `loxley print-env --chain x`  | Print env vars for chain `x`                        |
-| `loxley noir status`          | Check ZK prover status                              |
-| `loxley noir setup`           | Install/update ZK prover components                 |
+| Command                        | Description                                         |
+| ------------------------------ | --------------------------------------------------- |
+| `bracken start`                | Start the node in foreground                        |
+| `bracken start -v`             | Start with INFO logging (`-vv`=DEBUG, `-vvv`=TRACE) |
+| `bracken nodes up`             | Start all configured nodes                          |
+| `bracken nodes up --detach`    | Start all nodes in background                       |
+| `bracken nodes up --exclude x` | Start all nodes except `x`                          |
+| `bracken nodes down`           | Stop all nodes                                      |
+| `bracken nodes ps`             | List running nodes and their status                 |
+| `bracken nodes start <name>`   | Start an individual node                            |
+| `bracken nodes stop <name>`    | Stop an individual node                             |
+| `bracken nodes status <name>`  | Check specific node status                          |
+| `bracken nodes restart <name>` | Restart a specific node                             |
+| `bracken nodes purge`          | Purge all local ciphernode data                     |
+| `bracken ciphernode status`    | Show on-chain registration status                   |
+| `bracken config check`         | Compare configured addresses against the manifest   |
+| `bracken net get-peer-id`      | Show your libp2p peer ID                            |
+| `bracken wallet get`           | Show your wallet address                            |
+| `bracken rev`                  | Show the git SHA the CLI was built from             |
+| `bracken purge-all`            | Wipe all local data (use with caution)              |
+| `bracken print-env`            | Print contract addresses as env vars                |
+| `bracken print-env --vite`     | Print env vars with `VITE_` prefix                  |
+| `bracken print-env --chain x`  | Print env vars for chain `x`                        |
+| `bracken noir status`          | Check ZK prover status                              |
+| `bracken noir setup`           | Install/update ZK prover components                 |
 
 ---
 
@@ -210,7 +210,7 @@ node:
   address: '0xYourAddress'
   quic_port: 9091
   peers:
-    - '/dnsaddr/bootstrap.loxley.network'
+    - '/dnsaddr/bootstrap.bracken.network'
   autonetkey: true
   autopassword: true
 
@@ -219,7 +219,7 @@ chains:
     rpc_url: 'https://rpc.mainnet.chain.robinhood.com'
     chain_id: 4663
     contracts:
-      loxley:
+      bracken:
         address: '0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12'
         deploy_block: 45075164
       ciphernode_registry:
@@ -267,9 +267,9 @@ docker run -d \
   --name ciphernode \
   --restart unless-stopped \
   --stop-timeout 300 \
-  -v $(pwd)/config.yaml:/home/ciphernode/.config/loxley/config.yaml:ro \
+  -v $(pwd)/config.yaml:/home/ciphernode/.config/bracken/config.yaml:ro \
   -v $(pwd)/secrets.json:/run/secrets/secrets.json:ro \
-  -v ciphernode-data:/home/ciphernode/.local/share/loxley \
+  -v ciphernode-data:/home/ciphernode/.local/share/bracken \
   -p 9091:9091/udp \
   "$CIPHERNODE_IMAGE"
 ```
@@ -285,8 +285,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 5m
     volumes:
-      - ./config.yaml:/home/ciphernode/.config/loxley/config.yaml:ro
-      - ciphernode-data:/home/ciphernode/.local/share/loxley
+      - ./config.yaml:/home/ciphernode/.config/bracken/config.yaml:ro
+      - ciphernode-data:/home/ciphernode/.local/share/bracken
     secrets:
       - source: ciphernode_credentials
         target: secrets.json
@@ -306,11 +306,11 @@ same release's offline integrity check against the mounted configuration and dat
 
 ```bash
 docker run --rm \
-  -v $(pwd)/config.yaml:/home/ciphernode/.config/loxley/config.yaml:ro \
-  -v ciphernode-data:/home/ciphernode/.local/share/loxley \
-  --entrypoint loxley \
+  -v $(pwd)/config.yaml:/home/ciphernode/.config/bracken/config.yaml:ro \
+  -v ciphernode-data:/home/ciphernode/.local/share/bracken \
+  --entrypoint bracken \
   "$CIPHERNODE_IMAGE" \
-  node validate --config /home/ciphernode/.config/loxley/config.yaml
+  node validate --config /home/ciphernode/.config/bracken/config.yaml
 ```
 
 Do not start the node when validation reports `FAIL`; preserve a copy of the volume before repair,
@@ -328,15 +328,15 @@ docker logs -f ciphernode
 
 ### Node Configuration
 
-| Field          | Description                         | Default                 |
-| -------------- | ----------------------------------- | ----------------------- |
-| `address`      | Your Ethereum address               | Required                |
-| `quic_port`    | UDP port for QUIC/libp2p networking | `9091`                  |
-| `peers`        | Bootstrap peer multiaddresses       | `[]`                    |
-| `autopassword` | Auto-generate password if missing   | `false`                 |
-| `autowallet`   | Auto-load wallet from environment   | `false`                 |
-| `data_dir`     | Override data directory             | `~/.local/share/loxley` |
-| `config_dir`   | Override config directory           | `~/.config/loxley`      |
+| Field          | Description                         | Default                  |
+| -------------- | ----------------------------------- | ------------------------ |
+| `address`      | Your Ethereum address               | Required                 |
+| `quic_port`    | UDP port for QUIC/libp2p networking | `9091`                   |
+| `peers`        | Bootstrap peer multiaddresses       | `[]`                     |
+| `autopassword` | Auto-generate password if missing   | `false`                  |
+| `autowallet`   | Auto-load wallet from environment   | `false`                  |
+| `data_dir`     | Override data directory             | `~/.local/share/bracken` |
+| `config_dir`   | Override config directory           | `~/.config/bracken`      |
 
 ### Chain Configuration
 
@@ -347,7 +347,7 @@ docker logs -f ciphernode
 | `chain_id`  | EIP-155 chain ID                     | No       |
 | `contracts` | Contract addresses and deploy blocks | Yes      |
 
-Set `chain_id` even though it is optional: `loxley config check` compares it against the manifest
+Set `chain_id` even though it is optional: `bracken config check` compares it against the manifest
 rather than querying the endpoint, so it is the only thing that catches an `rpc_url` pointing at the
 wrong network. Without it, a config whose addresses all match but whose RPC points elsewhere passes
 the check.
@@ -356,21 +356,21 @@ the check.
 
 Each chain requires these contract addresses:
 
-| Contract              | Description                            | Required for ciphernode |
-| --------------------- | -------------------------------------- | ----------------------- |
-| `loxley`              | Main Loxley coordinator contract       | Yes                     |
-| `ciphernode_registry` | Tracks registered operators            | Yes                     |
-| `bonding_registry`    | Manages bonds and tickets              | Yes                     |
-| `slashing_manager`    | Manages slashing penalties             | Yes                     |
-| `e3_program`          | E3 Program contract address            | No                      |
-| `fee_token`           | Fee token address for E3 requests      | No                      |
-| `faucet`              | Testnet faucet for LOXLEY + fee tokens | No                      |
+| Contract              | Description                             | Required for ciphernode |
+| --------------------- | --------------------------------------- | ----------------------- |
+| `bracken`             | Main Bracken coordinator contract       | Yes                     |
+| `ciphernode_registry` | Tracks registered operators             | Yes                     |
+| `bonding_registry`    | Manages bonds and tickets               | Yes                     |
+| `slashing_manager`    | Manages slashing penalties              | Yes                     |
+| `e3_program`          | E3 Program contract address             | No                      |
+| `fee_token`           | Fee token address for E3 requests       | No                      |
+| `faucet`              | Testnet faucet for BRACKEN + fee tokens | No                      |
 
 Each contract can be specified as a simple address string or with a deploy block for faster syncing:
 
 ```yaml
 contracts:
-  loxley:
+  bracken:
     address: '0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12'
     deploy_block: 45075164
   ciphernode_registry: '0x7d6e460B1704B5B1cd5570E62a3c450a9611C346'
@@ -401,11 +401,11 @@ Open the following ports:
 
 ### Bootstrap Peers
 
-Connect to the Loxley bootstrap network:
+Connect to the Bracken bootstrap network:
 
 ```yaml
 peers:
-  - '/dnsaddr/bootstrap.loxley.network'
+  - '/dnsaddr/bootstrap.bracken.network'
 ```
 
 Or specify individual peers:
@@ -420,11 +420,11 @@ peers:
 
 ## Data Directories
 
-| Directory                     | Contents                          |
-| ----------------------------- | --------------------------------- |
-| `~/.config/loxley/`           | Configuration files, network keys |
-| `~/.local/share/loxley/`      | Databases, job data, keystores    |
-| `~/.local/share/loxley/jobs/` | Per-E3 secret shares and state    |
+| Directory                      | Contents                          |
+| ------------------------------ | --------------------------------- |
+| `~/.config/bracken/`           | Configuration files, network keys |
+| `~/.local/share/bracken/`      | Databases, job data, keystores    |
+| `~/.local/share/bracken/jobs/` | Per-E3 secret shares and state    |
 
 > Back up these directories regularly. The `jobs/` directory contains encrypted key shares for
 > active E3s - losing this data while participating in a committee may result in slashing.
@@ -463,5 +463,5 @@ Control verbosity with the `-v` flag:
 
 Once your node is running:
 
-1. **[Register & Ciphernode bond](./registration)** - Bond LOXLEY and register as an operator
+1. **[Register & Ciphernode bond](./registration)** - Bond BRACKEN and register as an operator
 2. **[Add Tickets](./tickets-and-sortition)** - Purchase tickets to participate in sortition

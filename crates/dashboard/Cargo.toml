@@ -3,7 +3,7 @@ name = "e3-dashboard"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "Lightweight node monitoring dashboard for Loxley ciphernodes"
+description = "Lightweight node monitoring dashboard for Bracken ciphernodes"
 repository.workspace = true
 
 [dependencies]

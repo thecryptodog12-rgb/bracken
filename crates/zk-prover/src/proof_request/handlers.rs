@@ -8,35 +8,35 @@ impl Actor for ProofRequestActor {
     type Context = Context<Self>;
 }
 
-impl Handler<LoxleyEvent> for ProofRequestActor {
+impl Handler<BrackenEvent> for ProofRequestActor {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
 
         match msg {
-            LoxleyEventData::EncryptionKeyPending(data) => {
+            BrackenEventData::EncryptionKeyPending(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ThresholdSharePending(data) => {
+            BrackenEventData::ThresholdSharePending(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ComputeResponse(data) => {
+            BrackenEventData::ComputeResponse(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ComputeRequestError(data) => {
+            BrackenEventData::ComputeRequestError(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::DecryptionShareProofsPending(data) => {
+            BrackenEventData::DecryptionShareProofsPending(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ShareDecryptionProofPending(data) => {
+            BrackenEventData::ShareDecryptionProofPending(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::PkAggregationProofPending(data) => {
+            BrackenEventData::PkAggregationProofPending(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::AggregationProofPending(data) => {
+            BrackenEventData::AggregationProofPending(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
             _ => (),

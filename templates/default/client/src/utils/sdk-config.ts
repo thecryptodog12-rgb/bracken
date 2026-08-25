@@ -5,18 +5,18 @@
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
 import { getContractAddresses } from './env-config'
-import type { ThresholdBfvParamsPresetName } from '@loxley/sdk'
+import type { ThresholdBfvParamsPresetName } from '@bracken/sdk'
 import { THRESHOLD_BFV_PARAMS_PRESET_NAME } from './env-config'
 
 /**
- * Get the Loxley SDK configuration.
+ * Get the Bracken SDK configuration.
  */
-export function getLoxleySDKConfig() {
+export function getBrackenSDKConfig() {
   const contracts = getContractAddresses()
   return {
     autoConnect: true,
     contracts: {
-      loxley: contracts.loxley,
+      bracken: contracts.bracken,
       ciphernodeRegistry: contracts.ciphernodeRegistry,
       feeToken: contracts.feeToken,
     },

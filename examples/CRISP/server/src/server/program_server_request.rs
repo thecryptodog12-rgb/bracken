@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize, Serializer};
 pub struct ComputeRequest {
     pub e3_id: Option<String>,
     pub chain_id: u64,
-    pub loxley_address: String,
+    pub bracken_address: String,
     #[serde(serialize_with = "serialize_as_hex")]
     pub encryption_scheme_id: Vec<u8>,
     #[serde(serialize_with = "serialize_as_hex")]
@@ -107,7 +107,7 @@ pub struct RoundInputs {
 pub async fn run_compute(
     e3_id: &str,
     chain_id: u64,
-    loxley_address: String,
+    bracken_address: String,
     encryption_scheme_id: Vec<u8>,
     committee_public_key_hash: Vec<u8>,
     params: Vec<u8>,
@@ -117,7 +117,7 @@ pub async fn run_compute(
     let request = ComputeRequest {
         e3_id: Some(e3_id.to_string()),
         chain_id,
-        loxley_address,
+        bracken_address,
         encryption_scheme_id,
         committee_public_key_hash,
         callback_url: Some(webhook_url),
@@ -165,7 +165,7 @@ mod tests {
         let request = ComputeRequest {
             e3_id: Some("7".to_string()),
             chain_id: 31_337,
-            loxley_address: "0x1111111111111111111111111111111111111111".to_string(),
+            bracken_address: "0x1111111111111111111111111111111111111111".to_string(),
             encryption_scheme_id: vec![0x22; 32],
             committee_public_key_hash: vec![0x33; 32],
             params: vec![1, 2, 3],
@@ -192,7 +192,7 @@ mod tests {
         let request = ComputeRequest {
             e3_id: Some("7".to_string()),
             chain_id: 31_337,
-            loxley_address: "0x1111111111111111111111111111111111111111".to_string(),
+            bracken_address: "0x1111111111111111111111111111111111111111".to_string(),
             encryption_scheme_id: vec![0x22; 32],
             committee_public_key_hash: vec![0x33; 32],
             params: vec![1, 2, 3],

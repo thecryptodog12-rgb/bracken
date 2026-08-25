@@ -2,7 +2,7 @@
 
 ## Overview
 
-An E3 (Encrypted Execution Environment) is the core unit of work in the Loxley protocol. A requester
+An E3 (Encrypted Execution Environment) is the core unit of work in the Bracken protocol. A requester
 pays a fee, a committee of ciphernodes is selected via sortition, and the committee collectively
 generates encryption keys through DKG.
 
@@ -29,25 +29,25 @@ Governance configures the fee token, its expected decimals, and every raw-unit p
 decimals check confirms the unit scale only; it does not prove that two tokens have the same
 economic value. Each request snapshots the active token, so later fee-asset changes do not alter an
 existing E3's escrow or settlement unit. Fee assets must transfer exact amounts and must not rebase
-account balances. Loxley checks the custody increase for escrow deposits. Each outbound transfer
-checks the recipient increase and the Loxley custody decrease.
+account balances. Bracken checks the custody increase for escrow deposits. Each outbound transfer
+checks the recipient increase and the Bracken custody decrease.
 
-Loxley starts with requests paused. Deployment wires and validates one complete dependency
+Bracken starts with requests paused. Deployment wires and validates one complete dependency
 generation before it enables requests. Governance must pause requests and drain the current
 generation before it replaces a registry, bonding registry, slashing manager, or refund manager.
 
-An E3 Program can deploy before its Loxley controller. Loxley must register the deployed program
+An E3 Program can deploy before its Bracken controller. Bracken must register the deployed program
 before the program owner binds that controller one time. This order removes the constructor
-dependency between Loxley and applications such as CRISP.
+dependency between Bracken and applications such as CRISP.
 
 ---
 
 ## Step 1: E3 Request (On-Chain)
 
-**Contract:** `Loxley.sol` → `request(E3RequestParams)`
+**Contract:** `Bracken.sol` → `request(E3RequestParams)`
 
 ```
-Requester calls: Loxley.request({
+Requester calls: Bracken.request({
   committeeSize: <minimum | micro | small>,
   inputWindow: [start, end], // when inputs are accepted
   e3Program: <address>,      // computation program contract
@@ -78,7 +78,7 @@ Requester calls: Loxley.request({
 │
 ├─ FEE CALCULATION:
 │   ├─ fee = getE3Quote()
-│   │   → LoxleyPricing validates the active circuit [T, H, N].
+│   │   → BrackenPricing validates the active circuit [T, H, N].
 │   │   → The quote uses N for committee-wide work and H for required decryption shares.
 │   │   → It also uses the time windows,
 │   │     proof counts, availability, decryption/publication costs, and margin
@@ -89,7 +89,7 @@ Requester calls: Loxley.request({
 │   │  expectedCryptoConfigId
 │   ├─ Require fee <= maxFee
 │   ├─ feeToken.transferFrom(requester, address(this), fee)
-│   │   → require Loxley receives exactly fee
+│   │   → require Bracken receives exactly fee
 │   └─ e3Payments[e3Id] = fee  (stored per-E3)
 │       _e3FeeTokens[e3Id] = feeToken  (survives global token rotation)
 │
@@ -97,14 +97,14 @@ Requester calls: Loxley.request({
 │   ├─ e3Id = nexte3Id++
 │   │   → nexte3Id starts at uint160(address(this)) << 96
 │   │   → every controller has a separate uint256 namespace
-│   ├─ Snapshot Loxley dependencies for this E3:
+│   ├─ Snapshot Bracken dependencies for this E3:
 │   │   registry, bonding registry, refund manager, and slashing manager
 │   │   → replacements are blocked until this E3 and its generation drain
 │   │   → the slashing manager registers this E3's refund destination in
 │   │     BondingRegistry for proposal-scoped ticket-slash routes
 │   ├─ snapshottedRefundManager.snapshotE3Policy(e3Id, registry)
 │   │   → freezes refund/slash allocation, treasury, policy version,
-│   │     request-time Loxley, committee registry, bonding registry,
+│   │     request-time Bracken, committee registry, bonding registry,
 │   │     and slashing manager
 │   ├─ seed = uint256(keccak256(block.prevrandao, e3Id))
 │   │   → Shared input for the E3 computation. Committee selection does not use it.
@@ -138,10 +138,10 @@ Requester calls: Loxley.request({
 │   │   │  │  requestCommittee(e3Id, legacySeed, threshold) {    │
 │   │   │  │    → legacySeed is ignored for ticket sortition    │
 │   │   │  │    1. require(!committees[e3Id].initialized)        │
-│   │   │  │    2. Snapshot request-time Loxley, bonding,     │
+│   │   │  │    2. Snapshot request-time Bracken, bonding,     │
 │   │   │  │       slashing manager, and fold verifier           │
 │   │   │  │       → ask SlashingManager to snapshot its         │
-│   │   │  │         bonding, registry, Loxley, refund routes │
+│   │   │  │         bonding, registry, Bracken, refund routes │
 │   │   │  │    3. Query eligibilityAt(address(0),               │
 │   │   │  │         requestBlock - 1) and require               │
 │   │   │  │         threshold[1] <= activeOperatorCount         │
@@ -207,7 +207,7 @@ CiphernodeRegistrySolReader decodes DkgFoldAttestationContextEstablished
 │  keccak256(blockHash, e3Id) without sending a transaction
 └─ Publishes CommitteeRequested with the resolved committee seed
 
-LoxleySolReader decodes ILoxley::E3Requested log
+BrackenSolReader decodes IBracken::E3Requested log
 │
 ├─ Preserves the complete uint256 E3 ID as a decimal string through persistence,
 │  program-runner requests, compute-proof journals, and webhook responses
@@ -219,7 +219,7 @@ LoxleySolReader decodes ILoxley::E3Requested log
 │  binary supports, records the provider log as internally processed and skips participation;
 │  historical ordering advances, while malformed ABI data still fails chain ingestion closed
 │
-├─ Publishes LoxleyEvent::E3Requested {
+├─ Publishes BrackenEvent::E3Requested {
 │     e3_id, threshold_m, threshold_n,
 │     computation_seed, params, error_size, esi_per_ct
 │   }
@@ -411,7 +411,7 @@ CiphernodeRegistrySolWriter receives CommitteeFinalizeRequested
     │  │    3. if topNodes.length < threshold[1]:                │
     │  │       → NOT ENOUGH NODES submitted tickets              │
     │  │       committees[e3Id].failed = true                    │
-    │  │       loxley.onE3Failed(e3Id,                          │
+    │  │       bracken.onE3Failed(e3Id,                          │
     │  │         FailureReason.InsufficientCommitteeMembers)     │
     │  │       Emit CommitteeFormationFailed(e3Id)               │
     │  │       RETURN                                            │
@@ -426,9 +426,9 @@ CiphernodeRegistrySolWriter receives CommitteeFinalizeRequested
     │  │    5. Record one unresolved collateral obligation        │
     │  │       for each finalized member in BondingRegistry       │
     │  │                                                         │
-    │  │    6. loxley.onCommitteeFinalized(e3Id)                │
+    │  │    6. bracken.onCommitteeFinalized(e3Id)                │
     │  │       │                                                 │
-    │  │       │  ┌─ Loxley.sol ────────────────────────────┐  │
+    │  │       │  ┌─ Bracken.sol ────────────────────────────┐  │
     │  │       │  │  onCommitteeFinalized(e3Id) {            │  │
     │  │       │  │    require(stage == Requested)            │  │
     │  │       │  │    stage = CommitteeFinalized             │  │
@@ -455,7 +455,7 @@ collateral obligation, and the same transaction releases a displaced candidate. 
 finalization grants membership and `Active` status to the final address-sorted members. Failed
 formation grants neither and releases all remaining candidate obligations. Finalization also freezes
 each member's current bond owner as its reward recipient for this E3. Later bond-owner transfers
-apply to later committees, not to payments earned by this committee. Once Loxley reports `Complete`
+apply to later committees, not to payments earned by this committee. Once Bracken reports `Complete`
 or `Failed`, anyone can call `releaseCommittee(e3Id)` on the request-time registry to release all
 member obligations atomically.
 
@@ -465,7 +465,7 @@ member obligations atomically.
 CiphernodeRegistrySolReader decodes SortitionCommitteeFinalized
 │  [ICiphernodeRegistry event]
 │
-├─ Publishes LoxleyEvent::CommitteeFinalized {
+├─ Publishes BrackenEvent::CommitteeFinalized {
 │     e3_id, committee: [addr1, addr2, ..., addrN], scores: [s1, s2, ..., sN], chain_id
 │   }
 │
@@ -556,7 +556,7 @@ A ready committee must finalize at or before its absolute DKG deadline.
    reused, but previously stored roots do not change.
 
 7. **Coherent dependency generations**: A request atomically validates and records its registry,
-   bonding, slashing, refund, and Loxley relationships. Governance pauses new requests before a
+   bonding, slashing, refund, and Bracken relationships. Governance pauses new requests before a
    replacement. The old generation must have no active E3s, unreleased committees, registered
    operators, bans, or slash assignments before any pointer can change. Governance then wires the
    complete new graph and enables requests. No request can observe a partly updated graph.
@@ -566,12 +566,12 @@ A ready committee must finalize at or before its absolute DKG deadline.
    finalization retains every winner's lock. The generation cannot rotate until all request-time
    committee obligations are released.
 
-9. **Operator identity is unchanged by delegated bonding**: tLOXLEY is minted to the operator, and
+9. **Operator identity is unchanged by delegated bonding**: tBRACKEN is minted to the operator, and
    `submitTicket` is still sent by the operator key. Sortition hashes, eligibility snapshots,
    committee membership, and party IDs never use the bond-owner address.
 
 10. **E3 program bootstrap and governance**: The production deploy requires one deployed E3 program.
-    `Loxley.initialize` registers it before it transfers ownership to `protocolOwner`. For DAO-owned
+    `Bracken.initialize` registers it before it transfers ownership to `protocolOwner`. For DAO-owned
     deployments, `protocolOwner` is the DAO, not a Safe. Every registration rejects an address
     without runtime code. After initialization, only the owner can append another program. The
     deployment can create `MockE3Program` as the initial program. This stateless program accepts the
@@ -585,7 +585,7 @@ A ready committee must finalize at or before its absolute DKG deadline.
 
 ### Z-05 — request seed grinding
 
-The E3 computation seed is still created during Loxley.request, but it no longer ranks committee
+The E3 computation seed is still created during Bracken.request, but it no longer ranks committee
 tickets. The registry commits the next block as the entropy block. Rust waits until that block is
 sealed and reads the committee seed. The first ticket stores the same seed before it calculates the
 score. A requester can revert the request or learn the committee seed, but it cannot do both in one
@@ -607,7 +607,7 @@ must commit the block immediately after the request event.
 ### H-04 — snapshot-based eligibility
 
 `CiphernodeRegistryOwnable._validateNodeEligibility` derives the per-node ticket weight from the
-`LoxleyTicketToken` ERC20Votes checkpoint history at `committee.requestBlock - 1` (EIP-6372
+`BrackenTicketToken` ERC20Votes checkpoint history at `committee.requestBlock - 1` (EIP-6372
 timestamp clock). Same-block or post-request rebalancing therefore cannot inflate a node's selection
 weight. `submitTicket` also checks historical eligibility and the current `isActive` flag in the
 request-time bonding registry.
@@ -627,7 +627,7 @@ requested after the upgrade need no backfill.
 
 ### M-33 — `markE3Failed` grace period
 
-When `markFailedGracePeriod > 0` (set via `Loxley.setMarkFailedGracePeriod`), calling `markE3Failed`
+When `markFailedGracePeriod > 0` (set via `Bracken.setMarkFailedGracePeriod`), calling `markE3Failed`
 within `deadline … deadline + markFailedGracePeriod` is restricted to
 `{ original requester, contract owner, active finalized committee member }`. After that window, any
 caller can finalize the failure. The default value of `0` preserves the permissionless flow.
@@ -635,7 +635,7 @@ caller can finalize the failure. The default value of `0` preserves the permissi
 ### H-26 — timestamp-clock `requestBlock`
 
 `Committee.requestBlock` stores `block.timestamp` (EIP-6372 timestamp mode) so that `getPastVotes`
-lookups against the `LoxleyTicketToken` resolve consistently across L1 and L2 clocks. The field name
+lookups against the `BrackenTicketToken` resolve consistently across L1 and L2 clocks. The field name
 is preserved for storage and event ABI compatibility.
 
 ### Committee observability events

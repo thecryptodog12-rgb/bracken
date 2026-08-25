@@ -54,7 +54,7 @@ export interface VoteStatusResponse {
 export interface VoteStateLite {
   id: string
   chain_id: number
-  loxley_address: string
+  bracken_address: string
 
   status: string
   vote_count: number

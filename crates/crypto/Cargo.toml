@@ -3,7 +3,7 @@ name = "e3-crypto"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "E3 - Loxley Ciphernode Cryptography Library"
+description = "E3 - Bracken Ciphernode Cryptography Library"
 repository.workspace = true
 
 [dependencies]

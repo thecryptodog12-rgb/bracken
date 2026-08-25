@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "pnpm install",
-  "buildCommand": "pnpm --filter loxley-docs build",
+  "buildCommand": "pnpm --filter bracken-docs build",
   "outputDirectory": "docs/out",
   "redirects": [
     {

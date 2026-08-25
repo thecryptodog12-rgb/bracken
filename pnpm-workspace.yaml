@@ -6,15 +6,15 @@ packages:
   - examples/CRISP/packages/crisp-sdk
   - examples/CRISP/packages/crisp-contracts
   - examples/CRISP/packages/crisp-zk-inputs
-  - packages/loxley-config
-  - packages/loxley-react
-  - packages/loxley-sdk
-  - packages/loxley-contracts
-  - packages/loxley-mcp
-  - packages/loxley-dashboard
-  - packages/loxley-node
-  - packages/loxley-diagrams
-  - packages/loxley-site
+  - packages/bracken-config
+  - packages/bracken-react
+  - packages/bracken-sdk
+  - packages/bracken-contracts
+  - packages/bracken-mcp
+  - packages/bracken-dashboard
+  - packages/bracken-node
+  - packages/bracken-diagrams
+  - packages/bracken-site
   - templates/default
   - templates/default/client
 linkWorkspacePackages: true

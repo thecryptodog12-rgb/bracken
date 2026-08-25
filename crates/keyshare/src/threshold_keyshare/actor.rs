@@ -16,7 +16,7 @@ use e3_events::{
     DecryptionShareProofsPending, Die, DkgProofSigned, DkgShareDecryptionProofRequest, E3Failed,
     E3RequestComplete, E3Stage, EType, EncryptionKey, EncryptionKeyCollectionFailed,
     EncryptionKeyCreated, EncryptionKeyPending, EventContext, FailureReason, KeyshareCreated,
-    LoxleyEvent, LoxleyEventData, PartyProofsToVerify, PartyShareDecryptionProofsToVerify,
+    BrackenEvent, BrackenEventData, PartyProofsToVerify, PartyShareDecryptionProofsToVerify,
     PkGenerationProofSigned, ProofType, Sequenced, ShareDecryptionProofPending,
     ShareVerificationComplete, ShareVerificationDispatched, SignedProofPayload, ThresholdShare,
     ThresholdShareCollectionFailed, ThresholdShareCreated, ThresholdShareDecryptionProofRequest,
@@ -113,7 +113,7 @@ pub struct ThresholdKeyshareParams {
     pub cipher: Arc<Cipher>,
     pub state: Persistable<ThresholdKeyshareState>,
     pub share_enc_preset: BfvPreset,
-    pub loxley_address: Address,
+    pub bracken_address: Address,
 }
 
 /// Ephemeral bridge data for operations already represented by the persisted keyshare phase.
@@ -146,7 +146,7 @@ pub struct ThresholdKeyshare {
     decryption_key_shared_collector: Option<Addr<DecryptionKeySharedCollector>>,
     state: Persistable<ThresholdKeyshareState>,
     share_enc_preset: BfvPreset,
-    loxley_address: Address,
+    bracken_address: Address,
     pending: PendingKeyshareWork,
 }
 
@@ -160,7 +160,7 @@ impl ThresholdKeyshare {
             decryption_key_shared_collector: None,
             state: params.state,
             share_enc_preset: params.share_enc_preset,
-            loxley_address: params.loxley_address,
+            bracken_address: params.bracken_address,
             pending: PendingKeyshareWork::default(),
         }
     }

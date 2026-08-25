@@ -11,51 +11,51 @@ impl Actor for Sortition {
     }
 }
 
-impl Handler<LoxleyEvent> for Sortition {
+impl Handler<BrackenEvent> for Sortition {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            LoxleyEventData::E3Requested(data) => self.notify_sync(ctx, TypedEvent::new(data, ec)),
-            LoxleyEventData::CiphernodeAdded(data) => {
+            BrackenEventData::E3Requested(data) => self.notify_sync(ctx, TypedEvent::new(data, ec)),
+            BrackenEventData::CiphernodeAdded(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CiphernodeRemoved(data) => {
+            BrackenEventData::CiphernodeRemoved(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::TicketBalanceUpdated(data) => {
+            BrackenEventData::TicketBalanceUpdated(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::OperatorActivationChanged(data) => {
+            BrackenEventData::OperatorActivationChanged(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ConfigurationUpdated(data) => {
+            BrackenEventData::ConfigurationUpdated(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CommitteeRequested(data) => {
+            BrackenEventData::CommitteeRequested(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CommitteePublished(data) => {
+            BrackenEventData::CommitteePublished(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::PlaintextOutputPublished(data) => {
+            BrackenEventData::PlaintextOutputPublished(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CommitteeFinalized(data) => {
+            BrackenEventData::CommitteeFinalized(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CommitteeMemberExpelled(data) => {
+            BrackenEventData::CommitteeMemberExpelled(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CommitteeMemberExcluded(data) => {
+            BrackenEventData::CommitteeMemberExcluded(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::E3Failed(data) => self.notify_sync(ctx, TypedEvent::new(data, ec)),
-            LoxleyEventData::E3StageChanged(data) => {
+            BrackenEventData::E3Failed(data) => self.notify_sync(ctx, TypedEvent::new(data, ec)),
+            BrackenEventData::E3StageChanged(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::E3RequestComplete(data) => {
+            BrackenEventData::E3RequestComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
             _ => (),

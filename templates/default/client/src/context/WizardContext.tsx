@@ -6,8 +6,8 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useCallback, useState, ReactNode } from 'react'
 import { useAccount } from 'wagmi'
-import { useLoxleySDK, UseLoxleySDKReturn } from '@loxley/react'
-import { getLoxleySDKConfig } from '@/utils/sdk-config'
+import { useBrackenSDK, UseBrackenSDKReturn } from '@bracken/react'
+import { getBrackenSDKConfig } from '@/utils/sdk-config'
 import { loadWizardState, saveWizardState, clearWizardState } from '@/utils/persistence'
 
 // ============================================================================
@@ -68,7 +68,7 @@ interface WizardContextType {
   handleTryAgain: () => void
 
   // SDK
-  sdk: UseLoxleySDKReturn
+  sdk: UseBrackenSDKReturn
 }
 
 const WizardContext = createContext<WizardContextType | undefined>(undefined)
@@ -96,8 +96,8 @@ export const WizardProvider: React.FC<WizardProviderProps> = ({ children }) => {
   const { isConnected, status } = useAccount()
 
   // Memoize the SDK config to prevent unnecessary re-initializations.
-  const sdkConfig = useMemo(() => getLoxleySDKConfig(), [])
-  const sdk = useLoxleySDK(sdkConfig)
+  const sdkConfig = useMemo(() => getBrackenSDKConfig(), [])
+  const sdk = useBrackenSDK(sdkConfig)
 
   // Hydrate from any state persisted before a refresh so the user resumes from
   // the same step instead of starting over. Read once on mount.

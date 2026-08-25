@@ -34,10 +34,10 @@ pub(crate) async fn execute(
                 .await?
                 .get_receipt()
                 .await?;
-            require_successful_receipt("unbond LOXLEY", &receipt)?;
+            require_successful_receipt("unbond BRACKEN", &receipt)?;
             log!(
                 out,
-                "Queued {} LOXLEY for operator {:#x} (tx: {:#x})",
+                "Queued {} BRACKEN for operator {:#x} (tx: {:#x})",
                 amount,
                 operator,
                 receipt.transaction_hash
@@ -106,10 +106,10 @@ async fn bond_ciphernode(
         .await?
         .get_receipt()
         .await?;
-    require_successful_receipt("bond LOXLEY", &receipt)?;
+    require_successful_receipt("bond BRACKEN", &receipt)?;
     log!(
         out,
-        "Bonded {} LOXLEY for operator {:#x} (tx: {:#x})",
+        "Bonded {} BRACKEN for operator {:#x} (tx: {:#x})",
         amount,
         operator,
         receipt.transaction_hash

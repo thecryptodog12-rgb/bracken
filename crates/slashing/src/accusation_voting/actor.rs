@@ -17,7 +17,7 @@
 //!
 //! This file is a **thin actix shell**. All protocol logic lives in the plain,
 //! synchronous [`AccusationVoting`] service ([`crate::accusation_voting`]). The
-//! actor's only job is to translate inbound [`LoxleyEvent`]s into service
+//! actor's only job is to translate inbound [`BrackenEvent`]s into service
 //! calls and to perform the I/O ([`VoteAction`]s) the service returns —
 //! publishing gossip events, dispatching ZK requests, and managing vote
 //! timeouts.
@@ -44,8 +44,8 @@ use alloy::primitives::{Address, Bytes};
 use alloy::signers::local::PrivateKeySigner;
 use e3_events::{
     AccusationVote, BusHandle, CommitmentConsistencyViolation, ComputeRequestError,
-    ComputeResponse, E3id, EventPublisher, EventSubscriber, EventType, LoxleyEvent,
-    LoxleyEventData, ProofFailureAccusation, ProofType, ProofVerificationFailed,
+    ComputeResponse, E3id, EventPublisher, EventSubscriber, EventType, BrackenEvent,
+    BrackenEventData, ProofFailureAccusation, ProofType, ProofVerificationFailed,
     ProofVerificationPassed, TypedEvent,
 };
 use e3_utils::NotifySync;

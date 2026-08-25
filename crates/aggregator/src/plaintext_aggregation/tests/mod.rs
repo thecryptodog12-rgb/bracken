@@ -17,7 +17,7 @@ use e3_sortition::{
 use e3_test_helpers::get_common_setup;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
-fn test_ctx(data: impl Into<LoxleyEventData>) -> EventContext<Sequenced> {
+fn test_ctx(data: impl Into<BrackenEventData>) -> EventContext<Sequenced> {
     EventContext::<Unsequenced>::from(data.into()).sequence(0)
 }
 
@@ -148,7 +148,7 @@ async fn build_plaintext_aggregator(
     proof_aggregation_enabled: bool,
 ) -> Result<(
     ThresholdPlaintextAggregator,
-    Addr<HistoryCollector<LoxleyEvent>>,
+    Addr<HistoryCollector<BrackenEvent>>,
     E3id,
 )> {
     let (bus, _rng, _seed, _params, _crp, _errors, history) =
@@ -171,8 +171,8 @@ async fn build_plaintext_aggregator(
     Ok((aggregator, history, e3_id))
 }
 
-async fn next_event(history: &Addr<HistoryCollector<LoxleyEvent>>) -> Result<LoxleyEvent> {
-    let mut result = history.send(TakeEvents::<LoxleyEvent>::new(1)).await?;
+async fn next_event(history: &Addr<HistoryCollector<BrackenEvent>>) -> Result<BrackenEvent> {
+    let mut result = history.send(TakeEvents::<BrackenEvent>::new(1)).await?;
     assert!(!result.timed_out, "timed out waiting for an event");
     Ok(result.events.pop().expect("expected one event"))
 }

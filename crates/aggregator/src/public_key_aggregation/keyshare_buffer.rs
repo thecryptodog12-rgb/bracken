@@ -7,7 +7,7 @@
 use actix::prelude::*;
 use alloy::primitives::Address;
 
-use e3_events::{prelude::*, AggregatorChanged, Die, LoxleyEvent, LoxleyEventData};
+use e3_events::{prelude::*, AggregatorChanged, Die, BrackenEvent, BrackenEventData};
 use e3_utils::MAILBOX_LIMIT;
 use std::collections::HashSet;
 use tracing::info;
@@ -20,7 +20,7 @@ pub struct KeyshareCreatedFilterBuffer {
     /// Finalized committee in canonical party-id order. A membership set is insufficient here:
     /// accepting a real member under another member's `party_id` poisons the DKG roster.
     committee: Option<Vec<String>>,
-    buffer: Vec<LoxleyEvent>,
+    buffer: Vec<BrackenEvent>,
     expelled_nodes: HashSet<Address>,
     is_aggregator: bool,
 }
@@ -53,7 +53,7 @@ impl KeyshareCreatedFilterBuffer {
         }
     }
 
-    fn forward(dest: &Addr<PublicKeyAggregator>, event: LoxleyEvent) {
+    fn forward(dest: &Addr<PublicKeyAggregator>, event: BrackenEvent) {
         dest.do_send(event);
     }
 
@@ -65,7 +65,7 @@ impl KeyshareCreatedFilterBuffer {
         if let Some(ref committee) = self.committee {
             for event in self.buffer.drain(..) {
                 match event.get_data() {
-                    LoxleyEventData::KeyshareCreated(data)
+                    BrackenEventData::KeyshareCreated(data)
                         if committee_member_matches(committee, data.party_id, &data.node)
                             && !data
                                 .node
@@ -74,13 +74,13 @@ impl KeyshareCreatedFilterBuffer {
                     {
                         Self::forward(&self.dest, event);
                     }
-                    LoxleyEventData::CommitteeMemberExpelled(data) if data.party_id.is_none() => {
+                    BrackenEventData::CommitteeMemberExpelled(data) if data.party_id.is_none() => {
                         Self::forward(&self.dest, event);
                     }
-                    LoxleyEventData::CommitteeMemberExcluded(data) if data.party_id.is_none() => {
+                    BrackenEventData::CommitteeMemberExcluded(data) if data.party_id.is_none() => {
                         Self::forward(&self.dest, event);
                     }
-                    LoxleyEventData::E3RequestComplete(_) | LoxleyEventData::Shutdown(_) => {
+                    BrackenEventData::E3RequestComplete(_) | BrackenEventData::Shutdown(_) => {
                         Self::forward(&self.dest, event);
                     }
                     _ => {}
@@ -97,12 +97,12 @@ impl Actor for KeyshareCreatedFilterBuffer {
     }
 }
 
-impl Handler<LoxleyEvent> for KeyshareCreatedFilterBuffer {
+impl Handler<BrackenEvent> for KeyshareCreatedFilterBuffer {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvent, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, _ctx: &mut Self::Context) -> Self::Result {
         match msg.get_data() {
-            LoxleyEventData::KeyshareCreated(data) => match &self.committee {
+            BrackenEventData::KeyshareCreated(data) => match &self.committee {
                 Some(committee)
                     if self.is_aggregator
                         && committee_member_matches(committee, data.party_id, &data.node)
@@ -127,13 +127,13 @@ impl Handler<LoxleyEvent> for KeyshareCreatedFilterBuffer {
                 }
                 _ => {}
             },
-            LoxleyEventData::CommitteeFinalized(data) => {
+            BrackenEventData::CommitteeFinalized(data) => {
                 let mut data = data.clone();
                 data.sort_by_address();
                 self.committee = Some(data.committee);
                 self.process_buffered_events();
             }
-            LoxleyEventData::CommitteeMemberExpelled(data) => {
+            BrackenEventData::CommitteeMemberExpelled(data) => {
                 if data.party_id.is_some() {
                     return;
                 }
@@ -145,7 +145,7 @@ impl Handler<LoxleyEvent> for KeyshareCreatedFilterBuffer {
                 self.buffer.retain(|event| {
                     !matches!(
                         event.get_data(),
-                        LoxleyEventData::KeyshareCreated(share)
+                        BrackenEventData::KeyshareCreated(share)
                             if address_matches(&share.node, node_addr)
                     )
                 });
@@ -163,7 +163,7 @@ impl Handler<LoxleyEvent> for KeyshareCreatedFilterBuffer {
                     self.buffer.push(msg);
                 }
             }
-            LoxleyEventData::CommitteeMemberExcluded(data) => {
+            BrackenEventData::CommitteeMemberExcluded(data) => {
                 if data.party_id.is_some() {
                     return;
                 }
@@ -175,7 +175,7 @@ impl Handler<LoxleyEvent> for KeyshareCreatedFilterBuffer {
                 self.buffer.retain(|event| {
                     !matches!(
                         event.get_data(),
-                        LoxleyEventData::KeyshareCreated(share)
+                        BrackenEventData::KeyshareCreated(share)
                             if address_matches(&share.node, node_addr)
                     )
                 });
@@ -186,11 +186,11 @@ impl Handler<LoxleyEvent> for KeyshareCreatedFilterBuffer {
                     self.buffer.push(msg);
                 }
             }
-            LoxleyEventData::AggregatorChanged(AggregatorChanged { is_aggregator, .. }) => {
+            BrackenEventData::AggregatorChanged(AggregatorChanged { is_aggregator, .. }) => {
                 self.is_aggregator = *is_aggregator;
                 self.process_buffered_events();
             }
-            LoxleyEventData::E3RequestComplete(_) | LoxleyEventData::Shutdown(_) => {
+            BrackenEventData::E3RequestComplete(_) | BrackenEventData::Shutdown(_) => {
                 Self::forward(&self.dest, msg);
             }
             _ => {

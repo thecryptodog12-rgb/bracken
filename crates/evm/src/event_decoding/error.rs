@@ -6,7 +6,7 @@
 
 //! Pure decoding of raw EVM revert data into human-readable contract errors.
 
-use crate::contracts::{ICiphernodeRegistry, ILoxley, ISlashingManager};
+use crate::contracts::{ICiphernodeRegistry, IBracken, ISlashingManager};
 use alloy::sol_types::{Panic, Revert, SolError, SolInterface};
 
 /// Try to decode raw revert data into a human-readable error string.
@@ -25,7 +25,7 @@ pub fn decode_error(data: &[u8]) -> Option<String> {
         return Some(format!("panic: {panic}"));
     }
 
-    if let Ok(err) = ILoxley::ILoxleyErrors::abi_decode(data) {
+    if let Ok(err) = IBracken::IBrackenErrors::abi_decode(data) {
         return Some(format!("{err:?}"));
     }
     if let Ok(err) = ICiphernodeRegistry::ICiphernodeRegistryErrors::abi_decode(data) {
@@ -84,7 +84,7 @@ mod tests {
     #[test]
     fn test_decode_known_errors() {
         // CiphertextOutputNotPublished(uint256 e3Id) with e3Id = 1
-        let mut data = ILoxley::CiphertextOutputNotPublished::SELECTOR.to_vec();
+        let mut data = IBracken::CiphertextOutputNotPublished::SELECTOR.to_vec();
         data.extend_from_slice(&[0u8; 31]);
         data.push(1); // e3Id = 1
         let decoded = decode_error(&data).unwrap();
@@ -105,7 +105,7 @@ mod tests {
     #[test]
     fn test_decode_from_error_string() {
         // Simulate an alloy error string containing hex revert data
-        let selector = hex::encode(ILoxley::CiphertextOutputNotPublished::SELECTOR);
+        let selector = hex::encode(IBracken::CiphertextOutputNotPublished::SELECTOR);
         let param = "0000000000000000000000000000000000000000000000000000000000000001";
         let error_str = format!(
             "server returned an error response: error code 3: execution reverted, data: \"0x{selector}{param}\""
@@ -125,10 +125,10 @@ mod tests {
 
     #[test]
     fn test_decode_string_revert() {
-        // Standard `revert("No LOXLEY")` -> Error(string)
-        let data = Revert::from("No LOXLEY").abi_encode();
+        // Standard `revert("No BRACKEN")` -> Error(string)
+        let data = Revert::from("No BRACKEN").abi_encode();
         let decoded = decode_error(&data).unwrap();
-        assert_eq!(decoded, "No LOXLEY");
+        assert_eq!(decoded, "No BRACKEN");
     }
 
     #[test]

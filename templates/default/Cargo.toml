@@ -2,7 +2,7 @@
 resolver = "3"
 members = [
   "program",
-  ".loxley/support/dev"
+  ".bracken/support/dev"
 ]
 
 [workspace.dependencies]

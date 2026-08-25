@@ -39,7 +39,7 @@ pub(crate) fn find(contract: &str, topic0: B256) -> Option<&'static EvmEventDefi
 
 fn catalog(contract: &str) -> &'static [EvmEventDefinition] {
     match contract {
-        "Loxley" => LOXLEY,
+        "Bracken" => BRACKEN,
         "BondingRegistry" => BONDING_REGISTRY,
         "CiphernodeRegistry" => CIPHERNODE_REGISTRY,
         "SlashingManager" => SLASHING_MANAGER,
@@ -72,7 +72,7 @@ const RETIRED_BONDING_REGISTRY: &[EvmEventDefinition] = &[
     ),
 ];
 
-const LOXLEY: &[EvmEventDefinition] = &[
+const BRACKEN: &[EvmEventDefinition] = &[
     EvmEventDefinition::new("BondingRegistrySet", "BondingRegistrySet(address)", None),
     EvmEventDefinition::new("CiphernodeRegistrySet", "CiphernodeRegistrySet(address)", None),
     EvmEventDefinition::new(
@@ -414,7 +414,7 @@ const CIPHERNODE_REGISTRY: &[EvmEventDefinition] = &[
         None,
     ),
     EvmEventDefinition::new("Initialized", "Initialized(uint64)", None),
-    EvmEventDefinition::new("LoxleySet", "LoxleySet(address)", None),
+    EvmEventDefinition::new("BrackenSet", "BrackenSet(address)", None),
     EvmEventDefinition::new(
         "OwnershipTransferStarted",
         "OwnershipTransferStarted(address,address)",
@@ -514,8 +514,8 @@ const SLASHING_MANAGER: &[EvmEventDefinition] = &[
         None,
     ),
     EvmEventDefinition::new("EIP712DomainChanged", "EIP712DomainChanged()", None),
-    EvmEventDefinition::new("LoxleySet", "LoxleySet(address)", None),
-    EvmEventDefinition::new("LoxleyUpdated", "LoxleyUpdated(address,address)", None),
+    EvmEventDefinition::new("BrackenSet", "BrackenSet(address)", None),
+    EvmEventDefinition::new("BrackenUpdated", "BrackenUpdated(address,address)", None),
     EvmEventDefinition::new(
         "NodeBanUpdated",
         "NodeBanUpdated(address,bool,bytes32,address)",
@@ -571,8 +571,8 @@ mod tests {
 
     const CONTRACT_ARTIFACTS: &[(&str, &str)] = &[
         (
-            "Loxley",
-            "artifacts/contracts/Loxley.sol/Loxley.json",
+            "Bracken",
+            "artifacts/contracts/Bracken.sol/Bracken.json",
         ),
         (
             "BondingRegistry",
@@ -590,7 +590,7 @@ mod tests {
 
     fn artifact_path(relative: &str) -> PathBuf {
         PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("../../packages/loxley-contracts")
+            .join("../../packages/bracken-contracts")
             .join(relative)
     }
 
@@ -647,7 +647,7 @@ mod tests {
     #[test]
     fn every_contract_catalog_has_unique_topics() {
         for contract in [
-            "Loxley",
+            "Bracken",
             "BondingRegistry",
             "CiphernodeRegistry",
             "SlashingManager",
@@ -672,7 +672,7 @@ mod tests {
         );
 
         let treasury = keccak256("TreasuryCredited(uint256,address,address,uint256)");
-        let definition = find("Loxley", treasury).unwrap();
+        let definition = find("Bracken", treasury).unwrap();
         assert_eq!(definition.name, "TreasuryCredited");
         assert_eq!(definition.e3_id_topic, Some(1));
     }
@@ -702,7 +702,7 @@ mod tests {
     #[test]
     fn retired_signatures_never_shadow_a_live_one() {
         for contract in [
-            "Loxley",
+            "Bracken",
             "BondingRegistry",
             "CiphernodeRegistry",
             "SlashingManager",

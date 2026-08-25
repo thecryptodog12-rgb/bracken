@@ -60,13 +60,13 @@ apply_crisp_dev_config_to_server_env() {
   fi
 }
 
-build_loxley_circuits_at_setup() {
+build_bracken_circuits_at_setup() {
   if [[ "$CRISP_SKIP_PROOF_AGGREGATION" == "true" ]]; then
     echo "Skipping recursive proof-aggregation circuit build for the CRISP dev profile."
     return 0
   fi
   local committee="${CRISP_COMMITTEE:-minimum}"
-  echo "Building loxley circuits (preset=${CRISP_BFV_PRESET}, committee=${committee})..."
+  echo "Building bracken circuits (preset=${CRISP_BFV_PRESET}, committee=${committee})..."
   (
     cd "${REPO_ROOT}" &&
       pnpm build:circuits \
@@ -76,13 +76,13 @@ build_loxley_circuits_at_setup() {
   )
 }
 
-sync_loxley_circuit_artifacts() {
+sync_bracken_circuit_artifacts() {
   local committee="${CRISP_COMMITTEE:-minimum}"
   local src="${REPO_ROOT}/dist/circuits/${CRISP_BFV_PRESET}/${committee}"
-  local dst="${CRISP_ROOT}/.loxley/noir/circuits/${CRISP_BFV_PRESET}/${committee}"
+  local dst="${CRISP_ROOT}/.bracken/noir/circuits/${CRISP_BFV_PRESET}/${committee}"
 
   if [[ ! -f "${src}/recursive/dkg/pk/pk.json" ]]; then
-    echo "No built circuits at ${src}; run pnpm dev:setup first. Using loxley noir setup release layout."
+    echo "No built circuits at ${src}; run pnpm dev:setup first. Using bracken noir setup release layout."
     return 0
   fi
 
@@ -100,7 +100,7 @@ CRISP dev profile (${CRISP_ROOT}/crisp.dev.env):
   CRISP_SKIP_PROOF_AGGREGATION=${CRISP_SKIP_PROOF_AGGREGATION}
   ENABLE_ZK_VERIFICATION=${ENABLE_ZK_VERIFICATION:-false} (used at deploy via dev:up)
   ciphernode skip flag=${CRISP_SKIP_PROOF_AGGREGATION}
-  Contract addresses synced by dev:up (deploy → server/.env, client/.env, loxley.config.yaml)
+  Contract addresses synced by dev:up (deploy → server/.env, client/.env, bracken.config.yaml)
 
 EOF
 }

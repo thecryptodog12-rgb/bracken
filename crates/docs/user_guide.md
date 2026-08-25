@@ -6,7 +6,7 @@ towards BLS keys_
 You can use the cli to setup your node:
 
 ```
-$ loxley init
+$ bracken init
 Enter WebSocket devnet RPC URL [wss://ethereum-sepolia-rpc.publicnode.com]: wss://ethereum-sepolia-rpc.publicnode.com
 ✔ Enter your Ethereum address (press Enter to skip) · 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 
@@ -14,23 +14,23 @@ Enter WebSocket devnet RPC URL [wss://ethereum-sepolia-rpc.publicnode.com]: wss:
 Please enter a new password:
 Please confirm your password:
 Password sucessfully set.
-Loxley configuration successfully created!
-You can start your node using `loxley start`
+Bracken configuration successfully created!
+You can start your node using `bracken start`
 ```
 
 This will setup an initial configuration:
 
 ```
-$ cat ~/.config/loxley/config.yaml
+$ cat ~/.config/bracken/config.yaml
 ---
-# Loxley Configuration File
+# Bracken Configuration File
 # Ethereum Account Configuration
 address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
 chains:
   - name: "devnet"
     rpc_url: "wss://ethereum-sepolia-rpc.publicnode.com"
     contracts:
-      loxley:
+      bracken:
         address: "0xCe087F31e20E2F76b6544A2E4A74D4557C8fDf77"
         deploy_block: 7073317
       ciphernode_registry:
@@ -44,43 +44,43 @@ chains:
 It will also setup the nodes key_file in the following path:
 
 ```
-~/.config/loxley/key
+~/.config/bracken/key
 ```
 
 You can now setup your wallet if you have your node configured for writing to the blockchain:
 
 ```
 # Example key DO NOT USE
-$ loxley wallet set --private-key "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+$ bracken wallet set --private-key "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 ```
 
 _\*NOTE: do not use the above private key as this is obviously public and all funds will be lost_
 
 ## Configuration
 
-Loxley is configured using a configuration file. By default this file is located under
-`~/.config/loxley/config.yaml`
+Bracken is configured using a configuration file. By default this file is located under
+`~/.config/bracken/config.yaml`
 
 Default values for this file might effectively look like:
 
 ```
-# ~/.config/loxley/config.yaml
+# ~/.config/bracken/config.yaml
 key_file: "{config_dir}/key"
 db_file: "{data_dir}/db"
-config_dir: "~/.config/loxley"
-data_dir: "~/.local/share/loxley"
+config_dir: "~/.config/bracken"
+data_dir: "~/.local/share/bracken"
 ```
 
 > Note if you set `config_dir` it will change the default location for both the config file and the
 > `key_file` and if you specify `data_dir` it will change the default location for the `db_file` for
-> example: If I run `loxley start --config ./some-config.yaml` where `./some-config.yaml` contains:
+> example: If I run `bracken start --config ./some-config.yaml` where `./some-config.yaml` contains:
 >
 > ```
 > # some-config.yaml
 > config_dir: "/my/config/dir"
 > ```
 >
-> The `loxley` binary will look for the key_file under: `/my/config/dir/key`
+> The `bracken` binary will look for the key_file under: `/my/config/dir/key`
 
 ### Setting a relative folder as a config dir
 
@@ -104,7 +104,7 @@ Ciphernodes need a registration address to identify themselves within a committe
 this with the `address` field within the configuration:
 
 ```
-# ~/.config/loxley/config.yaml
+# ~/.config/bracken/config.yaml
 address: "0x90F79bf6EB2c4f870365E785982E1f101E93b906"
 ```
 
@@ -119,7 +119,7 @@ wallet private keys. You can set this key in two ways:
 ## Provide your password using the commandline
 
 ```
-> loxley password set
+> bracken password set
 
 Please enter a new password:
 ```
@@ -136,21 +136,21 @@ Enter your password again to confirm it.
 Password sucessfully set.
 ```
 
-Assuming default settings you should now be able to find your keyfile under `~/.config/loxley/key`
+Assuming default settings you should now be able to find your keyfile under `~/.config/bracken/key`
 
 ## Provide your password using a key file
 
-You can use a keyfile to provide your password by creating a file under `~/.config/loxley/key` and
+You can use a keyfile to provide your password by creating a file under `~/.config/bracken/key` and
 setting the file permissions to `400`
 
 ```
-mkdir -p ~/.config/loxley && read -s password && echo -n "$password" > ~/.config/loxley/key && chmod 400 ~/.config/loxley/key
+mkdir -p ~/.config/bracken && read -s password && echo -n "$password" > ~/.config/bracken/key && chmod 400 ~/.config/bracken/key
 ```
 
 You can change the location of your keyfile by using the `key_file` option within your configuration
 file:
 
 ```
-# ~/.config/loxley/config.yaml
-key_file: "/path/to/loxley/key"
+# ~/.config/bracken/config.yaml
+key_file: "/path/to/bracken/key"
 ```

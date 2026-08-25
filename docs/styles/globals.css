@@ -41,7 +41,7 @@ img {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Loxley — visuele taal, gelijk aan packages/loxley-dashboard.
+   Bracken — visuele taal, gelijk aan packages/bracken-dashboard.
 
    Dezelfde regel als daar: geen zwart. Inkt is greenwood, papier is getint.
    Nextra's eigen chrome (sidebar, zoek, code) hangt aan --nextra-primary-hue,
@@ -188,7 +188,7 @@ img {
   border-radius: 10px;
 }
 
-/* Tokens van de docs doorgeven aan @loxley/diagrams. Zelfde afspraak als in
+/* Tokens van de docs doorgeven aan @bracken/diagrams. Zelfde afspraak als in
    het dashboard: het pakket leest --lxd-*, wij vullen die met onze eigen
    namen. Daardoor komt hetzelfde diagram er hier in Nextra's donkere thema
    uit en daar in dat van het dashboard, zonder dat een van de twee van de

@@ -15,7 +15,7 @@ use e3_events::{
     hlc::{Hlc, HlcTimestamp},
     EffectsEnabled, Event, EventContextAccessors, EventPublisher, EventSubscriber, EventType,
     EvmEventConfig, EvmEventConfigChain, GetEvents, HistoricalEvmEventsReceived,
-    HistoricalEvmSyncStart, LoxleyEvent, LoxleyEventData, StoreKeys, SyncEnded, TakeEvents,
+    HistoricalEvmSyncStart, BrackenEvent, BrackenEventData, StoreKeys, SyncEnded, TakeEvents,
     Unsequenced,
 };
 use e3_utils::MAILBOX_LIMIT_LARGE;
@@ -40,7 +40,7 @@ fn evm_config(chains: &[u64]) -> EvmEventConfig {
 fn historical_batch(chain_id: u64, event_count: usize) -> HistoricalEvmEventsReceived {
     let events = (0..event_count)
         .map(|index| {
-            LoxleyEvent::<Unsequenced>::test_event("historical")
+            BrackenEvent::<Unsequenced>::test_event("historical")
                 .id(index as u64 + 1)
                 .build()
         })

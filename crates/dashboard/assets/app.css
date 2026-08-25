@@ -34,8 +34,8 @@
   width: 100%;
   height: 100%;
   background: var(--ink);
-  mask: url(/assets/loxley.svg) no-repeat left center / contain;
-  -webkit-mask: url(/assets/loxley.svg) no-repeat left center / contain;
+  mask: url(/assets/bracken.svg) no-repeat left center / contain;
+  -webkit-mask: url(/assets/bracken.svg) no-repeat left center / contain;
 }
 .product-name {
   padding-left: 16px;

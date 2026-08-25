@@ -7,8 +7,8 @@
 use actix::{Actor, ActorContext, AsyncContext, Handler, Message};
 use anyhow::{anyhow, Context, Result};
 use e3_events::{
-    BusHandle, EType, ErrorDispatcher, Event, EventSubscriber, EventType, LoxleyEvent,
-    LoxleyEventData,
+    BusHandle, EType, ErrorDispatcher, Event, EventSubscriber, EventType, BrackenEvent,
+    BrackenEventData,
 };
 use e3_utils::MAILBOX_LIMIT;
 use tokio::sync::broadcast::{self, error::RecvError};
@@ -70,14 +70,14 @@ impl NetEventBuffer {
 
         let addr = actor.start();
 
-        // Subscribe to LoxleyEvent on the bus
+        // Subscribe to BrackenEvent on the bus
         bus.subscribe(EventType::SyncEnded, addr.clone().recipient());
 
         (output_rx, NetEventBufferHandle { readiness })
     }
 
-    fn handle_loxley_event(&mut self, msg: LoxleyEvent) -> Result<()> {
-        if let LoxleyEventData::SyncEnded(_) = msg.get_data() {
+    fn handle_bracken_event(&mut self, msg: BrackenEvent) -> Result<()> {
+        if let BrackenEventData::SyncEnded(_) = msg.get_data() {
             return self.process_sync_ended();
         }
         Ok(())

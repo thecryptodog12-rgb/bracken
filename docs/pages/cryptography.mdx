@@ -1,9 +1,10 @@
 ---
 title: 'Cryptography'
-description: 'Threshold BFV, zero-knowledge circuits, and how they map to the Loxley implementation'
+description:
+  'Threshold BFV, zero-knowledge circuits, and how they map to the Bracken implementation'
 ---
 
-import { KeyShares, TrustLadder } from '@loxley/diagrams'
+import { KeyShares, TrustLadder } from '@bracken/diagrams'
 
 ## Cryptography
 
@@ -13,7 +14,7 @@ The rest of this page is how each of those layers actually works.
 
 <KeyShares />
 
-This page is a guided tour of the **cryptographic foundations** behind the Loxley: how **threshold
+This page is a guided tour of the **cryptographic foundations** behind the Bracken: how **threshold
 Brakerski–Fan–Vercauteren (BFV)** encryption, **distributed key generation (DKG)**, and
 **zero-knowledge proofs** fit together so that ciphernodes can run an **E3** without any single
 party holding the full decryption key, while still allowing **anyone** to check that keys, shares,
@@ -30,7 +31,7 @@ You do not need to read every section in order. If the execution model is still 
 When many parties jointly generate keys or decrypt, classical threshold protocols spread trust
 across participants: if enough of them behave, the protocol succeeds. That works well inside a
 closed group, but it leaves **observers** with little to verify—they mostly assume the right nodes
-ran the right steps. Loxley design pushes in a different direction, often summarised as the
+ran the right steps. Bracken design pushes in a different direction, often summarised as the
 **coordination trilemma**: keep individual data and intermediate secrets confidential, avoid giving
 any one party full control over decryption, and still make each cryptographic step **publicly
 checkable** without re-running the whole computation.
@@ -219,11 +220,11 @@ per E3 session:
 
 1. **DKG recursive proof**: the aggregator recursively verifies every node's C0–C4 fold chain
    together with **C5**, which aggregates the public key. Verified on-chain by
-   [`BfvPkVerifier`](https://github.com/thecryptodog12-rgb/loxley/blob/main/packages/loxley-contracts/contracts/verifiers/bfv/BfvPkVerifier.sol)
+   [`BfvPkVerifier`](https://github.com/thecryptodog12-rgb/loxley/blob/main/packages/bracken-contracts/contracts/verifiers/bfv/BfvPkVerifier.sol)
    at `publishCommittee`.
 2. **Decryption recursive proof**: the aggregator recursively verifies **C6** proofs from at least
    **T+1** parties together with **C7**, which reconstructs the plaintext. Verified on-chain by
-   [`BfvDecryptionVerifier`](https://github.com/thecryptodog12-rgb/loxley/blob/main/packages/loxley-contracts/contracts/verifiers/bfv/BfvDecryptionVerifier.sol)
+   [`BfvDecryptionVerifier`](https://github.com/thecryptodog12-rgb/loxley/blob/main/packages/bracken-contracts/contracts/verifiers/bfv/BfvDecryptionVerifier.sol)
    at `publishPlaintextOutput`.
 
 Individual nodes do not post their inner proofs on-chain. Each node folds its own C0–C4 chain into a
@@ -244,7 +245,7 @@ Each node's fold attestation signs the canonical **EIP-712 typed-data digest**
 and `verifyingContract` (the deployed `DkgFoldAttestationVerifier` address); off-chain signers must
 include those domain fields. The **struct hash** binds `(e3Id, partyId, skAggCommit, esmAggCommit)`
 — the tuple values in the signed payload, separate from the domain. The on-chain
-[`DkgFoldAttestationVerifier`](https://github.com/thecryptodog12-rgb/loxley/blob/main/packages/loxley-contracts/contracts/verifiers/DkgFoldAttestationVerifier.sol)
+[`DkgFoldAttestationVerifier`](https://github.com/thecryptodog12-rgb/loxley/blob/main/packages/bracken-contracts/contracts/verifiers/DkgFoldAttestationVerifier.sol)
 then enforces four properties per attestation:
 
 1. **Slot binding**: `canonicalCommitteeNodeAt(e3Id, binding.partyId) == binding.node`. The
@@ -269,7 +270,7 @@ proofs can be checked against them.
 #### Per-operator attribution for slashing
 
 When a node misbehaves, the off-chain accusation quorum protocol produces a
-[`SlashingManager.proposeSlash`](https://github.com/thecryptodog12-rgb/loxley/blob/main/packages/loxley-contracts/contracts/slashing/SlashingManager.sol)
+[`SlashingManager.proposeSlash`](https://github.com/thecryptodog12-rgb/loxley/blob/main/packages/bracken-contracts/contracts/slashing/SlashingManager.sol)
 call. The on-chain check enforces, in `_verifyAttestationEvidence`:
 
 1. **Voter quorum and signatures**: ≥ `M` committee-member voters (sorted ascending, accused

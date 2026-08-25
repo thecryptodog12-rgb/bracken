@@ -12,7 +12,7 @@ pub const GIT_SHA: &str = env!("GIT_SHA");
 ///
 /// Feature gates are resolved at compile time, so a checkout says nothing about
 /// what the installed binary can do. Scripts that need a feature must ask the
-/// binary itself. Released binaries build `--bin loxley` with no features and
+/// binary itself. Released binaries build `--bin bracken` with no features and
 /// report an empty list.
 pub fn compiled_features() -> Vec<&'static str> {
     let mut features = Vec::new();

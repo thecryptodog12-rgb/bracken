@@ -1,4 +1,4 @@
-# DAppNode Setup Wizard - Loxley Ciphernode
+# DAppNode Setup Wizard - Bracken Ciphernode
 version: '2'
 fields:
   - id: NETWORK
@@ -43,13 +43,13 @@ fields:
     patternErrorMessage: 'Must be a valid 20-byte hex address (0x...)'
 
   # Contracts
-  - id: LOXLEY_CONTRACT
+  - id: BRACKEN_CONTRACT
     target:
       type: environment
-      name: LOXLEY_CONTRACT
+      name: BRACKEN_CONTRACT
       service: ciphernode
-    title: 'Loxley Contract Address'
-    description: 'Address of the Loxley contract on the selected network.'
+    title: 'Bracken Contract Address'
+    description: 'Address of the Bracken contract on the selected network.'
     required: true
     pattern: '^0x[a-fA-F0-9]{40}$'
     patternErrorMessage: 'Must be a valid Ethereum address (0x...)'
@@ -76,13 +76,13 @@ fields:
     pattern: '^0x[a-fA-F0-9]{40}$'
     patternErrorMessage: 'Must be a valid Ethereum address (0x...)'
 
-  - id: LOXLEY_DEPLOY_BLOCK
+  - id: BRACKEN_DEPLOY_BLOCK
     target:
       type: environment
-      name: LOXLEY_DEPLOY_BLOCK
+      name: BRACKEN_DEPLOY_BLOCK
       service: ciphernode
-    title: 'Loxley Deploy Block'
-    description: 'Block number where the Loxley contract was deployed.'
+    title: 'Bracken Deploy Block'
+    description: 'Block number where the Bracken contract was deployed.'
     required: true
     pattern: '^[0-9]+$'
     patternErrorMessage: 'Must be a block number (integer).'
@@ -164,5 +164,5 @@ fields:
       name: EXTRA_OPTS
       service: ciphernode
     title: 'Extra Options'
-    description: 'Additional CLI arguments passed to `loxley start`.'
+    description: 'Additional CLI arguments passed to `bracken start`.'
     required: false

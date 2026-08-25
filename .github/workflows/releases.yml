@@ -151,7 +151,7 @@ jobs:
             experimental-features = nix-command flakes
       - uses: cachix/cachix-action@v15
         with:
-          name: loxley
+          name: bracken
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         # if the following fails it means some of our git dependencies or bb has updated
         # to fix this basically what you need to do here is copy the actual hashes
@@ -201,11 +201,11 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: brew install solidity
 
-      - name: Build loxley binary
-        run: cargo build --locked --release --target ${{ matrix.target }} --bin loxley
+      - name: Build bracken binary
+        run: cargo build --locked --release --target ${{ matrix.target }} --bin bracken
 
-      - name: Build loxleyup binary
-        run: cargo build --locked --release --target ${{ matrix.target }} --bin loxleyup
+      - name: Build brackenup binary
+        run: cargo build --locked --release --target ${{ matrix.target }} --bin brackenup
 
       - name: Create release archives
         shell: bash
@@ -219,20 +219,20 @@ jobs:
             EXT=""
           fi
 
-          # Create loxley archive
-          cp "target/${{ matrix.target }}/release/loxley${EXT}" "./loxley${EXT}"
-          tar -czf "dist/loxley-${{ matrix.os_name }}-${{ matrix.arch }}.tar.gz" "loxley${EXT}"
-          rm "loxley${EXT}"
+          # Create bracken archive
+          cp "target/${{ matrix.target }}/release/bracken${EXT}" "./bracken${EXT}"
+          tar -czf "dist/bracken-${{ matrix.os_name }}-${{ matrix.arch }}.tar.gz" "bracken${EXT}"
+          rm "bracken${EXT}"
 
-          # Create loxleyup archive
-          cp "target/${{ matrix.target }}/release/loxleyup${EXT}" "./loxleyup${EXT}"
-          tar -czf "dist/loxleyup-${{ matrix.os_name }}-${{ matrix.arch }}.tar.gz" "loxleyup${EXT}"
-          rm "loxleyup${EXT}"
+          # Create brackenup archive
+          cp "target/${{ matrix.target }}/release/brackenup${EXT}" "./brackenup${EXT}"
+          tar -czf "dist/brackenup-${{ matrix.os_name }}-${{ matrix.arch }}.tar.gz" "brackenup${EXT}"
+          rm "brackenup${EXT}"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: loxley-binaries-${{ matrix.os_name }}-${{ matrix.arch }}
+          name: bracken-binaries-${{ matrix.os_name }}-${{ matrix.arch }}
           path: dist/
 
   publish-rust-crates:
@@ -293,7 +293,7 @@ jobs:
         uses: pnpm/action-setup@v4
 
       # `pnpm build:ts` builds the SDK, whose prebuild compiles the threshold
-      # circuits via `nargo` (packages/loxley-sdk/scripts/compile-circuits.sh).
+      # circuits via `nargo` (packages/bracken-sdk/scripts/compile-circuits.sh).
       # Without nargo on PATH the build fails with "nargo is not installed".
       - name: Install Nargo
         uses: noir-lang/noirup@v0.1.4
@@ -320,28 +320,28 @@ jobs:
             echo "📦 Publishing with 'latest' tag for stable release"
           fi
 
-      - name: Publish @loxley/config
-        working-directory: packages/loxley-config
+      - name: Publish @bracken/config
+        working-directory: packages/bracken-config
         run: npm publish --access public --tag ${{ steps.npm_tag.outputs.tag }} --provenance
 
-      - name: Publish @loxley/contracts
-        working-directory: packages/loxley-contracts
+      - name: Publish @bracken/contracts
+        working-directory: packages/bracken-contracts
         run: npm publish --access public --tag ${{ steps.npm_tag.outputs.tag }} --provenance
 
-      - name: Publish @loxley/wasm
+      - name: Publish @bracken/wasm
         working-directory: crates/wasm
         run: npm publish --access public --tag ${{ steps.npm_tag.outputs.tag }} --provenance
 
-      - name: Publish @loxley/sdk
-        working-directory: packages/loxley-sdk
+      - name: Publish @bracken/sdk
+        working-directory: packages/bracken-sdk
         run: npm publish --access public --tag ${{ steps.npm_tag.outputs.tag }} --provenance
 
-      - name: Publish @loxley/react
-        working-directory: packages/loxley-react
+      - name: Publish @bracken/react
+        working-directory: packages/bracken-react
         run: npm publish --access public --tag ${{ steps.npm_tag.outputs.tag }} --provenance
 
-      - name: Publish @loxley/mcp
-        working-directory: packages/loxley-mcp
+      - name: Publish @bracken/mcp
+        working-directory: packages/bracken-mcp
         run: npm publish --access public --tag ${{ steps.npm_tag.outputs.tag }} --provenance
 
   download-circuits:
@@ -489,7 +489,7 @@ jobs:
           mkdir -p release-assets
           find dist/ -name "*.tar.gz" -exec cp {} release-assets/ \;
           cp compute-provider-provenance.json release-assets/
-          # `loxley config check` fetches this asset from the latest release,
+          # `bracken config check` fetches this asset from the latest release,
           # so a release without it leaves operators unable to detect a redeploy.
           if [ ! -f deployments/manifest.json ]; then
             echo "deployments/manifest.json is missing. Run \`pnpm gen:manifest\` and commit it." >&2
@@ -540,16 +540,16 @@ jobs:
 
           ## 📦 Installation
 
-          ### Install via loxleyup (Recommended)
+          ### Install via brackenup (Recommended)
 
           Install the installer:
           \`\`\`bash
           curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash
           \`\`\`
 
-          Then use it to install loxley:
+          Then use it to install bracken:
           \`\`\`bash
-          loxleyup install
+          brackenup install
           \`\`\`
 
           ### NPM Packages
@@ -560,20 +560,20 @@ jobs:
             cat >> release_notes.md << EOF
           \`\`\`bash
           # Install pre-release versions
-          npm install @loxley/sdk@next
-          npm install @loxley/contracts@next
-          npm install @loxley/config@next
-          npm install @loxley/react@next
+          npm install @bracken/sdk@next
+          npm install @bracken/contracts@next
+          npm install @bracken/config@next
+          npm install @bracken/react@next
           \`\`\`
           EOF
           else
             cat >> release_notes.md << EOF
           \`\`\`bash
           # Install stable versions
-          npm install @loxley/sdk@latest
-          npm install @loxley/contracts@latest
-          npm install @loxley/config@latest
-          npm install @loxley/react@latest
+          npm install @bracken/sdk@latest
+          npm install @bracken/contracts@latest
+          npm install @bracken/config@latest
+          npm install @bracken/react@latest
           \`\`\`
           EOF
           fi
@@ -586,7 +586,7 @@ jobs:
 
           \`\`\`toml
           [dependencies]
-          loxley = "${VERSION}"
+          bracken = "${VERSION}"
           \`\`\`
           EOF
           fi
@@ -596,8 +596,8 @@ jobs:
 
           ## 💾 Binary Assets
 
-          - \`loxley-*\`: The main Loxley CLI binary
-          - \`loxleyup-*\`: The installer/version manager binary
+          - \`bracken-*\`: The main Bracken CLI binary
+          - \`brackenup-*\`: The installer/version manager binary
 
           ### Supported Platforms
           - Linux (x86_64)

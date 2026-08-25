@@ -1,7 +1,7 @@
 ---
 title: 'Noir Circuits'
 description:
-  'Toolchain, repo layout, compile/lint scripts, and integration hooks for Loxley Noir circuits'
+  'Toolchain, repo layout, compile/lint scripts, and integration hooks for Bracken Noir circuits'
 ---
 
 # Noir Circuits
@@ -51,7 +51,7 @@ Add a path or git dependency in your `Nargo.toml` (pin a **tag or rev** that mat
 
 ```toml
 [dependencies]
-loxley_lib = { git = "https://github.com/thecryptodog12-rgb/loxley", tag = "v0.2.2", directory = "circuits/lib" }
+bracken_lib = { git = "https://github.com/thecryptodog12-rgb/loxley", tag = "v0.2.2", directory = "circuits/lib" }
 ```
 
 Check `crates/zk-prover/Cargo.toml` / `versions.json` in the same release for compatible **nargo**
@@ -63,7 +63,7 @@ Building the circuits needs two tools, and each has its own installer (or rely o
 
 - **nargo** — the Noir compiler, installed through `noirup`
 - **bb** — the [Barretenberg](https://barretenberg.aztec.network/docs/getting_started) proving
-  backend, installed through the Loxley CLI
+  backend, installed through the Bracken CLI
 
 ### nargo
 
@@ -82,17 +82,17 @@ session. New shells pick it up from the profile the installer edited.
 
 ### bb
 
-`loxley noir setup` fetches the Barretenberg version pinned in `crates/zk-prover/versions.json`
+`bracken noir setup` fetches the Barretenberg version pinned in `crates/zk-prover/versions.json`
 (`required_bb_version`), so your prover and your local builds agree:
 
 ```bash
-loxley noir status
-loxley noir setup
-loxley noir setup --force   # reinstall
+bracken noir status
+bracken noir setup
+bracken noir setup --force   # reinstall
 ```
 
-The CLI keeps this copy under `~/.loxley/noir` instead of on your `PATH`, so `loxley noir status` is
-what reports the installed version.
+The CLI keeps this copy under `~/.bracken/noir` instead of on your `PATH`, so `bracken noir status`
+is what reports the installed version.
 
 ## Compile, format, test
 
@@ -151,7 +151,7 @@ interface ICircuitVerifier {
 ## Rust integration
 
 - **`e3-zk-prover`** (`crates/zk-prover`) — witness wiring, `bb prove` / `bb verify`, artifact paths
-  aligned with `loxley noir setup`.
+  aligned with `bracken noir setup`.
 - **Events / API** — `CircuitName`, `ProofType`, and request payloads are defined next to the node.
 
 When you add or rename a circuit package, update root **`package.json`** / CI scripts that call

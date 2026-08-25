@@ -35,7 +35,7 @@ const ARGON2_VERSION: Version = Version::V0x13;
 const AES_NONCE_LEN: usize = 12;
 
 // TODO: Currently using a fixed salt to make encryption faster. Was ~300ms now ~30ms This should be revised.
-const APP_SALT: [u8; 32] = *b">>THE_LOXLEY_SYSTEM_SALT_2026!<<";
+const APP_SALT: [u8; 32] = *b">>THE_BRACKEN_SYSTEM_SALT_2026!<<";
 
 fn argon2_derive_key(
     password_bytes: &Zeroizing<Vec<u8>>,

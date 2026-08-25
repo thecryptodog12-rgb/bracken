@@ -5,7 +5,7 @@
 # This script will go through the monorepo and update the rev key of any imports extracted as a cargo dependency.
 GITHUB_REPO_URL="https://github.com/thecryptodog12-rgb/loxley"
 EXCLUDE_PATHS=(
-    "*/.loxley/caches/*"
+    "*/.bracken/caches/*"
     "*/target/*"
     "*/node_modules/*"
     "*/risc0-ethereum/*"

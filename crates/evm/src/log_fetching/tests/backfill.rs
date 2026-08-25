@@ -140,6 +140,6 @@ async fn live_log_waits_for_confirmed_canonical_backfill() -> anyhow::Result<()>
     let emitted = tokio::time::timeout(std::time::Duration::from_secs(1), rx.recv())
         .await?
         .expect("confirmed log should be emitted");
-    assert!(matches!(emitted, LoxleyEvmEvent::Log(_)));
+    assert!(matches!(emitted, BrackenEvmEvent::Log(_)));
     Ok(())
 }

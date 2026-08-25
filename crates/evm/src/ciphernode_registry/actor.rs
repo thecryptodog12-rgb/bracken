@@ -21,7 +21,7 @@ use crate::helpers::{
     encode_zk_proof, send_tx_idempotent, send_tx_with_retry, transaction_nonce_guard, EthProvider,
     ProviderFactory, TxOutcome,
 };
-use crate::messages::{EvmEvent, EvmEventProcessor, EvmLog, EvmLogRejected, LoxleyEvmEvent};
+use crate::messages::{EvmEvent, EvmEventProcessor, EvmLog, EvmLogRejected, BrackenEvmEvent};
 use actix::prelude::*;
 use alloy::{
     primitives::{Address, Bytes, B256, U256},
@@ -32,7 +32,7 @@ use anyhow::{Context as _, Result};
 use e3_events::{
     prelude::*, AggregatorChanged, BusHandle, CommitteeFinalizeRequested,
     DkgFoldAttestationContextEstablished, E3RequestComplete, E3id, EType, EffectsEnabled,
-    EventSubscriber, EventType, LoxleyEvent, LoxleyEventData, Proof, PublicKeyAggregated, Shutdown,
+    EventSubscriber, EventType, BrackenEvent, BrackenEventData, Proof, PublicKeyAggregated, Shutdown,
     TicketGenerated, TicketId, DKG_FOLD_ATTESTATION_CONTEXT_SCHEMA_VERSION,
 };
 use e3_utils::{require_successful_receipt, ArcBytes, NotifySync, MAILBOX_LIMIT};
@@ -54,7 +54,7 @@ pub use effects::{
     finalize_committee_on_registry, publish_committee_to_registry, submit_ticket_to_registry,
 };
 
-/// Connects to CiphernodeRegistry.sol converting EVM events to LoxleyEvents.
+/// Connects to CiphernodeRegistry.sol converting EVM events to BrackenEvents.
 pub struct CiphernodeRegistrySolReader<P> {
     provider: EthProvider<P>,
     provider_factory: Option<ProviderFactory<P>>,
@@ -181,7 +181,7 @@ async fn parse_registry_log<P: Provider + Clone + 'static>(
     (provider, result)
 }
 
-async fn forward_registry_event(next: EvmEventProcessor, event: LoxleyEvmEvent) -> Result<()> {
+async fn forward_registry_event(next: EvmEventProcessor, event: BrackenEvmEvent) -> Result<()> {
     tokio::time::timeout(EVENT_FORWARD_TIMEOUT, next.send(event))
         .await
         .context("timed out while forwarding a ciphernode registry event")?
@@ -206,12 +206,12 @@ impl<P: Provider + Clone + 'static> CiphernodeRegistrySolReader<P> {
     }
 }
 
-impl<P: Provider + Clone + 'static> Handler<LoxleyEvmEvent> for CiphernodeRegistrySolReader<P> {
+impl<P: Provider + Clone + 'static> Handler<BrackenEvmEvent> for CiphernodeRegistrySolReader<P> {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvmEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvmEvent, ctx: &mut Self::Context) -> Self::Result {
         match msg.clone() {
-            LoxleyEvmEvent::Log(log) => {
+            BrackenEvmEvent::Log(log) => {
                 debug!("processing event({})", msg.get_id());
                 let id = log.id;
                 let chain_id = log.chain_id;
@@ -226,7 +226,7 @@ impl<P: Provider + Clone + 'static> Handler<LoxleyEvmEvent> for CiphernodeRegist
                             parse_registry_log(provider, provider_factory, confirmations, log)
                                 .await;
                         let event = match parsed {
-                            Ok(event) => LoxleyEvmEvent::Event(event),
+                            Ok(event) => BrackenEvmEvent::Event(event),
                             Err(parse_error) => {
                                 error!(
                                     %id,
@@ -234,7 +234,7 @@ impl<P: Provider + Clone + 'static> Handler<LoxleyEvmEvent> for CiphernodeRegist
                                     error = %parse_error,
                                     "Rejecting EVM log and failing the chain ingestion pipeline"
                                 );
-                                LoxleyEvmEvent::Rejected(EvmLogRejected::new(
+                                BrackenEvmEvent::Rejected(EvmLogRejected::new(
                                     id,
                                     chain_id,
                                     parse_error.to_string(),
@@ -259,7 +259,7 @@ impl<P: Provider + Clone + 'static> Handler<LoxleyEvmEvent> for CiphernodeRegist
                     }),
                 );
             }
-            hist @ LoxleyEvmEvent::HistoricalSyncComplete(..) => {
+            hist @ BrackenEvmEvent::HistoricalSyncComplete(..) => {
                 let next = self.next.clone();
                 ctx.wait(
                     async move { forward_registry_event(next, hist).await }

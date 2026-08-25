@@ -39,7 +39,7 @@ pub struct ComputeDomain {
 impl ComputeDomain {
     fn new(
         chain_id: u64,
-        loxley_address: &str,
+        bracken_address: &str,
         e3_id: &str,
         encryption_scheme_id: &[u8],
         committee_public_key_hash: &[u8],
@@ -47,9 +47,9 @@ impl ComputeDomain {
         Ok(Self {
             chain_id,
             verifying_contract: fixed(
-                &hex::decode(loxley_address.trim_start_matches("0x"))
-                    .map_err(|error| format!("invalid Loxley address: {error}"))?,
-                "Loxley address",
+                &hex::decode(bracken_address.trim_start_matches("0x"))
+                    .map_err(|error| format!("invalid Bracken address: {error}"))?,
+                "Bracken address",
             )?,
             e3_id: e3_id
                 .parse::<U256>()
@@ -434,7 +434,7 @@ async fn process_computation_background(
             println!("computation finished!");
             // Compute the SAFE commitment for the produced ciphertext so the
             // downstream template server can forward it to
-            // `Loxley.publishCiphertextOutput`.
+            // `Bracken.publishCiphertextOutput`.
             let params = decode_bfv_params_arc(&fhe_inputs.params)
                 .context("failed to decode BFV params for commitment")?;
             let ciphertext_commitment = compute_ct_commitment(
@@ -563,7 +563,7 @@ async fn handle_compute(
     };
     let domain = ComputeDomain::new(
         req.chain_id,
-        &req.loxley_address,
+        &req.bracken_address,
         &e3_id,
         &req.encryption_scheme_id,
         &req.committee_public_key_hash,

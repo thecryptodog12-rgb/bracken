@@ -17,7 +17,7 @@ use e3_bfv_client::validate_pk_commitment;
 use e3_evm_helpers::{
     block_listener::BlockListener,
     contracts::{
-        LoxleyContract, LoxleyContractFactory, LoxleyRead, ProviderType, ReadOnly, ReadWrite,
+        BrackenContract, BrackenContractFactory, BrackenRead, ProviderType, ReadOnly, ReadWrite,
     },
     event_listener::EventListener,
     events::{CiphertextOutputPublished, CommitteePublished, PlaintextOutputPublished},
@@ -155,13 +155,13 @@ impl<S: DataStore> DataStore for SharedStore<S> {
 }
 
 #[derive(Clone)]
-pub struct LoxleyIndexer<S: DataStore, R: ProviderType> {
+pub struct BrackenIndexer<S: DataStore, R: ProviderType> {
     ctx: Arc<IndexerContext<S, R>>,
 }
 
-impl<S: DataStore, R: ProviderType> Drop for LoxleyIndexer<S, R> {
+impl<S: DataStore, R: ProviderType> Drop for BrackenIndexer<S, R> {
     fn drop(&mut self) {
-        info!("LoxleyIndexer is DROPPED");
+        info!("BrackenIndexer is DROPPED");
     }
 }
 
@@ -169,7 +169,7 @@ pub struct IndexerContext<S: DataStore, R: ProviderType> {
     store: SharedStore<S>,
     event_listener: EventListener,
     block_listener: BlockListener,
-    contract: LoxleyContract<R>,
+    contract: BrackenContract<R>,
     contract_address: String,
     chain_id: u64,
     callbacks: CallbackQueue,
@@ -188,10 +188,10 @@ impl<S: DataStore, R: ProviderType> IndexerContext<S, R> {
         self.block_listener.clone()
     }
 
-    pub fn contract(&self) -> LoxleyContract<R> {
+    pub fn contract(&self) -> BrackenContract<R> {
         self.contract.clone()
     }
-    pub fn loxley_address(&self) -> String {
+    pub fn bracken_address(&self) -> String {
         self.contract_address.clone()
     }
 
@@ -222,44 +222,44 @@ impl<S: DataStore, R: ProviderType> IndexerContext<S, R> {
     }
 }
 
-impl<R: ProviderType> LoxleyIndexer<InMemoryStore, R> {
+impl<R: ProviderType> BrackenIndexer<InMemoryStore, R> {
     pub async fn new_with_in_mem_store(
         event_listener: EventListener,
-        contract: LoxleyContract<R>,
-    ) -> Result<LoxleyIndexer<InMemoryStore, R>> {
+        contract: BrackenContract<R>,
+    ) -> Result<BrackenIndexer<InMemoryStore, R>> {
         let store = InMemoryStore::new();
 
-        LoxleyIndexer::new(event_listener, contract, store).await
+        BrackenIndexer::new(event_listener, contract, store).await
     }
 }
 
-impl LoxleyIndexer<InMemoryStore, ReadOnly> {
-    /// Creates an `LoxleyIndexer` with an in-memory store.
+impl BrackenIndexer<InMemoryStore, ReadOnly> {
+    /// Creates an `BrackenIndexer` with an in-memory store.
     ///
-    /// Note: `addresses[0]` must be the loxley contract address.
+    /// Note: `addresses[0]` must be the bracken contract address.
     pub async fn from_endpoint_address_in_mem(rpc_url: &str, addresses: &[&str]) -> Result<Self> {
         let event_listener = EventListener::create_contract_listener(rpc_url, addresses).await?;
-        let contract = LoxleyContractFactory::create_read(rpc_url, addresses[0]).await?;
-        LoxleyIndexer::<InMemoryStore, ReadOnly>::new_with_in_mem_store(event_listener, contract)
+        let contract = BrackenContractFactory::create_read(rpc_url, addresses[0]).await?;
+        BrackenIndexer::<InMemoryStore, ReadOnly>::new_with_in_mem_store(event_listener, contract)
             .await
     }
 
-    /// Creates an `LoxleyIndexer` with a provided in-memory store.
+    /// Creates an `BrackenIndexer` with a provided in-memory store.
     ///
-    /// Note: `addresses[0]` must be the loxley contract address.
+    /// Note: `addresses[0]` must be the bracken contract address.
     pub async fn from_endpoint_address(
         rpc_url: &str,
         addresses: &[&str],
         store: InMemoryStore,
     ) -> Result<Self> {
         let event_listener = EventListener::create_contract_listener(rpc_url, addresses).await?;
-        let contract = LoxleyContractFactory::create_read(rpc_url, addresses[0]).await?;
-        LoxleyIndexer::new(event_listener, contract, store).await
+        let contract = BrackenContractFactory::create_read(rpc_url, addresses[0]).await?;
+        BrackenIndexer::new(event_listener, contract, store).await
     }
 }
 
-impl<S: DataStore> LoxleyIndexer<S, ReadWrite> {
-    /// Creates a new LoxleyIndexer with a writeable contract.
+impl<S: DataStore> BrackenIndexer<S, ReadWrite> {
+    /// Creates a new BrackenIndexer with a writeable contract.
     pub async fn new_with_write_contract(
         rpc_url: &str,
         addresses: &[&str], // First address must be contract_address
@@ -270,19 +270,19 @@ impl<S: DataStore> LoxleyIndexer<S, ReadWrite> {
             return Err(eyre::eyre!("No addresses provided"));
         };
         let event_listener = EventListener::create_contract_listener(rpc_url, addresses).await?;
-        LoxleyIndexer::new(
+        BrackenIndexer::new(
             event_listener,
-            LoxleyContractFactory::create_write(rpc_url, contract_address, private_key).await?,
+            BrackenContractFactory::create_write(rpc_url, contract_address, private_key).await?,
             store,
         )
         .await
     }
 }
 
-impl<S: DataStore, R: ProviderType> LoxleyIndexer<S, R> {
+impl<S: DataStore, R: ProviderType> BrackenIndexer<S, R> {
     pub async fn new(
         event_listener: EventListener,
-        contract: LoxleyContract<R>,
+        contract: BrackenContract<R>,
         store: S,
     ) -> Result<Self> {
         let chain_id = contract.provider.get_chain_id().await?;
@@ -300,7 +300,7 @@ impl<S: DataStore, R: ProviderType> LoxleyIndexer<S, R> {
             }),
         };
         instance.setup_listeners().await?;
-        info!("LoxleyIndexer has been configured");
+        info!("BrackenIndexer has been configured");
         Ok(instance)
     }
 
@@ -341,7 +341,7 @@ impl<S: DataStore, R: ProviderType> LoxleyIndexer<S, R> {
         self.add_event_handler(move |e: CommitteePublished, ctx| async move {
             let contract = ctx.contract();
             let db = ctx.store();
-            let loxley_address = ctx.loxley_address();
+            let bracken_address = ctx.bracken_address();
             let e3_id = e.e3Id.to_string();
 
             info!(
@@ -364,7 +364,7 @@ impl<S: DataStore, R: ProviderType> LoxleyIndexer<S, R> {
                 (
                     keccak256(b"fhe.rs:BFV"),
                     keccak256(&e3_params),
-                    keccak256(b"loxley-bfv-v1"),
+                    keccak256(b"bracken-bfv-v1"),
                 )
                     .abi_encode(),
             );
@@ -404,7 +404,7 @@ impl<S: DataStore, R: ProviderType> LoxleyIndexer<S, R> {
                 committee_public_key_hash: e.pkCommitment.to_vec(),
                 custom_params: e3.customParams.to_vec(),
                 e3_params: e3_params.to_vec(),
-                loxley_address,
+                bracken_address,
                 encryption_scheme_id: e3.encryptionSchemeId.to_vec(),
                 crypto_config_id: crypto_config_id.to_vec(),
                 id: e3_id.clone(),
@@ -488,7 +488,7 @@ impl<S: DataStore, R: ProviderType> LoxleyIndexer<S, R> {
     }
 
     async fn setup_listeners(&mut self) -> Result<()> {
-        info!("Setting up listeners for LoxleyIndexer...");
+        info!("Setting up listeners for BrackenIndexer...");
         self.register_committee_published().await?;
         self.register_ciphertext_output_published().await?;
         self.register_plaintext_output_published().await?;
@@ -498,7 +498,7 @@ impl<S: DataStore, R: ProviderType> LoxleyIndexer<S, R> {
     }
 
     pub async fn listen(&self) -> Result<()> {
-        info!("Starting LoxleyIndexer listening...");
+        info!("Starting BrackenIndexer listening...");
         loop {
             let res = tokio::select! {
                 res = self.ctx.event_listener.listen() => {

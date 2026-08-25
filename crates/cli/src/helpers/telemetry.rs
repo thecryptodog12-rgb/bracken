@@ -24,7 +24,7 @@ use tracing_subscriber::fmt::format::{FormatFields, Writer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, Layer};
 
 pub fn setup_simple_tracing(log_level: Level) {
-    LogCollector::init("loxley", None);
+    LogCollector::init("bracken", None);
     let targets = Targets::new()
         .with_default(log_level)
         .with_target("alloy_pubsub", Level::WARN);
@@ -61,7 +61,7 @@ pub fn setup_tracing(config: &AppConfig, log_level: Level) -> Result<()> {
                 .with_resource(Resource::builder().with_service_name(name).build())
                 .build();
             let telemetry = tracing_opentelemetry::layer()
-                .with_tracer(provider.tracer("loxley-ciphernode"))
+                .with_tracer(provider.tracer("bracken-ciphernode"))
                 .with_filter(tracing_subscriber::filter::filter_fn(
                     telemetry_metadata_is_safe,
                 ));

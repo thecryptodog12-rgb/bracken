@@ -8,8 +8,8 @@ docker run -it \
   -v $(pwd)/types:/app/types \
   -v $(pwd)/program:/app/program \
   -v $(pwd)/scripts:/app/scripts \
-  -v $(pwd)/.loxley/generated/contracts:/app/contracts \
-  -v $(pwd)/.loxley/generated/tests:/app/tests \
+  -v $(pwd)/.bracken/generated/contracts:/app/contracts \
+  -v $(pwd)/.bracken/generated/tests:/app/tests \
   -v $(pwd)/Cargo.toml:/app/Cargo.toml \
   -v $(pwd)/Cargo.lock:/app/Cargo.lock \
   $PKG

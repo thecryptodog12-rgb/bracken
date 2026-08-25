@@ -89,11 +89,11 @@ impl Handler<NetInputLagged> for NetEventBuffer {
     }
 }
 
-impl Handler<LoxleyEvent> for NetEventBuffer {
+impl Handler<BrackenEvent> for NetEventBuffer {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
-        if let Err(error) = self.handle_loxley_event(msg) {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
+        if let Err(error) = self.handle_bracken_event(msg) {
             self.fail_closed(error, ctx);
         }
     }

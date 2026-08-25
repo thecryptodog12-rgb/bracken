@@ -1,5 +1,5 @@
 {
-  "name": "loxley-example",
+  "name": "bracken-example",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -17,14 +17,14 @@
     "dev:frontend": "./scripts/dev_frontend.sh",
     "dev:program": "./scripts/dev_program.sh",
     "dev:server": "./scripts/dev_server.sh",
-    "predev:all": "[ ! -f './.loxley/generated/contracts/ImageID.sol' ] && loxley program compile || true",
+    "predev:all": "[ ! -f './.bracken/generated/contracts/ImageID.sol' ] && bracken program compile || true",
     "test": "hardhat test",
     "test:server": "vitest run ./server/runner.test.ts",
     "test:integration": "pnpm test:server && ./scripts/test_integration.sh"
   },
   "dependencies": {
-    "@loxley/contracts": "workspace:*",
-    "@loxley/sdk": "workspace:*",
+    "@bracken/contracts": "workspace:*",
+    "@bracken/sdk": "workspace:*",
     "@types/yargs": "^17.0.33",
     "@zk-kit/lazy-imt.sol": "2.0.0-beta.12",
     "dotenv": "^16.4.5",
@@ -32,7 +32,7 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@loxley/config": "workspace:*",
+    "@bracken/config": "workspace:*",
     "eslint": "^9.39.1",
     "@nomicfoundation/hardhat-ethers": "4.0.3",
     "@nomicfoundation/hardhat-ethers-chai-matchers": "3.0.1",

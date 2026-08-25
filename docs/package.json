@@ -1,8 +1,8 @@
 {
-  "name": "loxley-docs",
+  "name": "bracken-docs",
   "version": "1.0.0",
   "private": true,
-  "description": "the official documentation for Loxley.",
+  "description": "the official documentation for Bracken.",
   "main": "index.js",
   "scripts": {
     "dev": "next",
@@ -10,7 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@loxley/diagrams": "workspace:*",
+    "@bracken/diagrams": "workspace:*",
     "katex": "^0.16.44",
     "next": "^14.2.1",
     "nextra": "^2.13.4",

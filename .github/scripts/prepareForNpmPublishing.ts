@@ -28,11 +28,11 @@ interface PackageJson {
 }
 
 const PACKAGES: Package[] = [
-  { name: '@loxley/wasm', path: 'crates/wasm' },
-  { name: '@loxley/config', path: 'packages/loxley-config' },
-  { name: '@loxley/contracts', path: 'packages/loxley-contracts' },
-  { name: '@loxley/sdk', path: 'packages/loxley-sdk' },
-  { name: '@loxley/react', path: 'packages/loxley-react' },
+  { name: '@bracken/wasm', path: 'crates/wasm' },
+  { name: '@bracken/config', path: 'packages/bracken-config' },
+  { name: '@bracken/contracts', path: 'packages/bracken-contracts' },
+  { name: '@bracken/sdk', path: 'packages/bracken-sdk' },
+  { name: '@bracken/react', path: 'packages/bracken-react' },
 ]
 
 console.log('🔧 Preparing packages for npm publishing...\n')

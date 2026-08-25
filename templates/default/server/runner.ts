@@ -8,7 +8,7 @@ import { getProgramRunnerConfig } from './utils'
 
 export interface ComputeDomain {
   chainId: number
-  loxleyAddress: string
+  brackenAddress: string
   encryptionSchemeId: string
   committeePublicKeyHash: string
 }
@@ -24,7 +24,7 @@ export async function callFheRunner(
   const payload = {
     e3_id: e3Id.toString(),
     chain_id: domain.chainId,
-    loxley_address: domain.loxleyAddress,
+    bracken_address: domain.brackenAddress,
     encryption_scheme_id: domain.encryptionSchemeId,
     committee_public_key_hash: domain.committeePublicKeyHash,
     params,

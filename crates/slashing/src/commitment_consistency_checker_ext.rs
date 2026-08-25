@@ -14,7 +14,7 @@
 use crate::actors::commitment_consistency_checker::CommitmentConsistencyChecker;
 use anyhow::Result;
 use async_trait::async_trait;
-use e3_events::{BusHandle, CommitmentLink, Event, LoxleyEvent, LoxleyEventData};
+use e3_events::{BusHandle, CommitmentLink, Event, BrackenEvent, BrackenEventData};
 use e3_fhe_params::BfvPreset;
 use e3_request::{E3Context, E3ContextSnapshot, E3Extension, META_KEY};
 use e3_zk_helpers::CiphernodesCommitteeSize;
@@ -79,8 +79,8 @@ impl CommitmentConsistencyCheckerExtension {
 
 #[async_trait]
 impl E3Extension for CommitmentConsistencyCheckerExtension {
-    fn on_event(&self, ctx: &mut E3Context, evt: &LoxleyEvent) {
-        let LoxleyEventData::CommitteeFinalized(data) = evt.get_data() else {
+    fn on_event(&self, ctx: &mut E3Context, evt: &BrackenEvent) {
+        let BrackenEventData::CommitteeFinalized(data) = evt.get_data() else {
             return;
         };
 

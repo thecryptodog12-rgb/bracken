@@ -1,6 +1,6 @@
 # Circuits
 
-This directory holds the **Noir** implementation of Loxley’s zero-knowledge circuits: distributed
+This directory holds the **Noir** implementation of Bracken’s zero-knowledge circuits: distributed
 key generation and encrypted share handling (**BFV**), threshold key generation, user encryption,
 and threshold decryption (**TrBFV**), together with recursive proof aggregation.
 
@@ -101,7 +101,7 @@ pnpm tsx scripts/build-circuits.ts   # compile circuits, verification keys, arti
 ```
 
 Pin **nargo** and **bb** to the versions in `crates/zk-prover` and `versions.json`. For local work,
-**`loxley noir setup`** installs a toolchain that lines up with the prover and the artifacts CI
+**`bracken noir setup`** installs a toolchain that lines up with the prover and the artifacts CI
 produces. Install options and CLI flags are on the
 [Noir Circuits](https://docs.theinterfold.com/noir-circuits) page
 ([`docs/pages/noir-circuits.mdx`](../docs/pages/noir-circuits.mdx)).
@@ -111,6 +111,6 @@ produces. Install options and CLI flags are on the
 | Topic                                                                  | Location                                                                                                                          |
 | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | Cryptographic model (PV-TBFV, phases P1–P4, circuit identifiers C0–C7) | [Cryptography](https://docs.theinterfold.com/cryptography) · [source](../docs/pages/cryptography.mdx)                                |
-| Toolchain, repository layout, `loxley noir`, compilation               | [Noir Circuits](https://docs.theinterfold.com/noir-circuits) · [source](../docs/pages/noir-circuits.mdx)                             |
-| Rust types (`ProofType`, `CircuitName`)                                | [`signed_proof.rs`](../crates/events/src/loxley_event/signed_proof.rs) · [`proof.rs`](../crates/events/src/loxley_event/proof.rs) |
+| Toolchain, repository layout, `bracken noir`, compilation               | [Noir Circuits](https://docs.theinterfold.com/noir-circuits) · [source](../docs/pages/noir-circuits.mdx)                             |
+| Rust types (`ProofType`, `CircuitName`)                                | [`signed_proof.rs`](../crates/events/src/bracken_event/signed_proof.rs) · [`proof.rs`](../crates/events/src/bracken_event/proof.rs) |
 | Protocol execution (actors, events, proof ordering)                    | [`agent/flow-trace/04_DKG_AND_COMPUTATION.md`](../agent/flow-trace/04_DKG_AND_COMPUTATION.md)                                     |

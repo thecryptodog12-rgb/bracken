@@ -10,10 +10,10 @@ import CardContent from '../components/CardContent'
 import Spinner from '../components/Spinner'
 import ErrorDisplay from '../components/ErrorDisplay'
 import { useWizard, WizardStep } from '../../context/WizardContext'
-import { decodePlaintextOutput } from '@loxley/sdk'
+import { decodePlaintextOutput } from '@bracken/sdk'
 
 /**
- * EncryptSubmit component - Fourth step in the Loxley wizard flow
+ * EncryptSubmit component - Fourth step in the Bracken wizard flow
  *
  * This component handles the encryption and submission of user inputs to the E3.
  * It provides feedback on the encryption process and displays the status of the
@@ -22,7 +22,7 @@ import { decodePlaintextOutput } from '@loxley/sdk'
 const EncryptSubmit: React.FC = () => {
   const { e3State, setE3State, setResult, setCurrentStep, inputPublishError, inputPublishSuccess, handleTryAgain, handleReset, sdk } =
     useWizard()
-  const { isInitialized, onLoxleyEvent, off, LoxleyEventType } = sdk
+  const { isInitialized, onBrackenEvent, off, BrackenEventType } = sdk
 
   const [showErrorDetails, setShowErrorDetails] = useState(false)
   const [isExpired, setIsExpired] = useState(false)
@@ -57,14 +57,14 @@ const EncryptSubmit: React.FC = () => {
       })
     }
 
-    onLoxleyEvent(LoxleyEventType.CIPHERTEXT_OUTPUT_PUBLISHED, handleCiphertextOutput)
-    onLoxleyEvent(LoxleyEventType.PLAINTEXT_OUTPUT_PUBLISHED, handlePlaintextOutput)
+    onBrackenEvent(BrackenEventType.CIPHERTEXT_OUTPUT_PUBLISHED, handleCiphertextOutput)
+    onBrackenEvent(BrackenEventType.PLAINTEXT_OUTPUT_PUBLISHED, handlePlaintextOutput)
 
     return () => {
-      off(LoxleyEventType.CIPHERTEXT_OUTPUT_PUBLISHED, handleCiphertextOutput)
-      off(LoxleyEventType.PLAINTEXT_OUTPUT_PUBLISHED, handlePlaintextOutput)
+      off(BrackenEventType.CIPHERTEXT_OUTPUT_PUBLISHED, handleCiphertextOutput)
+      off(BrackenEventType.PLAINTEXT_OUTPUT_PUBLISHED, handlePlaintextOutput)
     }
-  }, [isInitialized, onLoxleyEvent, off, LoxleyEventType, setE3State, setResult])
+  }, [isInitialized, onBrackenEvent, off, BrackenEventType, setE3State, setResult])
 
   // Check for E3 expiration
   useEffect(() => {

@@ -150,7 +150,7 @@ async fn check(
         // Not "address(es)": a chain-id mismatch counts here too.
         bail!(
             "{} setting(s) do not match the published deployment. \
-             Update your config, or re-run `loxley ciphernode setup`.",
+             Update your config, or re-run `bracken ciphernode setup`.",
             errors
         );
     }

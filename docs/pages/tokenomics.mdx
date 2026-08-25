@@ -1,23 +1,23 @@
 ---
-title: 'Loxley Tokenomics'
+title: 'Bracken Tokenomics'
 description:
-  'The LOXLEY token — supply, decimals, powers the contract does not have, and its role as
+  'The BRACKEN token — supply, decimals, powers the contract does not have, and its role as
   ciphernode bonding collateral'
 ---
 
 import { Callout } from 'nextra/components'
 
-# LOXLEY Tokenomics
+# BRACKEN Tokenomics
 
 <Callout type='warning'>
-  **LOXLEY is not deployed.** No token exists at any address on any chain. The parameters below
-  describe what `LoxleyBondToken` does when it is deployed, taken from the contract source, not from
-  a launch that has happened.
+  **BRACKEN is not deployed.** No token exists at any address on any chain. The parameters below
+  describe what `BrackenBondToken` does when it is deployed, taken from the contract source, not
+  from a launch that has happened.
 </Callout>
 
 ## What the token is for
 
-LOXLEY is collateral. Ciphernode operators bond it to join the pool that sortition draws committees
+BRACKEN is collateral. Ciphernode operators bond it to join the pool that sortition draws committees
 from, and it is what gets slashed when an operator fails a duty. That is its function in the
 protocol — everything else the token does is a consequence of being ordinary enough to trade.
 
@@ -28,7 +28,7 @@ token with a different width; see [Two tokens, two widths](#two-tokens-two-width
 
 |                 |                                                 |
 | --------------- | ----------------------------------------------- |
-| Name / symbol   | Loxley / LOXLEY                                 |
+| Name / symbol   | Bracken / BRACKEN                               |
 | Total supply    | 1,200,000,000                                   |
 | Decimals        | 18                                              |
 | Chain           | Robinhood Chain (`4663`)                        |
@@ -42,7 +42,7 @@ The interesting part of this token is what is missing from it. Every power a tok
 a promise somebody has to trust, and collateral is the worst place to ask for that trust: a token
 that can freeze a balance can freeze a bond.
 
-So `LoxleyBondToken` has:
+So `BrackenBondToken` has:
 
 - **No `mint`.** Supply is minted once, inside the constructor. There is no function that can
   increase it afterwards, so no amount of key compromise can dilute a holder.
@@ -55,7 +55,7 @@ So `LoxleyBondToken` has:
   it exists.
 
 These are not claims about intent. They are claims about the bytecode, and they are checkable: read
-the source at `packages/loxley-contracts/contracts/token/LoxleyBondToken.sol`, then verify the
+the source at `packages/bracken-contracts/contracts/token/BrackenBondToken.sol`, then verify the
 deployed contract matches once it exists.
 
 ## Distribution
@@ -72,12 +72,12 @@ claimed here.
 
 ## Two tokens, two widths
 
-Loxley uses two different tokens, and the registry checks both:
+Bracken uses two different tokens, and the registry checks both:
 
-|              | Token  | Decimals | Used for                                  |
-| ------------ | ------ | -------- | ----------------------------------------- |
-| Bond         | LOXLEY | **18**   | operator collateral, slashing             |
-| Fee / ticket | USDG   | **6**    | paying for computation, ticket collateral |
+|              | Token   | Decimals | Used for                                  |
+| ------------ | ------- | -------- | ----------------------------------------- |
+| Bond         | BRACKEN | **18**   | operator collateral, slashing             |
+| Fee / ticket | USDG    | **6**    | paying for computation, ticket collateral |
 
 The width difference is not cosmetic. `BondingRegistry` stores `expectedCiphernodeBondDecimals: 18`
 and `expectedTicketDecimals: 6`, and rejects a token whose `decimals()` disagrees. Configuring an

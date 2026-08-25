@@ -1,15 +1,15 @@
 ---
 title: 'Installation'
-description: 'Install and set up the Loxley CLI'
+description: 'Install and set up the Bracken CLI'
 ---
 
 # Installation
 
-This guide covers how to install the Loxley CLI and get your development environment set up.
+This guide covers how to install the Bracken CLI and get your development environment set up.
 
 ## Prerequisites
 
-Before installing Loxley, make sure you have the following dependency installed:
+Before installing Bracken, make sure you have the following dependency installed:
 
 - [Rust](https://www.rust-lang.org/tools/install)
 
@@ -17,7 +17,7 @@ For full hardware and software requirements, see [System Requirements](/requirem
 
 ## Quick Install (Recommended)
 
-The easiest way to install the Loxley CLI is using our installer script:
+The easiest way to install the Bracken CLI is using our installer script:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash
@@ -29,44 +29,44 @@ Or if you prefer `wget`:
 wget -qO- https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash
 ```
 
-This script will download and install `loxleyup`, which is the standalone installer for the Loxley
+This script will download and install `brackenup`, which is the standalone installer for the Bracken
 CLI.
 
-## Using loxleyup
+## Using brackenup
 
-Once you have `loxleyup` installed, you can manage your Loxley CLI installation:
+Once you have `brackenup` installed, you can manage your Bracken CLI installation:
 
-### Install the Loxley CLI
+### Install the Bracken CLI
 
 ```bash
 # Install to ~/.local/bin (default)
-loxleyup install
+brackenup install
 
 # Install to /usr/local/bin (requires sudo)
-loxleyup install --system
+brackenup install --system
 ```
 
-Running `loxleyup install` will install the latest version of the Loxley CLI. See `loxleyup --help`
-for more options.
+Running `brackenup install` will install the latest version of the Bracken CLI. See
+`brackenup --help` for more options.
 
-### Update the Loxley CLI
+### Update the Bracken CLI
 
 ```bash
 # Update to the latest version
-loxleyup update
+brackenup update
 
 # Update system-wide installation
-loxleyup update --system
+brackenup update --system
 ```
 
 ### Uninstall
 
 ```bash
-# Remove the Loxley CLI
-loxleyup uninstall
+# Remove the Bracken CLI
+brackenup uninstall
 
 # Remove system-wide installation
-loxleyup uninstall --system
+brackenup uninstall --system
 ```
 
 ## Install with Nix
@@ -81,13 +81,13 @@ nix develop github:thecryptodog12-rgb/loxley/{branch,tag,commit}
 ```
 
 This will build from source using the nix package manager and provide a runtime environemnt for
-loxley. It might take some time but the result will be cached on your local nix store for future
+bracken. It might take some time but the result will be cached on your local nix store for future
 execution.
 
 ```bash
 ❯ nix develop github:thecryptodog12-rgb/loxley/v0.2.2
-❯ loxley --version
-loxley 0.2.2
+❯ bracken --version
+bracken 0.2.2
 ❯ bb --version
 3.0.0-nightly.20251104
 ❯ echo $E3_CUSTOM_BB
@@ -110,10 +110,10 @@ If you prefer to install manually:
 
 1. Visit the [releases page](https://github.com/thecryptodog12-rgb/loxley/releases)
 2. Download the appropriate release archive for your platform:
-   - Linux: `loxley-linux-x86_64.tar.gz`
-   - macOS: `loxley-macos-aarch64.tar.gz`
+   - Linux: `bracken-linux-x86_64.tar.gz`
+   - macOS: `bracken-macos-aarch64.tar.gz`
 3. Extract the binary and place it in your PATH (e.g., `~/.local/bin` or `/usr/local/bin`)
-4. Make sure the binary is executable: `chmod +x loxley`
+4. Make sure the binary is executable: `chmod +x bracken`
 
 ## Platform Support
 
@@ -127,35 +127,35 @@ _Note: Intel Macs automatically run Apple Silicon binaries through Rosetta 2 tra
 
 ### Building from Source
 
-If you need to build `loxley` from source:
+If you need to build `bracken` from source:
 
 1. Ensure you have Rust installed (using [rustup](https://rustup.rs/))
 2. Clone the repository
 
 ```bash
 git clone https://github.com/thecryptodog12-rgb/loxley.git
-cd loxley
+cd bracken
 ```
 
 3. Build the binary
 
 ```bash
-cargo install --locked --path ./crates/cli --bin loxley -f
+cargo install --locked --path ./crates/cli --bin bracken -f
 ```
 
 ## Verify Installation
 
-After installation, verify that the Loxley CLI is working correctly:
+After installation, verify that the Bracken CLI is working correctly:
 
 ```bash
-loxley --help
+bracken --help
 ```
 
-You should see the help information for the Loxley CLI.
+You should see the help information for the Bracken CLI.
 
 ## Next Steps
 
-Once you have the Loxley CLI installed, you're ready to:
+Once you have the Bracken CLI installed, you're ready to:
 
 1. [Run your first E3 program](/quick-start)
 2. [Learn about E3 concepts](/what-is-e3)

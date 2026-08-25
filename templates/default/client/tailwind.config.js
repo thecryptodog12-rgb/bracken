@@ -4,8 +4,8 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-// Design tokens mirror the Loxley / CRISP dashboard system
-// (packages/loxley-dashboard): warm paper surfaces, deep warm ink text, a
+// Design tokens mirror the Bracken / CRISP dashboard system
+// (packages/bracken-dashboard): warm paper surfaces, deep warm ink text, a
 // mint accent, Geist (sans) + Georgia (serif) + Geist Mono type.
 const config = {
   content: ['./src/**/*.{js,jsx,ts,tsx,mdx}'],

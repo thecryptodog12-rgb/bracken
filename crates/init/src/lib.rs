@@ -32,11 +32,11 @@ use crate::logging::TaskSpinner;
 
 const DEFAULT_TEMPLATE_URL: &str =
     "https://github.com/thecryptodog12-rgb/loxley.git#v{{VERSION}}:templates/default";
-const TEMP_DIR: &str = "/tmp/__loxley-tmp-folder.1";
+const TEMP_DIR: &str = "/tmp/__bracken-tmp-folder.1";
 const DEFAULT_TEMPLATE_PATH: &str = ".";
 const DEFAULT_BRANCH: &str = "main";
 
-async fn install_loxley(cwd: &PathBuf, template: Option<String>, verbose: bool) -> Result<()> {
+async fn install_bracken(cwd: &PathBuf, template: Option<String>, verbose: bool) -> Result<()> {
     let mut spinner = TaskSpinner::new("".to_string(), verbose);
 
     spinner.update("Downloading template...".to_string()).await;
@@ -74,27 +74,27 @@ async fn install_loxley(cwd: &PathBuf, template: Option<String>, verbose: bool) 
     spinner.update("Configuring template...".to_string()).await;
 
     let evm_version = spinner
-        .run("Getting workspace version of loxley...", || async {
+        .run("Getting workspace version of bracken...", || async {
             package_json::get_version_from_package_json(
-                &PathBuf::from(TEMP_DIR).join("packages/loxley-contracts/package.json"),
+                &PathBuf::from(TEMP_DIR).join("packages/bracken-contracts/package.json"),
             )
             .await
         })
         .await?;
 
     let react_version = spinner
-        .run("Getting workspace version of loxley-react...", || async {
+        .run("Getting workspace version of bracken-react...", || async {
             package_json::get_version_from_package_json(
-                &PathBuf::from(TEMP_DIR).join("packages/loxley-react/package.json"),
+                &PathBuf::from(TEMP_DIR).join("packages/bracken-react/package.json"),
             )
             .await
         })
         .await?;
 
     let sdk_version = spinner
-        .run("Getting workspace version of loxley-sdk...", || async {
+        .run("Getting workspace version of bracken-sdk...", || async {
             package_json::get_version_from_package_json(
-                &PathBuf::from(TEMP_DIR).join("packages/loxley-sdk/package.json"),
+                &PathBuf::from(TEMP_DIR).join("packages/bracken-sdk/package.json"),
             )
             .await
         })
@@ -110,18 +110,18 @@ async fn install_loxley(cwd: &PathBuf, template: Option<String>, verbose: bool) 
                 &[
                     Filter::new(
                         "**/package.json",
-                        r#""@loxley/contracts":\s*"[^"]*""#,
-                        &format!(r#""@loxley/contracts": "{}""#, evm_version),
+                        r#""@bracken/contracts":\s*"[^"]*""#,
+                        &format!(r#""@bracken/contracts": "{}""#, evm_version),
                     ),
                     Filter::new(
                         "**/package.json",
-                        r#""@loxley/react":\s*"[^"]*""#,
-                        &format!(r#""@loxley/react": "{}""#, react_version),
+                        r#""@bracken/react":\s*"[^"]*""#,
+                        &format!(r#""@bracken/react": "{}""#, react_version),
                     ),
                     Filter::new(
                         "**/package.json",
-                        r#""@loxley/sdk":\s*"[^"]*""#,
-                        &format!(r#""@loxley/sdk": "{}""#, sdk_version),
+                        r#""@bracken/sdk":\s*"[^"]*""#,
+                        &format!(r#""@bracken/sdk": "{}""#, sdk_version),
                     ),
                     Filter::new(
                         "**/Cargo.toml",
@@ -157,7 +157,7 @@ async fn install_loxley(cwd: &PathBuf, template: Option<String>, verbose: bool) 
 
     spinner
         .run("Resetting support folder...", || async {
-            remove_dir_except(&cwd.join(".loxley"), &["generated"]).await
+            remove_dir_except(&cwd.join(".bracken"), &["generated"]).await
         })
         .await?;
 
@@ -165,14 +165,14 @@ async fn install_loxley(cwd: &PathBuf, template: Option<String>, verbose: bool) 
         .run("Setting up support folders ctl and dev", || async {
             copy::copy_with_filters(
                 &PathBuf::from(TEMP_DIR).join("crates/support-scripts/ctl"),
-                &cwd.join(".loxley/support/ctl"),
+                &cwd.join(".bracken/support/ctl"),
                 &[],
             )
             .await?;
 
             copy::copy_with_filters(
                 &PathBuf::from(TEMP_DIR).join("crates/support-scripts/dev"),
-                &cwd.join(".loxley/support/dev"),
+                &cwd.join(".bracken/support/dev"),
                 &[],
             )
             .await
@@ -298,7 +298,7 @@ async fn install_loxley(cwd: &PathBuf, template: Option<String>, verbose: bool) 
 
     spinner.complete_task("Git repository set up\n");
 
-    spinner.done("🎉 You can now start building on Loxley");
+    spinner.done("🎉 You can now start building on Bracken");
 
     Ok(())
 }
@@ -321,7 +321,7 @@ pub async fn execute(
     "
     );
 
-    let mut task_spinner = TaskSpinner::new("Setting up a new Loxley project".to_string(), verbose);
+    let mut task_spinner = TaskSpinner::new("Setting up a new Bracken project".to_string(), verbose);
 
     task_spinner.update("Preparing paths...".to_string()).await;
 
@@ -361,7 +361,7 @@ pub async fn execute(
     task_spinner.complete_task("Paths prepared");
     task_spinner.done("");
 
-    match install_loxley(&cwd, template, verbose).await {
+    match install_bracken(&cwd, template, verbose).await {
         Ok(_) => Ok(()),
         Err(e) => {
             if !skip_cleanup {
@@ -374,7 +374,7 @@ pub async fn execute(
             }
             eprintln!("❌ Sorry about this but there was an error running the installer. ");
             eprintln!("❌ Error: {}\n", e);
-            eprintln!("Loxley is currently under active development please share this with our team:\n\n  https://github.com/thecryptodog12-rgb/loxley/issues/new\n");
+            eprintln!("Bracken is currently under active development please share this with our team:\n\n  https://github.com/thecryptodog12-rgb/loxley/issues/new\n");
             exit(1);
         }
     }

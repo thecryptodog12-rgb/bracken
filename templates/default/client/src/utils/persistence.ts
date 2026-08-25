@@ -5,7 +5,7 @@
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
 import type { E3State, WizardStep } from '../context/WizardContext'
-import { LOXLEY_ADDRESS, E3_PROGRAM_ADDRESS, REGISTRY_ADDRESS, FEE_TOKEN_ADDRESS } from './env-config'
+import { BRACKEN_ADDRESS, E3_PROGRAM_ADDRESS, REGISTRY_ADDRESS, FEE_TOKEN_ADDRESS } from './env-config'
 
 // ============================================================================
 // WIZARD STATE PERSISTENCE
@@ -22,11 +22,11 @@ import { LOXLEY_ADDRESS, E3_PROGRAM_ADDRESS, REGISTRY_ADDRESS, FEE_TOKEN_ADDRESS
 //   2. Reset — `clearWizardState` is called whenever the wizard is reset
 //      (e.g. "Start New Computation" / disconnect), so a fresh run starts clean.
 
-const STORAGE_KEY = 'loxley-wizard-state'
+const STORAGE_KEY = 'bracken-wizard-state'
 
 // Identifies the deployment this state belongs to. If any address changes, the
 // persisted state no longer applies and is thrown away.
-const APP_FINGERPRINT = [LOXLEY_ADDRESS, E3_PROGRAM_ADDRESS, REGISTRY_ADDRESS, FEE_TOKEN_ADDRESS].join('|')
+const APP_FINGERPRINT = [BRACKEN_ADDRESS, E3_PROGRAM_ADDRESS, REGISTRY_ADDRESS, FEE_TOKEN_ADDRESS].join('|')
 
 // The snapshot of wizard state that is persisted across refreshes.
 export interface PersistedWizardState {

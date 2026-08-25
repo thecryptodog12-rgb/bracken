@@ -38,9 +38,9 @@ risc0-zkvm = { version = "=3.0.3" }
 risc0-zkp = { version = "=3.0.2", default-features = false }
 serde = { version = "1.0", features = ["derive", "std"] }
 serde_json = "=1.0.145"
-# Loxley revision must match for all Loxley dependencies in this workspace.
+# Bracken revision must match for all Bracken dependencies in this workspace.
 #
-# Loxley crates below are pinned by revision rather than by path because this workspace is
+# Bracken crates below are pinned by revision rather than by path because this workspace is
 # excluded from the root workspace on purpose (see the root Cargo.toml): a client must be able to
 # build crates/support on its own, and the RISC Zero Docker build context root is crates/support,
 # so anything outside that directory is unreachable from the guest build.
@@ -56,7 +56,7 @@ serde_json = "=1.0.145"
 # It replaces c2097da6, the scope commit of the 2026-08-17 Zenith protocol audit. Sitting at the
 # audited baseline read as the conservative choice and was not: the audit covered six Solidity
 # files and no Rust at all, so crates/compute-provider and the guest were outside its scope, and
-# outside the mitigation review at c64bcfb8 as well. See packages/loxley-contracts/audits/README.md.
+# outside the mitigation review at c64bcfb8 as well. See packages/bracken-contracts/audits/README.md.
 # Holding the old pin bought reproducibility rather than assurance, while excluding real fixes to
 # the code the guest runs — among them 5213e23d, which derives the guest input root from the
 # processed ciphertexts. `pnpm check:image-id` still warns that the pin has moved off the audit

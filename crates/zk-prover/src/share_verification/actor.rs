@@ -29,7 +29,7 @@ use alloy::sol_types::SolValue;
 use e3_events::{
     BusHandle, CommitmentConsistencyCheckComplete, CommitmentConsistencyCheckRequested, Committee,
     ComputeRequest, ComputeRequestError, ComputeResponse, ComputeResponseKind, CorrelationId, E3id,
-    EventContext, EventPublisher, EventSubscriber, EventType, LoxleyEvent, LoxleyEventData,
+    EventContext, EventPublisher, EventSubscriber, EventType, BrackenEvent, BrackenEventData,
     PartyVerificationResult, ProofType, ProofVerificationFailed, ProofVerificationPassed,
     Sequenced, ShareVerificationComplete, ShareVerificationDispatched, SignedProofFailed,
     SignedProofPayload, TypedEvent, VerificationKind, VerifyShareDecryptionProofsRequest,

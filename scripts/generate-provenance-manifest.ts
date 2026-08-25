@@ -89,7 +89,7 @@ function firstMatch(text: string | null, pattern: RegExp): string | null {
   return match ? match[1] : null
 }
 
-/** Collects every Loxley git pin the guest workspace reads, so a split pin is visible. */
+/** Collects every Bracken git pin the guest workspace reads, so a split pin is visible. */
 function pinnedRevisions(): Record<string, string[]> {
   const manifests = [path.join(SUPPORT, 'Cargo.toml'), path.join(SUPPORT, 'methods', 'guest', 'Cargo.toml')]
   const pins: Record<string, string[]> = {}
@@ -254,7 +254,7 @@ async function main() {
   const chain = args.rpc && args.verifier ? await chainFacts(args.rpc, args.verifier) : null
 
   const manifest = {
-    schema: 'loxley.compute-provider-provenance/1',
+    schema: 'bracken.compute-provider-provenance/1',
     generatedFrom: {
       sourceCommit: sh('git', ['rev-parse', 'HEAD']),
       sourceDescribe: sh('git', ['describe', '--tags', '--always', '--dirty']),
@@ -271,7 +271,7 @@ async function main() {
       // audited; for the guest, it was not.
       auditBaseline: {
         commit: 'c2097da61b4d07c4ce83840393ff4e9f171eefb4',
-        report: 'packages/loxley-contracts/audits/20260714-Loxley - Zenith Audit Report.pdf',
+        report: 'packages/bracken-contracts/audits/20260714-Bracken - Zenith Audit Report.pdf',
         mitigationReviewCommit: 'c64bcfb890b596e626ea6578c5fbd53f808c3b43',
         guestInAuditScope: false,
         note: 'The 2026-08-17 Zenith audit covered six Solidity files and no Rust. crates/compute-provider, the RISC Zero guest, crates/zk-helpers, and Risc0BfvCiphertextVerifier.sol were outside both the audit and the mitigation review.',

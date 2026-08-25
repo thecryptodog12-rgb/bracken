@@ -5,18 +5,18 @@
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
 import {
-  LoxleySDK,
+  BrackenSDK,
   calculateInputWindow,
   DEFAULT_COMPUTE_PROVIDER_PARAMS,
   encodeComputeProviderParams,
   decodePlaintextOutput,
   CommitteeSize,
   ThresholdBfvParamsPresetNames,
-} from '@loxley/sdk'
-import { LoxleyEventType, RegistryEventType } from '@loxley/sdk/events'
-import type { AllEventTypes, LoxleyEvent } from '@loxley/sdk/events'
-import { E3Stage } from '@loxley/sdk/contracts'
-import type { E3 } from '@loxley/sdk/contracts'
+} from '@bracken/sdk'
+import { BrackenEventType, RegistryEventType } from '@bracken/sdk/events'
+import type { AllEventTypes, BrackenEvent } from '@bracken/sdk/events'
+import { E3Stage } from '@bracken/sdk/contracts'
+import type { E3 } from '@bracken/sdk/contracts'
 import { createWalletClient, hexToBytes, http } from 'viem'
 import assert from 'assert'
 
@@ -29,7 +29,7 @@ import { advanceAnvilTime, sleep } from './anvil-helpers'
 
 export function getContractAddresses() {
   return {
-    loxley: process.env.LOXLEY_ADDRESS as `0x${string}`,
+    bracken: process.env.BRACKEN_ADDRESS as `0x${string}`,
     ciphernodeRegistry: process.env.REGISTRY_ADDRESS as `0x${string}`,
     bondingRegistry: process.env.BONDING_REGISTRY_ADDRESS as `0x${string}`,
     e3Program: process.env.E3_PROGRAM_ADDRESS as `0x${string}`,
@@ -59,17 +59,17 @@ type E3StateOutputPublished = E3Shared & {
 
 type E3State = E3StateRequested | E3StatePublished | E3StateOutputPublished
 
-async function setupEventListeners(sdk: LoxleySDK, store: Map<bigint, E3State>) {
+async function setupEventListeners(sdk: BrackenSDK, store: Map<bigint, E3State>) {
   async function waitForEvent<T extends AllEventTypes>(
     type: T,
     trigger?: () => Promise<void>,
     timeoutMs?: number,
-  ): Promise<LoxleyEvent<T>> {
+  ): Promise<BrackenEvent<T>> {
     return new Promise((resolve, reject) => {
       let settled = false
       let timer: ReturnType<typeof setTimeout> | undefined
 
-      const handler = (event: LoxleyEvent<T>) => {
+      const handler = (event: BrackenEvent<T>) => {
         if (settled) return
         settled = true
         if (timer !== undefined) clearTimeout(timer)
@@ -85,9 +85,9 @@ async function setupEventListeners(sdk: LoxleySDK, store: Map<bigint, E3State>) 
         reject(err)
       }
 
-      // Use onLoxleyEvent so `handler` is the actual registered reference
+      // Use onBrackenEvent so `handler` is the actual registered reference
       // (sdk.once wraps in an internal closure, making sdk.off unable to remove it)
-      sdk.onLoxleyEvent(type, handler).catch(fail)
+      sdk.onBrackenEvent(type, handler).catch(fail)
 
       if (timeoutMs !== undefined) {
         timer = setTimeout(() => {
@@ -101,7 +101,7 @@ async function setupEventListeners(sdk: LoxleySDK, store: Map<bigint, E3State>) 
     })
   }
 
-  await sdk.onLoxleyEvent(LoxleyEventType.E3_REQUESTED, (event) => {
+  await sdk.onBrackenEvent(BrackenEventType.E3_REQUESTED, (event) => {
     const id = event.data.e3Id
 
     if (store.has(id)) {
@@ -114,7 +114,7 @@ async function setupEventListeners(sdk: LoxleySDK, store: Map<bigint, E3State>) 
     })
   })
 
-  await sdk.onLoxleyEvent(RegistryEventType.COMMITTEE_PUBLISHED, (event) => {
+  await sdk.onBrackenEvent(RegistryEventType.COMMITTEE_PUBLISHED, (event) => {
     const id = event.data.e3Id
 
     const state = store.get(id)
@@ -134,7 +134,7 @@ async function setupEventListeners(sdk: LoxleySDK, store: Map<bigint, E3State>) 
     })
   })
 
-  await sdk.onLoxleyEvent(LoxleyEventType.PLAINTEXT_OUTPUT_PUBLISHED, (event) => {
+  await sdk.onBrackenEvent(BrackenEventType.PLAINTEXT_OUTPUT_PUBLISHED, (event) => {
     const id = event.data.e3Id
 
     const state = store.get(id)
@@ -165,9 +165,9 @@ describe('Integration', () => {
   const testPrivateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
 
   const store = new Map<bigint, E3State>()
-  const sdk = LoxleySDK.create({
+  const sdk = BrackenSDK.create({
     contracts: {
-      loxley: contracts.loxley,
+      bracken: contracts.bracken,
       ciphernodeRegistry: contracts.ciphernodeRegistry,
       feeToken: contracts.feeToken,
     },
@@ -225,7 +225,7 @@ describe('Integration', () => {
     const timeoutMs = duration * 1000
 
     const requestEvent = await waitForEvent(
-      LoxleyEventType.E3_REQUESTED,
+      BrackenEventType.E3_REQUESTED,
       async () => {
         console.log('Requested E3...')
         await sdk.requestE3(requestParams)
@@ -295,7 +295,7 @@ describe('Integration', () => {
     )
     await sdk.waitForTransaction(txHash)
 
-    const plaintextEvent = await waitForEvent(LoxleyEventType.PLAINTEXT_OUTPUT_PUBLISHED, undefined, timeoutMs)
+    const plaintextEvent = await waitForEvent(BrackenEventType.PLAINTEXT_OUTPUT_PUBLISHED, undefined, timeoutMs)
 
     const result = decodePlaintextOutput(plaintextEvent.data.plaintextOutput)
     assert(result !== null, 'Failed to decode plaintext output')

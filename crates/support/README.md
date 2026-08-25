@@ -8,8 +8,8 @@ proof request to Boundless, and sends the result back via webhook callback.
 ```mermaid
 graph TD
     subgraph N["e3-support-scripts"]
-        A["loxley program start"]
-        AA["./.loxley/support/ctl/start"]
+        A["bracken program start"]
+        AA["./.bracken/support/ctl/start"]
         A --> AA
     end
     M["E3 instigator (CRISP server)"] --"POST /run_compute (with callback_url)"--> D
@@ -83,9 +83,9 @@ This matches the format expected by CRISP and `E3ProgramServer` in `crates/progr
 3. **Pinata account** — for IPFS program uploads (get a JWT at https://pinata.cloud)
 4. **Boundless wallet** — an Ethereum private key with ETH (for gas) and ZKC (for collateral) on the
    Boundless-supported chain
-5. **Loxley CLI** — `cargo install --locked --path ./crates/cli --bin loxley -f`
+5. **Bracken CLI** — `cargo install --locked --path ./crates/cli --bin bracken -f`
 
-### Step 1: Configure `loxley.config.yaml`
+### Step 1: Configure `bracken.config.yaml`
 
 ```yaml
 program:
@@ -110,7 +110,7 @@ program:
 ### Step 2: Compile the RISC Zero Guest Program
 
 ```bash
-loxley program compile
+bracken program compile
 ```
 
 This builds the guest ELF binary inside the Docker container. Output goes to
@@ -131,7 +131,7 @@ patch.
 The order matters:
 
 1. Merge the change to `crates/compute-provider`, then push.
-2. Bump every Loxley pin to the merge commit. There are three, and they must all name the same
+2. Bump every Bracken pin to the merge commit. There are three, and they must all name the same
    revision — the guest and host workspaces have to compile the same sources:
    - `e3-fhe-params` in `crates/support/Cargo.toml`
    - `e3-compute-provider` in `crates/support/Cargo.toml`
@@ -155,21 +155,21 @@ enforces. The reviewer-facing procedure is `docs/pages/verifying-the-compute-pro
 ### Step 3: Upload Program to IPFS (Pinata)
 
 ```bash
-loxley program upload
+bracken program upload
 ```
 
 This uploads the compiled guest ELF to Pinata IPFS and caches the resulting URL at
-`./target/.program_url`. Copy this URL into your `loxley.config.yaml` as
+`./target/.program_url`. Copy this URL into your `bracken.config.yaml` as
 `program.risc0.boundless.program_url` to avoid re-uploading the program at runtime.
 
-### Step 4: Deploy Loxley Contracts + Start Ciphernodes
+### Step 4: Deploy Bracken Contracts + Start Ciphernodes
 
 ```bash
 # Deploy contracts to local Hardhat / testnet
 pnpm evm:deploy
 
 # Start the ciphernode network
-loxley start
+bracken start
 ```
 
 This boots the ciphernodes, which listen for E3 requests, perform DKG, and await ciphertext outputs.
@@ -177,7 +177,7 @@ This boots the ciphernodes, which listen for E3 requests, perform DKG, and await
 ### Step 5: Start the Program Server (Boundless-backed)
 
 ```bash
-loxley program start
+bracken program start
 ```
 
 This starts the Docker container running `e3-support-app` on port 13151. If Boundless config is
@@ -188,8 +188,8 @@ present, it will submit proofs to the Boundless market. Otherwise it falls back 
 The E3 request is submitted on-chain by the instigator (e.g., CRISP coordination server):
 
 ```solidity
-// On-chain: Loxley.request(params)
-loxley.request(E3RequestParams({
+// On-chain: Bracken.request(params)
+bracken.request(E3RequestParams({
     threshold: [M, N],
     inputWindow: [start, end],
     e3Program: crispProgramAddress,
@@ -217,7 +217,7 @@ curl -X POST http://localhost:13151/run_compute \
   -d '{
     "e3_id": 1,
     "chain_id": 31337,
-    "loxley_address": "0x1111111111111111111111111111111111111111",
+    "bracken_address": "0x1111111111111111111111111111111111111111",
     "encryption_scheme_id": "0x...",
     "committee_public_key": "0x...",
     "params": "0x...",
@@ -240,10 +240,10 @@ The program server:
 The callback server (e.g., CRISP) receives the webhook and calls:
 
 ```solidity
-loxley.publishCiphertextOutput(e3Id, ciphertextOutput, ciphertextCommitment, proof);
+bracken.publishCiphertextOutput(e3Id, ciphertextOutput, ciphertextCommitment, proof);
 ```
 
-The proof binds the chain, Loxley contract, E3, encryption scheme, committee key, output, and SAFE
+The proof binds the chain, Bracken contract, E3, encryption scheme, committee key, output, and SAFE
 commitment. The protocol verifier checks these fields before the application verifier. Both checks
 must pass before the E3 can remain in `CiphertextReady`.
 
@@ -257,7 +257,7 @@ rewards distributed.
 
 ## Boundless Offer Parameters
 
-All parameters are configurable via environment variables (or `loxley.config.yaml`). Defaults:
+All parameters are configurable via environment variables (or `bracken.config.yaml`). Defaults:
 
 | Parameter    | Env Var                         | Default   | Description                  |
 | ------------ | ------------------------------- | --------- | ---------------------------- |
@@ -268,7 +268,7 @@ All parameters are configurable via environment variables (or `loxley.config.yam
 | Ramp-up      | `BOUNDLESS_RAMP_UP_SECS`        | `60`      | Price ramp-up period (sec)   |
 | Collateral   | `BOUNDLESS_LOCK_COLLATERAL_ZKC` | `2.0`     | ZKC locked per request       |
 
-These can also be set in `loxley.config.yaml` under `program.risc0.boundless`:
+These can also be set in `bracken.config.yaml` under `program.risc0.boundless`:
 
 ```yaml
 boundless:

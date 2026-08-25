@@ -6,7 +6,7 @@
 
 use super::*;
 use alloy::primitives::FixedBytes;
-use e3_events::{LoxleyEventData, Unsequenced};
+use e3_events::{BrackenEventData, Unsequenced};
 
 struct FixedClock(u64);
 impl Clock for FixedClock {
@@ -28,7 +28,7 @@ fn ctx() -> EventContext<Sequenced> {
         deadline: 0,
         signature: ArcBytes::default(),
     };
-    EventContext::<Unsequenced>::from(LoxleyEventData::from(vote)).sequence(0)
+    EventContext::<Unsequenced>::from(BrackenEventData::from(vote)).sequence(0)
 }
 
 const CHAIN_ID: u64 = 31337;

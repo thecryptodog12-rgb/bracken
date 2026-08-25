@@ -3,7 +3,7 @@ name = "e3-fhe"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "E3 - Loxley Ciphernode FHE Actors"
+description = "E3 - Bracken Ciphernode FHE Actors"
 repository.workspace = true
 
 [dependencies]

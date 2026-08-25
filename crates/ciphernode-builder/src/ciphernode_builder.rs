@@ -19,11 +19,11 @@ use e3_crypto::Cipher;
 use e3_data::{InMemStore, RepositoriesFactory};
 use e3_events::DkgFoldAttestationContext;
 use e3_events::{
-    AggregateConfig, AggregateId, BusHandle, EventBus, EventBusConfig, EvmEventConfig, LoxleyEvent,
+    AggregateConfig, AggregateId, BusHandle, EventBus, EventBusConfig, EvmEventConfig, BrackenEvent,
 };
 use e3_evm::{
     fetch_accusation_vote_validity, BondingRegistrySolReader, CiphernodeRegistrySol,
-    CiphernodeRegistrySolReader, EvmChainGatewayHandle, LoxleySolReader, LoxleySolWriter,
+    CiphernodeRegistrySolReader, EvmChainGatewayHandle, BrackenSolReader, BrackenSolWriter,
     ProviderConfig, SlashingManagerSolReader, SlashingManagerSolWriter,
 };
 use e3_fhe::ext::FheExtension;
@@ -88,7 +88,7 @@ pub struct CiphernodeBuilder {
     pubkey_agg: bool,
     rng: SharedRng,
     sortition_backend: SortitionBackend,
-    source_bus: Option<BusMode<Addr<EventBus<LoxleyEvent>>>>,
+    source_bus: Option<BusMode<Addr<EventBus<BrackenEvent>>>>,
     task_pool: Option<TaskPool>,
     threads: Option<usize>,
     signer: Option<alloy::signers::local::PrivateKeySigner>,
@@ -116,8 +116,8 @@ impl NetConfig {
 
 #[derive(Default, Debug)]
 pub struct ContractComponents {
-    loxley_reader: bool,
-    loxley: bool,
+    bracken_reader: bool,
+    bracken: bool,
     ciphernode_registry: bool,
     bonding_registry: bool,
     slashing_manager: bool,
@@ -172,7 +172,7 @@ impl CiphernodeBuilder {
     }
 
     /// Use the given bus for all events. No new bus is created.
-    pub fn with_source_bus(mut self, bus: &Addr<EventBus<LoxleyEvent>>) -> Self {
+    pub fn with_source_bus(mut self, bus: &Addr<EventBus<BrackenEvent>>) -> Self {
         self.source_bus = Some(BusMode::Source(bus.clone()));
         self
     }
@@ -181,7 +181,7 @@ impl CiphernodeBuilder {
     /// source are forwarded to the local bus created for this instance.
     /// Useful for tests and monitoring subscribers that need an isolated
     /// event stream that mirrors the source.
-    pub fn with_forked_bus(mut self, bus: &Addr<EventBus<LoxleyEvent>>) -> Self {
+    pub fn with_forked_bus(mut self, bus: &Addr<EventBus<BrackenEvent>>) -> Self {
         self.source_bus = Some(BusMode::Forked(bus.clone()));
         self
     }
@@ -211,7 +211,7 @@ impl CiphernodeBuilder {
         self
     }
 
-    /// Subscribe a [`HistoryCollector`] to only `LoxleyError` events.
+    /// Subscribe a [`HistoryCollector`] to only `BrackenError` events.
     /// Useful for tests and debugging.
     pub fn with_error_collector(mut self) -> Self {
         self.collect_errors = true;
@@ -414,15 +414,15 @@ impl CiphernodeBuilder {
         self
     }
 
-    /// Setup an Loxley contract reader for every evm chain provided
-    pub fn with_contract_loxley_reader(mut self) -> Self {
-        self.contract_components.loxley_reader = true;
+    /// Setup an Bracken contract reader for every evm chain provided
+    pub fn with_contract_bracken_reader(mut self) -> Self {
+        self.contract_components.bracken_reader = true;
         self
     }
 
-    /// Setup an Loxley contract reader and writer for every evm chain provided
-    pub fn with_contract_loxley_full(mut self) -> Self {
-        self.contract_components.loxley = true;
+    /// Setup an Bracken contract reader and writer for every evm chain provided
+    pub fn with_contract_bracken_full(mut self) -> Self {
+        self.contract_components.bracken = true;
         self
     }
 
@@ -462,8 +462,8 @@ impl CiphernodeBuilder {
         self
     }
 
-    fn create_local_bus() -> Addr<EventBus<LoxleyEvent>> {
-        EventBus::<LoxleyEvent>::new(EventBusConfig { deduplicate: true }).start()
+    fn create_local_bus() -> Addr<EventBus<BrackenEvent>> {
+        EventBus::<BrackenEvent>::new(EventBusConfig { deduplicate: true }).start()
     }
 
     /// Create aggregate configuration from configured chains
@@ -499,13 +499,13 @@ impl CiphernodeBuilder {
         // Optional event collectors for debugging / testing.
         let history = if self.collect_history {
             info!("Setting up history collector");
-            Some(EventBus::<LoxleyEvent>::history(&local_bus))
+            Some(EventBus::<BrackenEvent>::history(&local_bus))
         } else {
             None
         };
         let errors = if self.collect_errors {
             info!("Setting up error collector");
-            Some(EventBus::<LoxleyEvent>::error(&local_bus))
+            Some(EventBus::<BrackenEvent>::error(&local_bus))
         } else {
             None
         };
@@ -577,7 +577,7 @@ impl CiphernodeBuilder {
         ciphernode_selector.do_send(EmitPersistedAggregatorState);
 
         // Setup networking
-        let topic = "loxley-gossip";
+        let topic = "bracken-gossip";
         let (peer_id, interface, net_kind) = self.setup_networking(&store, topic).await?;
         let network_status = interface.status();
         let net_buffer = setup_net_with_limits(
@@ -619,7 +619,7 @@ impl CiphernodeBuilder {
 
     // ── build() sub-functions ──────────────────────────────────────────
 
-    fn resolve_bus(&self) -> Addr<EventBus<LoxleyEvent>> {
+    fn resolve_bus(&self) -> Addr<EventBus<BrackenEvent>> {
         match self.source_bus {
             Some(BusMode::Forked(ref bus)) => {
                 let local_bus = Self::create_local_bus();
@@ -634,7 +634,7 @@ impl CiphernodeBuilder {
 
     fn create_event_system(
         &self,
-        bus: Addr<EventBus<LoxleyEvent>>,
+        bus: Addr<EventBus<BrackenEvent>>,
         aggregate_config: &AggregateConfig,
     ) -> EventSystem {
         let base = match self.event_system.clone() {
@@ -801,16 +801,16 @@ impl CiphernodeBuilder {
             backend.ensure_installed().await?;
             let _signer = provider_cache.ensure_signer().await?;
 
-            let mut loxley_addresses = HashMap::new();
+            let mut bracken_addresses = HashMap::new();
             for chain in self.chains.iter().filter(|c| c.enabled.unwrap_or(true)) {
                 let provider = provider_cache.ensure_read_provider(chain).await?;
                 let chain_id = provider.chain_id();
                 validate_chain_id(chain, chain_id)?;
-                loxley_addresses.insert(chain_id, chain.contracts.loxley.address()?);
+                bracken_addresses.insert(chain_id, chain.contracts.bracken.address()?);
             }
             for chain in self.chains.iter().filter(|c| !c.enabled.unwrap_or(true)) {
                 if let Some(chain_id) = chain.chain_id {
-                    loxley_addresses.insert(chain_id, chain.contracts.loxley.address()?);
+                    bracken_addresses.insert(chain_id, chain.contracts.bracken.address()?);
                 }
             }
 
@@ -819,7 +819,7 @@ impl CiphernodeBuilder {
                 bus,
                 &self.cipher,
                 addr,
-                loxley_addresses,
+                bracken_addresses,
             ));
 
             info!("Setting up ZK actors");
@@ -1053,20 +1053,20 @@ async fn setup_evm_system(
             .with_provider_factory(provider_factory.clone())
             .with_buffer_limit(max_buffered_evm_events);
 
-        if contract_components.loxley {
+        if contract_components.bracken {
             let write_provider = provider_cache.ensure_write_provider(chain).await?;
-            let contract = &chain.contracts.loxley;
-            LoxleySolWriter::attach(bus, write_provider.clone(), contract.address()?);
+            let contract = &chain.contracts.bracken;
+            BrackenSolWriter::attach(bus, write_provider.clone(), contract.address()?);
             system.with_contract(contract.address()?, move |next| {
-                LoxleySolReader::setup(&next).recipient()
+                BrackenSolReader::setup(&next).recipient()
             });
         }
 
-        if contract_components.loxley_reader {
-            let contract = &chain.contracts.loxley;
+        if contract_components.bracken_reader {
+            let contract = &chain.contracts.bracken;
 
             system.with_contract(contract.address()?, move |next| {
-                LoxleySolReader::setup(&next).recipient()
+                BrackenSolReader::setup(&next).recipient()
             });
         }
 
@@ -1094,7 +1094,7 @@ async fn setup_evm_system(
             });
 
             // TODO: Should we not let this pass and just use '?'?
-            // Above if we include loxley in the config and we don't have a wallet it will fail
+            // Above if we include bracken in the config and we don't have a wallet it will fail
             match provider_cache
                     .ensure_write_provider(chain)
                     .await
@@ -1198,7 +1198,7 @@ mod tests {
             rpc_url: "http://127.0.0.1:8545".to_owned(),
             rpc_auth: RpcAuth::default(),
             contracts: ContractAddresses {
-                loxley: contract(),
+                bracken: contract(),
                 ciphernode_registry: contract(),
                 bonding_registry: contract(),
                 e3_program: None,

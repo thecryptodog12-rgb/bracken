@@ -10,7 +10,7 @@ use super::{
     database::generate_emoji,
     models::{CurrentRound, E3Crisp, E3StateLite, WebResultRequest},
 };
-use e3_sdk::indexer::{models::E3 as LoxleyE3, DataStore, E3Repository, SharedStore};
+use e3_sdk::indexer::{models::E3 as BrackenE3, DataStore, E3Repository, SharedStore};
 use eyre::Result;
 use fhe::bfv::BfvParameters;
 use log::info;
@@ -274,7 +274,7 @@ impl<S: DataStore> CrispE3Repository<S> {
         E3Repository::new(self.store.clone(), &self.e3_id)
     }
 
-    pub async fn get_e3(&self) -> Result<LoxleyE3> {
+    pub async fn get_e3(&self) -> Result<BrackenE3> {
         let e3 = self.get_e3_repo().get_e3().await?;
         Ok(e3)
     }
@@ -401,7 +401,7 @@ impl<S: DataStore> CrispE3Repository<S> {
             vote_count: u64::try_from(e3_crisp.has_voted.len())?,
             start_block: e3.request_block,
             snapshot_block,
-            loxley_address: e3.loxley_address,
+            bracken_address: e3.bracken_address,
             committee_public_key: e3.committee_public_key,
             token_address: e3_crisp.token_address,
             balance_threshold: e3_crisp.balance_threshold,

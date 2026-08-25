@@ -7,23 +7,23 @@
 import React, { useState, useEffect } from 'react'
 import { CalculatorIcon } from '@phosphor-icons/react'
 import { hexToBytes } from 'viem'
-import type { CommitteePublishedData } from '@loxley/sdk'
+import type { CommitteePublishedData } from '@bracken/sdk'
 import CardContent from '../components/CardContent'
 import Spinner from '../components/Spinner'
 import ErrorDisplay from '../components/ErrorDisplay'
 import { useWizard, WizardStep } from '../../context/WizardContext'
-import { encodeComputeProviderParams, DEFAULT_COMPUTE_PROVIDER_PARAMS, DEFAULT_E3_CONFIG, calculateInputWindow } from '@loxley/sdk'
+import { encodeComputeProviderParams, DEFAULT_COMPUTE_PROVIDER_PARAMS, DEFAULT_E3_CONFIG, calculateInputWindow } from '@bracken/sdk'
 import { getContractAddresses } from '@/utils/env-config'
 
 /**
- * RequestComputation component - Second step in the Loxley wizard flow
+ * RequestComputation component - Second step in the Bracken wizard flow
  *
- * This component handles the request for an E3 computation from the Loxley network.
+ * This component handles the request for an E3 computation from the Bracken network.
  * It provides feedback on the request process and displays the status of the request.
  */
 const RequestComputation: React.FC = () => {
   const { e3State, setE3State, setLastTransactionHash, setCurrentStep, sdk } = useWizard()
-  const { isInitialized, requestE3, onLoxleyEvent, off, LoxleyEventType, RegistryEventType } = sdk
+  const { isInitialized, requestE3, onBrackenEvent, off, BrackenEventType, RegistryEventType } = sdk
 
   const contracts = getContractAddresses()
 
@@ -76,14 +76,14 @@ const RequestComputation: React.FC = () => {
       }
     }
 
-    onLoxleyEvent(LoxleyEventType.E3_REQUESTED, handleE3Requested)
-    onLoxleyEvent(RegistryEventType.COMMITTEE_PUBLISHED, handleCommitteePublished)
+    onBrackenEvent(BrackenEventType.E3_REQUESTED, handleE3Requested)
+    onBrackenEvent(RegistryEventType.COMMITTEE_PUBLISHED, handleCommitteePublished)
 
     return () => {
-      off(LoxleyEventType.E3_REQUESTED, handleE3Requested)
+      off(BrackenEventType.E3_REQUESTED, handleE3Requested)
       off(RegistryEventType.COMMITTEE_PUBLISHED, handleCommitteePublished)
     }
-  }, [isInitialized, onLoxleyEvent, off, LoxleyEventType, RegistryEventType, setE3State, e3State.id, sdk.sdk])
+  }, [isInitialized, onBrackenEvent, off, BrackenEventType, RegistryEventType, setE3State, e3State.id, sdk.sdk])
 
   // Auto-advance to next step when committee publishes
   useEffect(() => {
@@ -155,7 +155,7 @@ const RequestComputation: React.FC = () => {
         <div className='space-y-4'>
           <h3 className='text-2xl'>Request Encrypted Execution Environment</h3>
           <p className='leading-relaxed text-ink-3'>
-            Request an E3 computation from Loxley's decentralized network. This initiates the selection of a Ciphernode Committee through
+            Request an E3 computation from Bracken's decentralized network. This initiates the selection of a Ciphernode Committee through
             cryptographic sortition, who will generate shared keys for securing your computation without any single point of trust.
           </p>
           <div className='note-accent text-left'>

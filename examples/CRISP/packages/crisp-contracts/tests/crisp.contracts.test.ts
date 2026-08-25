@@ -27,8 +27,8 @@ before(async () => {
   setCircuits(await loadCircuits())
 })
 import { expect } from 'chai'
-import { deployCRISPProgram, deployHonkVerifier, deployMockLoxley, ethers } from './utils'
-import type { CRISPProgram, HonkVerifier, MockLoxley } from '../types'
+import { deployCRISPProgram, deployHonkVerifier, deployMockBracken, ethers } from './utils'
+import type { CRISPProgram, HonkVerifier, MockBracken } from '../types'
 
 let keys = generateBFVKeys()
 let publicKey = keys.publicKey
@@ -51,7 +51,7 @@ describe('CRISP Contracts', function () {
   this.timeout(1_200_000)
 
   let honkVerifier: HonkVerifier
-  let mockLoxley: MockLoxley
+  let mockBracken: MockBracken
   let crispProgram: CRISPProgram
   let signature: `0x${string}`
   let address: string
@@ -66,9 +66,9 @@ describe('CRISP Contracts', function () {
 
   before(async function () {
     // Deploy contracts once
-    mockLoxley = await deployMockLoxley()
+    mockBracken = await deployMockBracken()
     honkVerifier = await deployHonkVerifier()
-    crispProgram = await deployCRISPProgram({ mockLoxley, honkVerifier })
+    crispProgram = await deployCRISPProgram({ mockBracken, honkVerifier })
 
     // Compute signature, address, and leaves once
     const [signer] = await ethers.getSigners()
@@ -79,8 +79,8 @@ describe('CRISP Contracts', function () {
     // Rounds created up front so each ballot can be bound to the exact e3Id it is published to.
     // The digest commits to the e3Id, so a ballot built for one round is rejected by another —
     // that rejection is the cross-round replay protection, not a test artefact.
-    publishE3Id = await mockLoxley.nextE3Id()
-    await mockLoxley.request(await crispProgram.getAddress())
+    publishE3Id = await mockBracken.nextE3Id()
+    await mockBracken.request(await crispProgram.getAddress())
 
     const domain = {
       name: 'CRISP',
@@ -166,14 +166,14 @@ describe('CRISP Contracts', function () {
     it('should validate input correctly', async function () {
       const merkleTree = generateMerkleTree(leaves)
 
-      await mockLoxley.setCommitteePublicKey(voteProof.publicInputs[8])
+      await mockBracken.setCommitteePublicKey(voteProof.publicInputs[8])
 
       await crispProgram.setMerkleRoot(publishE3Id, merkleTree.root)
 
       // Pin every public input the contract reconstructs against the ones the proof was built
       // with. A mismatch here names the field; without it the only symptom is an opaque
       // SumcheckFailed from the verifier, which says nothing about which value diverged.
-      const e3 = await mockLoxley.getE3(publishE3Id)
+      const e3 = await mockBracken.getE3(publishE3Id)
       const [rootOnChain, , numOptionsOnChain] = await crispProgram.getRoundData(publishE3Id)
       const digest = BigInt(await crispProgram.ballotDigest(publishE3Id, address, voteProof.publicInputs[7]))
       const pi = voteProof.publicInputs.map((v) => BigInt(v))
@@ -200,11 +200,11 @@ describe('CRISP Contracts', function () {
     /// Reverts inside the verifier rather than with `InvalidNoirProof`, because `HonkVerifier.verify`
     /// reverts on a public-input mismatch instead of returning false.
     it('should reject a ballot bound to a different round', async function () {
-      const otherE3Id = await mockLoxley.nextE3Id()
-      await mockLoxley.request(await crispProgram.getAddress())
+      const otherE3Id = await mockBracken.nextE3Id()
+      await mockBracken.request(await crispProgram.getAddress())
 
       const merkleTree = generateMerkleTree(leaves)
-      await mockLoxley.setCommitteePublicKey(voteProof.publicInputs[8])
+      await mockBracken.setCommitteePublicKey(voteProof.publicInputs[8])
       await crispProgram.setMerkleRoot(otherE3Id, merkleTree.root)
 
       // `voteProof` was built for `publishE3Id`. Everything else about it is valid here — same
@@ -216,11 +216,11 @@ describe('CRISP Contracts', function () {
   describe('get round data', () => {
     // The dynamic input tree has a minimum depth of one (InternalLazyIMT.Z_1).
     const EMPTY_TREE_ROOT = 14744269619966411208579211824598458697587494354926760081771325075741142829156n
-    // MockLoxley calls validate with empty e3ProgramParams
+    // MockBracken calls validate with empty e3ProgramParams
     const EMPTY_PARAMS_HASH = ethers.keccak256('0x')
 
     it('should return empty data for an e3 which was not initialized', async () => {
-      const e3Id = await mockLoxley.nextE3Id()
+      const e3Id = await mockBracken.nextE3Id()
 
       const [merkleRoot, paramsHash, numOptions, creditMode, inputRoot, numberOfVotes] = await crispProgram.getRoundData(e3Id)
 
@@ -233,8 +233,8 @@ describe('CRISP Contracts', function () {
     })
 
     it('should return the data set by validate', async () => {
-      const e3Id = await mockLoxley.nextE3Id()
-      await mockLoxley.request(await crispProgram.getAddress())
+      const e3Id = await mockBracken.nextE3Id()
+      await mockBracken.request(await crispProgram.getAddress())
 
       const [merkleRoot, paramsHash, numOptions, creditMode, inputRoot, numberOfVotes] = await crispProgram.getRoundData(e3Id)
 
@@ -248,8 +248,8 @@ describe('CRISP Contracts', function () {
     })
 
     it('should return the merkle root of the census once set', async () => {
-      const e3Id = await mockLoxley.nextE3Id()
-      await mockLoxley.request(await crispProgram.getAddress())
+      const e3Id = await mockBracken.nextE3Id()
+      await mockBracken.request(await crispProgram.getAddress())
 
       const merkleTree = generateMerkleTree(leaves)
       await crispProgram.setMerkleRoot(e3Id, merkleTree.root)

@@ -35,7 +35,7 @@ use tracing::info;
 const INDEX_HTML: &str = include_str!("../assets/index.html");
 const APP_JS: &str = include_str!("../assets/app.js");
 const APP_CSS: &str = include_str!("../assets/app.css");
-const LOXLEY_LOGO: &str = include_str!("../assets/loxley.svg");
+const BRACKEN_LOGO: &str = include_str!("../assets/bracken.svg");
 const PAGE_SIZE: u64 = 2_000;
 
 #[derive(Clone, Debug, Serialize)]
@@ -146,7 +146,7 @@ impl DashboardState {
         &self,
         aggregate: usize,
         since: u64,
-    ) -> Result<Vec<e3_events::LoxleyEvent>> {
+    ) -> Result<Vec<e3_events::BrackenEvent>> {
         let (recipient, response) = actix_toolbox::oneshot::<EventStoreQueryResponse>();
         let query = EventStoreQueryBy::<SeqAgg>::new(
             CorrelationId::new(),
@@ -335,7 +335,7 @@ async fn app_css() -> impl Responder {
 }
 
 async fn logo() -> impl Responder {
-    static_asset("image/svg+xml", LOXLEY_LOGO)
+    static_asset("image/svg+xml", BRACKEN_LOGO)
 }
 
 fn static_asset(content_type: &'static str, body: &'static str) -> HttpResponse {
@@ -371,8 +371,8 @@ pub async fn start_dashboard(port: u16, state: DashboardState) -> std::io::Resul
             .route("/", web::get().to(index))
             .route("/assets/app.js", web::get().to(app_js))
             .route("/assets/app.css", web::get().to(app_css))
-            .route("/assets/loxley.svg", web::get().to(logo))
-            .route("/loxley.svg", web::get().to(logo))
+            .route("/assets/bracken.svg", web::get().to(logo))
+            .route("/bracken.svg", web::get().to(logo))
             .default_service(web::get().to(index))
     })
     .bind(address)?

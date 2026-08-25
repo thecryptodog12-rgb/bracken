@@ -1,8 +1,8 @@
-# Loxley Ciphernode – DAppNode Package
+# Bracken Ciphernode – DAppNode Package
 
-Run an Loxley ciphernode on DAppNode.
+Run an Bracken ciphernode on DAppNode.
 
-This package wraps the `loxley` CLI in a DAppNode service so users can run a ciphernode with a
+This package wraps the `bracken` CLI in a DAppNode service so users can run a ciphernode with a
 simple UI form (setup wizard) instead of hand-crafting configs and Docker commands.
 
 ## Networks
@@ -28,9 +28,9 @@ dappnode/
 ├── docker-compose.yml    # DAppNode service definition (single variant)
 ├── dappnode_package.json # Package metadata (name, version, links, backup, etc.)
 ├── setup-wizard.yml      # DAppNode UI form -> configuration and credential upload
-├── entrypoint.sh         # Startup script (validates env, renders config, runs loxley)
+├── entrypoint.sh         # Startup script (validates env, renders config, runs bracken)
 ├── healthcheck.sh        # Local process, credential, config, and QUIC listener checks
-├── config.template.yaml  # Loxley config template (filled via envsubst)
+├── config.template.yaml  # Bracken config template (filled via envsubst)
 ├── releases.json         # Release metadata used by DAppNode
 └── avatar-default.png    # Icon shown in the DAppNode UI
 ```
@@ -46,7 +46,7 @@ are never accepted through container environment variables.
 Once this package is published to the DAppStore:
 
 1. Open your DAppNode UI (`http://my.dappnode`).
-2. Search for **“Loxley Ciphernode”** and install the package.
+2. Search for **“Bracken Ciphernode”** and install the package.
 3. The **setup wizard** will prompt you for:
    - `RPC_URL` – WebSocket RPC endpoint (e.g. `wss://ethereum-sepolia-rpc.publicnode.com`)
    - `NETWORK` – e.g. `sepolia`, `mainnet`, `localhost`
@@ -55,7 +55,7 @@ Once this package is published to the DAppStore:
    - Optional peers
 
 4. Confirm and finish the installation.
-5. Go to **Packages → loxley-ciphernode.public.dappnode.eth → Logs** to verify the node started
+5. Go to **Packages → bracken-ciphernode.public.dappnode.eth → Logs** to verify the node started
    correctly.
 
 Until it’s in the public store, you can install it by IPFS hash:
@@ -85,7 +85,7 @@ npx @dappnode/dappnodesdk@latest build -p remote
 This will:
 
 - Validate `docker-compose.yml`, `setup-wizard.yml`, and `dappnode_package.json`
-- Build a multi-arch Docker image for `ciphernode.loxley-ciphernode.public.dappnode.eth`
+- Build a multi-arch Docker image for `ciphernode.bracken-ciphernode.public.dappnode.eth`
 - Upload the release to the DAppNode IPFS node
 - Print an `/ipfs/<hash>` you can use to install the package
 
@@ -100,7 +100,7 @@ Fill in the wizard fields, then install.
 
 #### 3. Debugging and iteration
 
-- Use the package **Logs** tab to inspect `entrypoint.sh` and `loxley` output.
+- Use the package **Logs** tab to inspect `entrypoint.sh` and `bracken` output.
 
 - If something is wrong in the generated config, `docker exec` into the container and inspect:
 
@@ -125,28 +125,28 @@ Non-secret runtime configuration is provided through environment variables:
 - **`RPC_URL`** (required) WebSocket RPC endpoint for the chain (e.g.
   `wss://ethereum-sepolia-rpc.publicnode.com`).
 
-- **`NETWORK`** Logical network name written into the Loxley config (e.g. `sepolia`, `mainnet`,
+- **`NETWORK`** Logical network name written into the Bracken config (e.g. `sepolia`, `mainnet`,
   `localhost`).
 
-- **`NODE_ADDRESS`** Optional Ethereum address to bind the node to. Leave empty to let Loxley handle
+- **`NODE_ADDRESS`** Optional Ethereum address to bind the node to. Leave empty to let Bracken handle
   it.
 
 - **`QUIC_PORT`** Internal UDP port used for QUIC [Quick UDP Internet Connections] P2P networking.
   Default in this package: `37173`.
 
 - **`LOG_LEVEL`** One of `info`, `debug`, `trace`. Mapped internally to `-v`, `-vv`, or `-vvv` when
-  calling `loxley start`.
+  calling `bracken start`.
 
-- **`EXTRA_OPTS`** Extra flags appended to the `loxley start` CLI.
+- **`EXTRA_OPTS`** Extra flags appended to the `bracken start` CLI.
 
 ### Contracts
 
 Used to populate the `chains[0].contracts` section in `config.yaml`:
 
-- `LOXLEY_CONTRACT`
+- `BRACKEN_CONTRACT`
 - `CIPHERNODE_REGISTRY_CONTRACT`
 - `BONDING_REGISTRY_CONTRACT`
-- `LOXLEY_DEPLOY_BLOCK`
+- `BRACKEN_DEPLOY_BLOCK`
 - `CIPHERNODE_REGISTRY_DEPLOY_BLOCK`
 - `BONDING_REGISTRY_DEPLOY_BLOCK`
 
@@ -167,7 +167,7 @@ Create a local JSON file containing the password and operator key:
 Upload it in the setup wizard as **Ciphernode Credentials JSON**. DAppNode copies it to
 `/run/secrets/secrets.json` before starting the container. The entrypoint validates a maximum size
 of 16 KiB, required fields, and key encodings, then runs the exact commands supported by the pinned
-Loxley v0.2.3 image. Any failed command aborts startup. The wallet command atomically derives and
+Bracken v0.2.3 image. Any failed command aborts startup. The wallet command atomically derives and
 stores both the Ethereum and libp2p identities. Both keys are encrypted in `/data`; v0.2.3 stores
 its password key there as a mode-`0400` file. After successful persistence, the entrypoint removes
 the combined plaintext upload. Provisioning sends the secrets through the CLI's hidden TTY prompts
@@ -195,7 +195,7 @@ not required again. Uploading a different password while state already exists fa
   The entrypoint splits this on commas, trims spaces, and turns each into a `--peer` flag:
 
   ```bash
-  loxley start ... --peer /dns4/cn1/udp/37173/quic-v1 --peer /dns4/cn2/udp/37173/quic-v1
+  bracken start ... --peer /dns4/cn1/udp/37173/quic-v1 --peer /dns4/cn2/udp/37173/quic-v1
   ```
 
 If a variable is not set in the wizard, it still appears (with its default) in the package config
@@ -219,7 +219,7 @@ At container startup, `entrypoint.sh`:
 6. Executes:
 
    ```bash
-   loxley start --config /data/config.yaml ...
+   bracken start --config /data/config.yaml ...
    ```
 
 The state and databases live under `/data` inside the container, which is backed by the
@@ -231,7 +231,7 @@ access-controlled even though the wallet and network keys inside the volume are 
 
 DAppNode package v0.2.3 is the required bridge from the shipped v0.1.8 package to later binaries. On
 its first start it atomically renames the custom-config state root from `/data/.enclave` to
-`/data/.loxley`, refusing to proceed if both roots exist. The v0.2.3 binary then stamps schema
+`/data/.bracken`, refusing to proceed if both roots exist. The v0.2.3 binary then stamps schema
 version 1 using its release-era compatibility behavior. Later fail-closed binaries can therefore
 verify the marker instead of rejecting the old unversioned datastore. Do not skip this package when
 upgrading an existing v0.1.8 node, and keep a verified backup of `/data` until the bridge has
@@ -239,9 +239,9 @@ started successfully.
 
 ## Health semantics
 
-Loxley v0.2.3 does not expose a local readiness endpoint. The package health check therefore uses
+Bracken v0.2.3 does not expose a local readiness endpoint. The package health check therefore uses
 the strongest non-invasive local signals available in that release: PID 1 must be the expected
-`loxley start` command using `/data/config.yaml`, the protected config/password files must exist,
+`bracken start` command using `/data/config.yaml`, the protected config/password files must exist,
 the v0.2.3 Sled/event-log directories must be initialized, and the configured QUIC UDP listener must
 be bound. This detects the old false-positive case where an unrelated process matched `pgrep`, as
 well as missing credentials, uninitialized persistence, and a dead network listener.
@@ -252,7 +252,7 @@ status before treating the node as protocol-ready.
 
 ## Data & Ports
 
-- **Data volume**: `ciphernode_data` → `/data` This is where Loxley stores its databases and state.
+- **Data volume**: `ciphernode_data` → `/data` This is where Bracken stores its databases and state.
 
 - **Ports**:
   - **UDP 37173** – QUIC P2P networking (host and container).
@@ -277,8 +277,8 @@ new package version.
 
 ## Links
 
-- [Loxley Docs](https://docs.loxley.network)
+- [Bracken Docs](https://docs.bracken.network)
 - [DAppNode Package Development – Single Configuration](https://docs.dappnode.io/docs/dev/package-development/single-configuration/)
 - [DAppNode Docker Compose Reference](https://docs.dappnode.io/docs/dev/references/docker-compose/)
 - [DAppNode Setup Wizard Reference](https://docs.dappnode.io/docs/dev/references/setup-wizard/)
-- [Loxley GitHub Repository](https://github.com/thecryptodog12-rgb/loxley)
+- [Bracken GitHub Repository](https://github.com/thecryptodog12-rgb/loxley)

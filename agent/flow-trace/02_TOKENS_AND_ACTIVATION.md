@@ -4,9 +4,9 @@
 
 Before a node can register, it must stake two types of collateral:
 
-1. **LOXLEY tokens** (ciphernode bond) — governance/utility token, staked directly
-2. **Collateral via tLOXLEY tickets** (ticket collateral) — the configured ERC-20 asset is wrapped into
-   non-transferable LoxleyTicketToken. The planned launch asset is sUSDS.
+1. **BRACKEN tokens** (ciphernode bond) — governance/utility token, staked directly
+2. **Collateral via tBRACKEN tickets** (ticket collateral) — the configured ERC-20 asset is wrapped into
+   non-transferable BrackenTicketToken. The planned launch asset is sUSDS.
 
 Collateral ownership and operator identity are separate namespaces:
 
@@ -15,12 +15,12 @@ Collateral ownership and operator identity are separate namespaces:
 - `bondOwnerOf(operator)` is the wallet that funds and controls collateral. The operator must set it
   to a nonzero address before any position action. It may choose itself, although a separate cold
   wallet or Safe is recommended. The current owner can later rotate ownership through a two-step
-  proposal and acceptance, provided removing the position's LOXLEY credit does not break the old
+  proposal and acceptance, provided removing the position's BRACKEN credit does not break the old
   owner's locked-balance coverage.
 - Positions use only the owner-authorized `...For(operator)` calls. Ticket tokens are minted to the
   operator; exit payouts go only to the owner.
 - A bond owner may fund multiple operator keys. `totalBonded(owner)` aggregates its active and
-  pending LOXLEY across those keys so LOXLEY wallet-level lock accounting remains correct.
+  pending BRACKEN across those keys so BRACKEN wallet-level lock accounting remains correct.
 
 ---
 
@@ -28,7 +28,7 @@ Collateral ownership and operator identity are separate namespaces:
 
 ```text
 ┌───────────────────────────────────────────────────────────┐
-│                    LoxleyToken (LOXLEY)                   │
+│                    BrackenToken (BRACKEN)                   │
 │  ERC20 + ERC20Permit + ERC20Votes + AccessControl          │
 │  + Ownable2Step                                            │
 │                                                            │
@@ -88,7 +88,7 @@ Collateral ownership and operator identity are separate namespaces:
 └───────────────────────────────────────────────────────────┘
 
 ┌───────────────────────────────────────────────────────────┐
-│              LoxleyTicketToken (tLOXLEY)                 │
+│              BrackenTicketToken (tBRACKEN)                 │
 │  ERC20Wrapper over the configured collateral asset        │
 │                                                           │
 │  NON-TRANSFERABLE: _update() reverts on transfer          │
@@ -96,10 +96,10 @@ Collateral ownership and operator identity are separate namespaces:
 │  NO APPROVALS: approve() reverts                          │
 │                                                           │
 │  Only BondingRegistry (registry role) can:                │
-│    depositFor()  → wrap collateral, mint tLOXLEY to operator │
-│    depositFrom() → pull collateral, mint tLOXLEY to operator │
-│    burnTickets() → burn tLOXLEY, NO underlying returned     │
-│    withdrawTo()  → burn tLOXLEY, return collateral          │
+│    depositFor()  → wrap collateral, mint tBRACKEN to operator │
+│    depositFrom() → pull collateral, mint tBRACKEN to operator │
+│    burnTickets() → burn tBRACKEN, NO underlying returned     │
+│    withdrawTo()  → burn tBRACKEN, return collateral          │
 │    payout()      → send underlying from payableBalance    │
 │                                                           │
 │  Used as: TICKET COLLATERAL token                         │
@@ -119,7 +119,7 @@ slash penalty represents a fixed number of sUSDS shares, not a fixed USDS redemp
 
 Bonding-asset rotation is liability-gated. A replacement ticket wrapper cannot be configured while
 the old wrapper has issued tickets or a payable balance. The registry tracks
-`totalCiphernodeBondLiability` across active LOXLEY bonds, queued exits, and slashed funds; it
+`totalCiphernodeBondLiability` across active BRACKEN bonds, queued exits, and slashed funds; it
 decreases only when a claim or treasury withdrawal actually consumes an obligation. Unsolicited
 old-token dust is therefore distinguishable from operator liabilities. `setBondingAssetConfig()`
 sends that surplus to `slashedFundsTreasury` before it validates and applies the replacement in the
@@ -127,7 +127,7 @@ same transaction, so a new donation cannot interleave and block rotation.
 `sweepCiphernodeBondSurplus()` remains available for standalone cleanup. Rotation also waits for
 every E3 assignment, slash lock, and pending slash route to close. Replacement assets must be
 deployed contracts; the only zero exception is the one-time ciphernode-bond-token placeholder used
-to resolve the circular LOXLEY/BondingRegistry deployment.
+to resolve the circular BRACKEN/BondingRegistry deployment.
 
 The exit delay must exceed the current sortition submission window and every unexpired request-time
 deadline. Each request raises a monotonic deadline watermark. `exitDelayFloor()` returns the larger
@@ -138,18 +138,18 @@ deadline.
 
 ---
 
-## Step 1: Bond LOXLEY
+## Step 1: Bond BRACKEN
 
-The owner wallet or Safe approves LOXLEY and calls `bondCiphernodeFor(operator, amount)`. The registry
+The owner wallet or Safe approves BRACKEN and calls `bondCiphernodeFor(operator, amount)`. The registry
 pulls from the owner, credits the operator's ciphernode bond position, and credits
 `totalBonded(owner)`.
 
 ```text
 Bond owner submits bondCiphernodeFor(operator, 50000)
 │
-├─ 1. Approve LOXLEY spend:
-│     └─ LoxleyToken.approve(bondingRegistry, 50000)
-│        → Allows BondingRegistry to pull LOXLEY tokens
+├─ 1. Approve BRACKEN spend:
+│     └─ BrackenToken.approve(bondingRegistry, 50000)
+│        → Allows BondingRegistry to pull BRACKEN tokens
 │
 ├─ 2. BondingRegistry.bondCiphernodeFor(operator, 50000)
 │     │
@@ -166,9 +166,9 @@ Bond owner submits bondCiphernodeFor(operator, 50000)
 │     │  │         address(this), // to BondingRegistry            │
 │     │  │         amount                                          │
 │     │  │       )                                                 │
-│     │  │       → LOXLEY _update can see the pre-recorded bond      │
+│     │  │       → BRACKEN _update can see the pre-recorded bond      │
 │     │  │         and enforce locked-floor accounting             │
-│     │  │       → LOXLEY tokens move from owner → contract          │
+│     │  │       → BRACKEN tokens move from owner → contract          │
 │     │  │       → require the registry receives exactly amount    │
 │     │  │    5. totalCiphernodeBondLiability += amount            │
 │     │  │    6. _updateOperatorStatus(operator)                   │
@@ -180,15 +180,15 @@ Bond owner submits bondCiphernodeFor(operator, 50000)
 └─ Bond is owned by msg.sender and attributed to operator
 ```
 
-### Locked LOXLEY bonding
+### Locked BRACKEN bonding
 
-`BondingRegistry.totalBonded(account)` returns LOXLEY owned by that account across every operator
-position it funds, including pending exits that remain slashable/not returned. `LoxleyToken` uses
-this view for pooled wallet-level locks, so locked LOXLEY can be bonded without becoming transferable.
+`BondingRegistry.totalBonded(account)` returns BRACKEN owned by that account across every operator
+position it funds, including pending exits that remain slashable/not returned. `BrackenToken` uses
+this view for pooled wallet-level locks, so locked BRACKEN can be bonded without becoming transferable.
 A claim or ciphernode bond slash removes the exact amount from the owner's aggregate credit.
 Bond-owner acceptance checks that the previous owner's wallet balance plus its remaining aggregate
 bond still covers `lockedBalanceOf(previousOwner)` before migrating a position's credit. Without
-that check, a second wallet could claim the migrated bond as unlocked LOXLEY while the original lock
+that check, a second wallet could claim the migrated bond as unlocked BRACKEN while the original lock
 holder remains empty.
 
 ### Activation check after bonding:
@@ -202,7 +202,7 @@ _updateOperatorStatus(operator):
     AND no authorized slashing manager has banned the operator
     AND operators[operator].ciphernodeBond >= ceil(requiredCiphernodeBond * ciphernodeBondActiveBps / 10000)
         // Default: ciphernodeBondActiveBps = 8000 (80%)
-        // So if requiredCiphernodeBond = 50000, need >= 40000 LOXLEY
+        // So if requiredCiphernodeBond = 50000, need >= 40000 BRACKEN
     AND ticketToken.balanceOf(operator) / ticketPrice >= minTicketBalance
   )
 
@@ -233,7 +233,7 @@ A completed ban or unban refreshes the affected registered operator immediately.
 ## Step 2: Fund Tickets
 
 The owner calls `addTicketBalanceFor(operator, amount)`: ticket collateral is pulled from the owner,
-but non-transferable tLOXLEY is minted to the operator so committee snapshots remain keyed to the node.
+but non-transferable tBRACKEN is minted to the operator so committee snapshots remain keyed to the node.
 
 These steps are token operations, not an onboarding order. The operator must already be registered:
 `addTicketBalanceFor` reverts with `NotRegistered()` otherwise. Onboarding runs bond, register, then
@@ -263,15 +263,15 @@ Bond owner submits addTicketBalanceFor(operator, amount)
 │     │  │    4. require(!exitInProgress(operator))             │
 │     │  │    5. ticketToken.depositFrom(                       │
 │     │  │         msg.sender,  // pull collateral from owner   │
-│     │  │         operator,    // mint tLOXLEY to operator       │
+│     │  │         operator,    // mint tBRACKEN to operator       │
 │     │  │         amount       // raw underlying units         │
 │     │  │       )              // NO ticketPrice multiplication│
 │     │  │       │                                              │
-│     │  │       │  ┌─ LoxleyTicketToken.depositFrom() ────┐ │
+│     │  │       │  ┌─ BrackenTicketToken.depositFrom() ────┐ │
 │     │  │       │  │  1. underlying.transferFrom(           │  │
 │     │  │       │  │       from, address(this), amount)     │  │
-│     │  │       │  │     → collateral moves: owner → tLOXLEY    │  │
-│     │  │       │  │     → require tLOXLEY receives all amount │ │
+│     │  │       │  │     → collateral moves: owner → tBRACKEN    │  │
+│     │  │       │  │     → require tBRACKEN receives all amount │ │
 │     │  │       │  │  2. _mint(to, amount)                  │  │
 │     │  │       │  │     → minted amount = requested amount  │ │
 │     │  │       │  │  3. Auto-delegate to self on first     │  │
@@ -283,12 +283,12 @@ Bond owner submits addTicketBalanceFor(operator, amount)
 │     │  │  }                                                   │
 │     │  └──────────────────────────────────────────────────────┘
 │     │
-└─ Operator receives tLOXLEY; owner retains lifecycle control
+└─ Operator receives tBRACKEN; owner retains lifecycle control
 ```
 
 ### Why tickets are non-transferable:
 
-tLOXLEY tokens cannot be transferred between addresses. This ensures:
+tBRACKEN tokens cannot be transferred between addresses. This ensures:
 
 - An operator's collateral can't be moved to avoid slashing
 - The ticket balance is always attributable to the specific operator
@@ -296,10 +296,10 @@ tLOXLEY tokens cannot be transferred between addresses. This ensures:
 
 ---
 
-## Step 3: Unbond LOXLEY
+## Step 3: Unbond BRACKEN
 
 Only the configured owner may call `unbondCiphernodeFor(operator, amount)`. With a separate owner,
-the operator's hot key cannot queue the owner's LOXLEY for exit.
+the operator's hot key cannot queue the owner's BRACKEN for exit.
 
 ```text
 Bond owner submits unbondCiphernodeFor(operator, 10000)
@@ -317,7 +317,7 @@ Bond owner submits unbondCiphernodeFor(operator, 10000)
 │     │  │    5. _exits.queueCiphernodeBondsForExit(             │
 │     │  │         operator, exitDelay, amount                   │
 │     │  │       )                                               │
-│     │  │       → Pending LOXLEY still counts in totalBonded()    │
+│     │  │       → Pending BRACKEN still counts in totalBonded()    │
 │     │  │         until claimed or slashed                      │
 │     │  │    6. _updateOperatorStatus(operator)                 │
 │     │  │       → May DEACTIVATE if bond drops below threshold  │
@@ -335,7 +335,7 @@ Bond owner submits unbondCiphernodeFor(operator, 10000)
 Only the owner may call `removeTicketBalanceFor(operator, amount)`.
 
 > **IMPORTANT:** Like `addTicketBalance`, the `amount` here is in **raw underlying token units**
-> (tLOXLEY units, which are 1:1 with underlying). There is NO `ticketPrice` multiplication.
+> (tBRACKEN units, which are 1:1 with underlying). There is NO `ticketPrice` multiplication.
 
 ```text
 Bond owner submits removeTicketBalanceFor(operator, rawAmount)
@@ -353,11 +353,11 @@ Bond owner submits removeTicketBalanceFor(operator, rawAmount)
 │     │  │    5. ticketToken.burnTickets(operator, amount)       │
 │     │  │       │  (NO ticketPrice multiplication — raw units)  │
 │     │  │       │                                               │
-│     │  │       │  ┌─ LoxleyTicketToken ───────────────────┐ │
+│     │  │       │  ┌─ BrackenTicketToken ───────────────────┐ │
 │     │  │       │  │  burnTickets(operator, amount):        │   │
 │     │  │       │  │    payableBalance += amount             │  │
 │     │  │       │  │    _burn(operator, amount)             │   │
-│     │  │       │  │    → tLOXLEY destroyed                     │ │
+│     │  │       │  │    → tBRACKEN destroyed                     │ │
 │     │  │       │  │    → Collateral is not returned yet    │   │
 │     │  │       │  │    → Tracked in payableBalance for     │   │
 │     │  │       │  │      later payout()                    │   │
@@ -414,7 +414,7 @@ Caller submits claimExitsFor(operator, maxTicket, maxCiphernodeBond)
 │     │  │    5. if ticketAmount > 0:                                          │
 │     │  │       ticketToken.payout(recipient, ticketAmount)                   │
 │     │  │       │                                                             │
-│     │  │       │  ┌─ LoxleyTicketToken.payout() ──────────┐               │
+│     │  │       │  ┌─ BrackenTicketToken.payout() ──────────┐               │
 │     │  │       │  │  Transfers collateral from             │                 │
 │     │  │       │  │  payableBalance to bond owner           │                │
 │     │  │       │  │  payableBalance -= amount               │                │
@@ -428,8 +428,8 @@ Caller submits claimExitsFor(operator, maxTicket, maxCiphernodeBond)
 │     │  │         recipient, ciphernodeBondAmount)                            │
 │     │  │       → require owner receives exactly ciphernodeBondAmount         │
 │     │  │       → require registry spends exactly ciphernodeBondAmount        │
-│     │  │       → Pending LOXLEY is removed from totalBonded()                  │
-│     │  │         as returned LOXLEY reaches the wallet                         │
+│     │  │       → Pending BRACKEN is removed from totalBonded()                  │
+│     │  │         as returned BRACKEN reaches the wallet                         │
 │     │  │  }                                                                  │
 │     │  └─────────────────────────────────────────────────────────────────────┘
 │
@@ -445,9 +445,9 @@ and burns until governance activates or cancels it.
 
 ## Operator Voting Power
 
-Bonding transfers LOXLEY to `BondingRegistry`, which never delegates it. Under ERC20Votes an
+Bonding transfers BRACKEN to `BondingRegistry`, which never delegates it. Under ERC20Votes an
 undelegated balance carries no voting power, so those votes are not moved to the registry — they
-cease to exist. Bonded LOXLEY nonetheless still counts in `getPastTotalSupply`, so it raises the quorum
+cease to exist. Bonded BRACKEN nonetheless still counts in `getPastTotalSupply`, so it raises the quorum
 denominator while being unable to help meet it.
 
 Two contracts restore that weight:
@@ -455,51 +455,51 @@ Two contracts restore that weight:
 | Contract                     | Role                                                                                |
 | ---------------------------- | ----------------------------------------------------------------------------------- |
 | `registry/BondedCheckpoints` | Records `totalBonded(owner)` over time. Only `BondingRegistry` may write.           |
-| `registry/BondedVotes`       | `IERC5805` view summing a primary vote source and bonded LOXLEY at the same timepoint. |
+| `registry/BondedVotes`       | `IERC5805` view summing a primary vote source and bonded BRACKEN at the same timepoint. |
 
 ```text
 BondedVotes.getPastVotes(account, t)              ← the NUMERATOR
 │
 ├─ votesSource.getPastVotes(account, t)           ← either the token or an escrow adapter
-│    ├─ votesSource == token   → wallet-held LOXLEY (needs delegation)
-│    └─ votesSource == escrow  → only escrowed LOXLEY; idle wallet LOXLEY carries no weight
-├─ BondedCheckpoints.getPastBonded(account, t)    ← LOXLEY bonded as an operator
-└─ LoxleyToken.lockedBalanceAt(account, t)     ← vesting-locked LOXLEY, escrow source ONLY
+│    ├─ votesSource == token   → wallet-held BRACKEN (needs delegation)
+│    └─ votesSource == escrow  → only escrowed BRACKEN; idle wallet BRACKEN carries no weight
+├─ BondedCheckpoints.getPastBonded(account, t)    ← BRACKEN bonded as an operator
+└─ BrackenToken.lockedBalanceAt(account, t)     ← vesting-locked BRACKEN, escrow source ONLY
      minus the bonded total (saturating), because a bond satisfies a lock
 
 BondedVotes.getPastTotalSupply(t)                 ← the DENOMINATOR
-└─ LoxleyToken.getPastTotalSupply(t)           ← the TOKEN's supply, passed through unchanged
+└─ BrackenToken.getPastTotalSupply(t)           ← the TOKEN's supply, passed through unchanged
 ```
 
 `votesSource` is fixed at construction. Passing the token itself gives the original behaviour:
-wallet-held LOXLEY votes through the token's own ERC20Votes delegation. Passing an escrow adapter means
-only LOXLEY locked in the escrow votes, so holders must lock to participate while operators keep their
+wallet-held BRACKEN votes through the token's own ERC20Votes delegation. Passing an escrow adapter means
+only BRACKEN locked in the escrow votes, so holders must lock to participate while operators keep their
 weight by bonding instead.
 
 Total supply is **not** adjusted, and is always read from the **token** rather than the votes
-source. Bonded and locked LOXLEY were both transferred, not burned, so both are already in the supply —
+source. Bonded and locked BRACKEN were both transferred, not burned, so both are already in the supply —
 adding either again would inflate every quorum denominator, which is the distortion this is meant to
 remove, and reading the escrow's supply instead would omit the bonded half entirely and let
-participation exceed 100%. Escrowed and bonded LOXLEY cannot overlap, because escrowing custodies the
+participation exceed 100%. Escrowed and bonded BRACKEN cannot overlap, because escrowing custodies the
 token in the escrow and bonding custodies it in the registry.
 
-### Vesting-locked LOXLEY
+### Vesting-locked BRACKEN
 
-Under an escrow votes source there is a third numerator: LOXLEY still encumbered by the token's own
-vesting locks. That LOXLEY sits in the holder's own wallet and `LoxleyToken._update` refuses to move
+Under an escrow votes source there is a third numerator: BRACKEN still encumbered by the token's own
+vesting locks. That BRACKEN sits in the holder's own wallet and `BrackenToken._update` refuses to move
 it, so it can never be deposited into the escrow — without counting it, a locked holder would be
 barred from governance for the whole vesting schedule by a rule they cannot act on.
 
 Unlike the escrowed and bonded halves, this one **overlaps** the bond. A bond satisfies a lock:
-`transferableBalanceOf` lets a wallet move locked LOXLEY to the extent the bond already covers the
-obligation, so bonded LOXLEY is reported by both `lockedBalanceAt` and `getPastBonded` while existing
+`transferableBalanceOf` lets a wallet move locked BRACKEN to the extent the bond already covers the
+obligation, so bonded BRACKEN is reported by both `lockedBalanceAt` and `getPastBonded` while existing
 exactly once. `_lockedVotes` subtracts the bonded total from the locked balance and saturates at
 zero, so the pair is worth `max(bonded, locked)` rather than their sum.
 
 The netting rests on the token's transfer rule, `balance >= locked - bonded`, enforced on every
 transfer. **Slashing breaks that rule**: it takes the bond without touching the lock, so an operator
-that had already moved locked LOXLEY out on the strength of the bond is left owing more than it holds,
-and the unbonded remainder would vote with LOXLEY the slash recipient now holds and can count too.
+that had already moved locked BRACKEN out on the strength of the bond is left owing more than it holds,
+and the unbonded remainder would vote with BRACKEN the slash recipient now holds and can count too.
 `_lockedVotes` therefore caps the term at the account's wallet balance. The cap reads the present
 balance even for a past timepoint — a bound, never a source: it can only lower the term towards what
 the account demonstrably holds, and only that account's own power.
@@ -507,7 +507,7 @@ the account demonstrably holds, and only that account's own power.
 Two limits worth holding on to:
 
 - The lock schedule is read **only** when the votes source is an escrow. When the token votes for
-  itself, locked LOXLEY is wallet LOXLEY its own checkpoints already carry, and adding it would double
+  itself, locked BRACKEN is wallet BRACKEN its own checkpoints already carry, and adding it would double
   every locked holder's weight.
 - `lockedBalanceAt` is not a checkpointed history — it walks the account's **current** locks and
   evaluates them against the timestamp given. A lock created after a snapshot shows up in that
@@ -534,12 +534,12 @@ would drift in voting weight. It is called from every site that mutates `_bonded
 | `_claimExits`                   | exit claim, mutated inside `BondingAssetLib` |
 
 `unbondLicenseFor` is **not** a write site. Unbonding moves the bond into the exit queue, where the
-LOXLEY is still held by the registry, so the delegated total is unchanged until the exit is claimed or
+BRACKEN is still held by the registry, so the delegated total is unchanged until the exit is claimed or
 slashed. Voting power therefore stays with the owner for the duration of the exit window.
 
 ### Timepoints and configuration
 
-`BondedCheckpoints` keys history by `block.timestamp`, matching `LoxleyToken`'s ERC-6372
+`BondedCheckpoints` keys history by `block.timestamp`, matching `BrackenToken`'s ERC-6372
 `mode=timestamp` clock. `BondedVotes` compares the clocks at construction and reverts on a mismatch:
 summing a timestamp-keyed history with a block-numbered source would answer for two unrelated points
 in time, and nothing downstream could detect it. A votes source that is not the token is checked the
@@ -560,11 +560,11 @@ registry is configured: `protocol/deployContracts` deploys `BondedCheckpoints` o
 the governance app renders amounts from the metadata. There is no `transfer`, `transferFrom`,
 `approve` or `allowance`: the contract owns no position, so a spend attempt reverts on a missing
 selector. `balanceOf` subtracts `totalCiphernodeBondLiability` for the registry itself, because
-bonding moves LOXLEY into the registry while the adapter attributes it to the bond owner, and counting
+bonding moves BRACKEN into the registry while the adapter attributes it to the bond owner, and counting
 it at both addresses would put summed balances above total supply. When a votes source is
 configured, the escrow's own entry is netted to zero — every unit it custodies is already attributed
-to a locker, and unlike the registry it publishes no liability total to subtract, so LOXLEY donated to
-the escrow on its own account reads as nothing rather than risking a double count. Locked LOXLEY is
+to a locker, and unlike the registry it publishes no liability total to subtract, so BRACKEN donated to
+the escrow on its own account reads as nothing rather than risking a double count. Locked BRACKEN is
 added per account from the escrow's `votingPowerForAccount` for the same reason — it is custodied by
 the escrow but belongs to the locker. That function is used rather than the adapter's own
 `balanceOf`, which counts lock NFTs rather than tokens, and it is delegation-blind, matching what
@@ -574,7 +574,7 @@ the escrow but belongs to the locker. That function is used rather than the adap
 before the slot is spent. It must name this registry, and it must accept a write from it, which the
 setter checks by synchronizing the zero address — whose bonded total is always zero, so a successful
 probe leaves no readable state. Both checks are needed: `registry()` is not unique to a checkpoint
-contract, and `LoxleyTicketToken` answers it with this same address, so an address mix-up would
+contract, and `BrackenTicketToken` answers it with this same address, so an address mix-up would
 otherwise consume the slot on a contract that cannot record anything and revert every later bond,
 slash, exit claim and owner transfer with no way to correct it. While unset, `_syncBondedCheckpoint`
 is a no-op rather than a revert: the registry is upgradeable, so the upgrade lands before the
@@ -600,7 +600,7 @@ owner's history. Either call it for every existing owner after configuring, or c
 checkpoint contract in the same transaction that upgrades the registry, before any bonding.
 
 Bonded weight is **not delegatable** — the registry owns the position — so it always sits with the
-bond owner, including for an owner that never self-delegated. Wallet-held LOXLEY keeps its normal
+bond owner, including for an owner that never self-delegated. Wallet-held BRACKEN keeps its normal
 delegation through the token. `BondedVotes.delegate`/`delegateBySig` revert rather than silently
 doing nothing.
 
@@ -608,7 +608,7 @@ doing nothing.
 
 | Requirement               | Default             | Description                                |
 | ------------------------- | ------------------- | ------------------------------------------ |
-| `requiredCiphernodeBond`  | Configured by owner | Min LOXLEY to register                        |
+| `requiredCiphernodeBond`  | Configured by owner | Min BRACKEN to register                        |
 | `ciphernodeBondActiveBps` | 8000 (80%)          | % of required bond to stay active          |
 | `minTicketBalance`        | Configured by owner | Min tickets for active status              |
 | `ticketPrice`             | Configured by owner | Stablecoin cost per ticket (in base units) |
@@ -627,24 +627,24 @@ active = registered
 ## Token Flow Diagram
 
 ```text
-                BOND LOXLEY                                     BUY TICKETS
+                BOND BRACKEN                                     BUY TICKETS
                 ─────────                                     ───────────
   Bond owner                               Bond owner
-  LOXLEY wallet ──→ BondingRegistry          collateral wallet ──→ LoxleyTicketToken
-                  (operator ciphernodeBond++)                        (wraps asset → mints tLOXLEY)
-                                                           tLOXLEY → Operator balance
+  BRACKEN wallet ──→ BondingRegistry          collateral wallet ──→ BrackenTicketToken
+                  (operator ciphernodeBond++)                        (wraps asset → mints tBRACKEN)
+                                                           tBRACKEN → Operator balance
 
-                UNBOND LOXLEY                                   BURN TICKETS
+                UNBOND BRACKEN                                   BURN TICKETS
                 ───────────                                   ────────────
-  ciphernodeBond -= amount                    tLOXLEY burned from operator
-  amount → ExitQueue (locked)              collateral stays in tLOXLEY contract (payableBalance)
+  ciphernodeBond -= amount                    tBRACKEN burned from operator
+  amount → ExitQueue (locked)              collateral stays in tBRACKEN contract (payableBalance)
                                            amount → ExitQueue (locked)
 
                               CLAIM EXITS
                               ───────────
                    After exitDelay seconds:
-                   LOXLEY → returned to bond owner
-                   collateral → bond owner from tLOXLEY.payableBalance
+                   BRACKEN → returned to bond owner
+                   collateral → bond owner from tBRACKEN.payableBalance
 ```
 
 ---
@@ -652,9 +652,9 @@ active = registered
 ## Audit Cluster 2 Changes (Tokens)
 
 The token contracts were hardened against the following audit findings. All changes are covered by
-`packages/loxley-contracts/test/Token/` and have no runtime impact outside the touched contracts.
+`packages/bracken-contracts/test/Token/` and have no runtime impact outside the touched contracts.
 
-### LoxleyTicketToken (tLOXLEY)
+### BrackenTicketToken (tBRACKEN)
 
 - **Registry binding.** The initial circular deployment can use a placeholder registry only until
   the token is wired. Governance then repeats the atomic bonding-asset configuration check. Ticket
@@ -682,9 +682,9 @@ The token contracts were hardened against the following audit findings. All chan
 - **M-29 — EIP-6372 timestamp clock.** `clock() = uint48(block.timestamp)`,
   `CLOCK_MODE() = "mode=timestamp"`.
 
-### LoxleyToken (LOXLEY) — Complete Rewrite
+### BrackenToken (BRACKEN) — Complete Rewrite
 
-The LOXLEY token was rewritten to implement a CCA-auction-aligned lifecycle with wallet-level lock
+The BRACKEN token was rewritten to implement a CCA-auction-aligned lifecycle with wallet-level lock
 enforcement based on immutable policy curves. Key changes:
 
 - **Phase-based lifecycle.** The token derives its phase from immutable `CCA_START` / `CCA_END` and
@@ -723,9 +723,9 @@ enforcement based on immutable policy curves. Key changes:
 ### Registry coordination
 
 - `CiphernodeRegistryOwnable.requestBlock` stores `block.timestamp` (the storage slot and event
-  field names remain unchanged for compatibility). Sortition reads tLOXLEY voting power at
+  field names remain unchanged for compatibility). Sortition reads tBRACKEN voting power at
   `requestBlock - 1`. The value is an EIP-6372 timepoint, not a block number, as required by the
-  tLOXLEY timestamp clock.
+  tBRACKEN timestamp clock.
 
 ### Node-operator event projection
 

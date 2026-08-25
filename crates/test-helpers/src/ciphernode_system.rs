@@ -10,7 +10,7 @@ use anyhow::Context;
 use anyhow::Result;
 use e3_ciphernode_builder::CiphernodeHandle;
 use e3_events::Event;
-use e3_events::{GetEvents, LoxleyEvent, ResetHistory, TakeEvents};
+use e3_events::{GetEvents, BrackenEvent, ResetHistory, TakeEvents};
 use std::time::Instant;
 use std::{future::Future, ops::Deref, pin::Pin, time::Duration};
 use tokio::time::timeout;
@@ -243,7 +243,7 @@ impl CiphernodeSystem {
         Ok(CiphernodeHistory(history.events))
     }
 
-    /// Collect events until one whose [`LoxleyEvent::event_type`] equals `last_event_type`
+    /// Collect events until one whose [`BrackenEvent::event_type`] equals `last_event_type`
     /// (inclusive). Use when the pubkey flow ends with `PublicKeyAggregated` but a fixed
     /// `take_history` count can stop too early while gossip duplicates inflate the multiset.
     pub async fn take_history_until_last_event(
@@ -326,10 +326,10 @@ impl Deref for CiphernodeSystem {
 }
 
 #[derive(Debug, Clone)]
-pub struct CiphernodeHistory(Vec<LoxleyEvent>);
+pub struct CiphernodeHistory(Vec<BrackenEvent>);
 
 impl CiphernodeHistory {
-    pub fn filter_by_event_type(&self, event_type: String) -> Vec<LoxleyEvent> {
+    pub fn filter_by_event_type(&self, event_type: String) -> Vec<BrackenEvent> {
         self.0
             .iter()
             .filter(|e| e.event_type() == event_type)
@@ -347,7 +347,7 @@ impl CiphernodeHistory {
 }
 
 impl Deref for CiphernodeHistory {
-    type Target = Vec<LoxleyEvent>;
+    type Target = Vec<BrackenEvent>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -383,9 +383,9 @@ mod tests {
     async fn mock_setup_node(address: String) -> Result<CiphernodeHandle> {
         // Create mock actors for the test
         let store = InMemStore::new(true).start();
-        let bus = EventBus::<LoxleyEvent>::new(EventBusConfig { deduplicate: true }).start();
-        let history = EventBus::<LoxleyEvent>::history(&bus);
-        let errors = EventBus::<LoxleyEvent>::error(&bus);
+        let bus = EventBus::<BrackenEvent>::new(EventBusConfig { deduplicate: true }).start();
+        let history = EventBus::<BrackenEvent>::history(&bus);
+        let errors = EventBus::<BrackenEvent>::error(&bus);
 
         let bus = EventSystem::new()
             .with_event_bus(bus)

@@ -1,4 +1,4 @@
-# Loxley ZK Circuit Benchmarks
+# Bracken ZK Circuit Benchmarks
 
 **Generated:** 2026-06-13 18:13:56 UTC
 
@@ -45,7 +45,7 @@ Settings for this benchmark run (integration test + Nargo circuit benches on the
 
 ## Audit status
 
-On-chain verify gas: **complete** (CRISP Π_user + Loxley Π_DKG / Π_dec replay).
+On-chain verify gas: **complete** (CRISP Π_user + Bracken Π_DKG / Π_dec replay).
 
 ---
 

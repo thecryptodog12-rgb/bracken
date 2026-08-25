@@ -73,29 +73,29 @@ impl Handler<DecryptionCollectionTimeout> for ThresholdPlaintextAggregator {
     }
 }
 
-impl Handler<LoxleyEvent> for ThresholdPlaintextAggregator {
+impl Handler<BrackenEvent> for ThresholdPlaintextAggregator {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            LoxleyEventData::DecryptionshareCreated(data) => ctx.notify(TypedEvent::new(data, ec)),
-            LoxleyEventData::E3RequestComplete(_) => self.notify_sync(ctx, Die),
-            LoxleyEventData::ComputeResponse(data) => {
+            BrackenEventData::DecryptionshareCreated(data) => ctx.notify(TypedEvent::new(data, ec)),
+            BrackenEventData::E3RequestComplete(_) => self.notify_sync(ctx, Die),
+            BrackenEventData::ComputeResponse(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ComputeRequestError(data) => {
+            BrackenEventData::ComputeRequestError(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CommitteeMemberExpelled(data) => {
+            BrackenEventData::CommitteeMemberExpelled(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CommitteeMemberExcluded(data) => {
+            BrackenEventData::CommitteeMemberExcluded(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ShareVerificationComplete(data) => {
+            BrackenEventData::ShareVerificationComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::AggregationProofSigned(data) => {
+            BrackenEventData::AggregationProofSigned(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
             _ => (),

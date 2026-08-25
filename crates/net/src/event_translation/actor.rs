@@ -9,7 +9,7 @@ use actix::prelude::*;
 use anyhow::Result;
 use e3_events::{
     prelude::*, trap, BusHandle, CorrelationId, EType, EventContextAccessors, EventSource,
-    EventType, LoxleyEvent,
+    EventType, BrackenEvent,
 };
 use e3_utils::MAILBOX_LIMIT;
 use std::sync::Arc;
@@ -84,11 +84,11 @@ impl NetEventTranslator {
     /// Function to determine which events are allowed to be automatically broadcast to the
     /// network. Kept here so the rule can be referenced via `NetEventTranslator` while the
     /// implementation lives in the pure service.
-    pub fn is_forwardable_event(event: &LoxleyEvent) -> bool {
+    pub fn is_forwardable_event(event: &BrackenEvent) -> bool {
         EventTranslationService::is_forwardable_event(event)
     }
 
-    fn handle_loxley_event(&mut self, msg: LoxleyEvent) -> Result<()> {
+    fn handle_bracken_event(&mut self, msg: BrackenEvent) -> Result<()> {
         if let Some(data) = self.service.prepare_outbound(msg)? {
             let topic = self.service.topic().to_owned();
             if let Err(e) = self.tx.try_send(NetCommand::GossipPublish {
@@ -120,11 +120,11 @@ impl Handler<LibP2pEvent> for NetEventTranslator {
     }
 }
 
-impl Handler<LoxleyEvent> for NetEventTranslator {
+impl Handler<BrackenEvent> for NetEventTranslator {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvent, _: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, _: &mut Self::Context) -> Self::Result {
         trap(EType::Net, &self.bus.with_ec(msg.get_ctx()), || {
-            self.handle_loxley_event(msg)
+            self.handle_bracken_event(msg)
         })
     }
 }

@@ -4,7 +4,7 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-import { deployCRISPProgram, deployHonkVerifier, deployMockLoxley, deployMockRISC0Verifier, ethers } from './utils'
+import { deployCRISPProgram, deployHonkVerifier, deployMockBracken, deployMockRISC0Verifier, ethers } from './utils'
 
 describe('CRISP journal', () => {
   it('should match the journal returned by the RISC Zero guest', async () => {
@@ -23,13 +23,13 @@ describe('CRISP journal', () => {
       return Uint8Array.from(encoded)
     }
 
-    const mockLoxley = await deployMockLoxley()
-    await mockLoxley.setCommitteePublicKey(committeePublicKey)
+    const mockBracken = await deployMockBracken()
+    await mockBracken.setCommitteePublicKey(committeePublicKey)
     const chainId = (await ethers.provider.getNetwork()).chainId
     const journal = ethers.concat(
       [
         ethers.zeroPadValue(ethers.toBeHex(chainId), 32),
-        ethers.zeroPadValue(await mockLoxley.getAddress(), 32),
+        ethers.zeroPadValue(await mockBracken.getAddress(), 32),
         ethers.zeroPadValue(ethers.toBeHex(0), 32),
         encryptionSchemeId,
         committeePublicKey,
@@ -44,9 +44,9 @@ describe('CRISP journal', () => {
     const honkVerifier = await deployHonkVerifier()
     const risc0Verifier = await deployMockRISC0Verifier()
     await risc0Verifier.setExpectedJournalDigest(journalDigest)
-    const program = await deployCRISPProgram({ mockLoxley, honkVerifier, risc0Verifier })
-    const e3Id = await mockLoxley.nextE3Id()
-    await mockLoxley.request(await program.getAddress())
+    const program = await deployCRISPProgram({ mockBracken, honkVerifier, risc0Verifier })
+    const e3Id = await mockBracken.nextE3Id()
+    await mockBracken.request(await program.getAddress())
 
     const proof = ethers.AbiCoder.defaultAbiCoder().encode(['bytes', 'bytes32', 'bytes32'], ['0x', paramsHash, inputRoot])
     await program.verify(e3Id, ciphertextHash, ciphertextCommitment, proof)

@@ -5,7 +5,7 @@
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
 use crate::domain::historical_order_fixer::HistoricalOrderFixer;
-use crate::messages::{EvmEventProcessor, LoxleyEvmEvent};
+use crate::messages::{EvmEventProcessor, BrackenEvmEvent};
 use actix::{Actor, Addr, Handler};
 use e3_utils::MAILBOX_LIMIT;
 use tracing::debug;
@@ -35,11 +35,11 @@ impl Actor for FixHistoricalOrder {
     }
 }
 
-impl Handler<LoxleyEvmEvent> for FixHistoricalOrder {
+impl Handler<BrackenEvmEvent> for FixHistoricalOrder {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvmEvent, _ctx: &mut Self::Context) {
-        debug!("Receiving LoxleyEvmEvent event({})", msg.get_id());
+    fn handle(&mut self, msg: BrackenEvmEvent, _ctx: &mut Self::Context) {
+        debug!("Receiving BrackenEvmEvent event({})", msg.get_id());
         for event in self.fixer.process(msg) {
             self.dest.do_send(event);
         }
@@ -50,22 +50,22 @@ impl Handler<LoxleyEvmEvent> for FixHistoricalOrder {
 mod tests {
     use std::time::Duration;
 
-    use crate::messages::{EvmLog, HistoricalSyncComplete, LoxleyEvmEvent};
+    use crate::messages::{EvmLog, HistoricalSyncComplete, BrackenEvmEvent};
 
     use super::*;
     use actix::prelude::*;
     use alloy_primitives::Address;
     use tokio::{sync::mpsc, time::sleep};
 
-    struct Collector(mpsc::UnboundedSender<LoxleyEvmEvent>);
+    struct Collector(mpsc::UnboundedSender<BrackenEvmEvent>);
 
     impl Actor for Collector {
         type Context = Context<Self>;
     }
 
-    impl Handler<LoxleyEvmEvent> for Collector {
+    impl Handler<BrackenEvmEvent> for Collector {
         type Result = ();
-        fn handle(&mut self, msg: LoxleyEvmEvent, _ctx: &mut Self::Context) {
+        fn handle(&mut self, msg: BrackenEvmEvent, _ctx: &mut Self::Context) {
             let _ = self.0.send(msg);
         }
     }
@@ -75,11 +75,11 @@ mod tests {
         let (tx, mut rx) = mpsc::unbounded_channel();
         let fix = FixHistoricalOrder::setup(Collector(tx).start());
 
-        let log_1 = LoxleyEvmEvent::Log(EvmLog::test_log(Address::ZERO, 1, 1));
-        let log_2 = LoxleyEvmEvent::Log(EvmLog::test_log(Address::ZERO, 2, 2));
-        let log_3 = LoxleyEvmEvent::Log(EvmLog::test_log(Address::ZERO, 3, 3));
+        let log_1 = BrackenEvmEvent::Log(EvmLog::test_log(Address::ZERO, 1, 1));
+        let log_2 = BrackenEvmEvent::Log(EvmLog::test_log(Address::ZERO, 2, 2));
+        let log_3 = BrackenEvmEvent::Log(EvmLog::test_log(Address::ZERO, 3, 3));
 
-        let sync_complete = LoxleyEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete::new(
+        let sync_complete = BrackenEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete::new(
             1,
             Some(log_3.get_id()),
         ));

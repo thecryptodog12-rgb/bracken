@@ -9,6 +9,6 @@ source "${SCRIPT_DIR}/lib/dev_config.sh"
 load_template_dev_config
 cd "${TEMPLATE_ROOT}"
 
-echo "loxley rev = $(loxley rev)"
+echo "bracken rev = $(bracken rev)"
 echo "Waiting on ciphernodes to be ready..."
-pnpm wait-on file:/tmp/loxley_ciphernodes_ready && loxley program start
+pnpm wait-on file:/tmp/bracken_ciphernodes_ready && bracken program start

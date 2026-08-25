@@ -37,7 +37,7 @@
     "setup:testnet": "bash ./scripts/setup_testnet.sh"
   },
   "devDependencies": {
-    "@loxley/config": "workspace:*",
+    "@bracken/config": "workspace:*",
     "eslint": "^9.39.1",
     "@playwright/test": "1.52.0",
     "@synthetixio/synpress": "4.1.1",

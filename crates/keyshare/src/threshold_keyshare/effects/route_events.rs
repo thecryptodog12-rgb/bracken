@@ -4,54 +4,54 @@
 
 use super::*;
 
-impl Handler<LoxleyEvent> for ThresholdKeyshare {
+impl Handler<BrackenEvent> for ThresholdKeyshare {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            LoxleyEventData::CiphernodeSelected(data) => {
+            BrackenEventData::CiphernodeSelected(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CiphertextOutputPublished(data) => {
+            BrackenEventData::CiphertextOutputPublished(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::PublicKeyAggregated(data) => {
+            BrackenEventData::PublicKeyAggregated(data) => {
                 let committee_hash =
                     e3_committee_hash::hash_committee_addresses(&data.committee_addresses);
                 let pk = ArcBytes::from_bytes(&data.pubkey);
                 let _ = self.state.try_mutate(&ec, |mut s| {
                     s.aggregated_pk = Some(pk);
                     s.decryption_domain = Some(e3_committee_hash::DecryptionDomainContext {
-                        loxley_address: self.loxley_address,
+                        bracken_address: self.bracken_address,
                         committee_hash,
                         committee_public_key: data.pk_commitment.into(),
                     });
                     Ok(s)
                 });
             }
-            LoxleyEventData::ThresholdShareCreated(data) => {
+            BrackenEventData::ThresholdShareCreated(data) => {
                 let _ =
                     self.handle_threshold_share_created(TypedEvent::new(data, ec), ctx.address());
             }
-            LoxleyEventData::EncryptionKeyCreated(data) => {
+            BrackenEventData::EncryptionKeyCreated(data) => {
                 let _ =
                     self.handle_encryption_key_created(TypedEvent::new(data, ec), ctx.address());
             }
-            LoxleyEventData::PkGenerationProofSigned(data) => {
+            BrackenEventData::PkGenerationProofSigned(data) => {
                 let _ = self.handle_pk_generation_proof_signed(TypedEvent::new(data, ec));
             }
-            LoxleyEventData::DkgProofSigned(data) => {
+            BrackenEventData::DkgProofSigned(data) => {
                 let _ = self.handle_share_computation_proof_signed(TypedEvent::new(data, ec));
             }
-            LoxleyEventData::E3RequestComplete(data) => self.notify_sync(ctx, data),
-            LoxleyEventData::E3Failed(data) => {
+            BrackenEventData::E3RequestComplete(data) => self.notify_sync(ctx, data),
+            BrackenEventData::E3Failed(data) => {
                 warn!(
                     "E3 failed: {:?}. Shutting down ThresholdKeyshare for e3_id={}",
                     data.reason, data.e3_id
                 );
                 self.notify_sync(ctx, E3RequestComplete { e3_id: data.e3_id });
             }
-            LoxleyEventData::E3StageChanged(data) => {
+            BrackenEventData::E3StageChanged(data) => {
                 use e3_events::E3Stage;
                 match &data.new_stage {
                     E3Stage::Complete | E3Stage::Failed => {
@@ -67,7 +67,7 @@ impl Handler<LoxleyEvent> for ThresholdKeyshare {
                     }
                 }
             }
-            LoxleyEventData::DecryptionKeyShared(data) => {
+            BrackenEventData::DecryptionKeyShared(data) => {
                 if data.external {
                     // Route based on current state
                     if let Some(state) = self.state.get() {
@@ -133,22 +133,22 @@ impl Handler<LoxleyEvent> for ThresholdKeyshare {
                     }
                 }
             }
-            LoxleyEventData::DecryptionShareProofSigned(data) => {
+            BrackenEventData::DecryptionShareProofSigned(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ShareVerificationComplete(data) => {
+            BrackenEventData::ShareVerificationComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ComputeResponse(data) => {
+            BrackenEventData::ComputeResponse(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CommitteeMemberExpelled(data) => {
+            BrackenEventData::CommitteeMemberExpelled(data) => {
                 self.handle_committee_member_expelled(data, ec);
             }
-            LoxleyEventData::CommitteeMemberExcluded(data) => {
+            BrackenEventData::CommitteeMemberExcluded(data) => {
                 self.handle_committee_member_excluded(data, ec);
             }
-            LoxleyEventData::EffectsEnabled(_) => {
+            BrackenEventData::EffectsEnabled(_) => {
                 // Broadcast once at the end of boot sync. Re-drive any of this node's own
                 // in-flight work that a crash may have interrupted (idempotent downstream).
                 if let Err(err) = self.resume_in_flight_work(ec) {

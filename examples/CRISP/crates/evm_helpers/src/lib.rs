@@ -46,7 +46,7 @@ pub type CRISPReadProvider = FillProvider<
     Ethereum,
 >;
 
-/// Type alias for write provider (same as LoxleyWriteProvider)
+/// Type alias for write provider (same as BrackenWriteProvider)
 pub type CRISPWriteProvider = FillProvider<
     JoinFill<
         JoinFill<

@@ -32,9 +32,9 @@ pub(crate) mod evm_log_observation;
 pub(crate) mod historical_order_fixer;
 #[path = "chain_reader/log_timestamp.rs"]
 pub(crate) mod log_timestamp;
-#[path = "loxley/events.rs"]
-pub(crate) mod loxley_events;
-#[path = "loxley_writing/workflow.rs"]
+#[path = "bracken/events.rs"]
+pub(crate) mod bracken_events;
+#[path = "bracken_writing/workflow.rs"]
 pub(crate) mod plaintext_publication;
 #[path = "chain_reader/reorg.rs"]
 pub(crate) mod reorg;

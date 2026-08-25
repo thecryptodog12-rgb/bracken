@@ -1,19 +1,19 @@
 {
-  "name": "loxley-ciphernode.public.dappnode.eth",
+  "name": "bracken-ciphernode.public.dappnode.eth",
   "version": "0.2.3",
   "upstreamVersion": "0.2.3",
   "upstreamArg": "UPSTREAM_VERSION",
   "upstreamRepo": "thecryptodog12-rgb/loxley",
-  "shortDescription": "Loxley Ciphernode - Run a node for confidential computing",
-  "description": "Run an Loxley ciphernode to participate in the E3 (Encrypted Execution Environments) network.",
+  "shortDescription": "Bracken Ciphernode - Run a node for confidential computing",
+  "description": "Run an Bracken ciphernode to participate in the E3 (Encrypted Execution Environments) network.",
   "type": "service",
   "mainService": "ciphernode",
   "author": "Gnosis Guild <https://github.com/gnosisguild>",
   "categories": ["Blockchain", "Developer tools"],
-  "keywords": ["loxley", "fhe", "mpc", "ciphernode", "threshold", "encryption"],
+  "keywords": ["bracken", "fhe", "mpc", "ciphernode", "threshold", "encryption"],
   "links": {
-    "homepage": "https://loxley.network",
-    "docs": "https://docs.loxley.network",
+    "homepage": "https://bracken.network",
+    "docs": "https://docs.bracken.network",
     "repository": "https://github.com/thecryptodog12-rgb/loxley"
   },
   "repository": {

@@ -15,7 +15,7 @@ import { Nonces } from "@openzeppelin/contracts/utils/Nonces.sol";
 /// @dev `MockVotingToken` is a plain ERC20 with no `getPastVotes`, which makes it the negative
 /// case for the token probe in `CRISPProgram._initRound`. This one is the positive case.
 ///
-/// Uses the timestamp clock, matching `LoxleyToken`. A round records its snapshot in whatever
+/// Uses the timestamp clock, matching `BrackenToken`. A round records its snapshot in whatever
 /// units the token reports, so a mock on the default block-number clock would exercise a
 /// different path from the token this mode is built for.
 contract MockVotesToken is ERC20, ERC20Permit, ERC20Votes {

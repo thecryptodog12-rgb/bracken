@@ -11,14 +11,14 @@ use async_trait::async_trait;
 use e3_data::{
     Checkpoint, FromSnapshotWithParams, Repositories, RepositoriesFactory, Repository, Snapshot,
 };
-use e3_events::{E3id, LoxleyEvent};
+use e3_events::{E3id, BrackenEvent};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, sync::Arc};
 
 /// Initialize the HashMap with a list of expected Recipients. In order to know whether or not we
 /// should buffer we need to iterate over this list and determine which recipients are missing based
 /// on the recipient value is why we set it here to have keys with empty values.
-fn init_recipients() -> HashMap<String, Option<Recipient<LoxleyEvent>>> {
+fn init_recipients() -> HashMap<String, Option<Recipient<BrackenEvent>>> {
     HashMap::from([
         ("keyshare".to_owned(), None),
         ("threshold_keyshare".to_owned(), None),
@@ -34,8 +34,8 @@ fn init_recipients() -> HashMap<String, Option<Recipient<LoxleyEvent>>> {
 pub struct E3Context {
     /// The E3Request's ID
     pub e3_id: E3id,
-    /// A way to store LoxleyEvent recipients on the context
-    pub recipients: HashMap<String, Option<Recipient<LoxleyEvent>>>, // NOTE: can be a None value
+    /// A way to store BrackenEvent recipients on the context
+    pub recipients: HashMap<String, Option<Recipient<BrackenEvent>>>, // NOTE: can be a None value
     /// A way to store an extension's dependencies on the context
     pub dependencies: HetrogenousMap,
     /// A Repository for storing this context's data snapshot
@@ -73,14 +73,14 @@ impl E3Context {
 
     /// Return a list of expected recipient keys alongside any values that have or have not been
     /// set.
-    fn recipients(&self) -> Vec<(String, Option<Recipient<LoxleyEvent>>)> {
+    fn recipients(&self) -> Vec<(String, Option<Recipient<BrackenEvent>>)> {
         self.recipients
             .iter()
             .map(|(k, v)| (k.clone(), v.clone()))
             .collect()
     }
 
-    pub fn forward_message(&self, msg: &LoxleyEvent, buffer: &mut EventBuffer) {
+    pub fn forward_message(&self, msg: &BrackenEvent, buffer: &mut EventBuffer) {
         self.recipients().into_iter().for_each(|(key, recipient)| {
             if let Some(act) = recipient {
                 // Events buffered before this extension existed must remain ahead of the event
@@ -95,7 +95,7 @@ impl E3Context {
         });
     }
 
-    pub fn forward_message_now(&self, msg: &LoxleyEvent) {
+    pub fn forward_message_now(&self, msg: &BrackenEvent) {
         self.recipients().into_iter().for_each(|(_, recipient)| {
             if let Some(act) = recipient {
                 act.do_send(msg.clone());
@@ -106,13 +106,13 @@ impl E3Context {
     pub fn set_event_recipient(
         &mut self,
         key: impl Into<String>,
-        value: Option<Recipient<LoxleyEvent>>,
+        value: Option<Recipient<BrackenEvent>>,
     ) {
         self.recipients.insert(key.into(), value);
         self.checkpoint();
     }
 
-    pub fn get_event_recipient(&self, key: impl Into<String>) -> Option<&Recipient<LoxleyEvent>> {
+    pub fn get_event_recipient(&self, key: impl Into<String>) -> Option<&Recipient<BrackenEvent>> {
         self.recipients
             .get(&key.into())
             .and_then(|opt| opt.as_ref())
@@ -184,7 +184,7 @@ mod tests {
     use crate::ContextRepositoryFactory;
     use actix::{Actor, Context, Handler, Message};
     use e3_data::{DataStore, InMemStore};
-    use e3_events::{Event, LoxleyEventData, Sequenced};
+    use e3_events::{Event, BrackenEventData, Sequenced};
     use std::sync::{Arc, Mutex};
 
     struct Recorder(Arc<Mutex<Vec<String>>>);
@@ -193,11 +193,11 @@ mod tests {
         type Context = Context<Self>;
     }
 
-    impl Handler<LoxleyEvent> for Recorder {
+    impl Handler<BrackenEvent> for Recorder {
         type Result = ();
 
-        fn handle(&mut self, message: LoxleyEvent, _: &mut Self::Context) {
-            if let LoxleyEventData::TestEvent(event) = message.get_data() {
+        fn handle(&mut self, message: BrackenEvent, _: &mut Self::Context) {
+            if let BrackenEventData::TestEvent(event) = message.get_data() {
                 self.0.lock().unwrap().push(event.msg.clone());
             }
         }
@@ -215,8 +215,8 @@ mod tests {
         }
     }
 
-    fn event(e3_id: &E3id, label: &str, sequence: u64) -> LoxleyEvent {
-        LoxleyEvent::<Sequenced>::test_event(label)
+    fn event(e3_id: &E3id, label: &str, sequence: u64) -> BrackenEvent {
+        BrackenEvent::<Sequenced>::test_event(label)
             .e3_id(e3_id.clone())
             .seq(sequence)
             .build()

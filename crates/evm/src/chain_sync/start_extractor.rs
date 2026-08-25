@@ -5,7 +5,7 @@
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
 use actix::{Actor, Addr, Handler, Recipient};
-use e3_events::{Event, HistoricalEvmSyncStart, LoxleyEvent, LoxleyEventData};
+use e3_events::{Event, HistoricalEvmSyncStart, BrackenEvent, BrackenEventData};
 use e3_utils::MAILBOX_LIMIT;
 
 pub struct SyncStartExtractor {
@@ -28,10 +28,10 @@ impl Actor for SyncStartExtractor {
     }
 }
 
-impl Handler<LoxleyEvent> for SyncStartExtractor {
+impl Handler<BrackenEvent> for SyncStartExtractor {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvent, _: &mut Self::Context) -> Self::Result {
-        if let LoxleyEventData::HistoricalEvmSyncStart(evt) = msg.into_data() {
+    fn handle(&mut self, msg: BrackenEvent, _: &mut Self::Context) -> Self::Result {
+        if let BrackenEventData::HistoricalEvmSyncStart(evt) = msg.into_data() {
             self.dest.do_send(evt)
         }
     }

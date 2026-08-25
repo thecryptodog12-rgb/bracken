@@ -17,7 +17,7 @@ use anyhow::Result;
 use e3_ciphernode_builder::{CiphernodeHandle, EventSystem};
 use e3_events::{
     BusHandle, CiphernodeAdded, EventBus, EventBusConfig, EventPublisher, EventType,
-    HistoryCollector, LoxleyEvent, LoxleyEventData, Seed, Subscribe,
+    HistoryCollector, BrackenEvent, BrackenEventData, Seed, Subscribe,
 };
 use e3_fhe_params::BfvParamSet;
 use e3_fhe_params::DEFAULT_BFV_PRESET;
@@ -64,7 +64,7 @@ pub async fn find_bb() -> Option<PathBuf> {
         for path in [
             format!("{}/.bb/bb", home),
             format!("{}/.nargo/bin/bb", home),
-            format!("{}/.loxley/noir/bin/bb", home),
+            format!("{}/.bracken/noir/bin/bb", home),
         ] {
             if std::path::Path::new(&path).exists() {
                 return Some(PathBuf::from(path));
@@ -135,15 +135,15 @@ pub fn get_common_setup(
     Seed,
     Arc<BfvParameters>,
     CommonRandomPoly,
-    Addr<HistoryCollector<LoxleyEvent>>,
-    Addr<HistoryCollector<LoxleyEvent>>,
+    Addr<HistoryCollector<BrackenEvent>>,
+    Addr<HistoryCollector<BrackenEvent>>,
 )> {
-    let bus = EventBus::<LoxleyEvent>::new(EventBusConfig { deduplicate: true }).start();
-    let errors = HistoryCollector::<LoxleyEvent>::new().start();
-    let history = HistoryCollector::<LoxleyEvent>::new().start();
+    let bus = EventBus::<BrackenEvent>::new(EventBusConfig { deduplicate: true }).start();
+    let errors = HistoryCollector::<BrackenEvent>::new().start();
+    let history = HistoryCollector::<BrackenEvent>::new().start();
     bus.do_send(Subscribe::new(EventType::All, history.clone().recipient()));
     bus.do_send(Subscribe::new(
-        EventType::LoxleyError,
+        EventType::BrackenError,
         errors.clone().recipient(),
     ));
 
@@ -196,7 +196,7 @@ impl AddToCommittee {
             count: 0,
         }
     }
-    pub async fn add(&mut self, address: &str) -> Result<LoxleyEventData> {
+    pub async fn add(&mut self, address: &str) -> Result<BrackenEventData> {
         let evt = CiphernodeAdded {
             chain_id: self.chain_id,
             address: address.to_owned(),

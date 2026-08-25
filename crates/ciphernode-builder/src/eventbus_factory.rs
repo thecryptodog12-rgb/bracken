@@ -18,7 +18,7 @@ use e3_events::BusHandle;
 use e3_events::Event;
 use e3_events::EventBus;
 use e3_events::HistoryCollector;
-use e3_events::LoxleyEvent;
+use e3_events::BrackenEvent;
 use e3_events::Subscribe;
 
 use crate::EventSystem;
@@ -92,16 +92,16 @@ impl EventBusFactory {
     }
 }
 
-pub fn get_loxley_event_bus() -> Addr<EventBus<LoxleyEvent>> {
+pub fn get_bracken_event_bus() -> Addr<EventBus<BrackenEvent>> {
     EventBusFactory::instance().get_event_bus()
 }
 
-pub fn get_error_collector() -> Addr<HistoryCollector<LoxleyEvent>> {
+pub fn get_error_collector() -> Addr<HistoryCollector<BrackenEvent>> {
     EventBusFactory::instance().get_error_collector()
 }
 
-pub fn get_loxley_bus_handle() -> anyhow::Result<BusHandle<Disabled>> {
-    let bus = get_loxley_event_bus();
+pub fn get_bracken_bus_handle() -> anyhow::Result<BusHandle<Disabled>> {
+    let bus = get_bracken_event_bus();
     let system = EventSystem::new().with_event_bus(bus);
     system.store()?; // Ensure store is initialized before returning to avoid potentially dropping
                      // events.

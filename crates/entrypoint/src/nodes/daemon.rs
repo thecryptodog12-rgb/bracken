@@ -54,7 +54,7 @@ impl LaunchCommand {
         maybe_config_string: &Option<String>,
         maybe_otel: &Option<String>,
     ) -> Result<CommandParams> {
-        let loxley_bin = env::current_exe()?.display().to_string();
+        let bracken_bin = env::current_exe()?.display().to_string();
         let mut args = vec![];
         args.push("start".to_string());
 
@@ -80,7 +80,7 @@ impl LaunchCommand {
             args.push(peer.to_string());
         }
 
-        Ok((loxley_bin, args))
+        Ok((bracken_bin, args))
     }
 }
 

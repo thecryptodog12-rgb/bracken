@@ -16,7 +16,7 @@ use actix_web::{web, HttpResponse, Responder};
 use alloy::primitives::{Address, Bytes, U256};
 use alloy::sol_types::SolValue;
 use e3_sdk::evm_helpers::contracts::{
-    CommitteeSize, LoxleyContract, LoxleyRead, LoxleyWrite,
+    CommitteeSize, BrackenContract, BrackenRead, BrackenWrite,
 };
 use log::{error, info};
 
@@ -184,10 +184,10 @@ pub async fn initialize_crisp_round(
     );
 
     // Continue with the existing E3 initialization
-    let contract = LoxleyContract::new(
+    let contract = BrackenContract::new(
         &CONFIG.http_rpc_url,
         &CONFIG.private_key,
-        &CONFIG.loxley_address,
+        &CONFIG.bracken_address,
     )
     .await?;
     let e3_program: Address = CONFIG.e3_program_address.parse()?;

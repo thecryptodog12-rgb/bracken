@@ -4,13 +4,13 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-import { deployLoxley } from '@loxley/contracts/scripts'
+import { deployBracken } from '@bracken/contracts/scripts'
 import { deployTemplate } from '../deploy/default'
 import { ensureTemplateCwd } from './template-paths'
 
 async function main() {
   ensureTemplateCwd()
-  console.log('🚀 Deploying Loxley protocol locally...')
+  console.log('🚀 Deploying Bracken protocol locally...')
 
   // Get hardhat runtime environment
   const hre = await import('hardhat')
@@ -23,7 +23,7 @@ async function main() {
   console.log('Account balance:', ethers.formatEther(await ethers.provider.getBalance(deployer.address)))
 
   // Mocks for local dev; skip on-chain ZK verifiers (needs pnpm compile:circuits).
-  await deployLoxley(true, false)
+  await deployBracken(true, false)
   await deployTemplate()
 }
 

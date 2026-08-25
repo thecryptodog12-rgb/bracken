@@ -16,7 +16,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
-const STATE = path.join(ROOT, "packages/loxley-contracts/deployed_contracts.json");
+const STATE = path.join(ROOT, "packages/bracken-contracts/deployed_contracts.json");
 const EXPLORER = "https://robinhoodchain.blockscout.com/address";
 const USDG = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168";
 const CHECK = process.argv.includes("--check");
@@ -27,7 +27,7 @@ const at = (name) => {
   return (typeof v === "string" ? v : v?.address) || null;
 };
 
-const required = ["Loxley", "CiphernodeRegistryOwnable", "BondingRegistry", "LoxleyBondToken"];
+const required = ["Bracken", "CiphernodeRegistryOwnable", "BondingRegistry", "BrackenBondToken"];
 const missing = required.filter((n) => !at(n));
 if (missing.length) {
   console.error(`Ontbreekt in deployed_contracts.json onder "robinhood": ${missing.join(", ")}`);
@@ -38,13 +38,13 @@ if (missing.length) {
 // ── De deployments-pagina ───────────────────────────────────────────────────
 const GROUPS = [
   ["Core", [
-    ["Loxley", "The protocol. Requests, lifecycle, verifier registry."],
+    ["Bracken", "The protocol. Requests, lifecycle, verifier registry."],
     ["CiphernodeRegistryOwnable", "Committee selection and key publication."],
     ["E3RefundManager", "Fee refunds when an E3 fails."],
   ]],
   ["Tokens", [
-    ["LoxleyBondToken", "LOXLEY. Operator collateral, 18 decimals."],
-    ["LoxleyTicketToken", "Ticket collateral wrapper, 6 decimals."],
+    ["BrackenBondToken", "BRACKEN. Operator collateral, 18 decimals."],
+    ["BrackenTicketToken", "Ticket collateral wrapper, 6 decimals."],
   ]],
   ["Bonding and slashing", [
     ["BondingRegistry", "Bonds, eligibility, slashing accounting."],
@@ -64,8 +64,8 @@ const GROUPS = [
   ]],
   ["Libraries", [
     ["PoseidonT3", "Poseidon hash."],
-    ["LoxleyPricing", "Fee validation."],
-    ["LoxleyLifecycle", "Lifecycle validation."],
+    ["BrackenPricing", "Fee validation."],
+    ["BrackenLifecycle", "Lifecycle validation."],
     ["RegistrySortitionLib", "Sortition scoring."],
     ["BondingAssetLib", "Bonding asset checks."],
     ["BondingEligibilityLib", "Eligibility checks."],
@@ -80,14 +80,14 @@ const GROUPS = [
 
 const head = `---
 title: 'Deployments'
-description: 'Every Loxley contract on Robinhood Chain, with its address and what it does'
+description: 'Every Bracken contract on Robinhood Chain, with its address and what it does'
 ---
 
 import { Callout } from 'nextra/components'
 
 # Deployments
 
-Loxley runs on **Robinhood Chain**, chain id \`4663\`. Every address below is live
+Bracken runs on **Robinhood Chain**, chain id \`4663\`. Every address below is live
 and readable on [Blockscout](https://robinhoodchain.blockscout.com).
 
 <Callout type='warning'>
@@ -117,7 +117,7 @@ for (const [title, rows] of GROUPS) {
 parts.push(`
 ## Fee token
 
-Loxley charges for computation in **USDG**, not in LOXLEY:
+Bracken charges for computation in **USDG**, not in BRACKEN:
 
 | | |
 |---|---|
@@ -133,7 +133,7 @@ rejects a fee token whose \`decimals()\` disagrees. The bond token is 18. See
 Most contracts have their source published on Blockscout, so you can read what
 runs rather than trusting this page. Where a contract still shows as unverified,
 the source is in
-[the repository](https://github.com/thecryptodog12-rgb/loxley/tree/main/packages/loxley-contracts/contracts)
+[the repository](https://github.com/thecryptodog12-rgb/loxley/tree/main/packages/bracken-contracts/contracts)
 and can be matched against the deployed bytecode yourself.
 `);
 
@@ -175,8 +175,8 @@ for (const f of scanFiles) {
 
 // ── Rapport ─────────────────────────────────────────────────────────────────
 console.log(`Stack op keten 4663: ${Object.keys(state).length} contracten`);
-console.log(`  Loxley          ${at("Loxley")}`);
-console.log(`  LOXLEY token    ${at("LoxleyBondToken")}`);
+console.log(`  Bracken          ${at("Bracken")}`);
+console.log(`  BRACKEN token    ${at("BrackenBondToken")}`);
 console.log(`  BondingRegistry ${at("BondingRegistry")}`);
 console.log("");
 console.log(`deployments.mdx ${pageChanged ? (CHECK ? "ZOU WIJZIGEN" : "bijgewerkt") : "ongewijzigd"}`);
@@ -190,7 +190,7 @@ if (orphans.size) {
 }
 
 console.log("\nVercel-variabelen voor het dashboard:");
-console.log(`  VITE_LOXLEY_ADDRESS=${at("Loxley")}`);
+console.log(`  VITE_BRACKEN_ADDRESS=${at("Bracken")}`);
 console.log(`  VITE_CIPHERNODE_REGISTRY_ADDRESS=${at("CiphernodeRegistryOwnable")}`);
 console.log(`  VITE_BONDING_REGISTRY_ADDRESS=${at("BondingRegistry")}`);
 

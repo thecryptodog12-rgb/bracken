@@ -6,7 +6,7 @@
 
 use anyhow::{ensure, Result};
 use bloom::{BloomFilter, ASMS};
-use e3_events::{prelude::*, Event, LoxleyEvent, LoxleyEventData, SeqState, Unsequenced};
+use e3_events::{prelude::*, Event, BrackenEvent, BrackenEventData, SeqState, Unsequenced};
 use tracing::{trace, warn};
 
 use crate::events::GossipData;
@@ -36,16 +36,16 @@ impl EventTranslationService {
 
     /// Function to determine which events are allowed to be automatically broadcast to the
     /// network. Static so the same rule can be reused elsewhere (e.g. sync responses).
-    pub fn is_forwardable_event<S: SeqState>(event: &LoxleyEvent<S>) -> bool {
+    pub fn is_forwardable_event<S: SeqState>(event: &BrackenEvent<S>) -> bool {
         matches!(
             event.get_data(),
-            LoxleyEventData::DecryptionshareCreated(_)
-                | LoxleyEventData::DKGRecursiveAggregationComplete(_)
-                | LoxleyEventData::KeyshareCreated(_)
-                | LoxleyEventData::PlaintextAggregated(_)
-                | LoxleyEventData::PublicKeyAggregated(_)
-                | LoxleyEventData::ProofFailureAccusation(_)
-                | LoxleyEventData::AccusationVote(_)
+            BrackenEventData::DecryptionshareCreated(_)
+                | BrackenEventData::DKGRecursiveAggregationComplete(_)
+                | BrackenEventData::KeyshareCreated(_)
+                | BrackenEventData::PlaintextAggregated(_)
+                | BrackenEventData::PublicKeyAggregated(_)
+                | BrackenEventData::ProofFailureAccusation(_)
+                | BrackenEventData::AccusationVote(_)
         )
     }
 
@@ -53,7 +53,7 @@ impl EventTranslationService {
     ///
     /// Returns `Some(GossipData)` to publish over the network, or `None` when the event is not
     /// forwardable or has already been broadcast.
-    pub fn prepare_outbound(&mut self, event: LoxleyEvent) -> Result<Option<GossipData>> {
+    pub fn prepare_outbound(&mut self, event: BrackenEvent) -> Result<Option<GossipData>> {
         if !Self::is_forwardable_event(&event) {
             let id = event.event_id();
             trace!(evt_id=%id, "Local events should not be rebroadcast so ignoring");
@@ -74,8 +74,8 @@ impl EventTranslationService {
 
     /// Decode an inbound gossip payload into the internal event to publish locally, recording it
     /// for dedup so it is not later rebroadcast.
-    pub fn prepare_inbound(&mut self, data: GossipData) -> Result<LoxleyEvent<Unsequenced>> {
-        let event: LoxleyEvent<Unsequenced> = data.try_into()?;
+    pub fn prepare_inbound(&mut self, data: GossipData) -> Result<BrackenEvent<Unsequenced>> {
+        let event: BrackenEvent<Unsequenced> = data.try_into()?;
         ensure!(
             Self::is_forwardable_event(&event),
             "inbound gossip event type {} is not allowed on the protocol gossip channel",
@@ -95,8 +95,8 @@ mod tests {
     };
     use e3_utils::ArcBytes;
 
-    fn local_test_event() -> LoxleyEvent {
-        let unsequenced: LoxleyEvent<Unsequenced> = LoxleyEvent::new_with_timestamp(
+    fn local_test_event() -> BrackenEvent {
+        let unsequenced: BrackenEvent<Unsequenced> = BrackenEvent::new_with_timestamp(
             TestEvent::new("hello", 1).into(),
             None,
             42,
@@ -106,8 +106,8 @@ mod tests {
         unsequenced.into_sequenced(1)
     }
 
-    fn local_forwardable_event() -> LoxleyEvent {
-        let unsequenced: LoxleyEvent<Unsequenced> = LoxleyEvent::new_with_timestamp(
+    fn local_forwardable_event() -> BrackenEvent {
+        let unsequenced: BrackenEvent<Unsequenced> = BrackenEvent::new_with_timestamp(
             PlaintextAggregated {
                 e3_id: E3id::new("1", 1),
                 decrypted_output: vec![ArcBytes::from_bytes(&[1, 2, 3])],
@@ -138,7 +138,7 @@ mod tests {
     #[test]
     fn inbound_gossip_rejects_non_forwardable_internal_events() {
         let mut svc = EventTranslationService::new("topic");
-        let event: LoxleyEvent<Unsequenced> = LoxleyEvent::new_with_timestamp(
+        let event: BrackenEvent<Unsequenced> = BrackenEvent::new_with_timestamp(
             TestEvent::new("fish", 7).into(),
             None,
             99,

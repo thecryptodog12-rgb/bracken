@@ -7,7 +7,7 @@
 use crate::{ShutdownStore, SledDb, StoreHasExactKeys, StoreIsEmpty};
 use actix::{Actor, ActorContext, Addr, Handler, ResponseFuture};
 use anyhow::{Context, Result};
-use e3_events::{BusHandle, EType, ErrorDispatcher, Flush, LoxleyEvent, Unsequenced};
+use e3_events::{BusHandle, EType, ErrorDispatcher, Flush, BrackenEvent, Unsequenced};
 use e3_events::{Get, Insert, InsertBatch, InsertBatchIfAbsent, InsertSync, Remove};
 use e3_utils::MAILBOX_LIMIT;
 use std::path::PathBuf;
@@ -15,7 +15,7 @@ use tracing::{error, info};
 
 pub struct SledStore {
     db: Option<SledDb>,
-    bus: Box<dyn ErrorDispatcher<LoxleyEvent<Unsequenced>>>,
+    bus: Box<dyn ErrorDispatcher<BrackenEvent<Unsequenced>>>,
     write_failure: Option<String>,
 }
 

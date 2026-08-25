@@ -43,7 +43,7 @@ async fn dkg_aggregation_compute_error_emits_e3_failed() -> Result<()> {
     let event = next_event(&history).await?;
     assert!(matches!(
         event.into_data(),
-        LoxleyEventData::E3Failed(data)
+        BrackenEventData::E3Failed(data)
             if data.e3_id == e3_id
                 && data.failed_at_stage == E3Stage::CommitteeFinalized
                 && data.reason == FailureReason::DKGInvalidShares
@@ -93,7 +93,7 @@ async fn mixed_dkg_proofs_emit_e3_failed() -> Result<()> {
     let event = next_event(&history).await?;
     assert!(matches!(
         event.into_data(),
-        LoxleyEventData::E3Failed(data)
+        BrackenEventData::E3Failed(data)
             if data.e3_id == e3_id
                 && data.failed_at_stage == E3Stage::CommitteeFinalized
                 && data.reason == FailureReason::DKGInvalidShares

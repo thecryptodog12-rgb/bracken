@@ -25,7 +25,7 @@ async fn rejected_log_fails_gateway_readiness() -> Result<()> {
 
     gateway
         .addr()
-        .send(LoxleyEvmEvent::Rejected(EvmLogRejected::new(
+        .send(BrackenEvmEvent::Rejected(EvmLogRejected::new(
             CorrelationId::new(),
             1,
             "malformed historical log",
@@ -86,10 +86,10 @@ async fn test_evm_chain_gateway() -> Result<()> {
     );
 
     // This will actually arrive earlier than HistoricalEvmSyncStart but aught to be buffered
-    addr.send(LoxleyEvmEvent::Event(evm_event)).await?;
+    addr.send(BrackenEvmEvent::Event(evm_event)).await?;
 
     // HistoricalSyncComplete: ForwardToSyncActor -> BufferUntilLive
-    addr.send(LoxleyEvmEvent::HistoricalSyncComplete(
+    addr.send(BrackenEvmEvent::HistoricalSyncComplete(
         HistoricalSyncComplete::new(chain_id, None),
     ))
     .await?;
@@ -109,7 +109,7 @@ async fn test_evm_chain_gateway() -> Result<()> {
         12346,
         chain_id,
     );
-    addr.send(LoxleyEvmEvent::Event(buffered_event)).await?;
+    addr.send(BrackenEvmEvent::Event(buffered_event)).await?;
 
     // The Synchronizer will publish the SyncEnded event when it has all the information it needs
     // and has published everything to the bus
@@ -124,7 +124,7 @@ async fn test_evm_chain_gateway() -> Result<()> {
         chain_id,
     );
 
-    addr.send(LoxleyEvmEvent::Event(after_event)).await?;
+    addr.send(BrackenEvmEvent::Event(after_event)).await?;
 
     let full = history_collector.send(TakeEvents::new(5)).await?;
 
@@ -132,7 +132,7 @@ async fn test_evm_chain_gateway() -> Result<()> {
         .events
         .iter()
         .filter_map(|e| {
-            if let LoxleyEventData::TestEvent(TestEvent { msg, .. }) = e.get_data() {
+            if let BrackenEventData::TestEvent(TestEvent { msg, .. }) = e.get_data() {
                 Some(msg.to_string())
             } else {
                 None
@@ -176,7 +176,7 @@ async fn overflow_emits_actionable_error_stops_and_fails_readiness() -> Result<(
             u128::from(entropy),
             1,
         );
-        addr.send(LoxleyEvmEvent::Event(event)).await?;
+        addr.send(BrackenEvmEvent::Event(event)).await?;
     }
 
     let startup_error = gateway
@@ -190,8 +190,8 @@ async fn overflow_emits_actionable_error_stops_and_fails_readiness() -> Result<(
 
     let received = errors.send(TakeEvents::new(1)).await?;
     assert!(!received.timed_out, "overflow error should be observable");
-    let LoxleyEventData::LoxleyError(error) = received.events[0].get_data() else {
-        panic!("expected an LoxleyError event");
+    let BrackenEventData::BrackenError(error) = received.events[0].get_data() else {
+        panic!("expected an BrackenError event");
     };
     assert!(error
         .message

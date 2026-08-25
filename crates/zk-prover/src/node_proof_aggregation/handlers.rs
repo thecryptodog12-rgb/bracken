@@ -8,25 +8,25 @@ impl Actor for NodeProofAggregator {
     type Context = Context<Self>;
 }
 
-impl Handler<LoxleyEvent> for NodeProofAggregator {
+impl Handler<BrackenEvent> for NodeProofAggregator {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvent, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, _ctx: &mut Self::Context) -> Self::Result {
         let (data, ec) = msg.into_components();
         match data {
-            LoxleyEventData::DkgFoldAttestationContextEstablished(data) => {
+            BrackenEventData::DkgFoldAttestationContextEstablished(data) => {
                 self.handle_dkg_fold_attestation_context(TypedEvent::new(data, ec));
             }
-            LoxleyEventData::ThresholdSharePending(data) => {
+            BrackenEventData::ThresholdSharePending(data) => {
                 self.handle_threshold_share_pending(TypedEvent::new(data, ec));
             }
-            LoxleyEventData::DKGInnerProofReady(data) => {
+            BrackenEventData::DKGInnerProofReady(data) => {
                 self.handle_inner_proof_ready(TypedEvent::new(data, ec));
             }
-            LoxleyEventData::ComputeResponse(data) => {
+            BrackenEventData::ComputeResponse(data) => {
                 self.handle_compute_response(TypedEvent::new(data, ec));
             }
-            LoxleyEventData::ComputeRequestError(data) => {
+            BrackenEventData::ComputeRequestError(data) => {
                 self.handle_compute_request_error(TypedEvent::new(data, ec));
             }
             _ => {}

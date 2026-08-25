@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-# Script runs from examples/CRISP. Loxley circuits are at ../../circuits.
-LOXLEY_CIRCUITS="../../circuits"
+# Script runs from examples/CRISP. Bracken circuits are at ../../circuits.
+BRACKEN_CIRCUITS="../../circuits"
 CRISP_CIRCUITS="circuits"
 
 # The generated verifiers are NOT preset-specific. They are written from the fold circuit's
@@ -25,29 +25,29 @@ STACKS=(
     "crisp_onchain:fold_onchain:crisp_onchain_fold:CRISPOnchainVerifier.sol"
 )
 
-echo "Compiling loxley user_data_encryption circuits (dependencies)..."
+echo "Compiling bracken user_data_encryption circuits (dependencies)..."
 
 echo "Compiling user_data_encryption_ct0..."
-if ! (cd "$LOXLEY_CIRCUITS/bin/threshold/user_data_encryption_ct0" && nargo compile); then
+if ! (cd "$BRACKEN_CIRCUITS/bin/threshold/user_data_encryption_ct0" && nargo compile); then
     echo "Error: user_data_encryption_ct0 compilation failed"
     exit 1
 fi
 
 echo "Compiling user_data_encryption_ct1..."
-if ! (cd "$LOXLEY_CIRCUITS/bin/threshold/user_data_encryption_ct1" && nargo compile); then
+if ! (cd "$BRACKEN_CIRCUITS/bin/threshold/user_data_encryption_ct1" && nargo compile); then
     echo "Error: user_data_encryption_ct1 compilation failed"
     exit 1
 fi
 
 echo "Compiling user_data_encryption..."
-if ! (cd "$LOXLEY_CIRCUITS/bin/threshold/user_data_encryption" && nargo compile); then
+if ! (cd "$BRACKEN_CIRCUITS/bin/threshold/user_data_encryption" && nargo compile); then
     echo "Error: user_data_encryption compilation failed"
     exit 1
 fi
 
 # Inner recursive proofs use noir-recursive-no-zk; fold's compute_vk_hash chain reads
-# `{name}.vk_recursive_hash` in each package target/ (same layout as loxley `scripts/build-circuits.ts`).
-THRESHOLD_TARGET="${LOXLEY_CIRCUITS}/bin/threshold/target"
+# `{name}.vk_recursive_hash` in each package target/ (same layout as bracken `scripts/build-circuits.ts`).
+THRESHOLD_TARGET="${BRACKEN_CIRCUITS}/bin/threshold/target"
 echo "Writing noir-recursive-no-zk VKs (user_data_encryption)..."
 for name in user_data_encryption_ct0 user_data_encryption_ct1 user_data_encryption; do
     if ! bb write_vk -b "${THRESHOLD_TARGET}/${name}.json" -o "${THRESHOLD_TARGET}" -t noir-recursive-no-zk; then

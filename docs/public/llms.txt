@@ -1,6 +1,6 @@
-# Loxley
+# Bracken
 
-Loxley is a distributed network for confidential coordination between independent parties.
+Bracken is a distributed network for confidential coordination between independent parties.
 
 It enables shared, verifiable outcomes from private inputs without third-party custody, data exposure, or reliance on trusted hardware.
 
@@ -18,4 +18,4 @@ https://docs.theinterfold.com/architecture-overview
 https://docs.theinterfold.com/use-cases
 
 Repository:
-https://github.com/gnosisguild/loxley
+https://github.com/gnosisguild/bracken

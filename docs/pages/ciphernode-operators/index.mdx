@@ -8,14 +8,14 @@ import { Callout } from 'nextra/components'
 # Ciphernode Operators
 
 <Callout type='info'>
-  **Loxley is live on Robinhood Chain** (chain id `4663`). Any address shown inline below is an
+  **Bracken is live on Robinhood Chain** (chain id `4663`). Any address shown inline below is an
   example unless it appears on [Deployments](/deployments) — that page is generated from the
   deployment record and is the one to configure against.
 </Callout>
 
-Ciphernodes are the distributed workers that power the Loxley network. They participate in threshold
-cryptography to enable encrypted execution environments (E3s) while ensuring no single party can
-access the underlying plaintext data.
+Ciphernodes are the distributed workers that power the Bracken network. They participate in
+threshold cryptography to enable encrypted execution environments (E3s) while ensuring no single
+party can access the underlying plaintext data.
 
 > **Interactive setup:** the dashboard has a step-by-step operator guide. It reads the live bonding
 > registry and sends each on-chain step from your wallet. Open
@@ -37,33 +37,33 @@ malicious behavior.
 
 ## Contract Architecture
 
-Loxley protocol uses several contracts that work together:
+Bracken protocol uses several contracts that work together:
 
 | Contract               | Purpose                                                             |
 | ---------------------- | ------------------------------------------------------------------- |
-| **Loxley**             | Core coordinator that manages E3 requests and computation lifecycle |
+| **Bracken**            | Core coordinator that manages E3 requests and computation lifecycle |
 | **CiphernodeRegistry** | Tracks registered operators and manages committee formation         |
-| **BondingRegistry**    | Handles ciphernode bonds (LOXLEY) and ticket balances (tLOXLEY)     |
+| **BondingRegistry**    | Handles ciphernode bonds (BRACKEN) and ticket balances (tBRACKEN)   |
 | **SlashingManager**    | Processes slashing proposals, appeals, and ban enforcement          |
 | **E3RefundManager**    | Calculates and distributes refunds when an E3 fails                 |
-| **LoxleyToken**        | LOXLEY token used for ciphernode bonding                            |
-| **LoxleyTicketToken**  | Non-transferable tLOXLEY token representing ticket balances         |
+| **BrackenToken**       | BRACKEN token used for ciphernode bonding                           |
+| **BrackenTicketToken** | Non-transferable tBRACKEN token representing ticket balances        |
 
 ### Contract addresses
 
-Loxley runs on **Robinhood Chain**, chain id `4663`. These are the addresses an operator needs; the
+Bracken runs on **Robinhood Chain**, chain id `4663`. These are the addresses an operator needs; the
 full set is on [Deployments](/deployments).
 
-| Contract            | Address                                      |
-| ------------------- | -------------------------------------------- |
-| Loxley              | `0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12` |
-| CiphernodeRegistry  | `0x7d6e460B1704B5B1cd5570E62a3c450a9611C346` |
-| BondingRegistry     | `0x54921442e3f4272A899D6b647efB18f761a12CF6` |
-| SlashingManager     | `0xd6f9AeEF1d419c5F2722157b73e2a4faBCd80d42` |
-| E3RefundManager     | `0xa79BfE33F1cB1925F55ECCDBf50c7B0175BD9cF5` |
-| LoxleyTicketToken   | `0x03427Eb710120028f2C713d4e2De5E0AC07AC2B6` |
-| LOXLEY (bond token) | `0x12BE21fafF941622806b770a3a6c0aAEc23cff20` |
-| USDG (fee token)    | `0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168` |
+| Contract             | Address                                      |
+| -------------------- | -------------------------------------------- |
+| Bracken              | `0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12` |
+| CiphernodeRegistry   | `0x7d6e460B1704B5B1cd5570E62a3c450a9611C346` |
+| BondingRegistry      | `0x54921442e3f4272A899D6b647efB18f761a12CF6` |
+| SlashingManager      | `0xd6f9AeEF1d419c5F2722157b73e2a4faBCd80d42` |
+| E3RefundManager      | `0xa79BfE33F1cB1925F55ECCDBf50c7B0175BD9cF5` |
+| BrackenTicketToken   | `0x03427Eb710120028f2C713d4e2De5E0AC07AC2B6` |
+| BRACKEN (bond token) | `0x12BE21fafF941622806b770a3a6c0aAEc23cff20` |
+| USDG (fee token)     | `0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168` |
 
 The bonding registry reads the bond token, ticket wrapper and ticket underlying back from itself at
 runtime, so `BondingRegistry` is the only address the operator guide needs hardcoded.
@@ -99,9 +99,9 @@ against `BondingRegistry`.
 | ------------------------------------------------------- | ---------------------- | -------------------------------------------------------- |
 | `setBondOwner(bondOwner)`                               | Operator key           | Authorize the wallet that controls this position         |
 | `proposeBondOwner(operator, newOwner)`                  | Bond owner             | Nominate a replacement owner                             |
-| `acceptBondOwner(operator)`                             | Nominated owner        | Accept the position and move the LOXLEY accounting       |
-| `bondCiphernodeFor(operator, amount)`                   | Bond owner             | Bond LOXLEY from the caller's wallet                     |
-| `unbondCiphernodeFor(operator, amount)`                 | Bond owner             | Queue bonded LOXLEY for exit                             |
+| `acceptBondOwner(operator)`                             | Nominated owner        | Accept the position and move the BRACKEN accounting      |
+| `bondCiphernodeFor(operator, amount)`                   | Bond owner             | Bond BRACKEN from the caller's wallet                    |
+| `unbondCiphernodeFor(operator, amount)`                 | Bond owner             | Queue bonded BRACKEN for exit                            |
 | `registerOperatorFor(operator)`                         | Bond owner             | Add the operator key to the ciphernode registry          |
 | `deregisterOperatorFor(operator)`                       | Bond owner or operator | Request deregistration and queue all collateral          |
 | `addTicketBalanceFor(operator, amount)`                 | Bond owner             | Deposit the fee token and mint tickets                   |
@@ -113,17 +113,17 @@ against `BondingRegistry`.
 
 Read the current state with these view functions:
 
-| View                           | Returns                                                           |
-| ------------------------------ | ----------------------------------------------------------------- |
-| `bondOwnerOf(operator)`        | Wallet that controls the collateral, or the zero address if unset |
-| `pendingBondOwnerOf(operator)` | Wallet nominated to accept the position                           |
-| `getCiphernodeBond(operator)`  | Active ciphernode bond                                            |
-| `isCiphernodeBonded(operator)` | Whether the bond meets the active-maintenance floor (see below)   |
-| `isRegistered(operator)`       | Whether the key is in the registry                                |
-| `isActive(operator)`           | Whether the operator is eligible for sortition                    |
-| `availableTickets(operator)`   | `floor(ticketBalance / ticketPrice)`                              |
-| `totalBonded(account)`         | LOXLEY that counts toward the locked-floor collateral of an owner |
-| `hasExitInProgress(operator)`  | Whether an exit is queued                                         |
+| View                           | Returns                                                            |
+| ------------------------------ | ------------------------------------------------------------------ |
+| `bondOwnerOf(operator)`        | Wallet that controls the collateral, or the zero address if unset  |
+| `pendingBondOwnerOf(operator)` | Wallet nominated to accept the position                            |
+| `getCiphernodeBond(operator)`  | Active ciphernode bond                                             |
+| `isCiphernodeBonded(operator)` | Whether the bond meets the active-maintenance floor (see below)    |
+| `isRegistered(operator)`       | Whether the key is in the registry                                 |
+| `isActive(operator)`           | Whether the operator is eligible for sortition                     |
+| `availableTickets(operator)`   | `floor(ticketBalance / ticketPrice)`                               |
+| `totalBonded(account)`         | BRACKEN that counts toward the locked-floor collateral of an owner |
+| `hasExitInProgress(operator)`  | Whether an exit is queued                                          |
 
 > `isCiphernodeBonded` and registration use different thresholds. `isCiphernodeBonded` tests the
 > active-maintenance floor, which is `requiredCiphernodeBond` multiplied by
@@ -163,7 +163,7 @@ stateDiagram-v2
 | State           | Description                                                                        |
 | --------------- | ---------------------------------------------------------------------------------- |
 | **Unbonded**    | No ciphernode bond deposited; cannot register                                      |
-| **Bonded**      | LOXLEY bonded but not yet registered in the registry                               |
+| **Bonded**      | BRACKEN bonded but not yet registered in the registry                              |
 | **Registered**  | In the registry but lacking minimum ticket balance                                 |
 | **Active**      | Fully operational; eligible for committee selection via sortition                  |
 | **Inactive**    | Registered but below minimum requirements (tickets or ciphernode bond)             |
@@ -175,17 +175,17 @@ Before operating a ciphernode, ensure you have:
 
 | Requirement           | Details                                                                                    |
 | --------------------- | ------------------------------------------------------------------------------------------ |
-| **LOXLEY Tokens**     | Mainnet requires at least `32,000 LOXLEY` for the ciphernode bond                          |
+| **BRACKEN Tokens**    | Mainnet requires at least `32,000 BRACKEN` for the ciphernode bond                         |
 | **Ticket collateral** | Mainnet requires at least `1,000 sUSDS` shares for one ticket                              |
 | **ETH**               | Gas for transactions on your target network                                                |
 | **Hardware**          | Linux/macOS, 8+ cores, 32GB+ DDR5 RAM, 500GB+ NVMe SSD, stable internet with open UDP port |
-| **Software**          | Loxley CLI installed, WebSocket RPC endpoint                                               |
+| **Software**          | Bracken CLI installed, WebSocket RPC endpoint                                              |
 
 ## Getting Started
 
 Follow these guides in order to become an active ciphernode operator:
 
-1. **[Running a Ciphernode](./running)** - Set up your node using DappNode, Loxley CLI, or Docker
+1. **[Running a Ciphernode](./running)** - Set up your node using DappNode, Bracken CLI, or Docker
 2. **[Registration & Bonding](./registration)** - Bond your ciphernode bond, register, and add
    tickets
 3. **[Tickets & Sortition](./tickets-and-sortition)** - Understand how committee selection works

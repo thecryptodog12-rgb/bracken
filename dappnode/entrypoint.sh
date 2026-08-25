@@ -1,5 +1,5 @@
 #!/bin/bash
-# DAppNode Loxley Ciphernode Entrypoint
+# DAppNode Bracken Ciphernode Entrypoint
 set -Eeuo pipefail
 
 umask 077
@@ -10,8 +10,8 @@ TEMPLATE_FILE="${TEMPLATE_FILE:-/opt/config.template.yaml}"
 SECRETS_FILE="${SECRETS_FILE:-/run/secrets/secrets.json}"
 CREDENTIAL_PROVISIONER="${CREDENTIAL_PROVISIONER:-/opt/provision-credentials.exp}"
 LEGACY_STATE_DIR="${LEGACY_STATE_DIR:-$CONFIG_DIR/.enclave}"
-CURRENT_STATE_DIR="${CURRENT_STATE_DIR:-$CONFIG_DIR/.loxley}"
-# Loxley v0.2.3 resolves a relative `key_file: key` beside a discovered
+CURRENT_STATE_DIR="${CURRENT_STATE_DIR:-$CONFIG_DIR/.bracken}"
+# Bracken v0.2.3 resolves a relative `key_file: key` beside a discovered
 # /data/config.yaml to this path for the default node profile.
 PASSWORD_FILE="${PASSWORD_FILE:-$CURRENT_STATE_DIR/config/_default/key}"
 
@@ -22,7 +22,7 @@ fail() {
 }
 
 echo "=========================================="
-echo "  Loxley Ciphernode - ${NETWORK:-sepolia}"
+echo "  Bracken Ciphernode - ${NETWORK:-sepolia}"
 echo "=========================================="
 
 # Environment variables are visible in Docker/DAppNode metadata. Refuse the
@@ -52,7 +52,7 @@ migrate_legacy_state() {
         fail "both legacy and current state directories exist; refusing an ambiguous upgrade"
     fi
     if [ -d "$LEGACY_STATE_DIR" ]; then
-        log "Migrating the v0.1.8 state namespace to Loxley v0.2.3..."
+        log "Migrating the v0.1.8 state namespace to Bracken v0.2.3..."
         mv -- "$LEGACY_STATE_DIR" "$CURRENT_STATE_DIR" \
             || fail "could not migrate legacy state into $CURRENT_STATE_DIR"
     fi
@@ -136,7 +136,7 @@ if [ -e "$SECRETS_FILE" ]; then
 elif [ -s "$PASSWORD_FILE" ]; then
     # Backward-compatible restart/upgrade path: DAppNode file uploads are copied
     # when configuring a container, while encrypted credentials persist in
-    # /data. Loxley itself will fail startup if wallet/network state is absent.
+    # /data. Bracken itself will fail startup if wallet/network state is absent.
     validate_persisted_password_file
     log "No credential upload present; using persisted credential state."
 else
@@ -168,5 +168,5 @@ if [ -n "${EXTRA_OPTS:-}" ]; then
     CLI_ARGS+=("${EXTRA_ARGS[@]}")
 fi
 
-log "Starting Loxley ciphernode."
-exec loxley start "${CLI_ARGS[@]}"
+log "Starting Bracken ciphernode."
+exec bracken start "${CLI_ARGS[@]}"

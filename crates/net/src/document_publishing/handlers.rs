@@ -11,18 +11,18 @@ impl Actor for DocumentPublisher {
     }
 }
 
-impl Handler<LoxleyEvent> for DocumentPublisher {
+impl Handler<BrackenEvent> for DocumentPublisher {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            LoxleyEventData::PublishDocumentRequested(data) => {
+            BrackenEventData::PublishDocumentRequested(data) => {
                 ctx.notify(TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CiphernodeSelected(data) => {
+            BrackenEventData::CiphernodeSelected(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::E3RequestComplete(data) => {
+            BrackenEventData::E3RequestComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
             _ => (),

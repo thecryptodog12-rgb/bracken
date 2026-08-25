@@ -3,7 +3,7 @@ title: 'CRISP Introduction'
 description: 'Coercion-Resistant Impartial Selection Protocol - A complete E3 program example'
 ---
 
-import { BallotPrivacy } from '@loxley/diagrams'
+import { BallotPrivacy } from '@bracken/diagrams'
 
 # Introduction to CRISP
 
@@ -11,7 +11,7 @@ import { BallotPrivacy } from '@loxley/diagrams'
 
 CRISP (Coercion-Resistant Impartial Selection Protocol) is a secure protocol for digital
 decision-making, leveraging fully homomorphic encryption (FHE) and distributed threshold
-cryptography (DTC) to enable verifiable secret ballots. Built with Loxley, CRISP safeguards
+cryptography (DTC) to enable verifiable secret ballots. Built with Bracken, CRISP safeguards
 democratic systems and decision-making applications against coercion, manipulation, and other
 vulnerabilities.
 
@@ -33,7 +33,7 @@ coercion. CRISP mitigates these risks through:
 ## Project Structure
 
 CRISP, whose implementation is available in the
-[Loxley repository](https://github.com/thecryptodog12-rgb/loxley/tree/main/examples/CRISP), follows
+[Bracken repository](https://github.com/thecryptodog12-rgb/loxley/tree/main/examples/CRISP), follows
 a modern structure with clear separation of concerns:
 
 ```
@@ -47,7 +47,7 @@ CRISP/
 ├── crates/                  # Rust libraries used by the server
 ├── circuits/                # Noir zero-knowledge circuits
 ├── scripts/                 # Development scripts for running, testing, and deployment
-├── loxley.config.yaml      # Ciphernodes + aggregator config
+├── bracken.config.yaml      # Ciphernodes + aggregator config
 └── docker-compose.yaml      # Optional multi-node deployment
 ```
 
@@ -155,7 +155,7 @@ To get started with CRISP:
 3. **Study the code**: Examine the implementation for your own E3 programs
 
 CRISP demonstrates how E3 programs can be used for privacy-preserving applications, providing a
-complete reference implementation for developers building with the Loxley.
+complete reference implementation for developers building with the Bracken.
 
 ## References
 

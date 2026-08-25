@@ -15,12 +15,12 @@ use alloy::{
 };
 use eyre::Result;
 use EmitLogs::EmitLogsInstance;
-use Loxley::LoxleyInstance;
+use Bracken::BrackenInstance;
 
 sol!(
     #[sol(rpc)]
-    Loxley,
-    "tests/fixtures/fake_loxley.json"
+    Bracken,
+    "tests/fixtures/fake_bracken.json"
 );
 
 sol!(
@@ -30,7 +30,7 @@ sol!(
 );
 
 pub async fn setup_two_contracts() -> Result<(
-    LoxleyInstance<impl Provider>,
+    BrackenInstance<impl Provider>,
     String,
     EmitLogsInstance<impl Provider>,
     String,
@@ -39,7 +39,7 @@ pub async fn setup_two_contracts() -> Result<(
 )> {
     let (provider, endpoint, anvil) = setup_provider().await?;
     let provider = Arc::new(provider);
-    let contract1 = Loxley::deploy(provider.clone()).await?;
+    let contract1 = Bracken::deploy(provider.clone()).await?;
     let contract2 = EmitLogsInstance::deploy(provider.clone()).await?;
     let address1 = contract1.address().to_string();
     let address2 = contract2.address().to_string();

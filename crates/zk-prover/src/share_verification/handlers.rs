@@ -8,31 +8,31 @@ impl Actor for ShareVerificationActor {
     type Context = Context<Self>;
 }
 
-impl Handler<LoxleyEvent> for ShareVerificationActor {
+impl Handler<BrackenEvent> for ShareVerificationActor {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            LoxleyEventData::CommitteeFinalized(mut data) => {
+            BrackenEventData::CommitteeFinalized(mut data) => {
                 // Mirror the C0 verifier's canonical ordering at this trust boundary. Replayed and
                 // test-produced events are not assumed to have passed through the EVM decoder.
                 data.sort_by_address();
                 self.store_committee(data.e3_id, &data.committee);
             }
-            LoxleyEventData::ShareVerificationDispatched(data) => {
+            BrackenEventData::ShareVerificationDispatched(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ComputeResponse(data) => {
+            BrackenEventData::ComputeResponse(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ComputeRequestError(data) => {
+            BrackenEventData::ComputeRequestError(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CommitmentConsistencyCheckComplete(data) => {
+            BrackenEventData::CommitmentConsistencyCheckComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::E3RequestComplete(data) => {
+            BrackenEventData::E3RequestComplete(data) => {
                 let e3_id = data.e3_id;
                 self.committees.remove(&e3_id);
                 self.pending.retain(|_, pending| pending.e3_id != e3_id);

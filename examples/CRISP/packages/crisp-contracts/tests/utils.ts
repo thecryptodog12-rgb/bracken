@@ -6,7 +6,7 @@
 
 import { network } from 'hardhat'
 import { zeroHash } from 'viem'
-import { CRISPProgram, HonkVerifier, MockLoxley, MockRISC0Verifier, PoseidonT3 } from '../types'
+import { CRISPProgram, HonkVerifier, MockBracken, MockRISC0Verifier, PoseidonT3 } from '../types'
 import { verifierNames } from '../scripts/verifiers'
 
 // Non-zero address used in the tests.
@@ -38,13 +38,13 @@ export async function deployPoseidonT3() {
 }
 
 /**
- * Deploy MockLoxley and return the address.
- * @returns The address of the deployed MockLoxley contract.
+ * Deploy MockBracken and return the address.
+ * @returns The address of the deployed MockBracken contract.
  */
-export async function deployMockLoxley() {
-  const contract = await deployContract('MockLoxley')
+export async function deployMockBracken() {
+  const contract = await deployContract('MockBracken')
 
-  return contract as unknown as MockLoxley
+  return contract as unknown as MockBracken
 }
 
 export async function deployMockRISC0Verifier() {
@@ -103,12 +103,12 @@ export async function deployOnchainHonkVerifier() {
 
 export async function deployCRISPProgram(
   contracts: {
-    mockLoxley?: MockLoxley
+    mockBracken?: MockBracken
     honkVerifier?: HonkVerifier
     onchainHonkVerifier?: HonkVerifier
     poseidonT3?: PoseidonT3
     risc0Verifier?: MockRISC0Verifier
-    bindLoxley?: boolean
+    bindBracken?: boolean
   } = {},
 ) {
   const poseidonT3 = contracts.poseidonT3 || (await deployPoseidonT3())
@@ -117,7 +117,7 @@ export async function deployCRISPProgram(
   // only needs a non-zero address unless a test actually verifies an ONCHAIN ballot. Tests that do
   // must pass the real one.
   const onchainHonkVerifier = contracts.onchainHonkVerifier || honkVerifier
-  const mockLoxley = contracts.mockLoxley || (await deployMockLoxley())
+  const mockBracken = contracts.mockBracken || (await deployMockBracken())
   const risc0Verifier = contracts.risc0Verifier ? await contracts.risc0Verifier.getAddress() : nonZeroAddress
 
   const programFactory = await ethers.getContractFactory('CRISPProgram', {
@@ -137,9 +137,9 @@ export async function deployCRISPProgram(
 
   await program.waitForDeployment()
 
-  if (contracts.bindLoxley !== false) {
-    await (await mockLoxley.registerE3Program(await program.getAddress())).wait()
-    await (await program.bindLoxley(await mockLoxley.getAddress())).wait()
+  if (contracts.bindBracken !== false) {
+    await (await mockBracken.registerE3Program(await program.getAddress())).wait()
+    await (await program.bindBracken(await mockBracken.getAddress())).wait()
   }
 
   return program as unknown as CRISPProgram

@@ -1,7 +1,7 @@
 {
-  "name": "@loxley/wasm",
+  "name": "@bracken/wasm",
   "version": "0.7.0",
-  "description": "Wasm modules for loxley.",
+  "description": "Wasm modules for bracken.",
   "main": "dist/node/e3_wasm.js",
   "module": "dist/web/e3_wasm.js",
   "types": "dist/web/e3_wasm.d.ts",

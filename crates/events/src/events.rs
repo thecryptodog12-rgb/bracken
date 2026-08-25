@@ -9,7 +9,7 @@ use std::collections::HashMap;
 use actix::{Message, Recipient};
 use anyhow::Result;
 
-use crate::{AggregateId, CorrelationId, EventSource, LoxleyEvent, Sequenced, Unsequenced};
+use crate::{AggregateId, CorrelationId, EventSource, BrackenEvent, Sequenced, Unsequenced};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum EventStoreFilter {
@@ -20,13 +20,13 @@ pub enum EventStoreFilter {
 #[derive(Message, Debug)]
 #[rtype("()")]
 pub struct StoreEventRequested {
-    pub event: LoxleyEvent<Unsequenced>,
+    pub event: BrackenEvent<Unsequenced>,
     pub sender: Recipient<StoreEventResponse>,
 }
 
 impl StoreEventRequested {
     pub fn new(
-        event: LoxleyEvent<Unsequenced>,
+        event: BrackenEvent<Unsequenced>,
         sender: impl Into<Recipient<StoreEventResponse>>,
     ) -> Self {
         Self {
@@ -41,25 +41,25 @@ impl StoreEventRequested {
 #[rtype("()")]
 pub struct EventStoreQueryResponse {
     id: CorrelationId,
-    result: std::result::Result<Vec<LoxleyEvent<Sequenced>>, String>,
+    result: std::result::Result<Vec<BrackenEvent<Sequenced>>, String>,
 }
 
 impl EventStoreQueryResponse {
-    pub fn new(id: CorrelationId, events: Vec<LoxleyEvent>) -> Self {
+    pub fn new(id: CorrelationId, events: Vec<BrackenEvent>) -> Self {
         Self {
             id,
             result: Ok(events),
         }
     }
 
-    pub fn from_result(id: CorrelationId, result: Result<Vec<LoxleyEvent>>) -> Self {
+    pub fn from_result(id: CorrelationId, result: Result<Vec<BrackenEvent>>) -> Self {
         Self {
             id,
             result: result.map_err(|error| format!("{error:#}")),
         }
     }
 
-    pub fn into_events(self) -> Result<Vec<LoxleyEvent>> {
+    pub fn into_events(self) -> Result<Vec<BrackenEvent>> {
         self.result.map_err(anyhow::Error::msg)
     }
 
@@ -71,10 +71,10 @@ impl EventStoreQueryResponse {
 /// Direct event received by the Sequencer once an event has been stored
 #[derive(Message, Debug)]
 #[rtype("()")]
-pub struct StoreEventResponse(pub LoxleyEvent<Sequenced>);
+pub struct StoreEventResponse(pub BrackenEvent<Sequenced>);
 
 impl StoreEventResponse {
-    pub fn into_event(self) -> LoxleyEvent<Sequenced> {
+    pub fn into_event(self) -> BrackenEvent<Sequenced> {
         self.0
     }
 }

@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "loxley-docs": {
+    "bracken-docs": {
       "command": "pnpm",
-      "args": ["--filter", "@loxley/mcp", "exec", "tsx", "src/index.ts"]
+      "args": ["--filter", "@bracken/mcp", "exec", "tsx", "src/index.ts"]
     }
   }
 }

@@ -1,7 +1,7 @@
 # HAMT - A Space Efficient Serializable Hash Array Mapped Trie
 
 A serializable persistent, immutable hash map implementation in Rust using a Hash Array Mapped Trie
-data structure designed for using in Loxley Sortition.
+data structure designed for using in Bracken Sortition.
 
 ## What is a HAMT?
 

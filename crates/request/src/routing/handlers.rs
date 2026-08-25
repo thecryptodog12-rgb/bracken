@@ -12,10 +12,10 @@ impl Actor for E3Router {
     }
 }
 
-impl Handler<LoxleyEvent> for E3Router {
+impl Handler<BrackenEvent> for E3Router {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvent, _: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, _: &mut Self::Context) -> Self::Result {
         trap(
             EType::Event,
             &self.bus.with_ec(msg.get_ctx()),

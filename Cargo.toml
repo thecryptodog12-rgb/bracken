@@ -11,7 +11,7 @@ members = [
   "crates/dashboard",
   "crates/crypto",
   "crates/data",
-  "crates/loxleyup",
+  "crates/brackenup",
   "crates/entrypoint",
   "crates/events",
   "crates/evm",

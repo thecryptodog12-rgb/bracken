@@ -12,9 +12,9 @@
     }
   },
   "mcp": {
-    "loxley-docs": {
+    "bracken-docs": {
       "type": "local",
-      "command": ["pnpm", "--filter", "@loxley/mcp", "exec", "tsx", "src/index.ts"],
+      "command": ["pnpm", "--filter", "@bracken/mcp", "exec", "tsx", "src/index.ts"],
       "enabled": true,
       "timeout": 15000
     }

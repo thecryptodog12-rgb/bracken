@@ -13,7 +13,7 @@ import type { LeanIMTMerkleProof } from '@zk-kit/lean-imt'
 export type RoundDetails = {
   e3Id: bigint
   chainId: bigint
-  loxleyAddress: string
+  brackenAddress: string
   status: string
   voteCount: bigint
   startTime: bigint
@@ -252,7 +252,7 @@ export type CurrentRoundResponse = {
 export type E3StateLiteResponse = {
   id: string
   chain_id: number
-  loxley_address: string
+  bracken_address: string
   status: string
   vote_count: number
   start_time: number

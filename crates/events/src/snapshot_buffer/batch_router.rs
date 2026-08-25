@@ -10,7 +10,7 @@ use super::{
 };
 use crate::{
     AggregateId, EventContextAccessors, EventContextSeq, EventType, Insert, InsertBatch,
-    LoxleyEvent, Sequenced, StoreKeys,
+    BrackenEvent, Sequenced, StoreKeys,
 };
 use actix::{
     Actor, ActorFutureExt, Addr, AsyncContext, Handler, Message, Recipient, ResponseFuture,
@@ -162,9 +162,9 @@ impl Handler<Insert> for BatchRouter {
     }
 }
 
-impl Handler<LoxleyEvent<Sequenced>> for BatchRouter {
+impl Handler<BrackenEvent<Sequenced>> for BatchRouter {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvent<Sequenced>, _: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent<Sequenced>, _: &mut Self::Context) -> Self::Result {
         // Keep every open batch registered until the acknowledged
         // `FlushPendingSnapshots` fence drains it. Enqueueing child flushes here and clearing the
         // map lets the later fence return before the destination store has handled them.

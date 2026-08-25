@@ -22,13 +22,13 @@ use crisp_utils::decode_tally;
 use e3_fhe_params::decode_bfv_params_arc;
 use e3_sdk::{
     evm_helpers::{
-        contracts::{LoxleyRead, ReadWrite},
+        contracts::{BrackenRead, ReadWrite},
         events::{
             CiphertextOutputPublished, CommitteePublished, E3Requested, PlaintextOutputPublished,
         },
         retry::call_with_retry,
     },
-    indexer::{DataStore, LoxleyIndexer, SharedStore},
+    indexer::{DataStore, BrackenIndexer, SharedStore},
 };
 use evm_helpers::{CRISPContractFactory, InputPublished};
 use eyre::Context;
@@ -41,8 +41,8 @@ use tokio::time::sleep;
 type Result<T> = std::result::Result<T, Box<dyn Error + Send + Sync>>;
 
 pub async fn register_e3_requested(
-    indexer: LoxleyIndexer<impl DataStore, ReadWrite>,
-) -> Result<LoxleyIndexer<impl DataStore, ReadWrite>> {
+    indexer: BrackenIndexer<impl DataStore, ReadWrite>,
+) -> Result<BrackenIndexer<impl DataStore, ReadWrite>> {
     // E3Requested
     indexer
         .add_event_handler(move |event: E3Requested, ctx| {
@@ -129,7 +129,7 @@ pub async fn register_e3_requested(
                 // itself is not final when the E3 is requested.
                 //
                 // `requestBlock` is a timestamp, not a block height — the ticket token runs
-                // an EIP-6372 `mode=timestamp` clock, and `Loxley.request` assigns
+                // an EIP-6372 `mode=timestamp` clock, and `Bracken.request` assigns
                 // `block.timestamp` to match the checkpoints it is compared against. The
                 // name is historical.
                 let snapshot_timepoint = event.e3.requestBlock.to::<u64>().saturating_sub(1);
@@ -556,7 +556,7 @@ async fn handle_e3_input_deadline_expiration(
         let (id, status) = run_compute(
             &e3_id,
             e3.chain_id,
-            e3.loxley_address,
+            e3.bracken_address,
             e3.encryption_scheme_id,
             e3.committee_public_key_hash,
             e3.e3_params,
@@ -568,7 +568,7 @@ async fn handle_e3_input_deadline_expiration(
             },
             format!(
                 "{}/state/add-result",
-                CONFIG.loxley_server_url_for_clients()
+                CONFIG.bracken_server_url_for_clients()
             ),
         )
         .await
@@ -605,8 +605,8 @@ async fn handle_e3_input_deadline_expiration(
 }
 
 pub async fn register_ciphertext_output_published(
-    indexer: LoxleyIndexer<impl DataStore, ReadWrite>,
-) -> Result<LoxleyIndexer<impl DataStore, ReadWrite>> {
+    indexer: BrackenIndexer<impl DataStore, ReadWrite>,
+) -> Result<BrackenIndexer<impl DataStore, ReadWrite>> {
     // CiphertextOutputPublished
     indexer
         .add_event_handler(move |event: CiphertextOutputPublished, ctx| {
@@ -624,8 +624,8 @@ pub async fn register_ciphertext_output_published(
 }
 
 pub async fn register_plaintext_output_published(
-    indexer: LoxleyIndexer<impl DataStore, ReadWrite>,
-) -> Result<LoxleyIndexer<impl DataStore, ReadWrite>> {
+    indexer: BrackenIndexer<impl DataStore, ReadWrite>,
+) -> Result<BrackenIndexer<impl DataStore, ReadWrite>> {
     // PlaintextOutputPublished
     indexer
         .add_event_handler(move |event: PlaintextOutputPublished, ctx| {
@@ -655,8 +655,8 @@ pub async fn register_plaintext_output_published(
 }
 
 pub async fn register_committee_published(
-    indexer: LoxleyIndexer<impl DataStore, ReadWrite>,
-) -> Result<LoxleyIndexer<impl DataStore, ReadWrite>> {
+    indexer: BrackenIndexer<impl DataStore, ReadWrite>,
+) -> Result<BrackenIndexer<impl DataStore, ReadWrite>> {
     // CommitteePublished
     indexer
         .add_event_handler(move |event: CommitteePublished, ctx| {
@@ -712,8 +712,8 @@ pub async fn get_current_timestamp_rpc() -> eyre::Result<u64> {
 }
 
 pub async fn register_input_published(
-    indexer: LoxleyIndexer<impl DataStore, ReadWrite>,
-) -> Result<LoxleyIndexer<impl DataStore, ReadWrite>> {
+    indexer: BrackenIndexer<impl DataStore, ReadWrite>,
+) -> Result<BrackenIndexer<impl DataStore, ReadWrite>> {
     indexer
         .add_event_handler(move |event: InputPublished, ctx| {
             let e3_id = event.e3Id.to_string();
@@ -757,7 +757,7 @@ pub async fn start_indexer(
     private_key: &str,
 ) -> Result<()> {
     info!("CRISP: Creating indexer...");
-    let crisp_indexer = LoxleyIndexer::new_with_write_contract(
+    let crisp_indexer = BrackenIndexer::new_with_write_contract(
         url,
         &[contract_address, registry_address, crisp_address],
         store,

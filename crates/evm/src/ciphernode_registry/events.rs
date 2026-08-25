@@ -4,7 +4,7 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-//! Pure translation of `CiphernodeRegistry.sol` logs into `LoxleyEventData`.
+//! Pure translation of `CiphernodeRegistry.sol` logs into `BrackenEventData`.
 
 use crate::contracts::ICiphernodeRegistry;
 use alloy::{
@@ -14,7 +14,7 @@ use alloy::{
 use e3_events::{
     CommitteeActivationChanged, CommitteeFinalized, CommitteeFormationFailed, CommitteePublished,
     CommitteeViabilityUpdated, DkgFoldAttestationContext, DkgFoldAttestationContextEstablished,
-    E3id, LoxleyEventData, Seed, DKG_FOLD_ATTESTATION_CONTEXT_SCHEMA_VERSION,
+    E3id, BrackenEventData, Seed, DKG_FOLD_ATTESTATION_CONTEXT_SCHEMA_VERSION,
 };
 use e3_utils::ArcBytes;
 use tracing::{error, info, trace};
@@ -41,10 +41,10 @@ impl From<CiphernodeAddedWithChainId> for e3_events::CiphernodeAdded {
     }
 }
 
-impl From<CiphernodeAddedWithChainId> for LoxleyEventData {
+impl From<CiphernodeAddedWithChainId> for BrackenEventData {
     fn from(value: CiphernodeAddedWithChainId) -> Self {
         let payload: e3_events::CiphernodeAdded = value.into();
-        LoxleyEventData::from(payload)
+        BrackenEventData::from(payload)
     }
 }
 
@@ -69,10 +69,10 @@ impl From<CiphernodeRemovedWithChainId> for e3_events::CiphernodeRemoved {
     }
 }
 
-impl From<CiphernodeRemovedWithChainId> for LoxleyEventData {
+impl From<CiphernodeRemovedWithChainId> for BrackenEventData {
     fn from(value: CiphernodeRemovedWithChainId) -> Self {
         let payload: e3_events::CiphernodeRemoved = value.into();
-        LoxleyEventData::from(payload)
+        BrackenEventData::from(payload)
     }
 }
 
@@ -96,10 +96,10 @@ impl From<CommitteeRequestedWithChainId> for e3_events::CommitteeRequested {
     }
 }
 
-impl From<CommitteeRequestedWithChainId> for LoxleyEventData {
+impl From<CommitteeRequestedWithChainId> for BrackenEventData {
     fn from(value: CommitteeRequestedWithChainId) -> Self {
         let payload: e3_events::CommitteeRequested = value.into();
-        LoxleyEventData::from(payload)
+        BrackenEventData::from(payload)
     }
 }
 
@@ -118,7 +118,7 @@ pub(crate) fn extractor_with_sortition_seed(
     topics: &[B256],
     chain_id: u64,
     seed: Seed,
-) -> Option<LoxleyEventData> {
+) -> Option<BrackenEventData> {
     let event = decode_committee_request(data, topics)?;
     Some(CommitteeRequestedWithChainId(event, chain_id, seed).into())
 }
@@ -175,16 +175,16 @@ impl From<DkgFoldAttestationContextEstablishedWithChainId>
     }
 }
 
-impl From<DkgFoldAttestationContextEstablishedWithChainId> for LoxleyEventData {
+impl From<DkgFoldAttestationContextEstablishedWithChainId> for BrackenEventData {
     fn from(value: DkgFoldAttestationContextEstablishedWithChainId) -> Self {
         DkgFoldAttestationContextEstablished::from(value).into()
     }
 }
 
-impl From<CommitteeFinalizedWithChainId> for LoxleyEventData {
+impl From<CommitteeFinalizedWithChainId> for BrackenEventData {
     fn from(value: CommitteeFinalizedWithChainId) -> Self {
         let payload: e3_events::CommitteeFinalized = value.into();
-        LoxleyEventData::from(payload)
+        BrackenEventData::from(payload)
     }
 }
 
@@ -202,10 +202,10 @@ impl From<TicketSubmittedWithChainId> for e3_events::TicketSubmitted {
     }
 }
 
-impl From<TicketSubmittedWithChainId> for LoxleyEventData {
+impl From<TicketSubmittedWithChainId> for BrackenEventData {
     fn from(value: TicketSubmittedWithChainId) -> Self {
         let payload: e3_events::TicketSubmitted = value.into();
-        LoxleyEventData::from(payload)
+        BrackenEventData::from(payload)
     }
 }
 
@@ -226,10 +226,10 @@ impl From<CommitteeMemberExpelledWithChainId> for e3_events::CommitteeMemberExpe
     }
 }
 
-impl From<CommitteeMemberExpelledWithChainId> for LoxleyEventData {
+impl From<CommitteeMemberExpelledWithChainId> for BrackenEventData {
     fn from(value: CommitteeMemberExpelledWithChainId) -> Self {
         let payload: e3_events::CommitteeMemberExpelled = value.into();
-        LoxleyEventData::from(payload)
+        BrackenEventData::from(payload)
     }
 }
 
@@ -246,10 +246,10 @@ impl From<CommitteePublishedWithChainId> for CommitteePublished {
     }
 }
 
-impl From<CommitteePublishedWithChainId> for LoxleyEventData {
+impl From<CommitteePublishedWithChainId> for BrackenEventData {
     fn from(value: CommitteePublishedWithChainId) -> Self {
         let payload: CommitteePublished = value.into();
-        LoxleyEventData::from(payload)
+        BrackenEventData::from(payload)
     }
 }
 
@@ -268,7 +268,7 @@ impl From<CommitteeFormationFailedWithChainId> for CommitteeFormationFailed {
     }
 }
 
-impl From<CommitteeFormationFailedWithChainId> for LoxleyEventData {
+impl From<CommitteeFormationFailedWithChainId> for BrackenEventData {
     fn from(value: CommitteeFormationFailedWithChainId) -> Self {
         CommitteeFormationFailed::from(value).into()
     }
@@ -288,7 +288,7 @@ impl From<CommitteeActivationChangedWithChainId> for CommitteeActivationChanged 
     }
 }
 
-impl From<CommitteeActivationChangedWithChainId> for LoxleyEventData {
+impl From<CommitteeActivationChangedWithChainId> for BrackenEventData {
     fn from(value: CommitteeActivationChangedWithChainId) -> Self {
         CommitteeActivationChanged::from(value).into()
     }
@@ -310,20 +310,20 @@ impl From<CommitteeViabilityUpdatedWithChainId> for CommitteeViabilityUpdated {
     }
 }
 
-impl From<CommitteeViabilityUpdatedWithChainId> for LoxleyEventData {
+impl From<CommitteeViabilityUpdatedWithChainId> for BrackenEventData {
     fn from(value: CommitteeViabilityUpdatedWithChainId) -> Self {
         CommitteeViabilityUpdated::from(value).into()
     }
 }
 
-pub(crate) fn extractor(data: &LogData, topics: &[B256], chain_id: u64) -> Option<LoxleyEventData> {
+pub(crate) fn extractor(data: &LogData, topics: &[B256], chain_id: u64) -> Option<BrackenEventData> {
     match topics.first() {
         Some(&ICiphernodeRegistry::CiphernodeAdded::SIGNATURE_HASH) => {
             let Ok(event) = ICiphernodeRegistry::CiphernodeAdded::decode_log_data(data) else {
                 error!("Error parsing event CiphernodeAdded after topic was matched!");
                 return None;
             };
-            Some(LoxleyEventData::from(CiphernodeAddedWithChainId(
+            Some(BrackenEventData::from(CiphernodeAddedWithChainId(
                 event, chain_id,
             )))
         }
@@ -332,7 +332,7 @@ pub(crate) fn extractor(data: &LogData, topics: &[B256], chain_id: u64) -> Optio
                 error!("Error parsing event CiphernodeRemoved after topic was matched!");
                 return None;
             };
-            Some(LoxleyEventData::from(CiphernodeRemovedWithChainId(
+            Some(BrackenEventData::from(CiphernodeRemovedWithChainId(
                 event, chain_id,
             )))
         }
@@ -346,7 +346,7 @@ pub(crate) fn extractor(data: &LogData, topics: &[B256], chain_id: u64) -> Optio
                 error!("Error parsing event SortitionCommitteeFinalized after topic was matched!");
                 return None;
             };
-            Some(LoxleyEventData::from(CommitteeFinalizedWithChainId(
+            Some(BrackenEventData::from(CommitteeFinalizedWithChainId(
                 event, chain_id,
             )))
         }
@@ -378,7 +378,7 @@ pub(crate) fn extractor(data: &LogData, topics: &[B256], chain_id: u64) -> Optio
                 error!("Error parsing event TicketSubmitted after topic was matched!");
                 return None;
             };
-            Some(LoxleyEventData::from(TicketSubmittedWithChainId(
+            Some(BrackenEventData::from(TicketSubmittedWithChainId(
                 event, chain_id,
             )))
         }
@@ -392,7 +392,7 @@ pub(crate) fn extractor(data: &LogData, topics: &[B256], chain_id: u64) -> Optio
                 "CommitteeMemberExpelled event received: e3_id={}, node={}, reason={:?}, active_count_after={}",
                 event.e3Id, event.node, event.reason, event.activeCountAfter
             );
-            Some(LoxleyEventData::from(CommitteeMemberExpelledWithChainId(
+            Some(BrackenEventData::from(CommitteeMemberExpelledWithChainId(
                 event, chain_id,
             )))
         }
@@ -413,7 +413,7 @@ pub(crate) fn extractor(data: &LogData, topics: &[B256], chain_id: u64) -> Optio
                 "CommitteePublished event received: e3_id={}, nodes={:?}",
                 event.e3Id, event.nodes
             );
-            Some(LoxleyEventData::from(CommitteePublishedWithChainId(
+            Some(BrackenEventData::from(CommitteePublishedWithChainId(
                 event, chain_id,
             )))
         }
@@ -476,7 +476,7 @@ mod tests {
             10,
         );
         match out {
-            Some(LoxleyEventData::CiphernodeAdded(data)) => {
+            Some(BrackenEventData::CiphernodeAdded(data)) => {
                 assert_eq!(data.index, 2);
                 assert_eq!(data.num_nodes, 5);
                 assert_eq!(data.chain_id, 10);
@@ -564,7 +564,7 @@ mod tests {
         let log_data = LogData::default();
         assert!(matches!(
             extractor(&log_data, &[B256::ZERO], 1),
-            Some(LoxleyEventData::EvmLogObserved(_))
+            Some(BrackenEventData::EvmLogObserved(_))
         ));
     }
 
@@ -581,7 +581,7 @@ mod tests {
         let log = event.encode_log_data();
         let out = extractor(&log, log.topics(), 100);
         match out {
-            Some(LoxleyEventData::CommitteePublished(event)) => {
+            Some(BrackenEventData::CommitteePublished(event)) => {
                 assert_eq!(event.e3_id, E3id::new("12", 100));
                 assert_eq!(event.nodes, vec![node.to_string()]);
                 assert_eq!(event.public_key.extract_bytes(), b"public-key");

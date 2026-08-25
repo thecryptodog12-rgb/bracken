@@ -18,24 +18,24 @@ operator. Make sure your node is already [running](./running) before proceeding.
 Registration supports one or two wallets:
 
 - The **operator key** runs the node and authorizes its initial bond owner.
-- The **bond owner** holds LOXLEY and the ticket collateral token. It controls the position
+- The **bond owner** holds BRACKEN and the ticket collateral token. It controls the position
   lifecycle.
 
 Using a separate cold wallet or Safe as the bond owner is strongly recommended so the running node
 does not hold the key controlling collateral. Self-ownership is supported if an operator prefers a
 single-wallet setup. Ensure the selected bond-owner wallet has:
 
-| Token      | Amount Required                          | Purpose                      |
-| ---------- | ---------------------------------------- | ---------------------------- |
-| **LOXLEY** | Mainnet: `32,000 LOXLEY`                 | Ciphernode bond collateral   |
-| **sUSDS**  | Mainnet: `1,000 sUSDS` shares per ticket | Ticket balance for sortition |
-| **ETH**    | Sufficient for gas                       | Transaction fees             |
+| Token       | Amount Required                          | Purpose                      |
+| ----------- | ---------------------------------------- | ---------------------------- |
+| **BRACKEN** | Mainnet: `32,000 BRACKEN`                | Ciphernode bond collateral   |
+| **sUSDS**   | Mainnet: `1,000 sUSDS` shares per ticket | Ticket balance for sortition |
+| **ETH**     | Sufficient for gas                       | Transaction fees             |
 
-> **Testnet tokens:** on Sepolia you can self-serve test LOXLEY and mock USDC from the faucet with
-> `loxley faucet` (requires the `faucet` contract address in your config — see
+> **Testnet tokens:** on Sepolia you can self-serve test BRACKEN and mock USDC from the faucet with
+> `bracken faucet` (requires the `faucet` contract address in your config — see
 > [Running a Node → Contract Addresses](/ciphernode-operators/running#contract-addresses)). Each
-> call tops up LOXLEY and the fee token independently, only when your balance for that token is
-> below the faucet threshold. One call dispenses enough LOXLEY to meet the default Sepolia
+> call tops up BRACKEN and the fee token independently, only when your balance for that token is
+> below the faucet threshold. One call dispenses enough BRACKEN to meet the default Sepolia
 > ciphernode bond. If the faucet runs dry, open
 > [an issue](https://github.com/thecryptodog12-rgb/loxley/issues).
 
@@ -46,7 +46,7 @@ single-wallet setup. Ensure the selected bond-owner wallet has:
 First, verify your current on-chain status:
 
 ```bash
-loxley ciphernode status
+bracken ciphernode status
 ```
 
 Example output:
@@ -61,7 +61,7 @@ Ciphernode status on mainnet:
   Ticket balance: 0 (0 available)
   Ciphernode bond: 0
   Pending exits: tickets=0, bond=0
-  Requirements: minTickets=1, ticketPrice=1000 tLOXLEY, ciphernodeBond=32000 LOXLEY
+  Requirements: minTickets=1, ticketPrice=1000 tBRACKEN, ciphernodeBond=32000 BRACKEN
 ```
 
 ### Step 2: Authorize the Bond Owner
@@ -69,7 +69,7 @@ Ciphernode status on mainnet:
 From the node's operator key, authorize the wallet or Safe that will control collateral:
 
 ```bash
-loxley ciphernode set-bond-owner --owner 0xBOND_OWNER
+bracken ciphernode set-bond-owner --owner 0xBOND_OWNER
 ```
 
 The owner must be nonzero and may equal the operator address, although a separate cold wallet or
@@ -83,18 +83,18 @@ For an EOA bond owner, run the owner-aware CLI commands using a config whose enc
 that owner:
 
 ```bash
-loxley --config /path/to/owner.yaml ciphernode bond \
+bracken --config /path/to/owner.yaml ciphernode bond \
   --operator 0xOPERATOR bond --amount 32000
-loxley --config /path/to/owner.yaml ciphernode register --operator 0xOPERATOR
-loxley --config /path/to/owner.yaml ciphernode tickets \
+bracken --config /path/to/owner.yaml ciphernode register --operator 0xOPERATOR
+bracken --config /path/to/owner.yaml ciphernode tickets \
   --operator 0xOPERATOR buy --amount 1000
 ```
 
 The CLI submits any required token approval first. Safe owners can submit the same
 `bondCiphernodeFor`, `registerOperatorFor`, and `addTicketBalanceFor` calls through the Safe
 interface. The owner supplies the assets, while the operator address is added to the registry Merkle
-tree and receives non-transferable tLOXLEY. With the recommended separate-owner setup, the hot
-operator key does not control LOXLEY or ticket collateral withdrawals, and protocol rewards are
+tree and receives non-transferable tBRACKEN. With the recommended separate-owner setup, the hot
+operator key does not control BRACKEN or ticket collateral withdrawals, and protocol rewards are
 credited to the bond owner.
 
 The number of usable tickets is calculated as:
@@ -111,7 +111,7 @@ ticket.
 Confirm your registration is complete:
 
 ```bash
-loxley ciphernode status
+bracken ciphernode status
 ```
 
 Expected output for an active operator:
@@ -126,27 +126,27 @@ Ciphernode status on mainnet:
   Ticket balance: 1000 (1 available)
   Ciphernode bond: 32000
   Pending exits: tickets=0, bond=0
-  Requirements: minTickets=1, ticketPrice=1000 tLOXLEY, ciphernodeBond=32000 LOXLEY
+  Requirements: minTickets=1, ticketPrice=1000 tBRACKEN, ciphernodeBond=32000 BRACKEN
 ```
 
 ## Operator CLI Commands
 
 ```bash
 # Authorize the bond owner from the hot operator key
-loxley ciphernode set-bond-owner --owner 0xBOND_OWNER
+bracken ciphernode set-bond-owner --owner 0xBOND_OWNER
 
 # Fund and register from an EOA bond-owner config
-loxley --config /path/to/owner.yaml ciphernode bond \
+bracken --config /path/to/owner.yaml ciphernode bond \
   --operator 0xOPERATOR bond --amount 32000
-loxley --config /path/to/owner.yaml ciphernode register --operator 0xOPERATOR
-loxley --config /path/to/owner.yaml ciphernode tickets \
+bracken --config /path/to/owner.yaml ciphernode register --operator 0xOPERATOR
+bracken --config /path/to/owner.yaml ciphernode tickets \
   --operator 0xOPERATOR buy --amount 1000
 
 # The owner or operator can stop participation
-loxley ciphernode deregister --operator 0xOPERATOR
+bracken ciphernode deregister --operator 0xOPERATOR
 
 # Check status
-loxley ciphernode status --operator 0xOPERATOR
+bracken ciphernode status --operator 0xOPERATOR
 ```
 
 Omit `--operator` for a self-owned position. In the recommended two-wallet setup, run financial
@@ -158,10 +158,10 @@ Two commands adjust the activation state of an operator without a full exit:
 
 ```bash
 # Register an operator again after a full exit
-loxley --config /path/to/owner.yaml ciphernode activate --operator 0xOPERATOR
+bracken --config /path/to/owner.yaml ciphernode activate --operator 0xOPERATOR
 
 # Queue collateral for exit and drop below the active thresholds
-loxley --config /path/to/owner.yaml ciphernode deactivate \
+bracken --config /path/to/owner.yaml ciphernode deactivate \
   --operator 0xOPERATOR --tickets 50 --bond 25
 ```
 
@@ -183,13 +183,13 @@ queue and become claimable after the exit delay. The operator stays registered, 
 The current owner proposes a replacement, then the new owner accepts:
 
 ```bash
-loxley --config /path/to/current-owner.yaml ciphernode propose-bond-owner \
+bracken --config /path/to/current-owner.yaml ciphernode propose-bond-owner \
   --operator 0xOPERATOR --new-owner 0xNEW_OWNER
-loxley --config /path/to/new-owner.yaml ciphernode accept-bond-owner \
+bracken --config /path/to/new-owner.yaml ciphernode accept-bond-owner \
   --operator 0xOPERATOR
 ```
 
-Active and pending LOXLEY ownership accounting moves atomically on acceptance. The operator key is
+Active and pending BRACKEN ownership accounting moves atomically on acceptance. The operator key is
 not involved in rotation.
 
 ### Multi-Chain Support
@@ -197,8 +197,8 @@ not involved in rotation.
 Specify a chain when operating on multiple networks:
 
 ```bash
-loxley ciphernode status --chain mainnet
-loxley ciphernode set-bond-owner --owner 0xBOND_OWNER --chain sepolia
+bracken ciphernode status --chain mainnet
+bracken ciphernode set-bond-owner --owner 0xBOND_OWNER --chain sepolia
 ```
 
 The `--chain` parameter matches the `name` field in your config's `chains` array.
@@ -210,7 +210,7 @@ Current Ethereum Mainnet launch values (verify on-chain before depositing):
 | Parameter                | Value                | Description                         |
 | ------------------------ | -------------------- | ----------------------------------- |
 | `ticketPrice`            | 1,000 sUSDS shares   | Ticket collateral needed per ticket |
-| `requiredCiphernodeBond` | 32,000 LOXLEY        | Minimum LOXLEY needed to register   |
+| `requiredCiphernodeBond` | 32,000 BRACKEN       | Minimum BRACKEN needed to register  |
 | `minTicketBalance`       | 1 ticket             | Minimum tickets to be active        |
 | `exitDelay`              | 2,592,000s (30 days) | Wait time before claiming exits     |
 
@@ -251,7 +251,7 @@ status changes due to balance or bond updates.
 
 | Issue                     | Cause                                          | Solution                                                |
 | ------------------------- | ---------------------------------------------- | ------------------------------------------------------- |
-| `isActive` is false       | Below minimum ciphernode bond (80%) or tickets | Add more LOXLEY or tickets                              |
+| `isActive` is false       | Below minimum ciphernode bond (80%) or tickets | Add more BRACKEN or tickets                             |
 | Registration fails        | Already registered, banned, or unbonded        | Check `isRegistered()`, ban status, and ciphernode bond |
 | Ticket purchase fails     | Insufficient stablecoin or allowance           | Ensure balance and approve spending                     |
 | "NodeNotEligible" in logs | Not registered before E3 request               | Register before requests are made                       |

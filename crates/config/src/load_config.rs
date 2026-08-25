@@ -69,23 +69,23 @@ mod tests {
             None
         }
         fn found(_: &PathBuf, _: &str) -> Option<PathBuf> {
-            Some(PathBuf::from("/foo/loxley.config.yaml"))
+            Some(PathBuf::from("/foo/bracken.config.yaml"))
         }
         let path = resolve_config_path(
             not_found,
             PathBuf::from("/foo/bar"),
             PathBuf::from("/my/config"),
-            "loxley.config.yaml",
+            "bracken.config.yaml",
             None,
         );
 
-        assert_eq!(path, PathBuf::from("/my/config/loxley.config.yaml"));
+        assert_eq!(path, PathBuf::from("/my/config/bracken.config.yaml"));
 
         let path = resolve_config_path(
             found, // should be overridden by config attr
             PathBuf::from("/foo/bar"),
             PathBuf::from("/my/config"),
-            "loxley.config.yaml",
+            "bracken.config.yaml",
             Some(PathBuf::from("/my/absolute/conf.yaml")),
         );
 
@@ -95,11 +95,11 @@ mod tests {
             found, // should be overridden by config attr
             PathBuf::from("/foo/bar"),
             PathBuf::from("/my/config"),
-            "loxley.config.yaml",
+            "bracken.config.yaml",
             None,
         );
 
-        assert_eq!(path, PathBuf::from("/foo/loxley.config.yaml"));
+        assert_eq!(path, PathBuf::from("/foo/bracken.config.yaml"));
         Ok(())
     }
 }

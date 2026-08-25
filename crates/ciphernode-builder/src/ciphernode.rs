@@ -7,7 +7,7 @@
 use actix::Addr;
 use anyhow::{Context, Result};
 use e3_data::{DataStore, InMemStore, StoreAddr};
-use e3_events::{BusHandle, HistoryCollector, LoxleyEvent};
+use e3_events::{BusHandle, HistoryCollector, BrackenEvent};
 use e3_net::{NetChannelBridge, NetworkStatus};
 use libp2p::PeerId;
 use std::{future::Future, time::Duration};
@@ -59,10 +59,10 @@ pub struct CiphernodeHandle {
     pub bus: BusHandle,
     /// Optional event history collector. Populated when the builder is configured
     /// with [`CiphernodeBuilder::with_history_collector`].
-    pub history: Option<Addr<HistoryCollector<LoxleyEvent>>>,
+    pub history: Option<Addr<HistoryCollector<BrackenEvent>>>,
     /// Optional error event collector. Populated when the builder is configured
     /// with [`CiphernodeBuilder::with_error_collector`].
-    pub errors: Option<Addr<HistoryCollector<LoxleyEvent>>>,
+    pub errors: Option<Addr<HistoryCollector<BrackenEvent>>>,
     pub peer_id: PeerId,
     pub net_interface: NetInterfaceKind,
     pub network_status: NetworkStatus,
@@ -83,11 +83,11 @@ impl CiphernodeHandle {
         &self.bus
     }
 
-    pub fn history(&self) -> Option<Addr<HistoryCollector<LoxleyEvent>>> {
+    pub fn history(&self) -> Option<Addr<HistoryCollector<BrackenEvent>>> {
         self.history.clone()
     }
 
-    pub fn errors(&self) -> Option<Addr<HistoryCollector<LoxleyEvent>>> {
+    pub fn errors(&self) -> Option<Addr<HistoryCollector<BrackenEvent>>> {
         self.errors.clone()
     }
 

@@ -4,8 +4,8 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-import { getDeploymentChain, readDeploymentArgs, storeDeploymentArgs } from '@loxley/contracts/scripts'
-import { Loxley__factory as LoxleyFactory } from '@loxley/contracts/types'
+import { getDeploymentChain, readDeploymentArgs, storeDeploymentArgs } from '@bracken/contracts/scripts'
+import { Bracken__factory as BrackenFactory } from '@bracken/contracts/types'
 import { readFileSync } from 'fs'
 
 import hre from 'hardhat'
@@ -13,7 +13,7 @@ import hre from 'hardhat'
 import { CRISPProgram__factory as CRISPProgramFactory } from '../types'
 import { verifierNames } from '../scripts/verifiers'
 
-const imageIdContent = readFileSync('../../.loxley/generated/contracts/ImageID.sol', 'utf-8')
+const imageIdContent = readFileSync('../../.bracken/generated/contracts/ImageID.sol', 'utf-8')
 const match = imageIdContent.match(/bytes32 public constant PROGRAM_ID = bytes32\((0x[a-fA-F0-9]+)\)/)
 const IMAGE_ID = match ? match[1] : null
 
@@ -158,29 +158,29 @@ export const deployCRISPContracts = async (): Promise<CRISPDeploymentResult> => 
   )
 
   let governanceComplete = false
-  const loxleyAddress = readDeploymentArgs('Loxley', chain)?.address
-  if (loxleyAddress && (await ethers.provider.getCode(loxleyAddress)) !== '0x') {
-    const loxley = LoxleyFactory.connect(loxleyAddress, owner)
-    const loxleyOwner = await loxley.owner()
-    const registered = await loxley.e3Programs(crispAddress)
-    const boundLoxley = await crisp.loxley()
-    const configuredVerifier = await loxley.getCiphertextVerifier(encryptionSchemeId)
+  const brackenAddress = readDeploymentArgs('Bracken', chain)?.address
+  if (brackenAddress && (await ethers.provider.getCode(brackenAddress)) !== '0x') {
+    const bracken = BrackenFactory.connect(brackenAddress, owner)
+    const brackenOwner = await bracken.owner()
+    const registered = await bracken.e3Programs(crispAddress)
+    const boundBracken = await crisp.bracken()
+    const configuredVerifier = await bracken.getCiphertextVerifier(encryptionSchemeId)
     if (
       registered &&
-      boundLoxley.toLowerCase() === loxleyAddress.toLowerCase() &&
+      boundBracken.toLowerCase() === brackenAddress.toLowerCase() &&
       configuredVerifier.toLowerCase() === ciphertextVerifierAddress.toLowerCase()
     ) {
       governanceComplete = true
-    } else if (loxleyOwner.toLowerCase() === ownerAddress.toLowerCase() && initialOwner.toLowerCase() === ownerAddress.toLowerCase()) {
-      await (await loxley.setCiphertextVerifier(encryptionSchemeId, ciphertextVerifierAddress)).wait()
+    } else if (brackenOwner.toLowerCase() === ownerAddress.toLowerCase() && initialOwner.toLowerCase() === ownerAddress.toLowerCase()) {
+      await (await bracken.setCiphertextVerifier(encryptionSchemeId, ciphertextVerifierAddress)).wait()
       if (!registered) {
-        await (await loxley.registerE3Program(crispAddress)).wait()
+        await (await bracken.registerE3Program(crispAddress)).wait()
       }
-      await (await crisp.bindLoxley(loxleyAddress)).wait()
+      await (await crisp.bindBracken(brackenAddress)).wait()
       governanceComplete = true
     } else {
       console.log(
-        'CRISP integration is incomplete. Protocol governance must set the ciphertext verifier, register the program, and bind Loxley.',
+        'CRISP integration is incomplete. Protocol governance must set the ciphertext verifier, register the program, and bind Bracken.',
       )
     }
   }
@@ -204,7 +204,7 @@ export const deployCRISPContracts = async (): Promise<CRISPDeploymentResult> => 
   console.log(`
       Deployments:
       ----------------------------------------------------------------------
-      Loxley: ${loxleyAddress ?? '(bind during protocol governance wiring)'}
+      Bracken: ${brackenAddress ?? '(bind during protocol governance wiring)'}
       Risc0Verifier: ${verifier}
       Risc0BfvCiphertextVerifier: ${ciphertextVerifierAddress}
       HonkVerifier: ${honkVerifierAddress}

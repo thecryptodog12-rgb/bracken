@@ -11,36 +11,36 @@ impl Actor for PublicKeyAggregator {
     }
 }
 
-impl Handler<LoxleyEvent> for PublicKeyAggregator {
+impl Handler<BrackenEvent> for PublicKeyAggregator {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            LoxleyEventData::KeyshareCreated(data) => {
+            BrackenEventData::KeyshareCreated(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ShareVerificationComplete(data) => {
+            BrackenEventData::ShareVerificationComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::PkAggregationProofSigned(data) => {
+            BrackenEventData::PkAggregationProofSigned(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::DKGRecursiveAggregationComplete(data) => {
+            BrackenEventData::DKGRecursiveAggregationComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ComputeResponse(data) => {
+            BrackenEventData::ComputeResponse(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ComputeRequestError(data) => {
+            BrackenEventData::ComputeRequestError(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::DkgFoldAttestationContextEstablished(data) => {
+            BrackenEventData::DkgFoldAttestationContextEstablished(data) => {
                 if data.e3_id == self.e3_id {
                     self.dkg_fold_attestation_context = Some(data.context);
                 }
             }
-            LoxleyEventData::E3RequestComplete(_) => self.notify_sync(ctx, Die),
-            LoxleyEventData::CommitteeMemberExpelled(data) => {
+            BrackenEventData::E3RequestComplete(_) => self.notify_sync(ctx, Die),
+            BrackenEventData::CommitteeMemberExpelled(data) => {
                 // Only process raw events from chain (party_id not yet resolved).
                 if data.party_id.is_some() {
                     return;
@@ -85,7 +85,7 @@ impl Handler<LoxleyEvent> for PublicKeyAggregator {
                     Ok(())
                 });
             }
-            LoxleyEventData::CommitteeMemberExcluded(data) => {
+            BrackenEventData::CommitteeMemberExcluded(data) => {
                 // Sortition republishes this event with a party ID. The public-key collector uses
                 // the raw event because it filters by the node address before that enrichment.
                 if data.party_id.is_some() {

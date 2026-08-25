@@ -22,18 +22,18 @@ mod bonding_registry_contract {
     sol!(
         #[sol(rpc)]
         BondingRegistryContract,
-        "../../packages/loxley-contracts/artifacts/contracts/interfaces/IBondingRegistry.sol/IBondingRegistry.json"
+        "../../packages/bracken-contracts/artifacts/contracts/interfaces/IBondingRegistry.sol/IBondingRegistry.json"
     );
 }
 
 #[allow(clippy::too_many_arguments)]
-mod loxley_ticket_token_contract {
+mod bracken_ticket_token_contract {
     use super::sol;
 
     sol!(
         #[sol(rpc)]
-        LoxleyTicketTokenContract,
-        "../../packages/loxley-contracts/artifacts/contracts/token/LoxleyTicketToken.sol/LoxleyTicketToken.json"
+        BrackenTicketTokenContract,
+        "../../packages/bracken-contracts/artifacts/contracts/token/BrackenTicketToken.sol/BrackenTicketToken.json"
     );
 }
 
@@ -55,7 +55,7 @@ mod erc20_metadata_interface {
 
 use bonding_registry_contract::BondingRegistryContract;
 use erc20_metadata_interface::IERC20Metadata;
-use loxley_ticket_token_contract::LoxleyTicketTokenContract;
+use bracken_ticket_token_contract::BrackenTicketTokenContract;
 
 pub(crate) struct ChainContext {
     chain_label: String,
@@ -125,7 +125,7 @@ impl ChainContext {
     }
 
     pub(crate) async fn ticket_underlying_address(&self) -> Result<Address> {
-        Ok(LoxleyTicketTokenContract::new(
+        Ok(BrackenTicketTokenContract::new(
             self.ticket_token_address().await?,
             self.provider_client(),
         )
@@ -152,7 +152,7 @@ fn select_chain<'a>(config: &'a AppConfig, name: Option<&str>) -> Result<&'a Cha
         None => config
             .chains()
             .first()
-            .ok_or_else(|| anyhow!("No chains configured. Run `loxley ciphernode setup` first.")),
+            .ok_or_else(|| anyhow!("No chains configured. Run `bracken ciphernode setup` first.")),
     }
 }
 

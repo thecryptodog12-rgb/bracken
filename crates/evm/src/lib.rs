@@ -4,7 +4,7 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-//! EVM integration for Loxley.
+//! EVM integration for Bracken.
 //!
 //! - [`domain`] holds pure, synchronous, unit-testable services (no actix /
 //!   `BusHandle` / provider types in their cores).

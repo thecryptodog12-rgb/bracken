@@ -72,7 +72,7 @@ const Navbar: React.FC = () => {
     <nav className='w-full border-b border-rule bg-paper/80 px-6 backdrop-blur-sm lg:px-9'>
       <div className='mx-auto max-w-screen-xl'>
         <div className='flex h-20 items-center justify-between'>
-          <h1 className='font-serif text-2xl font-normal tracking-tight text-ink'>Loxley E3</h1>
+          <h1 className='font-serif text-2xl font-normal tracking-tight text-ink'>Bracken E3</h1>
           <div className='flex items-center gap-3'>
             <StartOverButton />
             <NetworkSwitchButton />

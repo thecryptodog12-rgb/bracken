@@ -8,7 +8,7 @@ use super::{
     timelock_queue::{Clock, StartTimelock, SystemClock, Tick, TimelockQueue},
     AggregateConfig, FlushPendingSnapshots,
 };
-use crate::{Insert, InsertBatch, LoxleyEvent};
+use crate::{Insert, InsertBatch, BrackenEvent};
 use actix::{Actor, Addr, Handler, Message, Recipient, ResponseFuture};
 use anyhow::{Context, Result};
 use e3_utils::MAILBOX_LIMIT;
@@ -132,9 +132,9 @@ impl Handler<Insert> for SnapshotBuffer {
     }
 }
 
-impl Handler<LoxleyEvent> for SnapshotBuffer {
+impl Handler<BrackenEvent> for SnapshotBuffer {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvent, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, _ctx: &mut Self::Context) -> Self::Result {
         if let Some(ref router) = self.router {
             router.do_send(msg);
         }
@@ -220,7 +220,7 @@ mod tests {
     use crate::snapshot_buffer::timelock_queue::Tick;
     use crate::{
         AggregateConfig, AggregateId, E3id, EventContext, EventContextAccessors, EventContextSeq,
-        EventId, EventSource, Insert, InsertBatch, LoxleyEvent, Sequenced, Shutdown, SyncEnded,
+        EventId, EventSource, Insert, InsertBatch, BrackenEvent, Sequenced, Shutdown, SyncEnded,
         TestEvent,
     };
     use actix::{Actor, Handler, ResponseFuture};
@@ -282,8 +282,8 @@ mod tests {
         .sequence(seq)
     }
 
-    fn create_event(ec: &EventContext<Sequenced>) -> LoxleyEvent {
-        LoxleyEvent::<Sequenced>::from_data_ec(
+    fn create_event(ec: &EventContext<Sequenced>) -> BrackenEvent {
+        BrackenEvent::<Sequenced>::from_data_ec(
             TestEvent::new("hello", ec.seq())
                 .with_e3_id(E3id::new("1", *ec.aggregate_id() as u64))
                 .into(),
@@ -473,7 +473,7 @@ mod tests {
 
         // Turn the buffer on (opens a batch for seq=1).
         buffer
-            .send(LoxleyEvent::from_data_ec(
+            .send(BrackenEvent::from_data_ec(
                 SyncEnded::new().into(),
                 create_ec(0, 1),
             ))
@@ -493,7 +493,7 @@ mod tests {
 
         // Shutdown arrives: every open batch must be force-flushed.
         buffer
-            .send(LoxleyEvent::from_data_ec(Shutdown.into(), create_ec(7, 3)))
+            .send(BrackenEvent::from_data_ec(Shutdown.into(), create_ec(7, 3)))
             .await?;
         buffer.send(FlushPendingSnapshots).await??;
 

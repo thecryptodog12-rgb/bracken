@@ -13,7 +13,7 @@ use e3_bfv_client::compute_pk_commitment;
 use e3_evm_helpers::contracts::ReadOnly;
 use e3_fhe_params::build_bfv_params_from_set_arc;
 use e3_fhe_params::DEFAULT_BFV_PRESET;
-use e3_indexer::{DataStore, InMemoryStore, LoxleyIndexer};
+use e3_indexer::{DataStore, InMemoryStore, BrackenIndexer};
 use eyre::Result;
 use fhe::bfv::{PublicKey, SecretKey};
 use fhe_traits::Serialize;
@@ -25,12 +25,12 @@ use std::{
 };
 use tokio::time::sleep;
 use EmitLogs::PublishMessage;
-use Loxley::InputPublished;
+use Bracken::InputPublished;
 
 sol!(
     #[sol(rpc)]
-    Loxley,
-    "tests/fixtures/fake_loxley.json"
+    Bracken,
+    "tests/fixtures/fake_bracken.json"
 );
 
 sol!(
@@ -48,13 +48,13 @@ async fn test_indexer() -> Result<()> {
     let param_set = DEFAULT_BFV_PRESET.into();
     let params = build_bfv_params_from_set_arc(param_set);
 
-    let (loxley_contract, loxley_address, emit_logs_contract, emit_logs_address, endpoint, _anvil) =
+    let (bracken_contract, bracken_address, emit_logs_contract, emit_logs_address, endpoint, _anvil) =
         setup_two_contracts().await?;
 
     let indexer = Arc::new(
-        LoxleyIndexer::<InMemoryStore, ReadOnly>::from_endpoint_address_in_mem(
+        BrackenIndexer::<InMemoryStore, ReadOnly>::from_endpoint_address_in_mem(
             &endpoint.to_string(),
-            &[&loxley_address.to_string(), &emit_logs_address.to_string()],
+            &[&bracken_address.to_string(), &emit_logs_address.to_string()],
         )
         .await?,
     );
@@ -106,7 +106,7 @@ async fn test_indexer() -> Result<()> {
     let ciphertext_output_data = vec![9, 8, 7, 6, 5, 4, 3, 2, 1];
 
     // first publish committee pk
-    loxley_contract
+    bracken_contract
         .emitCommitteePublished(
             Uint::from(E3_ID),
             Bytes::from(pk.to_bytes()),
@@ -118,7 +118,7 @@ async fn test_indexer() -> Result<()> {
         .watch()
         .await?;
 
-    loxley_contract
+    bracken_contract
         .emitInputPublished(
             Uint::from(E3_ID),
             input_data_bytes.clone(),
@@ -138,7 +138,7 @@ async fn test_indexer() -> Result<()> {
         .watch()
         .await?;
 
-    loxley_contract
+    bracken_contract
         .emitInputPublished(
             Uint::from(E3_ID),
             input_data_bytes.clone(),
@@ -150,7 +150,7 @@ async fn test_indexer() -> Result<()> {
         .watch()
         .await?;
 
-    loxley_contract
+    bracken_contract
         .emitInputPublished(
             Uint::from(E3_ID),
             input_data_bytes.clone(),
@@ -175,7 +175,7 @@ async fn test_indexer() -> Result<()> {
         );
     }
 
-    loxley_contract
+    bracken_contract
         .emitCiphertextOutputPublished(
             Uint::from(E3_ID),
             Bytes::from(ciphertext_output_data.clone()),
@@ -205,7 +205,7 @@ async fn test_indexer() -> Result<()> {
 
 mod test_memory_leak {
 
-    use e3_evm_helpers::{contracts::LoxleyContractFactory, event_listener::EventListener};
+    use e3_evm_helpers::{contracts::BrackenContractFactory, event_listener::EventListener};
 
     use super::*;
     use std::sync::atomic::{AtomicUsize, Ordering};
@@ -232,14 +232,14 @@ mod test_memory_leak {
         }
     }
 
-    async fn create_indexer() -> Result<LoxleyIndexer<InMemoryStore, ReadOnly>> {
-        let (_, loxley_address, _, _, endpoint, _anvil) = setup_two_contracts().await?;
+    async fn create_indexer() -> Result<BrackenIndexer<InMemoryStore, ReadOnly>> {
+        let (_, bracken_address, _, _, endpoint, _anvil) = setup_two_contracts().await?;
 
         let listener =
-            EventListener::create_contract_listener(&endpoint, &[&loxley_address]).await?;
-        let contract = LoxleyContractFactory::create_read(&endpoint, &loxley_address).await?;
+            EventListener::create_contract_listener(&endpoint, &[&bracken_address]).await?;
+        let contract = BrackenContractFactory::create_read(&endpoint, &bracken_address).await?;
 
-        LoxleyIndexer::<InMemoryStore, ReadOnly>::new_with_in_mem_store(listener, contract).await
+        BrackenIndexer::<InMemoryStore, ReadOnly>::new_with_in_mem_store(listener, contract).await
     }
 
     sol! {

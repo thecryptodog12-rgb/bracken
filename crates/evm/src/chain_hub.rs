@@ -7,7 +7,7 @@
 use actix::{Actor, Addr, Handler};
 use e3_utils::MAILBOX_LIMIT;
 
-use crate::messages::{EvmEventProcessor, LoxleyEvmEvent};
+use crate::messages::{EvmEventProcessor, BrackenEvmEvent};
 
 pub struct EvmHub {
     nexts: Vec<EvmEventProcessor>,
@@ -30,10 +30,10 @@ impl Actor for EvmHub {
     }
 }
 
-impl Handler<LoxleyEvmEvent> for EvmHub {
+impl Handler<BrackenEvmEvent> for EvmHub {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvmEvent, _: &mut Self::Context) -> Self::Result {
-        let LoxleyEvmEvent::Log { .. } = msg.clone() else {
+    fn handle(&mut self, msg: BrackenEvmEvent, _: &mut Self::Context) -> Self::Result {
+        let BrackenEvmEvent::Log { .. } = msg.clone() else {
             return;
         };
 
@@ -74,7 +74,7 @@ mod tests {
             processor2.clone().recipient(),
         ]);
 
-        let log_event = LoxleyEvmEvent::Log(EvmLog::test_log(
+        let log_event = BrackenEvmEvent::Log(EvmLog::test_log(
             address!("0x1111111111111111111111111111111111111111"),
             1,
             0,
@@ -96,10 +96,10 @@ mod tests {
         type Context = Context<Self>;
     }
 
-    impl Handler<LoxleyEvmEvent> for TestProcessor {
+    impl Handler<BrackenEvmEvent> for TestProcessor {
         type Result = ();
 
-        fn handle(&mut self, _msg: LoxleyEvmEvent, _ctx: &mut Self::Context) {
+        fn handle(&mut self, _msg: BrackenEvmEvent, _ctx: &mut Self::Context) {
             self.call_count.fetch_add(1, Ordering::SeqCst);
         }
     }

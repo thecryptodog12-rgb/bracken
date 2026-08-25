@@ -1,12 +1,12 @@
 # Sortition and E3 Complete Flow
 
-This document describes the complete flow of the Loxley system, from operator registration through
+This document describes the complete flow of the Bracken system, from operator registration through
 E3 computation request, sortition, committee selection, keyshare generation, public key aggregation,
 encryption, and decryption.
 
 ## Overview
 
-Loxley system uses a score-based sortition mechanism to select a committee of ciphernodes to
+Bracken system uses a score-based sortition mechanism to select a committee of ciphernodes to
 perform threshold homomorphic encryption operations. The flow involves:
 
 1. **Operator Setup** - Bonding ciphernode bond tokens and ticket balance
@@ -37,7 +37,7 @@ sequenceDiagram
 
     Operator->>BondingRegistry: setBondOwner(owner)
     Operator->>BondingRegistry: bondCiphernodeFor(operator, amount)
-    BondingRegistry->>BondingRegistry: Transfer LOXLEY tokens
+    BondingRegistry->>BondingRegistry: Transfer BRACKEN tokens
     BondingRegistry->>EventBus: CiphernodeBondUpdated
 
     Operator->>BondingRegistry: registerOperatorFor(operator)
@@ -328,7 +328,7 @@ reserve collateral or reduce the range that Solidity accepts. On-chain candidate
 | `CiphernodeRemoved`  | address, index, numNodes, chainId         | Node removal           |
 | `CommitteeRequested` | e3Id, entropyBlock, requestBlock, chainId | Delayed sortition seed |
 
-### Loxley Events
+### Bracken Events
 
 | Event                       | Parameters                                                     | Purpose               |
 | --------------------------- | -------------------------------------------------------------- | --------------------- |

@@ -105,7 +105,7 @@ pub async fn start_daemon(
         return Ok(());
     }
 
-    let loxley_bin = env::current_exe()?.display().to_string();
+    let bracken_bin = env::current_exe()?.display().to_string();
 
     let mut args = vec![];
     args.push("nodes".to_string());
@@ -125,7 +125,7 @@ pub async fn start_daemon(
     }
 
     // Start and forget
-    spawn_process(&loxley_bin, args).await?;
+    spawn_process(&bracken_bin, args).await?;
 
     tracing::info!("Daemon started successfully");
 

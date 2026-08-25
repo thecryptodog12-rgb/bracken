@@ -14,13 +14,13 @@ import { useVoteManagementContext } from '@/context/voteManagement'
 import { useNotificationAlertContext } from '@/context/NotificationAlert/NotificationAlert.context.tsx'
 import { Poll } from '@/model/poll.model'
 import { BroadcastVoteRequest, CensusMode, Vote, VoteStateLite, VotingRound } from '@/model/vote.model'
-import { useLoxleyServer } from '../loxley/useLoxleyServer'
+import { useBrackenServer } from '../bracken/useBrackenServer'
 import { getRandomVoterToMask } from '@/utils/voters'
 import { handleGenericError } from '@/utils/handle-generic-error'
 import { NUM_OPTIONS } from '@/utils/constants'
 import { ballotTypedData, getBallotDigest, getCrispProgramAddress } from '@/utils/ballotDigest'
 
-const LOXLEY_API = import.meta.env.VITE_LOXLEY_API
+const BRACKEN_API = import.meta.env.VITE_BRACKEN_API
 
 /// Shared so the guard in `castVoteWithProof` and the one in `handleProofGeneration` cannot drift
 /// into telling a voter two different things about the same round.
@@ -31,7 +31,7 @@ const ONCHAIN_UNSUPPORTED = 'This round uses an on-chain census, which this clie
 /// commitment is never selected by the Secure Process and is never a valid parent, so the server
 /// resolves the chain and answers with the entry that actually holds the slot.
 const getSlotHead = async (e3Id: string, address: string): Promise<{ ciphertext: Uint8Array; index: number } | undefined> => {
-  const response = await fetch(`${LOXLEY_API}/state/previous-ciphertext`, {
+  const response = await fetch(`${BRACKEN_API}/state/previous-ciphertext`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ round_id: e3Id, address }),
@@ -112,7 +112,7 @@ export const useVoteCasting = (customRoundState?: VoteStateLite | null, customVo
   const { signTypedDataAsync } = useSignTypedData()
   const publicClient = usePublicClient()
   const chainId = useChainId()
-  const { getEligibleVoters, getMerkleLeaves } = useLoxleyServer()
+  const { getEligibleVoters, getMerkleLeaves } = useBrackenServer()
   const { showToast } = useNotificationAlertContext()
   const navigate = useNavigate()
   const [isVoting, setIsVoting] = useState<boolean>(false)
@@ -168,7 +168,7 @@ export const useVoteCasting = (customRoundState?: VoteStateLite | null, customVo
         await ensureCircuits()
         const prepared = await prepareBallot(head ? { ...ballot, previousCiphertext: head.ciphertext, previousIndex: head.index } : ballot)
 
-        const crispProgram = await getCrispProgramAddress(publicClient, roundState.loxley_address as `0x${string}`, e3Id)
+        const crispProgram = await getCrispProgramAddress(publicClient, roundState.bracken_address as `0x${string}`, e3Id)
         const digest = await getBallotDigest(publicClient, crispProgram, e3Id, slot, prepared.ctCommitment)
 
         // A mask is not signed. The circuit skips the signature check on that branch, so the

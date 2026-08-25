@@ -17,7 +17,7 @@ use e3_events::{
     prelude::*, BusHandle, ComputeRequest, ComputeRequestError, ComputeResponse,
     ComputeResponseKind, CorrelationId, DKGRecursiveAggregationComplete, Die,
     DkgAggregationRequest, E3Failed, E3Stage, E3id, EventContext, FailureReason, KeyshareCreated,
-    LoxleyEvent, LoxleyEventData, NodesFoldStepRequest, OrderedSet, PkAggregationProofPending,
+    BrackenEvent, BrackenEventData, NodesFoldStepRequest, OrderedSet, PkAggregationProofPending,
     PkAggregationProofRequest, PkAggregationProofSigned, Proof, ProofType, PublicKeyAggregated,
     Sequenced, ShareVerificationComplete, ShareVerificationDispatched, SignedProofFailed,
     SignedProofPayload, TypedEvent, VerificationKind, ZkRequest, ZkResponse,

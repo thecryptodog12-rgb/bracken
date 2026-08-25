@@ -15,7 +15,7 @@ use actix::prelude::*;
 use anyhow::{Context, Result};
 use e3_events::{
     prelude::*, trap, trap_fut, BusHandle, CiphernodeSelected, CorrelationId, DocumentReceived,
-    E3RequestComplete, E3id, EType, EventSource, EventType, LoxleyEvent, LoxleyEventData, PartyId,
+    E3RequestComplete, E3id, EType, EventSource, EventType, BrackenEvent, BrackenEventData, PartyId,
     PublishDocumentRequested, TypedEvent,
 };
 use e3_utils::ArcBytes;
@@ -36,11 +36,11 @@ const KADEMLIA_GET_TIMEOUT: Duration = Duration::from_secs(30);
 const KADEMLIA_BROADCAST_TIMEOUT: Duration = Duration::from_secs(30);
 
 /// DocumentPublisher is an actor that monitors events from both the Libp2pNetInterface and the
-/// Loxley EventBus in order to manage document publishing interactions. The decision/state logic
+/// Bracken EventBus in order to manage document publishing interactions. The decision/state logic
 /// lives in [`DocumentPublishingService`]; this actor only wires events to that service and
 /// performs the resulting libp2p/Kademlia I/O.
 pub struct DocumentPublisher {
-    /// Loxley EventBus
+    /// Bracken EventBus
     bus: BusHandle,
     /// NetCommand sender to forward commands to the Libp2pNetInterface
     tx: mpsc::Sender<NetCommand>,
@@ -71,14 +71,14 @@ impl DocumentPublisher {
     }
 
     /// This is needed to create simulation libp2p event routers
-    pub fn is_document_publisher_event(event: &LoxleyEvent) -> bool {
+    pub fn is_document_publisher_event(event: &BrackenEvent) -> bool {
         // Add a list of events with paylods for the DHT
         matches!(
             event.get_data(),
-            LoxleyEventData::PublishDocumentRequested(_)
-                | LoxleyEventData::ThresholdShareCreated(_)
-                | LoxleyEventData::EncryptionKeyCreated(_)
-                | LoxleyEventData::DecryptionKeyShared(_)
+            BrackenEventData::PublishDocumentRequested(_)
+                | BrackenEventData::ThresholdShareCreated(_)
+                | BrackenEventData::EncryptionKeyCreated(_)
+                | BrackenEventData::DecryptionKeyShared(_)
         )
     }
 

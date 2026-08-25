@@ -11,9 +11,9 @@ const scriptsDir = path.dirname(fileURLToPath(import.meta.url))
 export const TEMPLATE_ROOT = path.resolve(scriptsDir, '..')
 
 export const DEPLOYMENTS_FILE = path.join(TEMPLATE_ROOT, 'deployed_contracts.json')
-export const LOXLEY_CONFIG_FILE = path.join(TEMPLATE_ROOT, 'loxley.config.yaml')
+export const BRACKEN_CONFIG_FILE = path.join(TEMPLATE_ROOT, 'bracken.config.yaml')
 
-/** Pin cwd so `@loxley/contracts` deployment helpers write only under the template. */
+/** Pin cwd so `@bracken/contracts` deployment helpers write only under the template. */
 export function ensureTemplateCwd(): void {
   if (process.cwd() !== TEMPLATE_ROOT) {
     process.chdir(TEMPLATE_ROOT)

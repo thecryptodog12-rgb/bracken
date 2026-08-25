@@ -4,7 +4,7 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-//! # lib - Loxley ZK library
+//! # lib - Bracken ZK library
 //! - **`core`**: DKG and threshold TrBFV circuit logic (PV-TBFV / publicly verifiable
 //!   threshold BFV).
 //! - **`math`**: Polynomials, SAFE sponge (Poseidon2 + Keccak per `safe.nr`), helpers,

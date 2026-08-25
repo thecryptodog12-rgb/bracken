@@ -5,7 +5,7 @@
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
 use actix::prelude::*;
-use e3_events::{prelude::*, AggregatorChanged, Die, LoxleyEvent, LoxleyEventData};
+use e3_events::{prelude::*, AggregatorChanged, Die, BrackenEvent, BrackenEventData};
 use e3_utils::MAILBOX_LIMIT;
 use std::collections::HashSet;
 
@@ -13,7 +13,7 @@ use crate::ThresholdPlaintextAggregator;
 
 pub struct DecryptionshareCreatedBuffer {
     dest: Addr<ThresholdPlaintextAggregator>,
-    buffer: Vec<LoxleyEvent>,
+    buffer: Vec<BrackenEvent>,
     expelled_parties: HashSet<u64>,
     is_aggregator: bool,
 }
@@ -35,7 +35,7 @@ impl DecryptionshareCreatedBuffer {
         }
     }
 
-    fn forward(dest: &Addr<ThresholdPlaintextAggregator>, event: LoxleyEvent) {
+    fn forward(dest: &Addr<ThresholdPlaintextAggregator>, event: BrackenEvent) {
         dest.do_send(event);
     }
 
@@ -46,18 +46,18 @@ impl DecryptionshareCreatedBuffer {
 
         for event in self.buffer.drain(..) {
             match event.get_data() {
-                LoxleyEventData::DecryptionshareCreated(data)
+                BrackenEventData::DecryptionshareCreated(data)
                     if !self.expelled_parties.contains(&data.party_id) =>
                 {
                     Self::forward(&self.dest, event);
                 }
-                LoxleyEventData::CommitteeMemberExpelled(data) if data.party_id.is_some() => {
+                BrackenEventData::CommitteeMemberExpelled(data) if data.party_id.is_some() => {
                     Self::forward(&self.dest, event);
                 }
-                LoxleyEventData::CommitteeMemberExcluded(data) if data.party_id.is_some() => {
+                BrackenEventData::CommitteeMemberExcluded(data) if data.party_id.is_some() => {
                     Self::forward(&self.dest, event);
                 }
-                LoxleyEventData::E3RequestComplete(_) | LoxleyEventData::Shutdown(_) => {
+                BrackenEventData::E3RequestComplete(_) | BrackenEventData::Shutdown(_) => {
                     Self::forward(&self.dest, event);
                 }
                 _ => {}
@@ -74,12 +74,12 @@ impl Actor for DecryptionshareCreatedBuffer {
     }
 }
 
-impl Handler<LoxleyEvent> for DecryptionshareCreatedBuffer {
+impl Handler<BrackenEvent> for DecryptionshareCreatedBuffer {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvent, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, _ctx: &mut Self::Context) -> Self::Result {
         match msg.get_data() {
-            LoxleyEventData::DecryptionshareCreated(data) => {
+            BrackenEventData::DecryptionshareCreated(data) => {
                 if self.expelled_parties.contains(&data.party_id) {
                     return;
                 }
@@ -90,7 +90,7 @@ impl Handler<LoxleyEvent> for DecryptionshareCreatedBuffer {
                     self.buffer.push(msg);
                 }
             }
-            LoxleyEventData::CommitteeMemberExpelled(data) => {
+            BrackenEventData::CommitteeMemberExpelled(data) => {
                 let Some(party_id) = data.party_id else {
                     return;
                 };
@@ -101,7 +101,7 @@ impl Handler<LoxleyEvent> for DecryptionshareCreatedBuffer {
                 self.buffer.retain(|event| {
                     !matches!(
                         event.get_data(),
-                        LoxleyEventData::DecryptionshareCreated(share)
+                        BrackenEventData::DecryptionshareCreated(share)
                             if share.party_id == party_id
                     )
                 });
@@ -112,7 +112,7 @@ impl Handler<LoxleyEvent> for DecryptionshareCreatedBuffer {
                     self.buffer.push(msg);
                 }
             }
-            LoxleyEventData::CommitteeMemberExcluded(data) => {
+            BrackenEventData::CommitteeMemberExcluded(data) => {
                 let Some(party_id) = data.party_id else {
                     return;
                 };
@@ -123,7 +123,7 @@ impl Handler<LoxleyEvent> for DecryptionshareCreatedBuffer {
                 self.buffer.retain(|event| {
                     !matches!(
                         event.get_data(),
-                        LoxleyEventData::DecryptionshareCreated(share)
+                        BrackenEventData::DecryptionshareCreated(share)
                             if share.party_id == party_id
                     )
                 });
@@ -134,11 +134,11 @@ impl Handler<LoxleyEvent> for DecryptionshareCreatedBuffer {
                     self.buffer.push(msg);
                 }
             }
-            LoxleyEventData::AggregatorChanged(AggregatorChanged { is_aggregator, .. }) => {
+            BrackenEventData::AggregatorChanged(AggregatorChanged { is_aggregator, .. }) => {
                 self.is_aggregator = *is_aggregator;
                 self.flush();
             }
-            LoxleyEventData::E3RequestComplete(_) | LoxleyEventData::Shutdown(_) => {
+            BrackenEventData::E3RequestComplete(_) | BrackenEventData::Shutdown(_) => {
                 Self::forward(&self.dest, msg);
             }
             _ => {

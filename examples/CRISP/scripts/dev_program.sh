@@ -8,4 +8,4 @@ source "${SCRIPT_DIR}/lib/dev_config.sh"
 
 load_crisp_dev_config
 
-loxley program start --dev true
+bracken program start --dev true

@@ -6,14 +6,14 @@
 
 use crate::domain::chain_sync_state::SyncStatus;
 use crate::messages::HistoricalSyncComplete;
-use crate::messages::LoxleyEvmEvent;
+use crate::messages::BrackenEvmEvent;
 use actix::{Actor, ActorContext, Handler};
 use actix::{Addr, Recipient};
 use anyhow::{bail, Context, Result};
 use e3_events::EType;
 use e3_events::{
     BusHandle, ErrorDispatcher, EventSubscriber, EventType, HistoricalEvmEventsReceived,
-    HistoricalEvmSyncStart, LoxleyEvent, LoxleyEventData, SyncEnded, Unsequenced,
+    HistoricalEvmSyncStart, BrackenEvent, BrackenEventData, SyncEnded, Unsequenced,
 };
 use e3_events::{Event, EventPublisher};
 use e3_utils::MAILBOX_LIMIT;
@@ -143,31 +143,31 @@ impl EvmChainGateway {
         Ok(())
     }
 
-    fn publish_evm_event(&mut self, msg: LoxleyEvent<Unsequenced>) -> Result<()> {
+    fn publish_evm_event(&mut self, msg: BrackenEvent<Unsequenced>) -> Result<()> {
         self.bus.naked_dispatch(msg);
         Ok(())
     }
 
-    fn handle_evm_event(&mut self, msg: LoxleyEvmEvent) -> Result<()> {
+    fn handle_evm_event(&mut self, msg: BrackenEvmEvent) -> Result<()> {
         match msg {
-            LoxleyEvmEvent::HistoricalSyncComplete(e) => {
+            BrackenEvmEvent::HistoricalSyncComplete(e) => {
                 self.forward_historical_sync_complete(e)?;
                 Ok(())
             }
-            LoxleyEvmEvent::Event(event) => {
-                self.process_evm_event(event.into_loxley_event(&self.bus)?)?;
+            BrackenEvmEvent::Event(event) => {
+                self.process_evm_event(event.into_bracken_event(&self.bus)?)?;
                 Ok(())
             }
-            LoxleyEvmEvent::Log(_) => {
+            BrackenEvmEvent::Log(_) => {
                 bail!("EvmChainGateway received an unparsed EVM log")
             }
-            LoxleyEvmEvent::Rejected(rejected) => bail!(
+            BrackenEvmEvent::Rejected(rejected) => bail!(
                 "chain {} rejected provider log {}: {}",
                 rejected.chain_id,
                 rejected.id,
                 rejected.reason
             ),
-            LoxleyEvmEvent::Processed(_) => {
+            BrackenEvmEvent::Processed(_) => {
                 bail!("EvmChainGateway received an internal ordering marker")
             }
         }
@@ -197,7 +197,7 @@ impl EvmChainGateway {
         Ok(())
     }
 
-    fn process_evm_event(&mut self, msg: LoxleyEvent<Unsequenced>) -> Result<()> {
+    fn process_evm_event(&mut self, msg: BrackenEvent<Unsequenced>) -> Result<()> {
         if matches!(self.status, SyncStatus::Live) {
             return self.publish_evm_event(msg);
         }

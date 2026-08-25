@@ -10,7 +10,7 @@ import { CastleTurret, GithubLogo, TelegramLogo, TwitterLogo } from '@phosphor-i
 
 const Footer: React.FC = () => {
   return (
-    <div className='crisp-editorial' data-palette='loxley' data-mode='light' data-density='comfortable'>
+    <div className='crisp-editorial' data-palette='bracken' data-mode='light' data-density='comfortable'>
       <footer className='footer'>
         <span>© 2026 — Crisp Protocol</span>
         <span className='muted'>Secret-ballot voting with FHE + threshold MPC</span>
@@ -18,17 +18,17 @@ const Footer: React.FC = () => {
           <a href='https://github.com/thecryptodog12-rgb/loxley' target='_blank' rel='noopener noreferrer' aria-label='GitHub'>
             <GithubLogo size={18} />
           </a>
-          <a href='https://x.com/theloxley' target='_blank' rel='noopener noreferrer' aria-label='X'>
+          <a href='https://x.com/thebracken' target='_blank' rel='noopener noreferrer' aria-label='X'>
             <TwitterLogo size={18} />
           </a>
           <a href='https://t.me/enclave_e3' target='_blank' rel='noopener noreferrer' aria-label='Telegram'>
             <TelegramLogo size={18} />
           </a>
-          <a href='https://warpcast.com/loxleye3' target='_blank' rel='noopener noreferrer' aria-label='Farcaster'>
+          <a href='https://warpcast.com/brackene3' target='_blank' rel='noopener noreferrer' aria-label='Farcaster'>
             <CastleTurret size={18} />
           </a>
           <a href='https://theinterfold.com' target='_blank' rel='noopener noreferrer'>
-            Secured with Loxley
+            Secured with Bracken
           </a>
           <a
             href='https://www.gnosisguild.org/'

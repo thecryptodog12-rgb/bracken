@@ -4,8 +4,8 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-import { ciphernodeAdd, ciphernodeAdminAdd } from '@loxley/contracts/tasks/ciphernode'
-import { cleanDeploymentsTask } from '@loxley/contracts/tasks/utils'
+import { ciphernodeAdd, ciphernodeAdminAdd } from '@bracken/contracts/tasks/ciphernode'
+import { cleanDeploymentsTask } from '@bracken/contracts/tasks/utils'
 import dotenv from 'dotenv'
 
 import hardhatEthersChaiMatchers from '@nomicfoundation/hardhat-ethers-chai-matchers'
@@ -76,7 +76,7 @@ const config: HardhatUserConfig = {
     tsNocheck: false,
   },
   paths: {
-    sources: ['./contracts', './.loxley/generated/contracts'],
+    sources: ['./contracts', './.bracken/generated/contracts'],
   },
   networks: {
     hardhat: {
@@ -116,39 +116,39 @@ const config: HardhatUserConfig = {
       'poseidon-solidity/PoseidonT3.sol',
       '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol',
       '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol',
-      '@loxley/contracts/contracts/lib/LoxleyLifecycle.sol',
-      '@loxley/contracts/contracts/lib/LoxleyPricing.sol',
-      '@loxley/contracts/contracts/lib/BondingAssetLib.sol',
-      '@loxley/contracts/contracts/lib/BondingEligibilityLib.sol',
-      '@loxley/contracts/contracts/lib/BondingSlashingLib.sol',
-      '@loxley/contracts/contracts/lib/BondingRegistrationLib.sol',
-      '@loxley/contracts/contracts/lib/BondingOwnershipLib.sol',
-      '@loxley/contracts/contracts/lib/RegistrySortitionLib.sol',
-      '@loxley/contracts/contracts/lib/SlashingEvidenceLib.sol',
-      '@loxley/contracts/contracts/Loxley.sol',
-      '@loxley/contracts/contracts/registry/CiphernodeRegistryOwnable.sol',
-      '@loxley/contracts/contracts/registry/BondingRegistry.sol',
-      '@loxley/contracts/contracts/registry/BondedCheckpoints.sol',
-      '@loxley/contracts/contracts/registry/BondedVotes.sol',
-      '@loxley/contracts/contracts/slashing/SlashingManager.sol',
-      '@loxley/contracts/contracts/E3RefundManager.sol',
-      '@loxley/contracts/contracts/token/LoxleyToken.sol',
-      '@loxley/contracts/contracts/token/LoxleyTicketToken.sol',
-      '@loxley/contracts/contracts/verifiers/bfv/BfvDecryptionVerifier.sol',
-      '@loxley/contracts/contracts/verifiers/bfv/Risc0BfvCiphertextVerifier.sol',
-      '@loxley/contracts/contracts/verifiers/bfv/BfvPkVerifier.sol',
-      '@loxley/contracts/contracts/verifiers/bfv/honk/DkgAggregatorVerifier.sol',
-      '@loxley/contracts/contracts/verifiers/bfv/honk/DecryptionAggregatorVerifier.sol',
-      '@loxley/contracts/contracts/test/MockCiphernodeRegistry.sol',
-      '@loxley/contracts/contracts/test/MockCiphertextVerifier.sol',
-      '@loxley/contracts/contracts/test/MockComputeProvider.sol',
-      '@loxley/contracts/contracts/test/MockDecryptionVerifier.sol',
-      '@loxley/contracts/contracts/test/MockDkgFoldAttestationVerifier.sol',
-      '@loxley/contracts/contracts/test/MockE3Program.sol',
-      '@loxley/contracts/contracts/test/MockE3ProgramHarness.sol',
-      '@loxley/contracts/contracts/test/MockPkVerifier.sol',
-      '@loxley/contracts/contracts/test/MockSlashingVerifier.sol',
-      '@loxley/contracts/contracts/test/MockStableToken.sol',
+      '@bracken/contracts/contracts/lib/BrackenLifecycle.sol',
+      '@bracken/contracts/contracts/lib/BrackenPricing.sol',
+      '@bracken/contracts/contracts/lib/BondingAssetLib.sol',
+      '@bracken/contracts/contracts/lib/BondingEligibilityLib.sol',
+      '@bracken/contracts/contracts/lib/BondingSlashingLib.sol',
+      '@bracken/contracts/contracts/lib/BondingRegistrationLib.sol',
+      '@bracken/contracts/contracts/lib/BondingOwnershipLib.sol',
+      '@bracken/contracts/contracts/lib/RegistrySortitionLib.sol',
+      '@bracken/contracts/contracts/lib/SlashingEvidenceLib.sol',
+      '@bracken/contracts/contracts/Bracken.sol',
+      '@bracken/contracts/contracts/registry/CiphernodeRegistryOwnable.sol',
+      '@bracken/contracts/contracts/registry/BondingRegistry.sol',
+      '@bracken/contracts/contracts/registry/BondedCheckpoints.sol',
+      '@bracken/contracts/contracts/registry/BondedVotes.sol',
+      '@bracken/contracts/contracts/slashing/SlashingManager.sol',
+      '@bracken/contracts/contracts/E3RefundManager.sol',
+      '@bracken/contracts/contracts/token/BrackenToken.sol',
+      '@bracken/contracts/contracts/token/BrackenTicketToken.sol',
+      '@bracken/contracts/contracts/verifiers/bfv/BfvDecryptionVerifier.sol',
+      '@bracken/contracts/contracts/verifiers/bfv/Risc0BfvCiphertextVerifier.sol',
+      '@bracken/contracts/contracts/verifiers/bfv/BfvPkVerifier.sol',
+      '@bracken/contracts/contracts/verifiers/bfv/honk/DkgAggregatorVerifier.sol',
+      '@bracken/contracts/contracts/verifiers/bfv/honk/DecryptionAggregatorVerifier.sol',
+      '@bracken/contracts/contracts/test/MockCiphernodeRegistry.sol',
+      '@bracken/contracts/contracts/test/MockCiphertextVerifier.sol',
+      '@bracken/contracts/contracts/test/MockComputeProvider.sol',
+      '@bracken/contracts/contracts/test/MockDecryptionVerifier.sol',
+      '@bracken/contracts/contracts/test/MockDkgFoldAttestationVerifier.sol',
+      '@bracken/contracts/contracts/test/MockE3Program.sol',
+      '@bracken/contracts/contracts/test/MockE3ProgramHarness.sol',
+      '@bracken/contracts/contracts/test/MockPkVerifier.sol',
+      '@bracken/contracts/contracts/test/MockSlashingVerifier.sol',
+      '@bracken/contracts/contracts/test/MockStableToken.sol',
     ],
     compilers: [
       {

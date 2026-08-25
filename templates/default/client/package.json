@@ -1,5 +1,5 @@
 {
-  "name": "loxley-client",
+  "name": "bracken-client",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -16,8 +16,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@loxley/react": "workspace:*",
-    "@loxley/sdk": "workspace:*",
+    "@bracken/react": "workspace:*",
+    "@bracken/sdk": "workspace:*",
     "@phosphor-icons/react": "^2.1.4",
     "@tanstack/react-query": "^5.74.3",
     "@wagmi/core": "^2.14.16",

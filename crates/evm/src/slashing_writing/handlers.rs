@@ -5,14 +5,14 @@
 use super::effects::{read_slash_policy, submit_slash_proposal};
 use super::*;
 
-impl<P: Provider + WalletProvider + Clone + 'static> Handler<LoxleyEvent>
+impl<P: Provider + WalletProvider + Clone + 'static> Handler<BrackenEvent>
     for SlashingManagerSolWriter<P>
 {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         match msg.into_data() {
-            LoxleyEventData::AccusationQuorumReached(data) => {
+            BrackenEventData::AccusationQuorumReached(data) => {
                 // Every node evaluates the policy after quorum. Only the first three voters send
                 // a transaction when Lane A is enabled, but all nodes need the same disabled-policy
                 // decision so they can derive the same E3-scoped exclusion.
@@ -33,7 +33,7 @@ impl<P: Provider + WalletProvider + Clone + 'static> Handler<LoxleyEvent>
                     }
                 }
             }
-            LoxleyEventData::CommitteeMemberExcluded(data) => {
+            BrackenEventData::CommitteeMemberExcluded(data) => {
                 if data.e3_id.chain_id() == self.provider.chain_id() {
                     match SlashIntentKey::from_exclusion(&data) {
                         Ok(key) => self.submissions.mark_completed(key),
@@ -41,7 +41,7 @@ impl<P: Provider + WalletProvider + Clone + 'static> Handler<LoxleyEvent>
                     }
                 }
             }
-            LoxleyEventData::EffectsEnabled(_) => {
+            BrackenEventData::EffectsEnabled(_) => {
                 let deferred = self.submissions.enable_effects();
                 if !deferred.is_empty() {
                     info!(
@@ -64,7 +64,7 @@ impl<P: Provider + WalletProvider + Clone + 'static> Handler<LoxleyEvent>
                     );
                 }
             }
-            LoxleyEventData::Shutdown(data) => self.notify_sync(ctx, data),
+            BrackenEventData::Shutdown(data) => self.notify_sync(ctx, data),
             _ => (),
         }
     }

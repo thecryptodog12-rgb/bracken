@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: LGPL-3.0-only
 #
-# Loxley deployen naar Robinhood Chain (4663), in één commando.
+# Bracken deployen naar Robinhood Chain (4663), in één commando.
 #
 # De runbook was zes blokken die je stuk voor stuk moest plakken, met een adres
 # dat je uit stap 1 moest overtypen naar stap 4. Elk van die stappen was een
@@ -29,7 +29,7 @@ bold() { printf '\033[1m%s\033[0m\n' "$*"; }
 die() { echo; red "GESTOPT: $*"; exit 1; }
 
 # ── Toolchain ───────────────────────────────────────────────────────────────
-bold "Loxley -> Robinhood Chain (4663)"
+bold "Bracken -> Robinhood Chain (4663)"
 echo
 
 if [ -s "$HOME/.nvm/nvm.sh" ]; then
@@ -64,7 +64,7 @@ esac
 export PRIVATE_KEY
 
 INFO=$(node -e '
-const {Wallet, JsonRpcProvider} = require("./packages/loxley-contracts/node_modules/ethers");
+const {Wallet, JsonRpcProvider} = require("./packages/bracken-contracts/node_modules/ethers");
 (async () => {
   try {
     const p = new JsonRpcProvider(process.env.ROBINHOOD_RPC_URL);
@@ -97,7 +97,7 @@ grn "  saldo volstaat"
 # tweede token maken met opnieuw de volledige voorraad.
 FOUND=$(python3 - <<'PYFIND'
 import json, pathlib
-p = pathlib.Path("packages/loxley-contracts/deployed_contracts.json")
+p = pathlib.Path("packages/bracken-contracts/deployed_contracts.json")
 try:
     r = json.load(open(p)).get("robinhood", {})
 except Exception:
@@ -105,7 +105,7 @@ except Exception:
 def addr(k):
     v = r.get(k)
     return (v.get("address") if isinstance(v, dict) else v) or ""
-print(addr("LoxleyBondToken"), addr("MockE3Program"))
+print(addr("BrackenBondToken"), addr("MockE3Program"))
 PYFIND
 )
 BOND_TOKEN_ADDRESS="${BOND_TOKEN_ADDRESS:-${FOUND%% *}}"
@@ -116,7 +116,7 @@ if [ -n "${BOND_TOKEN_ADDRESS:-}" ] && [ -n "${E3_PROGRAM_ADDRESS:-}" ]; then
   PROG="$E3_PROGRAM_ADDRESS"
   echo
   bold "Hervatten met bestaande adressen"
-  echo "  LOXLEY        : $BOND"
+  echo "  BRACKEN        : $BOND"
   echo "  MockE3Program : $PROG"
   SKIP_TOKENS=1
 else
@@ -136,7 +136,7 @@ if [ "$SKIP_TOKENS" = "1" ]; then
 TXT
 else
   cat <<TXT
-  1. LoxleyBondToken   -- 1.200.000.000 LOXLEY, volledige voorraad naar
+  1. BrackenBondToken   -- 1.200.000.000 BRACKEN, volledige voorraad naar
                           $ADDR
   2. MockE3Program     -- dwingt GEEN applicatieregels af
   3. de stack          -- negentien contracten, echte ZK-verifiers
@@ -152,22 +152,22 @@ read -r CONFIRM
 if [ "$SKIP_TOKENS" = "0" ]; then
 echo
 bold "[1/3] Bond token"
-BOND_LOG=$(BOND_TOKEN_NAME="${BOND_TOKEN_NAME:-Loxley}" \
-           BOND_TOKEN_SYMBOL="${BOND_TOKEN_SYMBOL:-LOXLEY}" \
+BOND_LOG=$(BOND_TOKEN_NAME="${BOND_TOKEN_NAME:-Bracken}" \
+           BOND_TOKEN_SYMBOL="${BOND_TOKEN_SYMBOL:-BRACKEN}" \
            BOND_TOKEN_SUPPLY="${BOND_TOKEN_SUPPLY:-1200000000}" \
-  pnpm --filter @loxley/contracts exec hardhat run \
+  pnpm --filter @bracken/contracts exec hardhat run \
     scripts/deployBondToken.ts --network robinhood 2>&1)
-BOND=$(echo "$BOND_LOG" | grep -oE "LoxleyBondToken: 0x[0-9a-fA-F]{40}" | cut -d' ' -f2)
+BOND=$(echo "$BOND_LOG" | grep -oE "BrackenBondToken: 0x[0-9a-fA-F]{40}" | cut -d' ' -f2)
 if [ -z "$BOND" ]; then
   echo "$BOND_LOG" | tail -20
   die "Bond token niet gedeployed. Er is nog geen gas uitgegeven aan de stack."
 fi
-grn "  LOXLEY: $BOND"
+grn "  BRACKEN: $BOND"
 
 # ── Stap 2 ──────────────────────────────────────────────────────────────────
 echo
 bold "[2/3] E3-programma"
-PROG_LOG=$(pnpm --filter @loxley/contracts exec hardhat run \
+PROG_LOG=$(pnpm --filter @bracken/contracts exec hardhat run \
   scripts/deployE3Program.ts --network robinhood 2>&1)
 PROG=$(echo "$PROG_LOG" | grep -oE "MockE3Program: 0x[0-9a-fA-F]{40}" | cut -d' ' -f2)
 if [ -z "$PROG" ]; then
@@ -185,7 +185,7 @@ STACK_LOG=$(BOND_TOKEN_ADDRESS="$BOND" \
             FEE_TOKEN_ADDRESS="$USDG" \
             DEPLOY_MOCKS=false \
             ENABLE_ZK_VERIFICATION=true \
-  pnpm --filter @loxley/contracts exec hardhat run \
+  pnpm --filter @bracken/contracts exec hardhat run \
     scripts/run.ts --network robinhood 2>&1)
 echo "$STACK_LOG" | grep -E "deployed to:|wiring verified|Enabling"
 
@@ -193,23 +193,23 @@ if ! echo "$STACK_LOG" | grep -q "wiring verified"; then
   echo
   echo "$STACK_LOG" | tail -25
   die "De stack is niet afgerond. Bond token: $BOND -- E3: $PROG
-Loop packages/loxley-contracts/deployed_contracts.json na voordat je opnieuw
+Loop packages/bracken-contracts/deployed_contracts.json na voordat je opnieuw
 draait: de scripts hergebruiken wat daar staat, dus een adres van een mislukte
 poging geeft fouten ver van de oorzaak."
 fi
 
-CORE=$(echo "$STACK_LOG" | grep -oE "^Loxley deployed to: 0x[0-9a-fA-F]{40}" | grep -oE "0x[0-9a-fA-F]{40}" | head -1)
+CORE=$(echo "$STACK_LOG" | grep -oE "^Bracken deployed to: 0x[0-9a-fA-F]{40}" | grep -oE "0x[0-9a-fA-F]{40}" | head -1)
 
 echo
 grn "============================================"
 grn " Gedeployed op Robinhood Chain (4663)"
 grn "============================================"
-echo "  LOXLEY token : $BOND"
-echo "  Loxley core  : ${CORE:-zie deployed_contracts.json}"
+echo "  BRACKEN token : $BOND"
+echo "  Bracken core  : ${CORE:-zie deployed_contracts.json}"
 echo "  E3 programma : $PROG"
 echo "  fee token    : $USDG (USDG)"
 echo
-echo "  Alle adressen: packages/loxley-contracts/deployed_contracts.json"
+echo "  Alle adressen: packages/bracken-contracts/deployed_contracts.json"
 echo "  Explorer     : https://robinhoodchain.blockscout.com/address/$BOND"
 echo
-bold "Stuur het 'Loxley core'-adres door om het dashboard erop te richten."
+bold "Stuur het 'Bracken core'-adres door om het dashboard erop te richten."

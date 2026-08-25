@@ -17,7 +17,7 @@ pub async fn preflight(config: &AppConfig) -> Result<()> {
     let pm = FilePasswordManager::new(key_file);
 
     if pm.is_set() {
-        bail!("Keyfile already exists. Try using `loxley password set` to set a new password or `loxley password delete` to remove the existing one.")
+        bail!("Keyfile already exists. Try using `bracken password set` to set a new password or `bracken password delete` to remove the existing one.")
     }
 
     Ok(())

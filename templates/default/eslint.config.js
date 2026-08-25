@@ -5,7 +5,7 @@
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
 import { defineConfig, globalIgnores } from 'eslint/config'
-import config from '@loxley/config/eslint.config.js'
+import config from '@bracken/config/eslint.config.js'
 
 export default defineConfig([
   globalIgnores([

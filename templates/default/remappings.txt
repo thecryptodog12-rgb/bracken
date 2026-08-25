@@ -1,5 +1,5 @@
 risc0/=lib/risc0-ethereum/contracts/src/
-@loxley/contracts/=node_modules/@loxley/contracts/
+@bracken/contracts/=node_modules/@bracken/contracts/
 @zk-kit/lazy-imt.sol/=node_modules/@zk-kit/lazy-imt.sol/
 poseidon-solidity/=node_modules/poseidon-solidity/
 @openzeppelin/=node_modules/@openzeppelin/

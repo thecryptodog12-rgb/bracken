@@ -10,7 +10,7 @@ import { Callout } from 'nextra/components'
 # Deploy your E3 to Robinhood Chain
 
 <Callout type='info'>
-  **Loxley is live on Robinhood Chain** (chain id `4663`). Any address shown inline below is an
+  **Bracken is live on Robinhood Chain** (chain id `4663`). Any address shown inline below is an
   example unless it appears on [Deployments](/deployments) — that page is generated from the
   deployment record and is the one to configure against.
 </Callout>
@@ -37,7 +37,7 @@ live deployment on Robinhood Chain.
   program contract is a fraction of that.
 - **USDG** for E3 fees and ticket collateral — `0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168`, six
   decimals. This is an existing token on the chain, not one this project issues.
-- **LOXLEY** only if you intend to run a ciphernode — `0x12BE21fafF941622806b770a3a6c0aAEc23cff20`.
+- **BRACKEN** only if you intend to run a ciphernode — `0x12BE21fafF941622806b770a3a6c0aAEc23cff20`.
   Requesting computation does not need it.
 
 There is no faucet. Every address is on [Deployments](/deployments).
@@ -57,8 +57,8 @@ PRIVATE_KEY=0x...
 
 CHAIN_ID=4663
 
-# Live Loxley contracts on Robinhood Chain
-LOXLEY_ADDRESS=0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12
+# Live Bracken contracts on Robinhood Chain
+BRACKEN_ADDRESS=0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12
 CIPHERNODE_REGISTRY_ADDRESS=0x7d6e460B1704B5B1cd5570E62a3c450a9611C346
 FEE_TOKEN_ADDRESS=0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168
 ```
@@ -102,7 +102,7 @@ ETHERSCAN_API_KEY=your_key
 pnpm hardhat verify --network sepolia <YOUR_PROGRAM_ADDRESS> <constructor-arg-1> <constructor-arg-2>
 ```
 
-Constructor args are whatever you passed to your program's constructor — typically the Loxley
+Constructor args are whatever you passed to your program's constructor — typically the Bracken
 contract address and any verifier addresses.
 
 ### Save the address
@@ -121,7 +121,7 @@ echo "E3_PROGRAM_ADDRESS=<deployed_address>" >> .env
 On testnet, you should use the production BFV parameters. Update your SDK initialisation:
 
 ```typescript
-const sdk = new LoxleySDK({
+const sdk = new BrackenSDK({
   // ... other config
   thresholdBfvParamsPresetName: 'SECURE_THRESHOLD_8192',
 })
@@ -152,7 +152,7 @@ Update your coordination server to point to Sepolia:
 ```bash
 # .env for the server
 HTTP_RPC_URL=https://rpc.mainnet.chain.robinhood.com
-LOXLEY_ADDRESS=0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12
+BRACKEN_ADDRESS=0xB2719FBF71F723FAb7fEAa1f3D2B6F23530AeE12
 E3_PROGRAM_ADDRESS=<your deployed program address>
 CHAIN_ID=4663
 ```
@@ -179,10 +179,12 @@ The server will connect to Sepolia via WebSocket and begin listening for E3 even
 Monitor progress by watching for events:
 
 ```typescript
-sdk.onLoxleyEvent(LoxleyEventType.E3_REQUESTED, (e) => console.log('E3 requested'))
-sdk.onLoxleyEvent(RegistryEventType.COMMITTEE_PUBLISHED, (e) => console.log('Committee ready'))
-sdk.onLoxleyEvent(LoxleyEventType.CIPHERTEXT_OUTPUT_PUBLISHED, (e) => console.log('Output ready'))
-sdk.onLoxleyEvent(LoxleyEventType.PLAINTEXT_OUTPUT_PUBLISHED, (e) => console.log('Result:', e.data))
+sdk.onBrackenEvent(BrackenEventType.E3_REQUESTED, (e) => console.log('E3 requested'))
+sdk.onBrackenEvent(RegistryEventType.COMMITTEE_PUBLISHED, (e) => console.log('Committee ready'))
+sdk.onBrackenEvent(BrackenEventType.CIPHERTEXT_OUTPUT_PUBLISHED, (e) => console.log('Output ready'))
+sdk.onBrackenEvent(BrackenEventType.PLAINTEXT_OUTPUT_PUBLISHED, (e) =>
+  console.log('Result:', e.data),
+)
 ```
 
 ---

@@ -19,13 +19,13 @@ impl EthPrivateKeyRepositoryFactory for Repositories {
     }
 }
 
-pub trait LoxleySolReaderRepositoryFactory {
-    fn loxley_sol_reader(&self, chain_id: u64) -> Repository<EvmReadInterfaceState>;
+pub trait BrackenSolReaderRepositoryFactory {
+    fn bracken_sol_reader(&self, chain_id: u64) -> Repository<EvmReadInterfaceState>;
 }
 
-impl LoxleySolReaderRepositoryFactory for Repositories {
-    fn loxley_sol_reader(&self, chain_id: u64) -> Repository<EvmReadInterfaceState> {
-        Repository::new(self.store.scope(StoreKeys::loxley_sol_reader(chain_id)))
+impl BrackenSolReaderRepositoryFactory for Repositories {
+    fn bracken_sol_reader(&self, chain_id: u64) -> Repository<EvmReadInterfaceState> {
+        Repository::new(self.store.scope(StoreKeys::bracken_sol_reader(chain_id)))
     }
 }
 

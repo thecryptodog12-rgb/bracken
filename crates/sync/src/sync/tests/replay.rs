@@ -12,24 +12,24 @@ async fn infrastructure_events_are_filtered_during_replay() -> anyhow::Result<()
     let bus = system.handle()?.enable("test-sync-replay");
     let history = bus.history();
 
-    let events: Vec<LoxleyEvent> = vec![
-        LoxleyEvent::<Unsequenced>::test_event("before")
+    let events: Vec<BrackenEvent> = vec![
+        BrackenEvent::<Unsequenced>::test_event("before")
             .id(1)
             .seq(1)
             .build(),
-        LoxleyEvent::<Unsequenced>::test_event("sync")
+        BrackenEvent::<Unsequenced>::test_event("sync")
             .data(SyncEnded::new())
             .seq(2)
             .build(),
-        LoxleyEvent::<Unsequenced>::test_event("fx")
+        BrackenEvent::<Unsequenced>::test_event("fx")
             .data(EffectsEnabled::new())
             .seq(3)
             .build(),
-        LoxleyEvent::<Unsequenced>::test_event("evm")
+        BrackenEvent::<Unsequenced>::test_event("evm")
             .data(make_historical_evm_sync_start())
             .seq(4)
             .build(),
-        LoxleyEvent::<Unsequenced>::test_event("after")
+        BrackenEvent::<Unsequenced>::test_event("after")
             .id(2)
             .seq(5)
             .build(),
@@ -44,10 +44,10 @@ async fn infrastructure_events_are_filtered_during_replay() -> anyhow::Result<()
         .events
         .iter()
         .map(|e| match e.get_data() {
-            LoxleyEventData::TestEvent(_) => "TestEvent",
-            LoxleyEventData::SyncEnded(_) => "SyncEnded",
-            LoxleyEventData::EffectsEnabled(_) => "EffectsEnabled",
-            LoxleyEventData::HistoricalEvmSyncStart(_) => "HistoricalEvmSyncStart",
+            BrackenEventData::TestEvent(_) => "TestEvent",
+            BrackenEventData::SyncEnded(_) => "SyncEnded",
+            BrackenEventData::EffectsEnabled(_) => "EffectsEnabled",
+            BrackenEventData::HistoricalEvmSyncStart(_) => "HistoricalEvmSyncStart",
             _ => "other",
         })
         .collect();
@@ -58,7 +58,7 @@ async fn infrastructure_events_are_filtered_during_replay() -> anyhow::Result<()
         .events
         .iter()
         .filter_map(|e| {
-            if let LoxleyEventData::TestEvent(t) = e.get_data() {
+            if let BrackenEventData::TestEvent(t) = e.get_data() {
                 Some(t.msg.clone())
             } else {
                 None
@@ -78,7 +78,7 @@ async fn replay_backlog_larger_than_event_bus_mailbox_is_delivered() -> anyhow::
     let count = MAILBOX_LIMIT_LARGE * 2;
     let events = (0..count)
         .map(|i| {
-            LoxleyEvent::<Unsequenced>::test_event("replay")
+            BrackenEvent::<Unsequenced>::test_event("replay")
                 .id(i as u64 + 1)
                 .seq(i as u64 + 1)
                 .build()
@@ -100,19 +100,19 @@ async fn replay_restores_global_timestamp_order_across_aggregates() -> anyhow::R
     let bus = system.handle()?.enable("test-ordered-sync-replay");
     let history = bus.history();
     let events = vec![
-        LoxleyEvent::<Unsequenced>::test_event("third")
+        BrackenEvent::<Unsequenced>::test_event("third")
             .id(3)
             .aggregate_id(3)
             .ts(30)
             .seq(1)
             .build(),
-        LoxleyEvent::<Unsequenced>::test_event("first")
+        BrackenEvent::<Unsequenced>::test_event("first")
             .id(1)
             .aggregate_id(1)
             .ts(10)
             .seq(1)
             .build(),
-        LoxleyEvent::<Unsequenced>::test_event("second")
+        BrackenEvent::<Unsequenced>::test_event("second")
             .id(2)
             .aggregate_id(2)
             .ts(20)
@@ -139,7 +139,7 @@ async fn replay_seeds_clock_from_post_snapshot_log_history() -> anyhow::Result<(
         .handle()?
         .enable_with_hlc(Hlc::new(7).with_clock(|| 1_000));
     let durable = HlcTimestamp::new(5_000, 17, 99);
-    let events = vec![LoxleyEvent::<Unsequenced>::test_event("durable")
+    let events = vec![BrackenEvent::<Unsequenced>::test_event("durable")
         .id(1)
         .ts(durable.to_u128())
         .seq(1)

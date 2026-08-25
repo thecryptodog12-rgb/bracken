@@ -103,7 +103,7 @@ impl ComputeProvider for Risc0Provider {
 // or FITNESS FOR A PARTICULAR PURPOSE.
 pragma solidity >=0.8.28;
 
-import {ILoxley, IE3Program} from "@loxley/contracts/interfaces/ILoxley.sol";
+import {IBracken, IE3Program} from "@bracken/contracts/interfaces/IBracken.sol";
 import {IRiscZeroVerifier} from "risc0/IRiscZeroVerifier.sol";
 
 contract MyE3Program is IE3Program {
@@ -111,13 +111,13 @@ contract MyE3Program is IE3Program {
     bytes32 public constant ENCRYPTION_SCHEME_ID = /* Your Encryption Scheme ID */;
 
     IRiscZeroVerifier public verifier;
-    ILoxley public loxley;
+    IBracken public bracken;
 
     constructor(
-        ILoxley _loxley,
+        IBracken _bracken,
         IRiscZeroVerifier _verifier
     ) {
-        loxley = _loxley;
+        bracken = _bracken;
         verifier = _verifier;
     }
 
@@ -127,25 +127,25 @@ contract MyE3Program is IE3Program {
 
 ### Step 5: Deploy Contracts
 
-- Deploy the Loxley contracts to your desired network.
-- Deploy your E3 Program contract and register it with the Loxley contract.
+- Deploy the Bracken contracts to your desired network.
+- Deploy your E3 Program contract and register it with the Bracken contract.
 
 ### Step 6: Run Ciphernodes
 
-- Start Ciphernodes and ensure they are registered with the Loxley contract.
+- Start Ciphernodes and ensure they are registered with the Bracken contract.
 
 ### Step 7: Submit a Computation Request
 
-- Use your application or a script to submit a computation request to the Loxley contract.
+- Use your application or a script to submit a computation request to the Bracken contract.
 
 **Example (JavaScript):**
 
 ```javascript
 // First approve the fee token
-await FeeTokenContract.approve(LoxleyContract.address, computationFee)
+await FeeTokenContract.approve(BrackenContract.address, computationFee)
 
 // Then request the E3
-await LoxleyContract.request(
+await BrackenContract.request(
   0, // CommitteeSize.Minimum
   [inputWindowStart, inputWindowEnd],
   e3ProgramAddress,
@@ -172,19 +172,19 @@ await LoxleyContract.request(
 ### Step 11: Retrieve Final Result
 
 - Listen for the `PlaintextOutputPublished` event.
-- Retrieve the plaintext result from the Loxley contract.
+- Retrieve the plaintext result from the Bracken contract.
 
 ---
 
 ## Conclusion
 
-By following this guide, you should now have a solid understanding of the Loxley and how to build
-your own E3 Programs. Loxley provides a framework for privacy-preserving computations over encrypted
-data, enabling a new class of decentralized applications.
+By following this guide, you should now have a solid understanding of the Bracken and how to build
+your own E3 Programs. Bracken provides a framework for privacy-preserving computations over
+encrypted data, enabling a new class of decentralized applications.
 
 **Key Takeaways:**
 
-- Loxley distributes trust and ensures data remains encrypted throughout computation.
+- Bracken distributes trust and ensures data remains encrypted throughout computation.
 - The modular architecture allows for flexibility in choosing Compute Providers and designing
   computations.
 - The provided Compute Provider package simplifies integration and handles complex tasks like Merkle
@@ -194,13 +194,13 @@ data, enabling a new class of decentralized applications.
 
 ## Additional Resources
 
-- **Loxley GitHub Repository**:
+- **Bracken GitHub Repository**:
   [https://github.com/thecryptodog12-rgb/loxley](https://github.com/thecryptodog12-rgb/loxley)
 - **CRISP GitHub Repository**:
   [https://github.com/thecryptodog12-rgb/loxley](https://github.com/thecryptodog12-rgb/loxley/tree/main/examples/CRISP)
-- **Loxley Quick Start**: [Quick Start](/quick-start)
+- **Bracken Quick Start**: [Quick Start](/quick-start)
 - **RISC Zero Documentation**: [https://www.risczero.com](https://www.risczero.com)
-- **Compute Provider Package**: Check the Loxley repository for the Compute Provider package and
+- **Compute Provider Package**: Check the Bracken repository for the Compute Provider package and
   examples.
 - **FHE Libraries**: Explore libraries like `fhe.rs` for Rust to handle homomorphic encryption.
 - **Zero-Knowledge Proof Libraries**: Use libraries like `risc0-zkvm` for proof generation and
@@ -211,4 +211,4 @@ data, enabling a new class of decentralized applications.
 **Happy Building!**
 
 If you have any questions or need further assistance, open an issue on
-[the Loxley repository](https://github.com/thecryptodog12-rgb/loxley/issues).
+[the Bracken repository](https://github.com/thecryptodog12-rgb/loxley/issues).

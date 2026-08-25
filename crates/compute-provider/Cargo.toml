@@ -3,7 +3,7 @@ name = "e3-compute-provider"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "E3 - Loxley Copmute Provider"
+description = "E3 - Bracken Copmute Provider"
 repository.workspace = true
 
 [dependencies]

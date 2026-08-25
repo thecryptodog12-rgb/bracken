@@ -8,34 +8,34 @@ impl Actor for AccusationManager {
     type Context = Context<Self>;
 }
 
-impl Handler<LoxleyEvent> for AccusationManager {
+impl Handler<BrackenEvent> for AccusationManager {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            LoxleyEventData::ProofVerificationFailed(data) => {
+            BrackenEventData::ProofVerificationFailed(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ProofVerificationPassed(data) => {
+            BrackenEventData::ProofVerificationPassed(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ProofFailureAccusation(data) => {
+            BrackenEventData::ProofFailureAccusation(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::AccusationVote(data) => {
+            BrackenEventData::AccusationVote(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ComputeResponse(data) => {
+            BrackenEventData::ComputeResponse(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::ComputeRequestError(data) => {
+            BrackenEventData::ComputeRequestError(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::SlashExecuted(data) => {
+            BrackenEventData::SlashExecuted(data) => {
                 self.voting.on_slash_executed(data);
             }
-            LoxleyEventData::CommitmentConsistencyViolation(data) => {
+            BrackenEventData::CommitmentConsistencyViolation(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
             _ => (),

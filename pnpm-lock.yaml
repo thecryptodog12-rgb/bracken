@@ -16,9 +16,9 @@ importers:
 
   .:
     devDependencies:
-      '@loxley/config':
+      '@bracken/config':
         specifier: workspace:*
-        version: link:packages/loxley-config
+        version: link:packages/bracken-config
       '@trivago/prettier-plugin-sort-imports':
         specifier: ^4.3.0
         version: 4.3.0(prettier@3.9.6)
@@ -76,9 +76,9 @@ importers:
 
   docs:
     dependencies:
-      '@loxley/diagrams':
+      '@bracken/diagrams':
         specifier: workspace:*
-        version: link:../packages/loxley-diagrams
+        version: link:../packages/bracken-diagrams
       katex:
         specifier: ^0.16.44
         version: 0.16.47
@@ -116,9 +116,9 @@ importers:
 
   examples/CRISP:
     devDependencies:
-      '@loxley/config':
+      '@bracken/config':
         specifier: workspace:*
-        version: link:../../packages/loxley-config
+        version: link:../../packages/bracken-config
       '@playwright/test':
         specifier: 1.52.0
         version: 1.52.0
@@ -255,12 +255,12 @@ importers:
 
   examples/CRISP/packages/crisp-contracts:
     dependencies:
+      '@bracken/contracts':
+        specifier: workspace:*
+        version: link:../../../../packages/bracken-contracts
       '@excubiae/contracts':
         specifier: ^0.4.0
         version: 0.4.0
-      '@loxley/contracts':
-        specifier: workspace:*
-        version: link:../../../../packages/loxley-contracts
       '@zk-kit/lazy-imt.sol':
         specifier: 2.0.0-beta.12
         version: 2.0.0-beta.12
@@ -396,7 +396,7 @@ importers:
         specifier: ^0.15.0
         version: 0.15.0
 
-  packages/loxley-config:
+  packages/bracken-config:
     dependencies:
       '@eslint/eslintrc':
         specifier: ^3.3.1
@@ -429,7 +429,7 @@ importers:
         specifier: 8.5.0
         version: 8.5.0(@microsoft/api-extractor@7.58.12(@types/node@22.7.5))(@swc/core@1.16.1)(jiti@1.21.7)(postcss@8.5.26)(tsx@4.23.12)(typescript@5.8.3)(yaml@2.9.0)
 
-  packages/loxley-contracts:
+  packages/bracken-contracts:
     dependencies:
       '@openzeppelin/contracts-upgradeable':
         specifier: ^5.0.2
@@ -456,9 +456,9 @@ importers:
         specifier: 0.0.5
         version: 0.0.5
     devDependencies:
-      '@loxley/config':
+      '@bracken/config':
         specifier: workspace:*
-        version: link:../loxley-config
+        version: link:../bracken-config
       '@nomicfoundation/hardhat-ethers':
         specifier: '4'
         version: 4.0.3(bufferutil@4.1.0)(hardhat@3.0.11(bufferutil@4.1.0)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
@@ -583,14 +583,14 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  packages/loxley-dashboard:
+  packages/bracken-dashboard:
     dependencies:
-      '@loxley/contracts':
+      '@bracken/contracts':
         specifier: workspace:*
-        version: link:../loxley-contracts
-      '@loxley/diagrams':
+        version: link:../bracken-contracts
+      '@bracken/diagrams':
         specifier: workspace:*
-        version: link:../loxley-diagrams
+        version: link:../bracken-diagrams
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -617,7 +617,7 @@ importers:
         specifier: ^5.4.0
         version: 5.4.21(@types/node@22.7.5)
 
-  packages/loxley-diagrams:
+  packages/bracken-diagrams:
     dependencies:
       react:
         specifier: ^18
@@ -630,7 +630,7 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  packages/loxley-mcp:
+  packages/bracken-mcp:
     dependencies:
       '@modelcontextprotocol/sdk':
         specifier: ^1.10.2
@@ -649,7 +649,7 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  packages/loxley-node:
+  packages/bracken-node:
     dependencies:
       react:
         specifier: ^18.3.1
@@ -695,11 +695,11 @@ importers:
         specifier: ^5.4.0
         version: 5.4.21(@types/node@22.7.5)
 
-  packages/loxley-react:
+  packages/bracken-react:
     dependencies:
-      '@loxley/sdk':
+      '@bracken/sdk':
         specifier: workspace:*
-        version: link:../loxley-sdk
+        version: link:../bracken-sdk
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -710,9 +710,9 @@ importers:
         specifier: ^2.14.16
         version: 2.19.5(@tanstack/query-core@5.101.4)(@tanstack/react-query@5.101.4(react@18.3.1))(@types/react@18.3.31)(bufferutil@4.1.0)(immer@11.1.15)(react@18.3.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.38.6(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.4.3))(zod@4.4.3)
     devDependencies:
-      '@loxley/config':
+      '@bracken/config':
         specifier: workspace:*
-        version: link:../loxley-config
+        version: link:../bracken-config
       '@types/react':
         specifier: ^18.2.0
         version: 18.3.31
@@ -723,15 +723,15 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  packages/loxley-sdk:
+  packages/bracken-sdk:
     dependencies:
       '@aztec/bb.js':
         specifier: 5.1.0
         version: 5.1.0
-      '@loxley/contracts':
+      '@bracken/contracts':
         specifier: workspace:*
-        version: link:../loxley-contracts
-      '@loxley/wasm':
+        version: link:../bracken-contracts
+      '@bracken/wasm':
         specifier: workspace:*
         version: link:../../crates/wasm
       '@noir-lang/noir_js':
@@ -756,9 +756,9 @@ importers:
         specifier: ^1.5.0
         version: 1.5.0
     devDependencies:
-      '@loxley/config':
+      '@bracken/config':
         specifier: workspace:*
-        version: link:../loxley-config
+        version: link:../bracken-config
       concurrently:
         specifier: ^9.1.2
         version: 9.2.4
@@ -775,11 +775,11 @@ importers:
         specifier: ^4.5.3
         version: 4.5.4(@types/node@22.7.5)(rollup@4.62.4)(typescript@5.8.3)(vite@6.4.3(@types/node@22.7.5)(jiti@1.21.7)(tsx@4.23.12)(yaml@2.9.0))
 
-  packages/loxley-site:
+  packages/bracken-site:
     dependencies:
-      '@loxley/diagrams':
+      '@bracken/diagrams':
         specifier: workspace:*
-        version: link:../loxley-diagrams
+        version: link:../bracken-diagrams
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -805,12 +805,12 @@ importers:
 
   templates/default:
     dependencies:
-      '@loxley/contracts':
+      '@bracken/contracts':
         specifier: workspace:*
-        version: link:../../packages/loxley-contracts
-      '@loxley/sdk':
+        version: link:../../packages/bracken-contracts
+      '@bracken/sdk':
         specifier: workspace:*
-        version: link:../../packages/loxley-sdk
+        version: link:../../packages/bracken-sdk
       '@types/yargs':
         specifier: ^17.0.33
         version: 17.0.35
@@ -827,9 +827,9 @@ importers:
         specifier: ^18.0.0
         version: 18.1.0
     devDependencies:
-      '@loxley/config':
+      '@bracken/config':
         specifier: workspace:*
-        version: link:../../packages/loxley-config
+        version: link:../../packages/bracken-config
       '@nomicfoundation/hardhat-ethers':
         specifier: 4.0.3
         version: 4.0.3(bufferutil@4.1.0)(hardhat@3.0.11(bufferutil@4.1.0)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
@@ -932,12 +932,12 @@ importers:
 
   templates/default/client:
     dependencies:
-      '@loxley/react':
+      '@bracken/react':
         specifier: workspace:*
-        version: link:../../../packages/loxley-react
-      '@loxley/sdk':
+        version: link:../../../packages/bracken-react
+      '@bracken/sdk':
         specifier: workspace:*
-        version: link:../../../packages/loxley-sdk
+        version: link:../../../packages/bracken-sdk
       '@phosphor-icons/react':
         specifier: ^2.1.4
         version: 2.1.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

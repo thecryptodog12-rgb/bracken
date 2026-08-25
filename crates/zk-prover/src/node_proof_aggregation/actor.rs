@@ -15,8 +15,8 @@ use e3_events::{
     BusHandle, ComputeRequest, ComputeRequestError, ComputeResponse, ComputeResponseKind,
     CorrelationId, DKGInnerProofReady, DKGRecursiveAggregationComplete, DkgFoldAttestationContext,
     DkgFoldAttestationContextEstablished, DkgFoldAttestationPayload, E3Failed, E3Stage, E3id,
-    EventContext, EventPublisher, EventSubscriber, EventType, FailureReason, LoxleyEvent,
-    LoxleyEventData, Proof, Sequenced, SignedDkgFoldAttestation, ThresholdSharePending, TypedEvent,
+    EventContext, EventPublisher, EventSubscriber, EventType, FailureReason, BrackenEvent,
+    BrackenEventData, Proof, Sequenced, SignedDkgFoldAttestation, ThresholdSharePending, TypedEvent,
     ZkRequest, ZkResponse, DKG_FOLD_ATTESTATION_CONTEXT_SCHEMA_VERSION,
 };
 use e3_fhe_params::build_pair_for_preset;
@@ -102,7 +102,7 @@ mod tests {
     use e3_test_helpers::get_common_setup;
     use e3_zk_helpers::CiphernodesCommitteeSize;
 
-    fn test_ctx(data: impl Into<LoxleyEventData>) -> EventContext<Sequenced> {
+    fn test_ctx(data: impl Into<BrackenEventData>) -> EventContext<Sequenced> {
         EventContext::<Unsequenced>::from(data.into()).sequence(0)
     }
 
@@ -120,8 +120,8 @@ mod tests {
         )
     }
 
-    async fn next_event(history: &Addr<HistoryCollector<LoxleyEvent>>) -> Result<LoxleyEvent> {
-        let mut result = history.send(TakeEvents::<LoxleyEvent>::new(1)).await?;
+    async fn next_event(history: &Addr<HistoryCollector<BrackenEvent>>) -> Result<BrackenEvent> {
+        let mut result = history.send(TakeEvents::<BrackenEvent>::new(1)).await?;
         assert!(!result.timed_out, "timed out waiting for an event");
         Ok(result.events.pop().expect("expected one event"))
     }
@@ -256,7 +256,7 @@ mod tests {
         let event = next_event(&history).await?;
         assert!(matches!(
             event.into_data(),
-            LoxleyEventData::E3Failed(data)
+            BrackenEventData::E3Failed(data)
                 if data.e3_id == e3_id
                     && data.failed_at_stage == E3Stage::CommitteeFinalized
                     && data.reason == FailureReason::DKGInvalidShares
@@ -350,7 +350,7 @@ mod tests {
 
         let event = next_event(&history).await?;
         match event.into_data() {
-            LoxleyEventData::ComputeRequest(request) => {
+            BrackenEventData::ComputeRequest(request) => {
                 assert_eq!(request.e3_id, e3_id);
                 match request.request {
                     ComputeRequestKind::Zk(ZkRequest::NodeDkgFold(fold_request)) => {

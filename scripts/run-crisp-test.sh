@@ -9,8 +9,8 @@ read
 # Use the locally installed bb
 export E3_CUSTOM_BB=$(which bb)
 
-echo "Resetting installed loxley"
-rm -rf ~/.cargo/bin/loxley
+echo "Resetting installed bracken"
+rm -rf ~/.cargo/bin/bracken
 
 rm -rf * && \
   git reset --hard HEAD && \

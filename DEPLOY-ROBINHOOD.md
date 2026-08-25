@@ -1,4 +1,4 @@
-# Deploying Loxley to Robinhood Chain (4663)
+# Deploying Bracken to Robinhood Chain (4663)
 
 Everything below has been run end to end on a local node. What has *not* been
 run is the real thing: nothing of ours exists on chain 4663 yet.
@@ -66,12 +66,12 @@ cd ~/interfold
 export PRIVATE_KEY=0x…
 export ROBINHOOD_RPC_URL=https://rpc.mainnet.chain.robinhood.com
 
-export BOND_TOKEN_NAME=Loxley
-export BOND_TOKEN_SYMBOL=LOXLEY
+export BOND_TOKEN_NAME=Bracken
+export BOND_TOKEN_SYMBOL=BRACKEN
 export BOND_TOKEN_SUPPLY=1200000000        # whole tokens, 18 decimals
 export BOND_TOKEN_RECIPIENT=0x…            # optional; defaults to deployer
 
-pnpm --filter @loxley/contracts exec hardhat run \
+pnpm --filter @bracken/contracts exec hardhat run \
   scripts/deployBondToken.ts --network robinhood
 ```
 
@@ -98,7 +98,7 @@ Ethereum mainnet. It applies no application-specific rules and verifies
 nothing. Fastest path to something that stands up; be honest about what it is.
 
 ```bash
-pnpm --filter @loxley/contracts exec hardhat run \
+pnpm --filter @bracken/contracts exec hardhat run \
   scripts/deployE3Program.ts --network robinhood
 ```
 
@@ -125,22 +125,22 @@ export SLASHER_ADDRESS=0x…                 # optional, defaults to deployer
 export DEPLOY_MOCKS=false
 export ENABLE_ZK_VERIFICATION=true
 
-pnpm --filter @loxley/contracts exec hardhat run \
+pnpm --filter @bracken/contracts exec hardhat run \
   scripts/run.ts --network robinhood
 ```
 
 Deploys nineteen contracts: ticket token, slashing manager, ciphernode
-registry, bonding registry, bonded checkpoints and votes, the Loxley core, the
+registry, bonding registry, bonded checkpoints and votes, the Bracken core, the
 refund manager, and the real ZK verifiers. Ends with `Cross-contract wiring
 verified` and `Enabling E3 requests`.
 
-Addresses land in `packages/loxley-contracts/deployed_contracts.json` under
+Addresses land in `packages/bracken-contracts/deployed_contracts.json` under
 `robinhood`.
 
 ## Step 5 — Point the dashboard at it
 
 ```bash
-# packages/loxley-dashboard/.env
+# packages/bracken-dashboard/.env
 VITE_DOCS_URL=https://docs.loxley-rh.com
 ```
 
@@ -175,7 +175,7 @@ every tutorial on the internet.
 
 This is not hypothetical. On chain 4663, `0x46b142DD1E924FAb83eCc3c08e4D46E82f005e0E`
 already holds a contract created by that exact test account — same key, same
-nonce, same address on every chain. `scripts/deployLoxley.ts` now refuses to
+nonce, same address on every chain. `scripts/deployBracken.ts` now refuses to
 deploy to a non-local chain from it, but the fallback still exists elsewhere.
 Set `PRIVATE_KEY` explicitly, every time.
 

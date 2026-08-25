@@ -30,7 +30,7 @@ If you get an error that looks similar to the following you likely need to upgra
 version:
 
 ```
-ERROR! event=LoxleyError(LoxleyError { err_type: Evm, message: "deserialization error: duplicate field `status` at line 1 column 34542" })
+ERROR! event=BrackenError(BrackenError { err_type: Evm, message: "deserialization error: duplicate field `status` at line 1 column 34542" })
 ```
 
 # E3 Requested
@@ -90,23 +90,23 @@ You can debug using the `-vvv` cli arguments to alter what output is produced by
 
 ```
 # Show INFO logging
-loxley start
+bracken start
 ```
 
 ```
 # Show DEBUG logging
-loxley start -v
+bracken start -v
 ```
 
 ```
 # Show TRACE logging
-loxley start -vv
+bracken start -vv
 ```
 
 if you want to remove all output aside from errors you can use the `--quiet` argument.
 
 ```
-loxley --quiet
+bracken --quiet
 ```
 
 ## Open telemetry
@@ -120,7 +120,7 @@ docker run -e COLLECTOR_OTLP_ENABLED=true -p 16686:16686 -p 4317:4317 -p 4318:43
 ```
 
 ```
-loxley start -v --otel http://localhost:4317
+bracken start -v --otel http://localhost:4317
 ```
 
 Now you can visit your Jaeger instance at http://localhost:16686 to view the logs from your node.

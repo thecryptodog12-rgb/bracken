@@ -19,9 +19,9 @@ module.exports = withNextra({
   // juist het probleem was. `images.unoptimized` is verplicht in export-modus.
   output: 'export',
   images: { unoptimized: true },
-  // @loxley/diagrams is TypeScript-bron uit de workspace; zonder dit laat Next
+  // @bracken/diagrams is TypeScript-bron uit de workspace; zonder dit laat Next
   // hem ongemoeid door webpack gaan en struikelt die over de type-syntax.
-  transpilePackages: ['@loxley/diagrams'],
+  transpilePackages: ['@bracken/diagrams'],
   webpack: (config) => {
     // Nextra v2 skips addContextDependency in production, so webpack reuses
     // cached MDX compilations when only _meta.json changes. Disabling the

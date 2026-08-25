@@ -7,7 +7,7 @@
 //! Pure reordering service that holds a `HistoricalSyncComplete` marker back
 //! until the event it references has been observed.
 
-use crate::messages::{HistoricalSyncComplete, LoxleyEvmEvent};
+use crate::messages::{HistoricalSyncComplete, BrackenEvmEvent};
 use bloom::{BloomFilter, ASMS};
 use e3_events::CorrelationId;
 use tracing::debug;
@@ -16,7 +16,7 @@ use tracing::debug;
 /// releases it once that event flows through. All other events are forwarded
 /// immediately while their ids are tracked in a bloom filter.
 pub(crate) struct HistoricalOrderFixer {
-    pending_sync_complete: Option<LoxleyEvmEvent>,
+    pending_sync_complete: Option<BrackenEvmEvent>,
     seen_ids: BloomFilter,
 }
 
@@ -30,12 +30,12 @@ impl HistoricalOrderFixer {
 
     /// Process a single incoming event, returning the (possibly empty) ordered
     /// list of events that should be forwarded downstream as a result.
-    pub(crate) fn process(&mut self, msg: LoxleyEvmEvent) -> Vec<LoxleyEvmEvent> {
+    pub(crate) fn process(&mut self, msg: BrackenEvmEvent) -> Vec<BrackenEvmEvent> {
         let id = msg.get_id();
-        debug!("Receiving LoxleyEvmEvent event({})", id);
+        debug!("Receiving BrackenEvmEvent event({})", id);
         let mut out = Vec::new();
         match msg {
-            none_hist @ LoxleyEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete {
+            none_hist @ BrackenEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete {
                 prev_event: None,
                 ..
             }) => {
@@ -45,7 +45,7 @@ impl HistoricalOrderFixer {
                 );
                 out.push(none_hist);
             }
-            hist @ LoxleyEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete {
+            hist @ BrackenEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete {
                 prev_event: Some(_),
                 ..
             }) => {
@@ -55,7 +55,7 @@ impl HistoricalOrderFixer {
                 );
                 self.pending_sync_complete = Some(hist);
             }
-            LoxleyEvmEvent::Processed(id) => self.track_id(id),
+            BrackenEvmEvent::Processed(id) => self.track_id(id),
             other => {
                 debug!("Forwarding event({})", other.get_id());
                 self.track_id(other.get_id());
@@ -68,8 +68,8 @@ impl HistoricalOrderFixer {
         out
     }
 
-    fn take_ready_pending(&mut self) -> Option<LoxleyEvmEvent> {
-        if let Some(LoxleyEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete {
+    fn take_ready_pending(&mut self) -> Option<BrackenEvmEvent> {
+        if let Some(BrackenEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete {
             prev_event: Some(ref id),
             ..
         })) = self.pending_sync_complete
@@ -96,7 +96,7 @@ mod tests {
     #[test]
     fn test_forwards_sync_complete_without_prev_event_immediately() {
         let mut fixer = HistoricalOrderFixer::new();
-        let sync = LoxleyEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete::new(1, None));
+        let sync = BrackenEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete::new(1, None));
         let out = fixer.process(sync.clone());
         assert_eq!(out, vec![sync]);
     }
@@ -105,11 +105,11 @@ mod tests {
     fn test_holds_sync_complete_until_referenced_event_seen() {
         let mut fixer = HistoricalOrderFixer::new();
 
-        let log_1 = LoxleyEvmEvent::Log(EvmLog::test_log(Address::ZERO, 1, 1));
-        let log_2 = LoxleyEvmEvent::Log(EvmLog::test_log(Address::ZERO, 2, 2));
-        let log_3 = LoxleyEvmEvent::Log(EvmLog::test_log(Address::ZERO, 3, 3));
+        let log_1 = BrackenEvmEvent::Log(EvmLog::test_log(Address::ZERO, 1, 1));
+        let log_2 = BrackenEvmEvent::Log(EvmLog::test_log(Address::ZERO, 2, 2));
+        let log_3 = BrackenEvmEvent::Log(EvmLog::test_log(Address::ZERO, 3, 3));
 
-        let sync = LoxleyEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete::new(
+        let sync = BrackenEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete::new(
             1,
             Some(log_3.get_id()),
         ));
@@ -127,20 +127,20 @@ mod tests {
     #[test]
     fn test_processed_events_track_ids_without_forwarding() {
         let mut fixer = HistoricalOrderFixer::new();
-        let log = LoxleyEvmEvent::Log(EvmLog::test_log(Address::ZERO, 9, 9));
+        let log = BrackenEvmEvent::Log(EvmLog::test_log(Address::ZERO, 9, 9));
         let id = log.get_id();
 
-        let sync = LoxleyEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete::new(1, Some(id)));
+        let sync = BrackenEvmEvent::HistoricalSyncComplete(HistoricalSyncComplete::new(1, Some(id)));
         // Buffer the sync first
         assert!(fixer.process(sync.clone()).is_empty());
         // A Processed marker for the referenced id releases the sync but is not forwarded
-        assert_eq!(fixer.process(LoxleyEvmEvent::Processed(id)), vec![sync]);
+        assert_eq!(fixer.process(BrackenEvmEvent::Processed(id)), vec![sync]);
     }
 
     #[test]
     fn rejected_logs_are_forwarded_to_fail_the_gateway() {
         let mut fixer = HistoricalOrderFixer::new();
-        let rejected = LoxleyEvmEvent::Rejected(crate::messages::EvmLogRejected::new(
+        let rejected = BrackenEvmEvent::Rejected(crate::messages::EvmLogRejected::new(
             CorrelationId::new(),
             1,
             "malformed",

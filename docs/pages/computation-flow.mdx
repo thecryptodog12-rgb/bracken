@@ -2,7 +2,7 @@
 title: 'Computation Flow'
 ---
 
-import { Lifecycle } from '@loxley/diagrams'
+import { Lifecycle } from '@bracken/diagrams'
 
 ## Computation Flow
 
@@ -10,7 +10,7 @@ import { Lifecycle } from '@loxley/diagrams'
 
 The five phases below are the same five stages, in detail.
 
-The computation process within the Loxley protocol is decentralized and open, allowing any
+The computation process within the Bracken protocol is decentralized and open, allowing any
 participant to contribute to each phase of execution. This design ensures transparency and
 flexibility, enabling different roles to be fulfilled by various actors, including the application
 server, Compute Providers, or other network participants.
@@ -18,7 +18,7 @@ server, Compute Providers, or other network participants.
 ### Phase 1: Request
 
 1. **Define the E3 Program**: Author your Secure Process using the tooling described in
-   [Writing the Secure Process](/write-secure-program). Loxley currently ships first-party support
+   [Writing the Secure Process](/write-secure-program). Bracken currently ships first-party support
    for the BFV scheme via [fhe.rs](https://github.com/gnosisguild/fhe.rs) and the SAFE library.
 2. **Choose a Compute Provider**: Your program must align with the execution backend (e.g.,
    [RISC Zero](https://www.risczero.com/) for [CRISP](/CRISP/introduction) or a custom FHE
@@ -67,7 +67,7 @@ server, Compute Providers, or other network participants.
 
 ### Phase 2: Node Selection
 
-Each new request to the Loxley contracts initiates a verifiable sortition process to select a
+Each new request to the Bracken contracts initiates a verifiable sortition process to select a
 Ciphernode Committee (CiCo). The selected Ciphernodes use the E3 Program parameters to determine the
 appropriate Fully Homomorphic Encryption (FHE) scheme, then generate and publish a shared public
 encryption key.
@@ -95,14 +95,14 @@ During this phase, Data Providers — who may include individual users, applicat
 ### Phase 4: Execution
 
 In this phase, the Compute Provider (CP) executes the Secure Process defined in your E3 Program and
-publishes the encrypted output back to Loxley contract. This must happen before the compute deadline
-expires.
+publishes the encrypted output back to Bracken contract. This must happen before the compute
+deadline expires.
 
 1. **Execution**: The CP retrieves encrypted inputs and executes the Secure Process defined in your
    E3 program.
-2. **Publish Output**: The ciphertext output and accompanying proof are submitted to the Loxley
-   contract via `publishCiphertextOutput`. Loxley contract calls your E3 Program's `verify` function
-   to validate the proof before accepting the output.
+2. **Publish Output**: The ciphertext output and accompanying proof are submitted to the Bracken
+   contract via `publishCiphertextOutput`. Bracken contract calls your E3 Program's `verify`
+   function to validate the proof before accepting the output.
 
    ```solidity
    function publishCiphertextOutput(
@@ -117,7 +117,7 @@ expires.
 After the ciphertext output is published, the CiCo for the given E3 coordinates to decrypt the
 ciphertext output and publish the resulting plaintext. The decryption must complete before the
 decryption deadline. The Decryption Verifier contract validates the submitted plaintext proof before
-accepting the output. The plaintext output can be queried from the Loxley contract's `getE3()`
+accepting the output. The plaintext output can be queried from the Bracken contract's `getE3()`
 function.
 
 ```solidity
@@ -133,7 +133,7 @@ event PlaintextOutputPublished(uint256 indexed e3Id, bytes plaintextOutput, byte
 Upon successful decryption, rewards are distributed to the active committee members.
 
 **See also:** [Cryptography](/cryptography) (threshold BFV, phases P1–P4, circuit IDs) and
-[Noir Circuits](/noir-circuits) (build, lint, `loxley noir`, Rust prover integration).
+[Noir Circuits](/noir-circuits) (build, lint, `bracken noir`, Rust prover integration).
 
 ### Failure Handling
 
@@ -147,7 +147,7 @@ treasury using its configurable `WorkValueAllocation` (basis-point weights per s
 slashed funds — not a simple proportion of work remaining. The failure cause is recorded as one of
 the 13 `FailureReason` entries (`None` plus 12 concrete states such as `DKGTimeout`,
 `ComputeProviderFailed`, `DecryptionInvalidShares`, etc.; `_MAX_FAILURE_REASON` is a separate
-sentinel used for bounds-checking in `ILoxley`):
+sentinel used for bounds-checking in `IBracken`):
 
 - The requester can claim their share via `claimRequesterRefund(e3Id)`
 - An honest committee member's bond owner can claim its compensation via
@@ -155,4 +155,4 @@ sentinel used for bounds-checking in `ILoxley`):
 - The protocol treasury receives the configured failure-path protocol share
 
 For the complete `FailureReason` → allocation map, see the `markE3Failed` / `claimRequesterRefund`
-flow in `IE3RefundManager` and `ILoxley`.
+flow in `IE3RefundManager` and `IBracken`.

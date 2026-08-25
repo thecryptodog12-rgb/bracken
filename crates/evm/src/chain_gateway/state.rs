@@ -15,12 +15,12 @@ use std::mem::take;
 
 use crate::messages::HistoricalSyncComplete;
 use anyhow::{bail, Result};
-use e3_events::{LoxleyEvent, Unsequenced};
+use e3_events::{BrackenEvent, Unsequenced};
 
 #[derive(Clone, Debug)]
 pub(crate) struct ForwardToSyncActorData<S> {
     pub(crate) sender: Option<S>,
-    pub(crate) buffer: Vec<LoxleyEvent<Unsequenced>>,
+    pub(crate) buffer: Vec<BrackenEvent<Unsequenced>>,
 }
 
 impl<S> Default for ForwardToSyncActorData<S> {
@@ -37,14 +37,14 @@ impl<S> Default for ForwardToSyncActorData<S> {
 pub(crate) enum SyncStatus<S> {
     /// Buffers events until `HistoricalEvmSyncStart` arrives.
     Init {
-        buffer: Vec<LoxleyEvent<Unsequenced>>,
+        buffer: Vec<BrackenEvent<Unsequenced>>,
         pending_sync_complete: Option<HistoricalSyncComplete>,
     },
     /// Forward events to the sync actor for ordering.
     ForwardToSyncActor(ForwardToSyncActorData<S>),
     /// Once the chain has completed historical sync then we buffer all "live"
     /// events until sync is complete.
-    BufferUntilLive(Vec<LoxleyEvent<Unsequenced>>),
+    BufferUntilLive(Vec<BrackenEvent<Unsequenced>>),
     /// Forward all events directly to the bus.
     Live,
     /// A buffer or transition invariant failed. This state is terminal.
@@ -63,7 +63,7 @@ impl<S> Default for SyncStatus<S> {
 impl<S: std::fmt::Debug> SyncStatus<S> {
     pub(crate) fn add_buffered_event(
         &mut self,
-        event: LoxleyEvent<Unsequenced>,
+        event: BrackenEvent<Unsequenced>,
         limit: usize,
     ) -> Result<()> {
         let (state, buffered) = match self {
@@ -106,7 +106,7 @@ impl<S: std::fmt::Debug> SyncStatus<S> {
         &mut self,
         sender: S,
     ) -> Result<(
-        Vec<LoxleyEvent<Unsequenced>>,
+        Vec<BrackenEvent<Unsequenced>>,
         Option<HistoricalSyncComplete>,
     )> {
         let Self::Init {
@@ -142,7 +142,7 @@ impl<S: std::fmt::Debug> SyncStatus<S> {
         Ok(state_data)
     }
 
-    pub(crate) fn live(&mut self) -> Result<Vec<LoxleyEvent<Unsequenced>>> {
+    pub(crate) fn live(&mut self) -> Result<Vec<BrackenEvent<Unsequenced>>> {
         let Self::BufferUntilLive(buffer) = self else {
             bail!("Cannot change state to Live when state is {:?}", self);
         };
@@ -155,14 +155,14 @@ impl<S: std::fmt::Debug> SyncStatus<S> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use e3_events::LoxleyEvent;
+    use e3_events::BrackenEvent;
 
     // A trivial sender stand-in so the state machine can be exercised without actix.
     #[derive(Clone, Debug, PartialEq)]
     struct FakeSender(u32);
 
-    fn event(id: u64) -> LoxleyEvent<Unsequenced> {
-        LoxleyEvent::<Unsequenced>::test_event("buffer-boundary")
+    fn event(id: u64) -> BrackenEvent<Unsequenced> {
+        BrackenEvent::<Unsequenced>::test_event("buffer-boundary")
             .id(id)
             .build()
     }

@@ -27,20 +27,20 @@ else
   pnpm evm:deploy
 fi
 
-heading "Sync tests/integration/loxley.config.yaml from deployed_contracts.json"
-(cd "$ROOT_DIR/packages/loxley-contracts" && pnpm utils:sync-integration-config)
+heading "Sync tests/integration/bracken.config.yaml from deployed_contracts.json"
+(cd "$ROOT_DIR/packages/bracken-contracts" && pnpm utils:sync-integration-config)
 
-loxley_wallet_set cn1 "$PRIVATE_KEY_CN1"
-loxley_wallet_set cn2 "$PRIVATE_KEY_CN2"
-loxley_wallet_set cn3 "$PRIVATE_KEY_CN3"
-loxley_wallet_set cn4 "$PRIVATE_KEY_CN4"
-loxley_wallet_set cn5 "$PRIVATE_KEY_CN5"
+bracken_wallet_set cn1 "$PRIVATE_KEY_CN1"
+bracken_wallet_set cn2 "$PRIVATE_KEY_CN2"
+bracken_wallet_set cn3 "$PRIVATE_KEY_CN3"
+bracken_wallet_set cn4 "$PRIVATE_KEY_CN4"
+bracken_wallet_set cn5 "$PRIVATE_KEY_CN5"
 
 heading "Setup ZK prover (bb binary; circuits staged in prebuild when proof aggregation is on)"
-$LOXLEY_BIN noir setup
+$BRACKEN_BIN noir setup
 
 # start swarm
-loxley_nodes_up
+bracken_nodes_up
 
 echo "waiting on binaries and utilities..."
 
@@ -101,8 +101,8 @@ daemon_query_events cn1 "$SCRIPT_DIR/output/events.txt"
 check_last_line "$SCRIPT_DIR/output/events.txt" '{"Next":10}'
 
 if [[ "$FULL_PROOF_AGGREGATION" == "true" ]]; then
-  heading "Wire MockE3Program → Loxley so publishInput triggers decryption"
-  pnpm e3-program:setMockLoxley --network localhost
+  heading "Wire MockE3Program → Bracken so publishInput triggers decryption"
+  pnpm e3-program:setMockBracken --network localhost
 
   heading "Encrypt plaintext under the published committee pubkey"
   $SCRIPT_DIR/lib/fake_encrypt.sh --input "$SCRIPT_DIR/output/pubkey.bin" --output "$SCRIPT_DIR/output/output.bin" --commitment-output "$SCRIPT_DIR/output/ciphertext_commitment.bin" --plaintext "$PLAINTEXT" --params "$ENCODED_PARAMS"

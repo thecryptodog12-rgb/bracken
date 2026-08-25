@@ -4,22 +4,22 @@
 
 use super::*;
 
-impl Handler<LoxleyEvent> for CommitteeFinalizer {
+impl Handler<BrackenEvent> for CommitteeFinalizer {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            LoxleyEventData::CommitteeRequested(data) => {
+            BrackenEventData::CommitteeRequested(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::EffectsEnabled(data) => self.notify_sync(ctx, data),
-            LoxleyEventData::TicketGenerated(data) => self.notify_sync(ctx, data),
-            LoxleyEventData::Shutdown(data) => self.notify_sync(ctx, data),
-            LoxleyEventData::E3Failed(data) => self.notify_sync(ctx, TypedEvent::new(data, ec)),
-            LoxleyEventData::E3RequestComplete(data) => {
+            BrackenEventData::EffectsEnabled(data) => self.notify_sync(ctx, data),
+            BrackenEventData::TicketGenerated(data) => self.notify_sync(ctx, data),
+            BrackenEventData::Shutdown(data) => self.notify_sync(ctx, data),
+            BrackenEventData::E3Failed(data) => self.notify_sync(ctx, TypedEvent::new(data, ec)),
+            BrackenEventData::E3RequestComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::E3StageChanged(data) => {
+            BrackenEventData::E3StageChanged(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
             _ => (),

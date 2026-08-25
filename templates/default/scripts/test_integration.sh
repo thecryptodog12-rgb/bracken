@@ -8,9 +8,9 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 source "$(dirname "${BASH_SOURCE[0]}")/lib/dev_config.sh"
 load_template_dev_config
 
-# The skip below is only honoured by an loxley binary carrying the
+# The skip below is only honoured by an bracken binary carrying the
 # `test-only-skip-proof-aggregation` Cargo feature. `pnpm dev:setup` builds one from the monorepo;
-# released binaries (releases.yml builds `--bin loxley` with no features) do not have it, and
+# released binaries (releases.yml builds `--bin bracken` with no features) do not have it, and
 # every ciphernode would exit at startup. Fail here rather than let the `wait-on` below block until
 # the CI timeout.
 #
@@ -18,14 +18,14 @@ load_template_dev_config
 # alongside a stale or release-profile install passes a checkout test and still fails at startup,
 # while a standalone checkout with a correctly built CLI is rejected for no reason.
 if ! template_cli_has_feature test-only-skip-proof-aggregation; then
-  echo "ERROR: this integration test needs an loxley built with" >&2
+  echo "ERROR: this integration test needs an bracken built with" >&2
   echo "'--features test-only-skip-proof-aggregation'." >&2
-  echo "The loxley on PATH does not report that feature, so every ciphernode would exit at" >&2
+  echo "The bracken on PATH does not report that feature, so every ciphernode would exit at" >&2
   echo "startup." >&2
   if template_monorepo_build_available; then
-    echo "Run 'pnpm dev:setup' to reinstall the CLI from ${LOXLEY_REPO_ROOT}." >&2
+    echo "Run 'pnpm dev:setup' to reinstall the CLI from ${BRACKEN_REPO_ROOT}." >&2
   else
-    echo "No loxley checkout found at ${LOXLEY_REPO_ROOT}. Install the CLI from an loxley" >&2
+    echo "No bracken checkout found at ${BRACKEN_REPO_ROOT}. Install the CLI from an bracken" >&2
     echo "checkout with '--features test-only-skip-proof-aggregation'." >&2
   fi
   exit 1
@@ -61,7 +61,7 @@ failed_message() {
   --prefix-colors "blue,cyan,gray,magenta,yellow,green" \
   --kill-others \
   --success first \
-  "wait-on file:/tmp/loxley_ciphernodes_ready tcp:localhost:8545 http://localhost:13151/health && export \$(loxley print-env --chain localhost) && pnpm vitest run ./tests/integration.spec.ts" \
+  "wait-on file:/tmp/bracken_ciphernodes_ready tcp:localhost:8545 http://localhost:13151/health && export \$(bracken print-env --chain localhost) && pnpm vitest run ./tests/integration.spec.ts" \
   "anvil --host 0.0.0.0 --chain-id 31337 --block-time 1  --mnemonic 'test test test test test test test test test test test junk' --silent" \
   "wait-on tcp:localhost:8545 && node ./scripts/anvil-automine.mjs" \
   "pnpm dev:ciphernodes" \

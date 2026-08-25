@@ -5,12 +5,12 @@ set -euo pipefail
 export CARGO_INCREMENTAL=1
 
 # nuke past installations as we are adding these nodes to the contract
-rm -rf ./.loxley/data
-rm -rf ./.loxley/config
+rm -rf ./.bracken/data
+rm -rf ./.bracken/config
 
 cleanup() {
   echo "Cleaning up processes..."
-  pkill -9 -f "loxley start"
+  pkill -9 -f "bracken start"
   sleep 1
   
   # Kill any remaining background jobs from this script
@@ -42,22 +42,22 @@ if [ -z "$PRIVATE_KEY_ADMIN" ]; then
   exit 1
 fi
 
-loxley wallet set --name cn1 --private-key "$PRIVATE_KEY_CN1"
-loxley wallet set --name cn2 --private-key "$PRIVATE_KEY_CN2"
-loxley wallet set --name cn3 --private-key "$PRIVATE_KEY_CN3"
-loxley wallet set --name cn4 --private-key "$PRIVATE_KEY_CN4"
-loxley wallet set --name cn5 --private-key "$PRIVATE_KEY_CN5"
+bracken wallet set --name cn1 --private-key "$PRIVATE_KEY_CN1"
+bracken wallet set --name cn2 --private-key "$PRIVATE_KEY_CN2"
+bracken wallet set --name cn3 --private-key "$PRIVATE_KEY_CN3"
+bracken wallet set --name cn4 --private-key "$PRIVATE_KEY_CN4"
+bracken wallet set --name cn5 --private-key "$PRIVATE_KEY_CN5"
 
 # using & instead of -d so that wait works below
-loxley nodes up -v &
+bracken nodes up -v &
 
 sleep 2
 
-CN1=$(yq -r '.nodes.cn1.address' ./loxley.config.yaml)
-CN2=$(yq -r '.nodes.cn2.address' ./loxley.config.yaml)
-CN3=$(yq -r '.nodes.cn3.address' ./loxley.config.yaml)
-CN4=$(yq -r '.nodes.cn4.address' ./loxley.config.yaml)
-CN5=$(yq -r '.nodes.cn5.address' ./loxley.config.yaml)
+CN1=$(yq -r '.nodes.cn1.address' ./bracken.config.yaml)
+CN2=$(yq -r '.nodes.cn2.address' ./bracken.config.yaml)
+CN3=$(yq -r '.nodes.cn3.address' ./bracken.config.yaml)
+CN4=$(yq -r '.nodes.cn4.address' ./bracken.config.yaml)
+CN5=$(yq -r '.nodes.cn5.address' ./bracken.config.yaml)
 
 echo "Minting tokens" 
 

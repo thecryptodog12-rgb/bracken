@@ -44,7 +44,7 @@ impl NetSyncManager {
     /// Re-gossip the node's own forwardable artifacts returned by the re-broadcast query.
     pub(in crate::actors::net_sync_manager) fn handle_rebroadcast_response(
         &mut self,
-        events: Vec<LoxleyEvent>,
+        events: Vec<BrackenEvent>,
     ) {
         let mut count = 0usize;
         for event in events {

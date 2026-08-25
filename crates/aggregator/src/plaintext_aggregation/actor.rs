@@ -21,7 +21,7 @@ use e3_events::{
     CommitteeMemberExcluded, CommitteeMemberExpelled, ComputeRequest, ComputeRequestError,
     ComputeRequestErrorKind, ComputeResponse, ComputeResponseKind, CorrelationId,
     DecryptedSharesAggregationProofRequest, DecryptionAggregationRequest, DecryptionshareCreated,
-    Die, E3Failed, E3Stage, E3id, EType, EventContext, FailureReason, LoxleyEvent, LoxleyEventData,
+    Die, E3Failed, E3Stage, E3id, EType, EventContext, FailureReason, BrackenEvent, BrackenEventData,
     PlaintextAggregated, Proof, Sequenced, ShareVerificationComplete, ShareVerificationDispatched,
     SignedProofPayload, TypedEvent, VerificationKind, ZkRequest, ZkResponse,
 };

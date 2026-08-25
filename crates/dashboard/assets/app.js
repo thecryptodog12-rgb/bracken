@@ -8943,7 +8943,7 @@ function cp({ updates: e, activeE3s: t }) {
   var s, u, a, c, m
   const [n, r] = T.useState(!1),
     l = () => {
-      navigator.clipboard.writeText('loxleyup update').then(() => {
+      navigator.clipboard.writeText('brackenup update').then(() => {
         ;(r(!0), window.setTimeout(() => r(!1), 1500))
       })
     },
@@ -8977,7 +8977,7 @@ function cp({ updates: e, activeE3s: t }) {
               o.jsxs('div', {
                 children: [
                   o.jsx('span', { className: 'section-kicker', children: 'Installed' }),
-                  o.jsxs('h2', { children: ['Loxley ', (i == null ? void 0 : i.current_version) ?? '…'] }),
+                  o.jsxs('h2', { children: ['Bracken ', (i == null ? void 0 : i.current_version) ?? '…'] }),
                   o.jsx('p', {
                     children:
                       i != null && i.update_available
@@ -9036,7 +9036,7 @@ function cp({ updates: e, activeE3s: t }) {
                         type: 'button',
                         className: 'copy-command mono',
                         onClick: l,
-                        children: n ? 'Copied' : 'loxleyup update',
+                        children: n ? 'Copied' : 'brackenup update',
                       }),
                     ],
                   }),
@@ -9116,7 +9116,7 @@ function fp({ view: e, setView: t, nodeName: n, connected: r, updateAvailable: l
         o.jsx('button', {
           className: 'wordmark',
           type: 'button',
-          'aria-label': 'Loxley node overview',
+          'aria-label': 'Bracken node overview',
           onClick: () => i('overview'),
           children: o.jsx('span', {}),
         }),
@@ -9202,7 +9202,7 @@ function hp() {
                 className: 'site-foot',
                 children: [
                   o.jsx('span', { children: 'Local operator surface · bound to 127.0.0.1' }),
-                  o.jsxs('span', { className: 'mono', children: ['Loxley ', l.data.node.version] }),
+                  o.jsxs('span', { className: 'mono', children: ['Bracken ', l.data.node.version] }),
                 ],
               }),
             ],

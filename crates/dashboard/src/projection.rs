@@ -9,7 +9,7 @@
 use alloy::primitives::U256;
 use e3_events::{
     hlc::HlcTimestamp, E3Stage, Event, EventContextAccessors, EventContextSeq, EventSource,
-    LoxleyEvent, LoxleyEventData,
+    BrackenEvent, BrackenEventData,
 };
 use serde::Serialize;
 use serde_json::{json, Map, Value};
@@ -245,7 +245,7 @@ impl TelemetryProjection {
         }
     }
 
-    pub fn apply(&mut self, event: LoxleyEvent) {
+    pub fn apply(&mut self, event: BrackenEvent) {
         let view = project_event(&event, &self.local_address);
         self.apply_operator_state(event.get_data());
         if let Some(e3_id) = view.e3_id.clone() {
@@ -308,22 +308,22 @@ impl TelemetryProjection {
         }
     }
 
-    fn apply_operator_state(&mut self, data: &LoxleyEventData) {
+    fn apply_operator_state(&mut self, data: &BrackenEventData) {
         match data {
-            LoxleyEventData::CiphernodeAdded(event) => {
+            BrackenEventData::CiphernodeAdded(event) => {
                 self.chains
                     .entry(event.chain_id)
                     .or_default()
                     .registered
                     .insert(normalize_address(&event.address));
             }
-            LoxleyEventData::CiphernodeRemoved(event) => {
+            BrackenEventData::CiphernodeRemoved(event) => {
                 let state = self.chains.entry(event.chain_id).or_default();
                 let address = normalize_address(&event.address);
                 state.registered.remove(&address);
                 state.active.remove(&address);
             }
-            LoxleyEventData::OperatorActivationChanged(event) => {
+            BrackenEventData::OperatorActivationChanged(event) => {
                 let state = self.chains.entry(event.chain_id).or_default();
                 let operator = normalize_address(&event.operator);
                 if event.active {
@@ -332,7 +332,7 @@ impl TelemetryProjection {
                     state.active.remove(&operator);
                 }
             }
-            LoxleyEventData::TicketBalanceUpdated(event)
+            BrackenEventData::TicketBalanceUpdated(event)
                 if normalize_address(&event.operator) == self.local_address =>
             {
                 self.chains
@@ -340,7 +340,7 @@ impl TelemetryProjection {
                     .or_default()
                     .ticket_balance = Some(event.new_balance.to_string());
             }
-            LoxleyEventData::CiphernodeBondUpdated(event)
+            BrackenEventData::CiphernodeBondUpdated(event)
                 if normalize_address(&event.operator) == self.local_address =>
             {
                 self.chains
@@ -348,13 +348,13 @@ impl TelemetryProjection {
                     .or_default()
                     .ciphernode_bond = Some(event.new_bond.to_string());
             }
-            LoxleyEventData::BondOwnerSet(event)
+            BrackenEventData::BondOwnerSet(event)
                 if normalize_address(&event.operator) == self.local_address =>
             {
                 self.chains.entry(event.chain_id).or_default().bond_owner =
                     Some(event.bond_owner.clone());
             }
-            LoxleyEventData::CiphernodeDeregistrationRequested(event)
+            BrackenEventData::CiphernodeDeregistrationRequested(event)
                 if normalize_address(&event.operator) == self.local_address =>
             {
                 self.chains
@@ -362,7 +362,7 @@ impl TelemetryProjection {
                     .or_default()
                     .exit_unlock_at = Some(event.unlock_at);
             }
-            LoxleyEventData::RewardCredited(event)
+            BrackenEventData::RewardCredited(event)
                 if normalize_address(&event.account) == self.local_address =>
             {
                 self.chains
@@ -379,7 +379,7 @@ impl TelemetryProjection {
                         },
                     });
             }
-            LoxleyEventData::RewardClaimed(event)
+            BrackenEventData::RewardClaimed(event)
                 if normalize_address(&event.account) == self.local_address =>
             {
                 let state = self.chains.entry(event.e3_id.chain_id()).or_default();
@@ -399,7 +399,7 @@ impl TelemetryProjection {
         }
     }
 
-    fn apply_e3_state(&mut self, e3_id: &str, data: &LoxleyEventData, view: &EventView) {
+    fn apply_e3_state(&mut self, e3_id: &str, data: &BrackenEventData, view: &EventView) {
         let chain_id = e3_id
             .split_once(':')
             .and_then(|(chain, _)| chain.parse().ok())
@@ -424,24 +424,24 @@ impl TelemetryProjection {
         }
 
         match data {
-            LoxleyEventData::CommitteeFinalized(event) => {
+            BrackenEventData::CommitteeFinalized(event) => {
                 state.committee = event.committee.clone();
                 state.scores = event.scores.clone();
             }
-            LoxleyEventData::CommitteePublished(event) if state.committee.is_empty() => {
+            BrackenEventData::CommitteePublished(event) if state.committee.is_empty() => {
                 state.committee = event.nodes.clone();
             }
-            LoxleyEventData::TicketSubmitted(event) => state.tickets.push(TicketView {
+            BrackenEventData::TicketSubmitted(event) => state.tickets.push(TicketView {
                 node: event.node.clone(),
                 ticket_id: event.ticket_id,
                 score: event.score.clone(),
             }),
-            LoxleyEventData::CommitteeMemberExpelled(event) => {
+            BrackenEventData::CommitteeMemberExpelled(event) => {
                 state
                     .expelled
                     .insert(normalize_address(&event.node.to_string()));
             }
-            LoxleyEventData::E3Failed(event) => {
+            BrackenEventData::E3Failed(event) => {
                 state.status = "failed".to_owned();
                 state.failed_phase = view.phase;
                 state.failure = Some(json!({
@@ -449,7 +449,7 @@ impl TelemetryProjection {
                     "reason": event.reason,
                 }));
             }
-            LoxleyEventData::CommitteeFormationFailed(event) => {
+            BrackenEventData::CommitteeFormationFailed(event) => {
                 state.status = "failed".to_owned();
                 state.failed_phase = Some(E3Phase::Committee);
                 state.failure = Some(json!({
@@ -458,11 +458,11 @@ impl TelemetryProjection {
                     "threshold_required": event.threshold_required,
                 }));
             }
-            LoxleyEventData::E3RequestComplete(_)
-            | LoxleyEventData::PlaintextOutputPublished(_) => {
+            BrackenEventData::E3RequestComplete(_)
+            | BrackenEventData::PlaintextOutputPublished(_) => {
                 state.status = "complete".to_owned();
             }
-            LoxleyEventData::E3StageChanged(event) => match event.new_stage {
+            BrackenEventData::E3StageChanged(event) => match event.new_stage {
                 E3Stage::Complete => state.status = "complete".to_owned(),
                 E3Stage::Failed => {
                     let failed_phase = stage_phase(&event.previous_stage);
@@ -472,7 +472,7 @@ impl TelemetryProjection {
                 }
                 _ => {}
             },
-            LoxleyEventData::RewardsDistributed(event) => {
+            BrackenEventData::RewardsDistributed(event) => {
                 state.reward_allocations = event
                     .nodes
                     .iter()
@@ -483,7 +483,7 @@ impl TelemetryProjection {
                     })
                     .collect();
             }
-            LoxleyEventData::RewardCredited(event) => {
+            BrackenEventData::RewardCredited(event) => {
                 state.rewards.push(RewardView {
                     account: event.account.clone(),
                     token: Some(event.token.clone()),
@@ -491,7 +491,7 @@ impl TelemetryProjection {
                     claimed: false,
                 });
             }
-            LoxleyEventData::RewardClaimed(event) => {
+            BrackenEventData::RewardClaimed(event) => {
                 mark_claimed_rewards(
                     state.rewards.iter_mut(),
                     &event.account,
@@ -505,7 +505,7 @@ impl TelemetryProjection {
     }
 }
 
-fn project_event(event: &LoxleyEvent, local_address: &str) -> EventView {
+fn project_event(event: &BrackenEvent, local_address: &str) -> EventView {
     let timestamp = HlcTimestamp::from(event.ts());
     let source = match event.source() {
         EventSource::Local => "local",
@@ -514,12 +514,12 @@ fn project_event(event: &LoxleyEvent, local_address: &str) -> EventView {
     };
     let producer = match (event.source(), event.get_data()) {
         (EventSource::Local, _) => local_address.to_owned(),
-        (EventSource::Evm, LoxleyEventData::EvmLogObserved(observed)) => observed.contract.clone(),
+        (EventSource::Evm, BrackenEventData::EvmLogObserved(observed)) => observed.contract.clone(),
         (EventSource::Evm, _) => "on-chain contract".to_owned(),
         (EventSource::Net, _) => format!("node:{:08x}", timestamp.node),
     };
     let event_type = match event.get_data() {
-        LoxleyEventData::EvmLogObserved(observed) => {
+        BrackenEventData::EvmLogObserved(observed) => {
             format!("{}::{}", observed.contract, observed.event_name)
         }
         _ => event.event_type(),
@@ -544,9 +544,9 @@ fn project_event(event: &LoxleyEvent, local_address: &str) -> EventView {
     }
 }
 
-fn phase(data: &LoxleyEventData) -> Option<E3Phase> {
+fn phase(data: &BrackenEventData) -> Option<E3Phase> {
     use E3Phase as P;
-    use LoxleyEventData as E;
+    use BrackenEventData as E;
     match data {
         E::E3Requested(_) => Some(P::Request),
         E::CommitteeRequested(_)
@@ -660,10 +660,10 @@ fn stage_phase(stage: &E3Stage) -> E3Phase {
     }
 }
 
-fn severity(data: &LoxleyEventData) -> EventSeverity {
-    use LoxleyEventData as E;
+fn severity(data: &BrackenEventData) -> EventSeverity {
+    use BrackenEventData as E;
     match data {
-        E::LoxleyError(_)
+        E::BrackenError(_)
         | E::E3Failed(_)
         | E::CommitteeFormationFailed(_)
         | E::ProofVerificationFailed(_)
@@ -683,7 +683,7 @@ fn severity(data: &LoxleyEventData) -> EventSeverity {
     }
 }
 
-fn compact_payload(data: &LoxleyEventData) -> Value {
+fn compact_payload(data: &BrackenEventData) -> Value {
     let serialized = serde_json::to_value(data)
         .unwrap_or_else(|error| json!({ "serialization_error": error.to_string() }));
     let payload = match serialized {
@@ -1090,8 +1090,8 @@ mod tests {
         assert!(rewards.iter().all(|reward| !reward.claimed));
     }
 
-    fn replay_event(data: LoxleyEventData, seq: u64, timestamp: u128) -> LoxleyEvent {
-        LoxleyEvent::<Unsequenced>::new_with_timestamp(
+    fn replay_event(data: BrackenEventData, seq: u64, timestamp: u128) -> BrackenEvent {
+        BrackenEvent::<Unsequenced>::new_with_timestamp(
             data,
             None,
             timestamp,

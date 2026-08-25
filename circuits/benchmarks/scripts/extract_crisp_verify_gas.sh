@@ -83,13 +83,13 @@ fi
 CRISP_CONTRACTS_DIR="${REPO_ROOT}/examples/CRISP/packages/crisp-contracts"
 TMP_LOG_CRISP="$(mktemp)"
 TMP_LOG_FOLDED="$(mktemp)"
-TMP_LOG_LOXLEY="$(mktemp)"
-TMP_JSON_LOXLEY="$(mktemp)"
+TMP_LOG_BRACKEN="$(mktemp)"
+TMP_JSON_BRACKEN="$(mktemp)"
 TMP_JSON_FOLDED="$(mktemp)"
 TMP_JSON_SUMMARY="$(mktemp)"
 
 cleanup_tmp_files() {
-    rm -f "$TMP_LOG_CRISP" "$TMP_LOG_FOLDED" "$TMP_LOG_LOXLEY" "$TMP_JSON_LOXLEY" "$TMP_JSON_FOLDED" "$TMP_JSON_SUMMARY"
+    rm -f "$TMP_LOG_CRISP" "$TMP_LOG_FOLDED" "$TMP_LOG_BRACKEN" "$TMP_JSON_BRACKEN" "$TMP_JSON_FOLDED" "$TMP_JSON_SUMMARY"
 }
 trap cleanup_tmp_files EXIT
 
@@ -104,7 +104,7 @@ EOF
     exit 0
 fi
 
-LOXLEY_CONTRACTS_DIR="${REPO_ROOT}/packages/loxley-contracts"
+BRACKEN_CONTRACTS_DIR="${REPO_ROOT}/packages/bracken-contracts"
 OUTPUT_DIR="$(cd "$(dirname "$OUTPUT_JSON")" && pwd)"
 RAW_DIR="${OUTPUT_DIR}/raw"
 
@@ -177,23 +177,23 @@ echo "  [gas] Running integration test (test_trbfv_actor); proof_aggregation=tru
 ) 2>&1 | tee "$TMP_LOG_FOLDED"
 FOLDED_TEST_EXIT_CODE=${PIPESTATUS[0]}
 echo "  [gas] Integration export completed (exit=${FOLDED_TEST_EXIT_CODE})."
-LOXLEY_TEST_EXIT_CODE=0
+BRACKEN_TEST_EXIT_CODE=0
 if [ "$FOLDED_TEST_EXIT_CODE" -ne 0 ]; then
     echo "  [gas] Skipping EVM replay: test_trbfv_actor failed (exit=${FOLDED_TEST_EXIT_CODE})."
-    echo '{}' >"$TMP_JSON_LOXLEY"
+    echo '{}' >"$TMP_JSON_BRACKEN"
 elif [ ! -s "$TMP_JSON_FOLDED" ] || ! jq -e '(.dkg_aggregator.proof_hex != "") and (.decryption_aggregator.proof_hex != "")' "$TMP_JSON_FOLDED" >/dev/null 2>&1; then
     echo "  [gas] Skipping EVM replay: folded proof export missing or empty."
-    echo '{}' >"$TMP_JSON_LOXLEY"
+    echo '{}' >"$TMP_JSON_BRACKEN"
 else
     echo "  [gas] Replaying folded artifacts on EVM verifiers for Pi_DKG/Pi_dec gas..."
     (
-      cd "$LOXLEY_CONTRACTS_DIR" && \
-      BENCHMARK_RAW_DIR="$RAW_DIR" BENCHMARK_GAS_OUTPUT="$TMP_JSON_LOXLEY" BENCHMARK_FOLDED_JSON="$TMP_JSON_FOLDED" \
+      cd "$BRACKEN_CONTRACTS_DIR" && \
+      BENCHMARK_RAW_DIR="$RAW_DIR" BENCHMARK_GAS_OUTPUT="$TMP_JSON_BRACKEN" BENCHMARK_FOLDED_JSON="$TMP_JSON_FOLDED" \
       BENCHMARK_PRESET="$PRESET_NAME" \
       pnpm hardhat run scripts/benchmarkGasFromRaw.ts --network hardhat
-    ) 2>&1 | tee "$TMP_LOG_LOXLEY"
-    LOXLEY_TEST_EXIT_CODE=${PIPESTATUS[0]}
-    echo "  [gas] EVM replay completed (exit=${LOXLEY_TEST_EXIT_CODE})."
+    ) 2>&1 | tee "$TMP_LOG_BRACKEN"
+    BRACKEN_TEST_EXIT_CODE=${PIPESTATUS[0]}
+    echo "  [gas] EVM replay completed (exit=${BRACKEN_TEST_EXIT_CODE})."
 fi
 set -e
 
@@ -248,8 +248,8 @@ PY
 }
 
 USER_VERIFY_GAS=$(parse_marker "crisp_user_verify" "$TMP_LOG_CRISP")
-DKG_VERIFY_GAS=$(jq -r '.verify_gas.dkg // empty' "$TMP_JSON_LOXLEY" 2>/dev/null || true)
-DEC_VERIFY_GAS=$(jq -r '.verify_gas.dec // empty' "$TMP_JSON_LOXLEY" 2>/dev/null || true)
+DKG_VERIFY_GAS=$(jq -r '.verify_gas.dkg // empty' "$TMP_JSON_BRACKEN" 2>/dev/null || true)
+DEC_VERIFY_GAS=$(jq -r '.verify_gas.dec // empty' "$TMP_JSON_BRACKEN" 2>/dev/null || true)
 
 DKG_PROOF_HEX=$(jq -r '.dkg_aggregator.proof_hex // empty' "$TMP_JSON_FOLDED" 2>/dev/null || true)
 DKG_PUBLIC_HEX=$(jq -r '.dkg_aggregator.public_inputs_hex // empty' "$TMP_JSON_FOLDED" 2>/dev/null || true)
@@ -328,7 +328,7 @@ cat > "$OUTPUT_JSON" <<EOF
   "test_exit_code": {
     "crisp": ${CRISP_TEST_EXIT_CODE},
     "folded_export": ${FOLDED_TEST_EXIT_CODE},
-    "loxley_contracts": ${LOXLEY_TEST_EXIT_CODE}
+    "bracken_contracts": ${BRACKEN_TEST_EXIT_CODE}
   }
 }
 EOF
@@ -337,6 +337,6 @@ if [ "$FOLDED_TEST_EXIT_CODE" -ne 0 ]; then
     echo "  [gas] ERROR: test_trbfv_actor failed — Pi_DKG/Pi_dec verify gas and integration timings will be incomplete."
     echo "  [gas]        Re-run after a successful integration export (no Anvil required)."
 fi
-if [ "$CRISP_TEST_EXIT_CODE" -ne 0 ] || [ "$FOLDED_TEST_EXIT_CODE" -ne 0 ] || [ "$LOXLEY_TEST_EXIT_CODE" -ne 0 ]; then
+if [ "$CRISP_TEST_EXIT_CODE" -ne 0 ] || [ "$FOLDED_TEST_EXIT_CODE" -ne 0 ] || [ "$BRACKEN_TEST_EXIT_CODE" -ne 0 ]; then
     exit 1
 fi

@@ -7,7 +7,7 @@ use super::*;
 pub async fn collect_historical_evm_events(
     mut receiver: Receiver<HistoricalEvmEventsReceived>,
     config: &EvmEventConfig,
-) -> Result<Vec<LoxleyEvent<Unsequenced>>> {
+) -> Result<Vec<BrackenEvent<Unsequenced>>> {
     let mut collector = HistoricalEvmCollector::new(config);
     let progress_interval = Duration::from_secs(30);
 

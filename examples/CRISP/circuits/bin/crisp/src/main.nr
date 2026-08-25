@@ -8,10 +8,10 @@ use crisp_lib::ciphertext_addition::{CiphertextAddition, select_addend};
 use crisp_lib::ecdsa::{address_to_field, derive_address, digest_from_halves, validate_signature};
 use crisp_lib::merkle_tree::get_merkle_root;
 use crisp_lib::utils::{check_coefficient_values_with_balance, check_coefficient_zero};
-use loxley_lib::configs::default::threshold::{
+use bracken_lib::configs::default::threshold::{
     L, N, Q_MOD_T_CENTERED, QIS, USER_DATA_ENCRYPTION_BIT_CT, USER_DATA_ENCRYPTION_BIT_K,
 };
-use loxley_lib::math::{
+use bracken_lib::math::{
     commitments::{
         compute_ciphertext_commitment, compute_single_polynomial_commitment,
         DS_USER_DATA_ENCRYPTION_COMMITMENT,

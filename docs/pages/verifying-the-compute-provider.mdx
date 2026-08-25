@@ -16,7 +16,7 @@ deployment you did not build.
 
 Three properties hold without any work on your part:
 
-1. **The verifier is frozen per E3.** Loxley snapshots the ciphertext verifier for an E3's
+1. **The verifier is frozen per E3.** Bracken snapshots the ciphertext verifier for an E3's
    encryption scheme at request time. A later `setCiphertextVerifier` does not affect an E3 already
    in flight.
 2. **The image ID is immutable.** `Risc0BfvCiphertextVerifier.imageId` is set in the constructor and
@@ -78,7 +78,7 @@ for proof acceptance. Never substitute one for the other.
 
 ## What this does not cover
 
-- **Governance of the proxy.** The Safe owns Loxley's `ProxyAdmin`. The per-E3 verifier snapshot
+- **Governance of the proxy.** The Safe owns Bracken's `ProxyAdmin`. The per-E3 verifier snapshot
   protects an E3 in flight from a `setCiphertextVerifier` call, but it is not protection against a
   proxy upgrade. That is a governance property, not a build property.
 - **Application-level image IDs.** An E3 program may store its own image ID and verifier — CRISP has

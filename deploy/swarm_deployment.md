@@ -62,7 +62,7 @@ git clone https://github.com/thecryptodog12-rgb/loxley.git
 Move to the new folder:
 
 ```
-cd loxley/
+cd bracken/
 ```
 
 Build the app
@@ -83,7 +83,7 @@ Alter the variables to reflect the correct values required for the stack:
 
 ```
 export RPC_URL=wss://eth-sepolia.g.alchemy.com/v2/<SOME_API_KEY>
-export SEPOLIA_LOXLEY_ADDRESS=0xCe087F31e20E2F76b6544A2E4A74D4557C8fDf77
+export SEPOLIA_BRACKEN_ADDRESS=0xCe087F31e20E2F76b6544A2E4A74D4557C8fDf77
 export SEPOLIA_CIPHERNODE_REGISTRY_ADDRESS=0x0952388f6028a9Eda93a5041a3B216Ea331d97Ab
 export SEPOLIA_BONDING_REGISTRY=0xcBaCE7C360b606bb554345b20884A28e41436934
 ```
@@ -126,7 +126,7 @@ Remember to modify any highlighted files before use with unique secrets.
 To deploy
 
 ```
-./deploy/deploy.sh loxley ghcr.io/gnosisguild/ciphernode:<release-version>
+./deploy/deploy.sh bracken ghcr.io/gnosisguild/ciphernode:<release-version>
 ```
 
 This will deploy the following services:
@@ -134,10 +134,10 @@ This will deploy the following services:
 ```
 ❯ docker service ls
 ID             NAME                 MODE         REPLICAS   IMAGE                  PORTS
-tr44go8vevh1   loxley_cn4          replicated   1/1        ghcr.io/gnosisguild/ciphernode:<release-version>
-kdqktv85xcuv   loxley_cn1          replicated   1/1        ghcr.io/gnosisguild/ciphernode:<release-version>
-nguul381w6mu   loxley_cn2          replicated   1/1        ghcr.io/gnosisguild/ciphernode:<release-version>
-zgmwmv7cd63j   loxley_cn3          replicated   1/1        ghcr.io/gnosisguild/ciphernode:<release-version>
+tr44go8vevh1   bracken_cn4          replicated   1/1        ghcr.io/gnosisguild/ciphernode:<release-version>
+kdqktv85xcuv   bracken_cn1          replicated   1/1        ghcr.io/gnosisguild/ciphernode:<release-version>
+nguul381w6mu   bracken_cn2          replicated   1/1        ghcr.io/gnosisguild/ciphernode:<release-version>
+zgmwmv7cd63j   bracken_cn3          replicated   1/1        ghcr.io/gnosisguild/ciphernode:<release-version>
 ```
 
 # Get the logs
@@ -145,13 +145,13 @@ zgmwmv7cd63j   loxley_cn3          replicated   1/1        ghcr.io/gnosisguild/c
 You can get the logs:
 
 ```
-docker service logs loxley_cn1
+docker service logs bracken_cn1
 ```
 
 Notice the line:
 
 ```
-loxley_cn2.1.zom4r645ophf@nixos    | 2024-12-19T23:47:08.582536Z  INFO loxley: COMPILATION ID: 'painfully_fluent_crane'
+bracken_cn2.1.zom4r645ophf@nixos    | 2024-12-19T23:47:08.582536Z  INFO bracken: COMPILATION ID: 'painfully_fluent_crane'
 ```
 
 This can help you identify which compilation you are looking at. This works by generating a unique

@@ -3,7 +3,7 @@ name = "e3-fhe-params"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "E3 - Loxley FHE Params"
+description = "E3 - Bracken FHE Params"
 repository.workspace = true
 
 [dependencies]

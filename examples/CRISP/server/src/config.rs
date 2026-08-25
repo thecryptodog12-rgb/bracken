@@ -13,11 +13,11 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 pub struct Config {
     pub program_server_url: String,
-    pub loxley_server_url: String,
+    pub bracken_server_url: String,
     pub private_key: String,
     pub http_rpc_url: String,
     pub ws_rpc_url: String,
-    pub loxley_address: String,
+    pub bracken_address: String,
     pub e3_program_address: String,
     pub ciphernode_registry_address: String,
     pub fee_token_address: String,
@@ -40,8 +40,8 @@ impl Config {
     /// Base URL for outbound HTTP clients (program-server webhooks, CLI, cron).
     ///
     /// `0.0.0.0` / `::` are bind addresses only; connecting to them fails (e.g. macOS `EADDRNOTAVAIL`).
-    pub fn loxley_server_url_for_clients(&self) -> String {
-        Self::client_connectable_url(&self.loxley_server_url)
+    pub fn bracken_server_url_for_clients(&self) -> String {
+        Self::client_connectable_url(&self.bracken_server_url)
     }
 
     fn client_connectable_url(url: &str) -> String {

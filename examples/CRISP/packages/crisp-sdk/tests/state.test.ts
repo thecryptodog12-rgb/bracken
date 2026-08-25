@@ -24,7 +24,7 @@ describe('State', () => {
   const mockStateLiteResponse: E3StateLiteResponse = {
     id: GLOBAL_E3_ID.toString(),
     chain_id: 11155111,
-    loxley_address: '0x1234567890123456789012345678901234567890',
+    bracken_address: '0x1234567890123456789012345678901234567890',
     status: 'active',
     vote_count: 10,
     start_time: 1000000,
@@ -65,7 +65,7 @@ describe('State', () => {
       expect(state).toBeDefined()
       expect(state.e3Id).toBe(GLOBAL_E3_ID)
       expect(state.chainId).toBe(11155111n)
-      expect(state.loxleyAddress).toBe('0x1234567890123456789012345678901234567890')
+      expect(state.brackenAddress).toBe('0x1234567890123456789012345678901234567890')
       expect(state.status).toBe('active')
       expect(state.voteCount).toBe(10n)
       expect(state.startTime).toBe(1000000n)

@@ -15,12 +15,12 @@
 
 use alloy::sol;
 
-// ── ILoxley ───────────────────────────────────────────────────────────────
+// ── IBracken ───────────────────────────────────────────────────────────────
 
 sol! {
     #[sol(rpc)]
     #[derive(Debug)]
-    interface ILoxley {
+    interface IBracken {
         struct E3 {
             uint256 seed;
             uint8 committeeSize;

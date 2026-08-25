@@ -1,6 +1,6 @@
 <div align="center">
   <picture>
-    <img src="./docs/public/loxley-meta.jpg" alt="Loxley" width="100%">
+    <img src="./docs/public/bracken-meta.jpg" alt="Bracken" width="100%">
   </picture>
 
 [![Docs][docs-badge]][docs] [![Github Actions][gha-badge]][gha] [![Hardhat][hardhat-badge]][hardhat]
@@ -8,23 +8,23 @@
 
 </div>
 
-# Loxley
+# Bracken
 
-> **Note:** Loxley is a fork of [theinterfold/interfold](https://github.com/theinterfold/interfold)
+> **Note:** Bracken is a fork of [theinterfold/interfold](https://github.com/theinterfold/interfold)
 > (LGPL-3.0), retargeted at Robinhood Chain (chain id `4663`). Upstream was itself previously known
 > as **Enclave**.
 >
 > **Nothing is deployed yet.** Contract addresses throughout this repo and the docs are placeholders;
 > the upstream Ethereum deployment is archived in
-> `packages/loxley-contracts/upstream-interfold-deployments.reference.json`. No LOXLEY token exists —
+> `packages/bracken-contracts/upstream-interfold-deployments.reference.json`. No BRACKEN token exists —
 > the tokenomics pages describe upstream's FOLD and are flagged as such.
 >
 > Links to `theinterfold.com` are deliberate: that content lives upstream and renaming the URLs would
 > only break them.
 
-This is the monorepo for **Loxley**, an open-source protocol for confidential coordination.
+This is the monorepo for **Bracken**, an open-source protocol for confidential coordination.
 
-Loxley leverages a combination of Fully Homomorphic Encryption (FHE), Zero-Knowledge Proofs
+Bracken leverages a combination of Fully Homomorphic Encryption (FHE), Zero-Knowledge Proofs
 (ZKPs), and Multi-Party Computation (MPC) to enable Encrypted Execution Environments (E3), with
 integrity and privacy guarantees rooted in cryptography and economics, rather than hardware and
 attestations.
@@ -49,7 +49,7 @@ See [CONTRIBUTING.md][contributing].
 
 ## Development
 
-This section covers the essential commands for setting up and working with the Loxley codebase
+This section covers the essential commands for setting up and working with the Bracken codebase
 locally.
 
 ```bash
@@ -82,9 +82,9 @@ The monorepo provides several test scripts for different components:
 - **`pnpm rust:test`** - Runs all Rust crate tests in the `crates/` directory. This script runs
   tests for all crates in the workspace, not just ciphernode-related crates.
 
-- **`pnpm evm:test`** - Runs tests for the EVM smart contracts in `packages/loxley-contracts`.
+- **`pnpm evm:test`** - Runs tests for the EVM smart contracts in `packages/bracken-contracts`.
 
-- **`pnpm sdk:test`** - Runs tests for the TypeScript SDK in `packages/loxley-sdk`.
+- **`pnpm sdk:test`** - Runs tests for the TypeScript SDK in `packages/bracken-sdk`.
 
 - **`pnpm noir:test`** - Runs tests for Noir circuits in the `circuits/` directory using
   `nargo test`. Requires the [Noir toolchain](https://noir-lang.org/docs/installation) (`nargo`) and
@@ -214,57 +214,57 @@ This workspace's minimum supported rustc version is 1.91.1.
 
 ## Architecture
 
-Loxley employs a modular architecture involving numerous actors and participants. The sequence
+Bracken employs a modular architecture involving numerous actors and participants. The sequence
 diagram below offers a high-level overview of the protocol, but necessarily omits most detail.
 
 ```mermaid
 sequenceDiagram
     participant Users
-    participant Loxley
+    participant Bracken
     participant CiphernodeRegistry
     participant E3Program
     participant ComputeProvider
     participant DecryptionVerifier
 
-    Users->>Loxley: request(parameters)
-    Loxley->>E3Program: validate(e3ProgramParams)
-    Loxley->>ComputeProvider: validate(computeProviderParams)
-    ComputeProvider-->>Loxley: decryptionVerifier
-    Loxley->>CiphernodeRegistry: requestCommittee(e3Id, legacySeed, threshold)
+    Users->>Bracken: request(parameters)
+    Bracken->>E3Program: validate(e3ProgramParams)
+    Bracken->>ComputeProvider: validate(computeProviderParams)
+    ComputeProvider-->>Bracken: decryptionVerifier
+    Bracken->>CiphernodeRegistry: requestCommittee(e3Id, legacySeed, threshold)
     CiphernodeRegistry->>CiphernodeRegistry: commit future entropy block
-    CiphernodeRegistry-->>Loxley: success
-    Loxley-->>Users: e3Id, E3 struct
+    CiphernodeRegistry-->>Bracken: success
+    Bracken-->>Users: e3Id, E3 struct
 
-    Users->>Loxley: activate(e3Id)
-    Loxley->>CiphernodeRegistry: committeePublicKey(e3Id)
-    CiphernodeRegistry-->>Loxley: publicKey
-    Loxley->>Loxley: Set expiration and committeePublicKey
-    Loxley-->>Users: success
+    Users->>Bracken: activate(e3Id)
+    Bracken->>CiphernodeRegistry: committeePublicKey(e3Id)
+    CiphernodeRegistry-->>Bracken: publicKey
+    Bracken->>Bracken: Set expiration and committeePublicKey
+    Bracken-->>Users: success
 
-    Users->>Loxley: publishInput(e3Id, data)
-    Loxley->>E3Program: validateInput(msg.sender, data)
-    E3Program-->>Loxley: input, success
-    Loxley->>Loxley: Store input
-    Loxley-->>Users: success
+    Users->>Bracken: publishInput(e3Id, data)
+    Bracken->>E3Program: validateInput(msg.sender, data)
+    E3Program-->>Bracken: input, success
+    Bracken->>Bracken: Store input
+    Bracken-->>Users: success
 
-    Users->>Loxley: publishCiphertextOutput(e3Id, data)
-    Loxley->>DecryptionVerifier: verify(e3Id, data)
-    DecryptionVerifier-->>Loxley: output, success
-    Loxley->>Loxley: Store ciphertextOutput
-    Loxley-->>Users: success
+    Users->>Bracken: publishCiphertextOutput(e3Id, data)
+    Bracken->>DecryptionVerifier: verify(e3Id, data)
+    DecryptionVerifier-->>Bracken: output, success
+    Bracken->>Bracken: Store ciphertextOutput
+    Bracken-->>Users: success
 
-    Users->>Loxley: publishPlaintextOutput(e3Id, data)
-    Loxley->>E3Program: verify(e3Id, data)
-    E3Program-->>Loxley: output, success
-    Loxley->>Loxley: Store plaintextOutput
-    Loxley-->>Users: success
+    Users->>Bracken: publishPlaintextOutput(e3Id, data)
+    Bracken->>E3Program: verify(e3Id, data)
+    E3Program-->>Bracken: output, success
+    Bracken->>Bracken: Store plaintextOutput
+    Bracken-->>Users: success
 ```
 
 ## 🚀 Release Process
 
 ### Overview
 
-Loxley uses a unified versioning strategy where all packages (Rust crates and npm packages)
+Bracken uses a unified versioning strategy where all packages (Rust crates and npm packages)
 share the same version number. Releases are triggered by git tags and follow semantic versioning.
 
 ### Quick Release
@@ -365,7 +365,7 @@ Once the tag is pushed, GitHub Actions automatically:
 
 ### Version Format
 
-Loxley follows [Semantic Versioning](https://semver.org/):
+Bracken follows [Semantic Versioning](https://semver.org/):
 
 - **Stable**: `v1.0.0` - Production ready
 - **Pre-release**: `v1.0.0-beta.1` - Testing/preview versions
@@ -380,8 +380,8 @@ Loxley follows [Semantic Versioning](https://semver.org/):
 Use stable versions only:
 
 ```bash
-loxleyup install              # Latest stable
-loxleyup install v1.0.0       # Specific stable version
+brackenup install              # Latest stable
+brackenup install v1.0.0       # Specific stable version
 ```
 
 #### For Testing (Testnet)
@@ -389,8 +389,8 @@ loxleyup install v1.0.0       # Specific stable version
 You can use pre-release versions:
 
 ```bash
-loxleyup install --pre-release # Latest pre-release
-loxleyup install v1.0.0-beta.1 # Specific pre-release
+brackenup install --pre-release # Latest pre-release
+brackenup install v1.0.0-beta.1 # Specific pre-release
 ```
 
 #### For Development
@@ -399,7 +399,7 @@ Build from source:
 
 ```bash
 git clone https://github.com/thecryptodog12-rgb/loxley.git
-cd loxley
+cd bracken
 cargo build --release
 ```
 
@@ -431,8 +431,8 @@ For maintainers doing a release:
 - [ ] Decide version number (major/minor/patch)
 - [ ] Run: `pnpm bump:versions X.Y.Z`
 - [ ] Monitor GitHub Actions for successful deployment
-- [ ] Verify packages on [npm](https://www.npmjs.com/org/loxley) and
-      [crates.io](https://crates.io/search?q=loxley)
+- [ ] Verify packages on [npm](https://www.npmjs.com/org/bracken) and
+      [crates.io](https://crates.io/search?q=bracken)
 - [ ] Check GitHub release page for binaries and changelog
 - [ ] Announce release (Discord/Twitter/etc)
 
@@ -464,13 +464,13 @@ If a release has issues:
 1. **Mark as deprecated on npm**:
 
    ```bash
-   npm deprecate @loxley/sdk@1.0.0 "Critical bug, use 1.0.1"
+   npm deprecate @bracken/sdk@1.0.0 "Critical bug, use 1.0.1"
    ```
 
 2. **Yank from crates.io** (if critical):
 
    ```bash
-   cargo yank --version 1.0.0 loxley
+   cargo yank --version 1.0.0 bracken
    ```
 
 3. **Fix and release patch**:

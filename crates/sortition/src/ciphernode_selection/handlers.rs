@@ -4,25 +4,25 @@
 
 use super::*;
 
-impl Handler<LoxleyEvent> for CiphernodeSelector {
+impl Handler<BrackenEvent> for CiphernodeSelector {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            LoxleyEventData::E3Requested(data) => self.notify_sync(ctx, TypedEvent::new(data, ec)),
-            LoxleyEventData::E3RequestComplete(data) => {
+            BrackenEventData::E3Requested(data) => self.notify_sync(ctx, TypedEvent::new(data, ec)),
+            BrackenEventData::E3RequestComplete(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CommitteeFinalized(data) => {
+            BrackenEventData::CommitteeFinalized(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CommitteeMemberExpelled(data) => {
+            BrackenEventData::CommitteeMemberExpelled(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::CommitteeMemberExcluded(data) => {
+            BrackenEventData::CommitteeMemberExcluded(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::Shutdown(data) => self.notify_sync(ctx, data),
+            BrackenEventData::Shutdown(data) => self.notify_sync(ctx, data),
             _ => (),
         }
     }

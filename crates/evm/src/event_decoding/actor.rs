@@ -7,12 +7,12 @@
 use actix::{Actor, Handler};
 use alloy::primitives::{LogData, B256};
 use anyhow::{Context as _, Result};
-use e3_events::LoxleyEventData;
+use e3_events::BrackenEventData;
 use e3_utils::MAILBOX_LIMIT;
 use tracing::{debug, error};
 
 use crate::domain::log_timestamp::from_log_chain_id_to_ts;
-use crate::messages::{EvmEvent, EvmEventProcessor, EvmLog, EvmLogRejected, LoxleyEvmEvent};
+use crate::messages::{EvmEvent, EvmEventProcessor, EvmLog, EvmLogRejected, BrackenEvmEvent};
 
 pub type ExtractorFn<E> = fn(&LogData, &[B256], u64) -> Option<E>;
 pub type VersionAwareExtractorFn<E> = fn(&LogData, &[B256], u64) -> Result<Option<E>>;
@@ -24,7 +24,7 @@ enum Extractor<E> {
 
 pub struct EvmParser {
     next: EvmEventProcessor,
-    extractor: Extractor<LoxleyEventData>,
+    extractor: Extractor<BrackenEventData>,
 }
 
 impl Actor for EvmParser {
@@ -35,7 +35,7 @@ impl Actor for EvmParser {
 }
 
 impl EvmParser {
-    pub fn new(next: &EvmEventProcessor, extractor: ExtractorFn<LoxleyEventData>) -> Self {
+    pub fn new(next: &EvmEventProcessor, extractor: ExtractorFn<BrackenEventData>) -> Self {
         Self {
             next: next.clone(),
             extractor: Extractor::Strict(extractor),
@@ -44,7 +44,7 @@ impl EvmParser {
 
     pub fn new_version_aware(
         next: &EvmEventProcessor,
-        extractor: VersionAwareExtractorFn<LoxleyEventData>,
+        extractor: VersionAwareExtractorFn<BrackenEventData>,
     ) -> Self {
         Self {
             next: next.clone(),
@@ -53,7 +53,7 @@ impl EvmParser {
     }
 }
 
-fn parse_log(log: EvmLog, extractor: &Extractor<LoxleyEventData>) -> Result<Option<EvmEvent>> {
+fn parse_log(log: EvmLog, extractor: &Extractor<BrackenEventData>) -> Result<Option<EvmEvent>> {
     let block = log.log.block_number.context(
         "provider log is missing its block number; pending or malformed logs cannot be ordered",
     )?;
@@ -83,19 +83,19 @@ fn parse_log(log: EvmLog, extractor: &Extractor<LoxleyEventData>) -> Result<Opti
     )))
 }
 
-impl Handler<LoxleyEvmEvent> for EvmParser {
+impl Handler<BrackenEvmEvent> for EvmParser {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvmEvent, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvmEvent, _ctx: &mut Self::Context) -> Self::Result {
         match msg.clone() {
-            LoxleyEvmEvent::Log(log) => {
+            BrackenEvmEvent::Log(log) => {
                 debug!("processing event({})", msg.get_id());
                 let id = log.id;
                 let chain_id = log.chain_id;
                 match parse_log(log, &self.extractor) {
-                    Ok(Some(event)) => self.next.do_send(LoxleyEvmEvent::Event(event)),
+                    Ok(Some(event)) => self.next.do_send(BrackenEvmEvent::Event(event)),
                     Ok(None) => {
                         debug!(%id, chain_id, "Skipping unsupported EVM event and advancing historical ordering");
-                        self.next.do_send(LoxleyEvmEvent::Processed(id));
+                        self.next.do_send(BrackenEvmEvent::Processed(id));
                     }
                     Err(parse_error) => {
                         error!(
@@ -105,7 +105,7 @@ impl Handler<LoxleyEvmEvent> for EvmParser {
                             "Rejecting EVM log and failing the chain ingestion pipeline"
                         );
                         self.next
-                            .do_send(LoxleyEvmEvent::Rejected(EvmLogRejected::new(
+                            .do_send(BrackenEvmEvent::Rejected(EvmLogRejected::new(
                                 id,
                                 chain_id,
                                 parse_error.to_string(),
@@ -113,7 +113,7 @@ impl Handler<LoxleyEvmEvent> for EvmParser {
                     }
                 }
             }
-            hist @ LoxleyEvmEvent::HistoricalSyncComplete(..) => self.next.do_send(hist),
+            hist @ BrackenEvmEvent::HistoricalSyncComplete(..) => self.next.do_send(hist),
             _ => (),
         }
     }
@@ -127,15 +127,15 @@ mod tests {
     use e3_events::TestEvent;
     use tokio::sync::mpsc;
 
-    fn test_extractor(_: &LogData, _: &[B256], _: u64) -> Option<LoxleyEventData> {
+    fn test_extractor(_: &LogData, _: &[B256], _: u64) -> Option<BrackenEventData> {
         Some(TestEvent::new("parsed", 1).into())
     }
 
-    fn rejected_extractor(_: &LogData, _: &[B256], _: u64) -> Option<LoxleyEventData> {
+    fn rejected_extractor(_: &LogData, _: &[B256], _: u64) -> Option<BrackenEventData> {
         None
     }
 
-    fn skipped_extractor(_: &LogData, _: &[B256], _: u64) -> Result<Option<LoxleyEventData>> {
+    fn skipped_extractor(_: &LogData, _: &[B256], _: u64) -> Result<Option<BrackenEventData>> {
         Ok(None)
     }
 
@@ -185,16 +185,16 @@ mod tests {
         assert_eq!(block, 7);
     }
 
-    struct Collector(mpsc::UnboundedSender<LoxleyEvmEvent>);
+    struct Collector(mpsc::UnboundedSender<BrackenEvmEvent>);
 
     impl Actor for Collector {
         type Context = Context<Self>;
     }
 
-    impl Handler<LoxleyEvmEvent> for Collector {
+    impl Handler<BrackenEvmEvent> for Collector {
         type Result = ();
 
-        fn handle(&mut self, msg: LoxleyEvmEvent, _: &mut Self::Context) {
+        fn handle(&mut self, msg: BrackenEvmEvent, _: &mut Self::Context) {
             let _ = self.0.send(msg);
         }
     }
@@ -207,12 +207,12 @@ mod tests {
         let malformed = log(Some(7), Some(3));
         let expected_id = malformed.id;
 
-        parser.send(LoxleyEvmEvent::Log(malformed)).await.unwrap();
+        parser.send(BrackenEvmEvent::Log(malformed)).await.unwrap();
 
         let rejected = rx.recv().await.expect("parser rejection");
         assert!(matches!(
             rejected,
-            LoxleyEvmEvent::Rejected(EvmLogRejected { id, chain_id: 1, .. }) if id == expected_id
+            BrackenEvmEvent::Rejected(EvmLogRejected { id, chain_id: 1, .. }) if id == expected_id
         ));
     }
 
@@ -224,11 +224,11 @@ mod tests {
         let unsupported = log(Some(7), Some(3));
         let expected_id = unsupported.id;
 
-        parser.send(LoxleyEvmEvent::Log(unsupported)).await.unwrap();
+        parser.send(BrackenEvmEvent::Log(unsupported)).await.unwrap();
 
         assert_eq!(
             rx.recv().await.expect("processed marker"),
-            LoxleyEvmEvent::Processed(expected_id)
+            BrackenEvmEvent::Processed(expected_id)
         );
     }
 }

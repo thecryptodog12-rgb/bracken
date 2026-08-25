@@ -53,8 +53,8 @@ fn peer_connected_before_dial_does_not_publish() {
     assert_eq!(r.on_all_peers_dialed(0, 3), ReadinessDecision::PublishReady);
 }
 
-fn net_event(ts: u128) -> LoxleyEvent {
-    LoxleyEvent::<Unsequenced>::new_with_timestamp(
+fn net_event(ts: u128) -> BrackenEvent {
+    BrackenEvent::<Unsequenced>::new_with_timestamp(
         PlaintextAggregated {
             e3_id: E3id::new(ts.to_string(), 1),
             decrypted_output: vec![ArcBytes::from_bytes(&[1, 2, 3])],
@@ -69,8 +69,8 @@ fn net_event(ts: u128) -> LoxleyEvent {
     .into_sequenced(ts as u64)
 }
 
-fn net_non_forwardable_event(ts: u128) -> LoxleyEvent {
-    LoxleyEvent::<Unsequenced>::new_with_timestamp(
+fn net_non_forwardable_event(ts: u128) -> BrackenEvent {
+    BrackenEvent::<Unsequenced>::new_with_timestamp(
         TestEvent::new("remote-control", ts as u64).into(),
         None,
         ts,
@@ -80,8 +80,8 @@ fn net_non_forwardable_event(ts: u128) -> LoxleyEvent {
     .into_sequenced(ts as u64)
 }
 
-fn local_event(ts: u128) -> LoxleyEvent {
-    LoxleyEvent::<Unsequenced>::new_with_timestamp(
+fn local_event(ts: u128) -> BrackenEvent {
+    BrackenEvent::<Unsequenced>::new_with_timestamp(
         TestEvent::new("y", ts as u64).into(),
         None,
         ts,

@@ -4,8 +4,8 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-use loxley_lib::configs::default::MAX_MSG_NON_ZERO_COEFFS;
-use loxley_lib::math::polynomial::Polynomial;
+use bracken_lib::configs::default::MAX_MSG_NON_ZERO_COEFFS;
+use bracken_lib::math::polynomial::Polynomial;
 
 use crate::constants::{MAX_OPTIONS, MAX_VOTE_BITS};
 

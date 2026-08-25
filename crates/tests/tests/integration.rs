@@ -15,7 +15,7 @@ use e3_crypto::Cipher;
 use e3_events::{
     hlc::HlcTimestamp, prelude::*, BusHandle, CiphertextOutputPublished, CommitteeFinalized,
     CommitteeRequested, ComputeRequestKind, ComputeResponseKind, ConfigurationUpdated,
-    DkgFoldAttestationContextEstablished, E3Requested, E3id, LoxleyEvent, LoxleyEventData,
+    DkgFoldAttestationContextEstablished, E3Requested, E3id, BrackenEvent, BrackenEventData,
     OperatorActivationChanged, PlaintextAggregated, ProofType, Seed, TakeEvents,
     TicketBalanceUpdated, VerificationKind, ZkRequest, ZkResponse,
     DKG_FOLD_ATTESTATION_CONTEXT_SCHEMA_VERSION,
@@ -933,9 +933,9 @@ async fn expect_node_events_with_timeouts(
     Ok(h)
 }
 
-fn project_history<F>(history: &[LoxleyEvent], mut projector: F) -> Vec<&'static str>
+fn project_history<F>(history: &[BrackenEvent], mut projector: F) -> Vec<&'static str>
 where
-    F: FnMut(&LoxleyEventData) -> Option<&'static str>,
+    F: FnMut(&BrackenEventData) -> Option<&'static str>,
 {
     history
         .iter()
@@ -950,12 +950,12 @@ fn count_projected_events(projected: &[&str], event_type: &str) -> usize {
 /// Scan a node history for slashing, accusation, and protocol-fault signals that must not
 /// appear on an all-honest benchmark run. Catches regressions such as spurious C2→C4
 /// commitment mismatches when N > H that completion-only assertions would miss.
-fn collect_honest_run_faults(history: &[LoxleyEvent], e3_id: &E3id, context: &str) -> Vec<String> {
+fn collect_honest_run_faults(history: &[BrackenEvent], e3_id: &E3id, context: &str) -> Vec<String> {
     let mut faults = Vec::new();
 
     for event in history {
         match event.get_data() {
-            LoxleyEventData::CommitmentConsistencyCheckComplete(data)
+            BrackenEventData::CommitmentConsistencyCheckComplete(data)
                 if data.e3_id == *e3_id && !data.inconsistent_parties.is_empty() =>
             {
                 faults.push(format!(
@@ -963,31 +963,31 @@ fn collect_honest_run_faults(history: &[LoxleyEvent], e3_id: &E3id, context: &st
                     data.kind, data.inconsistent_parties
                 ));
             }
-            LoxleyEventData::CommitmentConsistencyViolation(data) if data.e3_id == *e3_id => {
+            BrackenEventData::CommitmentConsistencyViolation(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: CommitmentConsistencyViolation accused_party_id={} proof_type={:?}",
                     data.accused_party_id, data.proof_type
                 ));
             }
-            LoxleyEventData::ProofFailureAccusation(data) if data.e3_id == *e3_id => {
+            BrackenEventData::ProofFailureAccusation(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: ProofFailureAccusation accuser={} accused_party_id={} proof_type={:?}",
                     data.accuser, data.accused_party_id, data.proof_type
                 ));
             }
-            LoxleyEventData::ProofVerificationFailed(data) if data.e3_id == *e3_id => {
+            BrackenEventData::ProofVerificationFailed(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: ProofVerificationFailed accused_party_id={} proof_type={:?}",
                     data.accused_party_id, data.proof_type
                 ));
             }
-            LoxleyEventData::SignedProofFailed(data) if data.e3_id == *e3_id => {
+            BrackenEventData::SignedProofFailed(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: SignedProofFailed faulting_node={} proof_type={:?}",
                     data.faulting_node, data.proof_type
                 ));
             }
-            LoxleyEventData::ShareVerificationComplete(data)
+            BrackenEventData::ShareVerificationComplete(data)
                 if data.e3_id == *e3_id && !data.dishonest_parties.is_empty() =>
             {
                 faults.push(format!(
@@ -995,27 +995,27 @@ fn collect_honest_run_faults(history: &[LoxleyEvent], e3_id: &E3id, context: &st
                     data.kind, data.dishonest_parties
                 ));
             }
-            LoxleyEventData::AccusationVote(data) if data.e3_id == *e3_id => {
+            BrackenEventData::AccusationVote(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: AccusationVote voter={} accusation_id={:?}",
                     data.voter, data.accusation_id
                 ));
             }
-            LoxleyEventData::CommitteeMemberExpelled(data) if data.e3_id == *e3_id => {
+            BrackenEventData::CommitteeMemberExpelled(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: CommitteeMemberExpelled node={} party_id={:?}",
                     data.node, data.party_id
                 ));
             }
-            LoxleyEventData::E3Failed(data) if data.e3_id == *e3_id => {
+            BrackenEventData::E3Failed(data) if data.e3_id == *e3_id => {
                 faults.push(format!(
                     "{context}: E3Failed stage={:?} reason={:?}",
                     data.failed_at_stage, data.reason
                 ));
             }
-            LoxleyEventData::LoxleyError(data) => {
+            BrackenEventData::BrackenError(data) => {
                 faults.push(format!(
-                    "{context}: LoxleyError {:?}: {}",
+                    "{context}: BrackenError {:?}: {}",
                     data.err_type, data.message
                 ));
             }
@@ -1026,7 +1026,7 @@ fn collect_honest_run_faults(history: &[LoxleyEvent], e3_id: &E3id, context: &st
     faults
 }
 
-fn assert_honest_run_safeguards(history: &[LoxleyEvent], e3_id: &E3id, context: &str) {
+fn assert_honest_run_safeguards(history: &[BrackenEvent], e3_id: &E3id, context: &str) {
     let faults = collect_honest_run_faults(history, e3_id, context);
     assert!(
         faults.is_empty(),
@@ -1038,13 +1038,13 @@ fn assert_honest_run_safeguards(history: &[LoxleyEvent], e3_id: &E3id, context: 
 
 /// Wall seconds between first `start_when` and last `end_when` event in `history` (HLC physical time).
 fn history_wall_seconds_between<F1, F2>(
-    history: &[LoxleyEvent],
+    history: &[BrackenEvent],
     start_when: F1,
     end_when: F2,
 ) -> Option<f64>
 where
-    F1: Fn(&LoxleyEventData) -> bool,
-    F2: Fn(&LoxleyEventData) -> bool,
+    F1: Fn(&BrackenEventData) -> bool,
+    F2: Fn(&BrackenEventData) -> bool,
 {
     let start = history.iter().find(|e| start_when(e.get_data()))?;
     let end = history.iter().rfind(|e| end_when(e.get_data()))?;
@@ -1053,83 +1053,83 @@ where
     (end_us >= start_us).then(|| (end_us - start_us) as f64 / 1_000_000.0)
 }
 
-fn publickey_aggregator_marker(data: &LoxleyEventData, e3_id: &E3id) -> Option<&'static str> {
+fn publickey_aggregator_marker(data: &BrackenEventData, e3_id: &E3id) -> Option<&'static str> {
     match data {
-        LoxleyEventData::CommitteeFinalized(data) if data.e3_id == *e3_id => {
+        BrackenEventData::CommitteeFinalized(data) if data.e3_id == *e3_id => {
             Some("CommitteeFinalized")
         }
-        LoxleyEventData::CiphernodeSelected(data) if data.e3_id == *e3_id => {
+        BrackenEventData::CiphernodeSelected(data) if data.e3_id == *e3_id => {
             Some("CiphernodeSelected")
         }
-        LoxleyEventData::AggregatorChanged(data) if data.e3_id == *e3_id && data.is_aggregator => {
+        BrackenEventData::AggregatorChanged(data) if data.e3_id == *e3_id && data.is_aggregator => {
             Some("AggregatorChanged")
         }
-        LoxleyEventData::KeyshareCreated(data) if data.e3_id == *e3_id => Some("KeyshareCreated"),
-        LoxleyEventData::ShareVerificationDispatched(data)
+        BrackenEventData::KeyshareCreated(data) if data.e3_id == *e3_id => Some("KeyshareCreated"),
+        BrackenEventData::ShareVerificationDispatched(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::PkGenerationProofs =>
         {
             Some("ShareVerificationDispatched")
         }
-        LoxleyEventData::CommitmentConsistencyCheckRequested(data)
+        BrackenEventData::CommitmentConsistencyCheckRequested(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::PkGenerationProofs =>
         {
             Some("CommitmentConsistencyCheckRequested")
         }
-        LoxleyEventData::CommitmentConsistencyCheckComplete(data)
+        BrackenEventData::CommitmentConsistencyCheckComplete(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::PkGenerationProofs =>
         {
             Some("CommitmentConsistencyCheckComplete")
         }
-        LoxleyEventData::ProofVerificationPassed(data)
+        BrackenEventData::ProofVerificationPassed(data)
             if data.e3_id == *e3_id && data.proof_type == ProofType::C1PkGeneration =>
         {
             Some("ProofVerificationPassed")
         }
-        LoxleyEventData::ShareVerificationComplete(data)
+        BrackenEventData::ShareVerificationComplete(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::PkGenerationProofs =>
         {
             Some("ShareVerificationComplete")
         }
-        LoxleyEventData::PkAggregationProofPending(data) if data.e3_id == *e3_id => {
+        BrackenEventData::PkAggregationProofPending(data) if data.e3_id == *e3_id => {
             Some("PkAggregationProofPending")
         }
-        LoxleyEventData::PkAggregationProofSigned(data) if data.e3_id == *e3_id => {
+        BrackenEventData::PkAggregationProofSigned(data) if data.e3_id == *e3_id => {
             Some("PkAggregationProofSigned")
         }
-        LoxleyEventData::DKGRecursiveAggregationComplete(data) if data.e3_id == *e3_id => {
+        BrackenEventData::DKGRecursiveAggregationComplete(data) if data.e3_id == *e3_id => {
             Some("DKGRecursiveAggregationComplete")
         }
-        LoxleyEventData::PublicKeyAggregated(data) if data.e3_id == *e3_id => {
+        BrackenEventData::PublicKeyAggregated(data) if data.e3_id == *e3_id => {
             Some("PublicKeyAggregated")
         }
         _ => None,
     }
 }
 
-fn plaintext_aggregator_marker(data: &LoxleyEventData, e3_id: &E3id) -> Option<&'static str> {
+fn plaintext_aggregator_marker(data: &BrackenEventData, e3_id: &E3id) -> Option<&'static str> {
     match data {
-        LoxleyEventData::CiphertextOutputPublished(data) if data.e3_id == *e3_id => {
+        BrackenEventData::CiphertextOutputPublished(data) if data.e3_id == *e3_id => {
             Some("CiphertextOutputPublished")
         }
-        LoxleyEventData::DecryptionshareCreated(data) if data.e3_id == *e3_id => {
+        BrackenEventData::DecryptionshareCreated(data) if data.e3_id == *e3_id => {
             Some("DecryptionshareCreated")
         }
-        LoxleyEventData::ShareVerificationDispatched(data)
+        BrackenEventData::ShareVerificationDispatched(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::ThresholdDecryptionProofs =>
         {
             Some("ShareVerificationDispatched")
         }
-        LoxleyEventData::CommitmentConsistencyCheckRequested(data)
+        BrackenEventData::CommitmentConsistencyCheckRequested(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::ThresholdDecryptionProofs =>
         {
             Some("CommitmentConsistencyCheckRequested")
         }
-        LoxleyEventData::CommitmentConsistencyCheckComplete(data)
+        BrackenEventData::CommitmentConsistencyCheckComplete(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::ThresholdDecryptionProofs =>
         {
             Some("CommitmentConsistencyCheckComplete")
         }
-        LoxleyEventData::ComputeRequest(data)
+        BrackenEventData::ComputeRequest(data)
             if data.e3_id == *e3_id
                 && matches!(
                     &data.request,
@@ -1143,7 +1143,7 @@ fn plaintext_aggregator_marker(data: &LoxleyEventData, e3_id: &E3id) -> Option<&
         {
             Some("ComputeRequest")
         }
-        LoxleyEventData::ComputeResponse(data)
+        BrackenEventData::ComputeResponse(data)
             if data.e3_id == *e3_id
                 && matches!(
                     &data.response,
@@ -1159,23 +1159,23 @@ fn plaintext_aggregator_marker(data: &LoxleyEventData, e3_id: &E3id) -> Option<&
         {
             Some("ComputeResponse")
         }
-        LoxleyEventData::ProofVerificationPassed(data)
+        BrackenEventData::ProofVerificationPassed(data)
             if data.e3_id == *e3_id && data.proof_type == ProofType::C6ThresholdShareDecryption =>
         {
             Some("ProofVerificationPassed")
         }
-        LoxleyEventData::ShareVerificationComplete(data)
+        BrackenEventData::ShareVerificationComplete(data)
             if data.e3_id == *e3_id && data.kind == VerificationKind::ThresholdDecryptionProofs =>
         {
             Some("ShareVerificationComplete")
         }
-        LoxleyEventData::AggregationProofPending(data) if data.e3_id == *e3_id => {
+        BrackenEventData::AggregationProofPending(data) if data.e3_id == *e3_id => {
             Some("AggregationProofPending")
         }
-        LoxleyEventData::AggregationProofSigned(data) if data.e3_id == *e3_id => {
+        BrackenEventData::AggregationProofSigned(data) if data.e3_id == *e3_id => {
             Some("AggregationProofSigned")
         }
-        LoxleyEventData::PlaintextAggregated(data) if data.e3_id == *e3_id => {
+        BrackenEventData::PlaintextAggregated(data) if data.e3_id == *e3_id => {
             Some("PlaintextAggregated")
         }
         _ => None,
@@ -1396,7 +1396,7 @@ async fn test_trbfv_actor() -> Result<()> {
         rpc_url: "http://localhost:8545".into(),
         rpc_auth: Default::default(),
         contracts: e3_config::ContractAddresses {
-            loxley: e3_config::Contract::AddressOnly(
+            bracken: e3_config::Contract::AddressOnly(
                 "0x0000000000000000000000000000000000000000".into(),
             ),
             ciphernode_registry: e3_config::Contract::AddressOnly(
@@ -1686,14 +1686,14 @@ async fn test_trbfv_actor() -> Result<()> {
     let dkg_parties: HashSet<u64> = h
         .iter()
         .filter_map(|e| match e.get_data() {
-            LoxleyEventData::DKGRecursiveAggregationComplete(d) => Some(d.party_id),
+            BrackenEventData::DKGRecursiveAggregationComplete(d) => Some(d.party_id),
             _ => None,
         })
         .collect();
     let ks_parties: HashSet<u64> = h
         .iter()
         .filter_map(|e| match e.get_data() {
-            LoxleyEventData::KeyshareCreated(d) => Some(d.party_id),
+            BrackenEventData::KeyshareCreated(d) => Some(d.party_id),
             _ => None,
         })
         .collect();
@@ -1718,7 +1718,7 @@ async fn test_trbfv_actor() -> Result<()> {
         .iter()
         .rev()
         .find_map(|e| match e.get_data() {
-            LoxleyEventData::PublicKeyAggregated(d) => Some(d),
+            BrackenEventData::PublicKeyAggregated(d) => Some(d),
             _ => None,
         })
         .expect("PublicKeyAggregated in history");
@@ -1779,10 +1779,10 @@ async fn test_trbfv_actor() -> Result<()> {
         |d| {
             matches!(
                 d,
-                LoxleyEventData::PkAggregationProofPending(data) if data.e3_id == e3_id
+                BrackenEventData::PkAggregationProofPending(data) if data.e3_id == e3_id
             )
         },
-        |d| matches!(d, LoxleyEventData::PublicKeyAggregated(data) if data.e3_id == e3_id),
+        |d| matches!(d, BrackenEventData::PublicKeyAggregated(data) if data.e3_id == e3_id),
     ) {
         report.push_wall(
             "Aggregator P2: PkAggregation pending -> PublicKeyAggregated (wall)",
@@ -1804,7 +1804,7 @@ async fn test_trbfv_actor() -> Result<()> {
     // First we get the public key from the collector-visible gossip event.
     println!("Getting public key");
     let Some(pubkey_event) = h.iter().rev().find_map(|event| match event.get_data() {
-        LoxleyEventData::PublicKeyAggregated(data) => Some(data.clone()),
+        BrackenEventData::PublicKeyAggregated(data) => Some(data.clone()),
         _ => None,
     }) else {
         panic!(
@@ -1906,7 +1906,7 @@ async fn test_trbfv_actor() -> Result<()> {
     let unique_ds_parties: HashSet<u64> = h
         .iter()
         .filter_map(|e| match e.get_data() {
-            LoxleyEventData::DecryptionshareCreated(d) => Some(d.party_id),
+            BrackenEventData::DecryptionshareCreated(d) => Some(d.party_id),
             _ => None,
         })
         .collect();
@@ -1952,11 +1952,11 @@ async fn test_trbfv_actor() -> Result<()> {
         .take_while(|e| {
             !matches!(
                 e.get_data(),
-                LoxleyEventData::ShareVerificationDispatched(_)
+                BrackenEventData::ShareVerificationDispatched(_)
             )
         })
         .filter_map(|e| match e.get_data() {
-            LoxleyEventData::DecryptionshareCreated(d) if d.e3_id == e3_id => Some(d.party_id),
+            BrackenEventData::DecryptionshareCreated(d) if d.e3_id == e3_id => Some(d.party_id),
             _ => None,
         })
         .collect();
@@ -2054,10 +2054,10 @@ async fn test_trbfv_actor() -> Result<()> {
         |d| {
             matches!(
                 d,
-                LoxleyEventData::AggregationProofPending(data) if data.e3_id == e3_id
+                BrackenEventData::AggregationProofPending(data) if data.e3_id == e3_id
             )
         },
-        |d| matches!(d, LoxleyEventData::PlaintextAggregated(data) if data.e3_id == e3_id),
+        |d| matches!(d, BrackenEventData::PlaintextAggregated(data) if data.e3_id == e3_id),
     ) {
         report.push_wall(
             "Aggregator P4: Aggregation pending -> PlaintextAggregated (wall)",
@@ -2074,7 +2074,7 @@ async fn test_trbfv_actor() -> Result<()> {
         .iter()
         .rev()
         .find_map(|e| {
-            if let LoxleyEventData::PlaintextAggregated(PlaintextAggregated {
+            if let BrackenEventData::PlaintextAggregated(PlaintextAggregated {
                 decrypted_output,
                 decryption_aggregator_proofs,
                 ..
@@ -2311,7 +2311,7 @@ async fn test_trbfv_actor() -> Result<()> {
 
 #[actix::test]
 async fn test_p2p_actor_forwards_events_to_network() -> Result<()> {
-    use e3_events::{CiphernodeSelected, LoxleyEvent, TakeEvents, Unsequenced};
+    use e3_events::{CiphernodeSelected, BrackenEvent, TakeEvents, Unsequenced};
     use e3_net::events::GossipData;
     use e3_net::{events::NetEvent, NetEventTranslator};
     use std::sync::Arc;
@@ -2329,7 +2329,7 @@ async fn test_p2p_actor_forwards_events_to_network() -> Result<()> {
     NetEventTranslator::setup(&bus, &cmd_tx, &event_rx, "my-topic");
 
     // Capture messages from output on msgs vec
-    let msgs: Arc<Mutex<Vec<LoxleyEventData>>> = Arc::new(Mutex::new(Vec::new()));
+    let msgs: Arc<Mutex<Vec<BrackenEventData>>> = Arc::new(Mutex::new(Vec::new()));
 
     let msgs_loop = msgs.clone();
 
@@ -2344,7 +2344,7 @@ async fn test_p2p_actor_forwards_events_to_network() -> Result<()> {
                 _ => None,
             } {
                 if let GossipData::GossipBytes(_) = msg {
-                    let event: LoxleyEvent<Unsequenced> = msg.clone().try_into().unwrap();
+                    let event: BrackenEvent<Unsequenced> = msg.clone().try_into().unwrap();
                     let (data, _) = event.split();
                     msgs_loop.lock().await.push(data);
                     event_tx.send(NetEvent::GossipData(msg)).unwrap();
@@ -2382,7 +2382,7 @@ async fn test_p2p_actor_forwards_events_to_network() -> Result<()> {
 
     // check the history of the event bus
     let history = history_collector
-        .send(TakeEvents::<LoxleyEvent>::new(3))
+        .send(TakeEvents::<BrackenEvent>::new(3))
         .await?;
 
     assert_eq!(
@@ -2432,7 +2432,7 @@ async fn test_p2p_actor_forwards_events_to_bus() -> Result<()> {
 
     // check the history of the event bus
     let history = history_collector
-        .send(TakeEvents::<LoxleyEvent>::new(1))
+        .send(TakeEvents::<BrackenEvent>::new(1))
         .await?;
 
     assert_eq!(
@@ -2440,7 +2440,7 @@ async fn test_p2p_actor_forwards_events_to_bus() -> Result<()> {
             .events
             .into_iter()
             .map(|e| e.into_data())
-            .collect::<Vec<LoxleyEventData>>(),
+            .collect::<Vec<BrackenEventData>>(),
         vec![event.into()]
     );
 
@@ -2558,7 +2558,7 @@ async fn test_stopped_keyshares_retain_state() -> Result<()> {
         let history_collector = cn1.history().unwrap();
         let error_collector = cn1.errors().unwrap();
         let history = history_collector
-            .send(TakeEvents::<e3_events::LoxleyEvent>::new(14))
+            .send(TakeEvents::<e3_events::BrackenEvent>::new(14))
             .await?;
         let errors = error_collector.send(GetEvents::new()).await?;
 
@@ -2589,7 +2589,7 @@ async fn test_stopped_keyshares_retain_state() -> Result<()> {
 
     let bus = EventSystem::in_mem()
         .with_event_bus(
-            EventBus::<e3_events::LoxleyEvent>::new(EventBusConfig { deduplicate: true }).start(),
+            EventBus::<e3_events::BrackenEvent>::new(EventBusConfig { deduplicate: true }).start(),
         )
         .handle()?
         .enable("cn2");
@@ -2623,7 +2623,7 @@ async fn test_stopped_keyshares_retain_state() -> Result<()> {
         .events
         .iter()
         .filter_map(|evt| match evt.get_data() {
-            LoxleyEventData::KeyshareCreated(data) => {
+            BrackenEventData::KeyshareCreated(data) => {
                 PublicKeyShare::deserialize(&data.pubkey, &params, crpoly.clone()).ok()
             }
             _ => None,
@@ -2644,14 +2644,14 @@ async fn test_stopped_keyshares_retain_state() -> Result<()> {
     })?;
 
     let history = history_collector
-        .send(TakeEvents::<e3_events::LoxleyEvent>::new(5))
+        .send(TakeEvents::<e3_events::BrackenEvent>::new(5))
         .await?;
 
     let actual = history
         .events
         .into_iter()
         .filter_map(|e| match e.into_data() {
-            LoxleyEventData::PlaintextAggregated(data) => Some(data),
+            BrackenEventData::PlaintextAggregated(data) => Some(data),
             _ => None,
         })
         .collect::<Vec<_>>()
@@ -2808,11 +2808,11 @@ async fn test_duplicate_e3_id_with_different_chain_id() -> Result<()> {
     )?)?;
     let history_collector = ciphernodes.last().unwrap().history().unwrap();
     let history = history_collector
-        .send(TakeEvents::<e3_events::LoxleyEvent>::new(28))
+        .send(TakeEvents::<e3_events::BrackenEvent>::new(28))
         .await?;
 
     let actual_pubkey_agg_1 = match history.events.last().cloned().unwrap().into_data() {
-        e3_events::LoxleyEventData::PublicKeyAggregated(ev) => ev,
+        e3_events::BrackenEventData::PublicKeyAggregated(ev) => ev,
         other => panic!("expected PublicKeyAggregated, got {other:?}"),
     };
     assert_eq!(
@@ -2852,11 +2852,11 @@ async fn test_duplicate_e3_id_with_different_chain_id() -> Result<()> {
     )?)?;
 
     let history = history_collector
-        .send(TakeEvents::<e3_events::LoxleyEvent>::new(8))
+        .send(TakeEvents::<e3_events::BrackenEvent>::new(8))
         .await?;
 
     let actual_pubkey_agg_2 = match history.events.last().cloned().unwrap().into_data() {
-        e3_events::LoxleyEventData::PublicKeyAggregated(ev) => ev,
+        e3_events::BrackenEventData::PublicKeyAggregated(ev) => ev,
         other => panic!("expected PublicKeyAggregated, got {other:?}"),
     };
     assert_eq!(

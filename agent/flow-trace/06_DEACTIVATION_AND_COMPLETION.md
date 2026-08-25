@@ -27,9 +27,9 @@ Bond owner submits removeTicketBalanceFor(operator, 50)
     │  │                                                         │
     │  │  removeTicketBalanceFor(operator, 50):                  │
     │  │    1. require(msg.sender == bondOwnerOf(operator))      │
-    │  │    2. require(amount != 0, registered, sufficient tLOXLEY)│
+    │  │    2. require(amount != 0, registered, sufficient tBRACKEN)│
     │  │    3. ticketToken.burnTickets(operator, amount)         │
-    │  │       → tLOXLEY destroyed, underlying becomes claimable      │
+    │  │       → tBRACKEN destroyed, underlying becomes claimable      │
     │  │    4. _exits.queueTicketsForExit(                       │
     │  │         operator, exitDelay, amount                      │
     │  │       )                                                  │
@@ -57,10 +57,10 @@ Bond owner submits unbondCiphernodeFor(operator, 20000)
     │  │                                                         │
     │  │  unbondCiphernodeFor(operator, 20000):                     │
     │  │    1. require(msg.sender == bondOwnerOf(operator))      │
-    │  │    2. require(amount != 0, sufficient bonded LOXLEY)      │
+    │  │    2. require(amount != 0, sufficient bonded BRACKEN)      │
     │  │    3. operators[op].ciphernodeBond -= 20000                │
     │  │    4. _exits.queueCiphernodeBondsForExit(op, exitDelay, 20000)│
-    │  │       → Pending LOXLEY remains in totalBonded(bondOwner)  │
+    │  │       → Pending BRACKEN remains in totalBonded(bondOwner)  │
     │  │         token-level locked-floor accounting             │
     │  │    5. _updateOperatorStatus(operator)                   │
     │  │       → If ciphernodeBond <                                │
@@ -81,7 +81,7 @@ Bond owner submits both owner-authorized calls
 ├─ Calls removeTicketBalanceFor(operator, 50) first
 └─ Then calls unbondCiphernodeFor(operator, 20000)
   → Tickets are queued in ExitQueueLib
-  → LOXLEY is queued in ExitQueueLib pending ciphernode bond exits and remains counted in totalBonded()
+  → BRACKEN is queued in ExitQueueLib pending ciphernode bond exits and remains counted in totalBonded()
 ```
 
 ---
@@ -148,7 +148,7 @@ Bond owner or operator submits deregisterOperatorFor(operator)
    └─ the bond owner may also claim ciphernode bonds
 ```
 
-The ticket collateral asset and LOXLEY are both paid to the bond owner. The queue and slash target
+The ticket collateral asset and BRACKEN are both paid to the bond owner. The queue and slash target
 remain keyed by the operator until the claim completes.
 
 The next registration uses a free tree index before it appends a leaf. Historical E3 roots remain
@@ -228,7 +228,7 @@ publishPlaintextOutput() succeeds
 ## Rust-Side: Node Shutdown
 
 ```text
-loxley start → running node
+bracken start → running node
 │
 ├─ Ctrl+C / SIGINT / SIGTERM
 │
@@ -305,14 +305,14 @@ accept within the timeout fails recovery instead of being silently skipped. Snap
 contains asynchronous edges, so this does not claim that every downstream actor is synchronously
 durable at each replay step.
 
-`loxley node validate` detects a recoverable uncommitted event-log tail without changing it. With
-the node stopped, `loxley node validate --repair` applies the same boundary-checked tail recovery as
+`bracken node validate` detects a recoverable uncommitted event-log tail without changing it. With
+the node stopped, `bracken node validate --repair` applies the same boundary-checked tail recovery as
 startup and refuses to remove indexed records. Runtime EventStore query failures are returned to the
 correlated caller rather than panicking the actor; committed corruption remains a startup/integrity
 failure.
 
 For DAppNode installations, package v0.2.3 is the mandatory bridge from the shipped v0.1.8 state. It
-atomically moves the legacy `.enclave` custom-config root to `.loxley`, preserves the encrypted
+atomically moves the legacy `.enclave` custom-config root to `.bracken`, preserves the encrypted
 operator/libp2p identity, and lets the v0.2.3 binary stamp schema version 1 before later binaries
 enforce the marker. An ambiguous volume containing both roots fails closed.
 
@@ -380,7 +380,7 @@ protocol execution.
 
 `CiphernodeSelector` also emits every persisted `AggregatorChanged` entry before EventStore replay.
 If a prior snapshot failed to persist the selector's completion cleanup, the request router may log
-that emission as unexpected for an already-completed E3. The router converts it to an `LoxleyError`;
+that emission as unexpected for an already-completed E3. The router converts it to an `BrackenError`;
 it does not abort EventBus replay. Treat the warning as evidence of stale snapshot state rather than
 suppressing it unconditionally.
 
@@ -480,8 +480,8 @@ Time ─────────────────────────
 │ or deactivate    │   EXIT DELAY       │                  │
 │                  │  (configured)      │                  │
 │ Assets queued    │                    │ Assets claimable │
-│ tLOXLEY burned     │  Cannot cancel     │ asset returned   │
-│ LOXLEY locked      │  Can be slashed!   │ LOXLEY returned to │
+│ tBRACKEN burned     │  Cannot cancel     │ asset returned   │
+│ BRACKEN locked      │  Can be slashed!   │ BRACKEN returned to │
 │                  │                    │ bond owner       │
 │                  │                    │                  │
 

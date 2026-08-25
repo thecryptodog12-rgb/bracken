@@ -40,7 +40,7 @@ struct RecoveryExtension {
 
 #[async_trait]
 impl E3Extension for RecoveryExtension {
-    fn on_event(&self, _: &mut E3Context, _: &LoxleyEvent) {}
+    fn on_event(&self, _: &mut E3Context, _: &BrackenEvent) {}
 
     async fn hydrate(&self, _: &mut E3Context, _: &E3ContextSnapshot) -> Result<()> {
         self.hydrations.fetch_add(1, Ordering::SeqCst);
@@ -49,7 +49,7 @@ impl E3Extension for RecoveryExtension {
 }
 
 fn test_bus() -> BusHandle {
-    let event_bus = EventBus::<LoxleyEvent>::default().start();
+    let event_bus = EventBus::<BrackenEvent>::default().start();
     let store = StoreSink.start();
     let sequencer = Sequencer::new(&event_bus, store.recipient()).start();
     BusHandle::new(event_bus, sequencer, HlcFactory::new()).enable("router-recovery-test")

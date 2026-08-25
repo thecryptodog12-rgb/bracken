@@ -10,13 +10,13 @@ pub(in crate::actors::net_sync_manager) async fn fetch_historical_events_for_agg
     aggregate_id: AggregateId,
     since: u128,
     budget: &mut SyncFetchBudget,
-) -> Result<Vec<LoxleyEvent<Unsequenced>>> {
+) -> Result<Vec<BrackenEvent<Unsequenced>>> {
     let requester = DirectRequester::builder(net_cmds.clone(), net_events.clone())
         .max_retries(SYNC_FETCH_MAX_RETRIES)
         .retry_timeout(SYNC_FETCH_RETRY_TIMEOUT)
         .build();
 
-    let events = fetch_all_batched_events_with_budget::<LoxleyEvent<Unsequenced>>(
+    let events = fetch_all_batched_events_with_budget::<BrackenEvent<Unsequenced>>(
         requester,
         PeerTarget::Random,
         aggregate_id,
@@ -31,8 +31,8 @@ pub(in crate::actors::net_sync_manager) async fn fetch_historical_events_for_agg
 
 pub(in crate::actors::net_sync_manager) fn validate_historical_events(
     aggregate_id: AggregateId,
-    events: Vec<LoxleyEvent<Unsequenced>>,
-) -> Result<Vec<LoxleyEvent<Unsequenced>>> {
+    events: Vec<BrackenEvent<Unsequenced>>,
+) -> Result<Vec<BrackenEvent<Unsequenced>>> {
     for event in &events {
         if event.aggregate_id() != aggregate_id {
             bail!(
@@ -95,7 +95,7 @@ pub(in crate::actors::net_sync_manager) async fn handle_sync_request_event(
     }
     info!("handle_sync_request_event: ready to sync");
 
-    let mut all_events: Vec<LoxleyEvent<Unsequenced>> = Vec::new();
+    let mut all_events: Vec<BrackenEvent<Unsequenced>> = Vec::new();
     let mut latest_timestamp: u128 = 0;
     let mut failed_aggregates: Vec<AggregateId> = Vec::new();
     let mut budget = SyncFetchBudget::production();
@@ -120,12 +120,12 @@ pub(in crate::actors::net_sync_manager) async fn handle_sync_request_event(
                     events.len(),
                     aggregate_id
                 );
-                for loxley_event in events {
-                    let ts = loxley_event.ts();
+                for bracken_event in events {
+                    let ts = bracken_event.ts();
                     if ts > latest_timestamp {
                         latest_timestamp = ts;
                     }
-                    all_events.push(loxley_event);
+                    all_events.push(bracken_event);
                 }
             }
             Err(e) => {
@@ -201,12 +201,12 @@ pub(in crate::actors::net_sync_manager) async fn handle_sync_request_event(
                             events.len(),
                             aggregate_id
                         );
-                        for loxley_event in events {
-                            let ts = loxley_event.ts();
+                        for bracken_event in events {
+                            let ts = bracken_event.ts();
                             if ts > latest_timestamp {
                                 latest_timestamp = ts;
                             }
-                            all_events.push(loxley_event);
+                            all_events.push(bracken_event);
                         }
                     }
                     Err(e) => {

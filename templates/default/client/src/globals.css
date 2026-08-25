@@ -1,4 +1,4 @@
-/* Geist (sans) + Geist Mono, matching the Loxley / CRISP dashboard.
+/* Geist (sans) + Geist Mono, matching the Bracken / CRISP dashboard.
    Georgia (serif, for display headings) is a system font — no import needed. */
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&display=swap');
 @tailwind base;

@@ -37,7 +37,7 @@ impl Handler<StoreEventRequested> for TestEventStore {
 }
 
 fn test_bus() -> BusHandle {
-    let event_bus = EventBus::<LoxleyEvent>::new(EventBusConfig { deduplicate: true }).start();
+    let event_bus = EventBus::<BrackenEvent>::new(EventBusConfig { deduplicate: true }).start();
     let store = TestEventStore::default().start();
     let sequencer = Sequencer::new(&event_bus, store.recipient()).start();
     BusHandle::new(event_bus, sequencer, HlcFactory::new()).enable("share-recovery-test")
@@ -109,7 +109,7 @@ async fn restored_committee_authorizes_c6_without_replayed_finalization_event() 
         .await
         .expect("restored committee did not authorize C6 before timeout")
         .expect("wait for consistency request");
-    let LoxleyEventData::CommitmentConsistencyCheckRequested(request) = event.into_data() else {
+    let BrackenEventData::CommitmentConsistencyCheckRequested(request) = event.into_data() else {
         panic!("unexpected event type")
     };
     assert_eq!(request.e3_id, e3_id);

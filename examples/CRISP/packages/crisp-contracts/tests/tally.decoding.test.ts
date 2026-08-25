@@ -17,8 +17,8 @@
 
 import { encodeVote, decodeTally, MAX_MSG_NON_ZERO_COEFFS, MAX_VOTE_OPTIONS } from '@crisp-e3/sdk'
 import { expect } from 'chai'
-import { deployCRISPProgram, deployMockLoxley } from './utils'
-import type { CRISPProgram, MockLoxley } from '../types'
+import { deployCRISPProgram, deployMockBracken } from './utils'
+import type { CRISPProgram, MockBracken } from '../types'
 
 /**
  * Pack polynomial coefficients exactly as the ciphernodes publish them:
@@ -43,20 +43,20 @@ const aggregateBallots = (ballots: number[][]): number[] =>
 describe('Tally decoding (SDK vs CRISPProgram)', function () {
   this.timeout(120000)
 
-  let mockLoxley: MockLoxley
+  let mockBracken: MockBracken
   let crispProgram: CRISPProgram
 
   before(async function () {
-    mockLoxley = await deployMockLoxley()
-    crispProgram = await deployCRISPProgram({ mockLoxley })
+    mockBracken = await deployMockBracken()
+    crispProgram = await deployCRISPProgram({ mockBracken })
   })
 
   /** Publish a plaintext output for a fresh E3 and read back the on-chain tally. */
   const decodeOnChain = async (coefficients: number[], numOptions: number): Promise<bigint[]> => {
-    const e3Id = await mockLoxley.nextE3Id()
+    const e3Id = await mockBracken.nextE3Id()
 
-    await mockLoxley.requestWithOptions(await crispProgram.getAddress(), numOptions)
-    await mockLoxley.setPlaintextOutput(packCoefficients(coefficients))
+    await mockBracken.requestWithOptions(await crispProgram.getAddress(), numOptions)
+    await mockBracken.setPlaintextOutput(packCoefficients(coefficients))
 
     return crispProgram.decodeTally(e3Id)
   }
@@ -136,16 +136,16 @@ describe('Tally decoding (SDK vs CRISPProgram)', function () {
     // The Noir circuit asserts num_options <= MAX_OPTIONS (10). A round above that could
     // never accept a ballot, so the contract and the SDK must reject it at the same point.
     it('should reject a round with more options than the circuit allows', async function () {
-      await expect(mockLoxley.requestWithOptions(await crispProgram.getAddress(), MAX_VOTE_OPTIONS + 1)).to.be.revertedWithCustomError(
+      await expect(mockBracken.requestWithOptions(await crispProgram.getAddress(), MAX_VOTE_OPTIONS + 1)).to.be.revertedWithCustomError(
         crispProgram,
         'InvalidNumOptions',
       )
     })
 
     it('should accept a round at exactly MAX_VOTE_OPTIONS options', async function () {
-      const e3Id = await mockLoxley.nextE3Id()
+      const e3Id = await mockBracken.nextE3Id()
 
-      await mockLoxley.requestWithOptions(await crispProgram.getAddress(), MAX_VOTE_OPTIONS)
+      await mockBracken.requestWithOptions(await crispProgram.getAddress(), MAX_VOTE_OPTIONS)
 
       const [, , numOptions] = await crispProgram.getRoundData(e3Id)
       expect(numOptions).to.equal(BigInt(MAX_VOTE_OPTIONS))

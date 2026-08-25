@@ -28,17 +28,17 @@ use e3_events::BusHandle;
 use e3_events::E3RequestComplete;
 use e3_events::EType;
 use e3_events::EventType;
-use e3_events::{E3id, LoxleyEvent};
+use e3_events::{E3id, BrackenEvent};
 use e3_utils::MAILBOX_LIMIT;
 use serde::Deserialize;
 use serde::Serialize;
 use std::collections::HashSet;
 use std::{collections::HashMap, sync::Arc};
 
-/// An Extension interface for the E3Router system that listens and responds to LoxleyEvents.
+/// An Extension interface for the E3Router system that listens and responds to BrackenEvents.
 ///
 /// # Responsibilities
-/// - Listens for broadcast LoxleyEvents
+/// - Listens for broadcast BrackenEvents
 /// - Instantiates appropriate actors based on received events
 /// - Manages actor state persistence and reconstruction
 /// - Handles event streaming to registered recipients
@@ -55,11 +55,11 @@ use std::{collections::HashMap, sync::Arc};
 /// before constructing new extensions.
 #[async_trait]
 pub trait E3Extension: Send + Sync + 'static {
-    /// This function is triggered when an LoxleyEvent is sent to the router. Use this to
+    /// This function is triggered when an BrackenEvent is sent to the router. Use this to
     /// initialize the receiver using `ctx.set_event_receiver(my_address.into())`. Typically this
     /// means filtering for specific e3_id enabled events that give rise to actors that have to
     /// handle certain behaviour.
-    fn on_event(&self, ctx: &mut E3Context, evt: &LoxleyEvent);
+    fn on_event(&self, ctx: &mut E3Context, evt: &BrackenEvent);
 
     /// This function it triggered when the request context is being hydrated from snapshot.
     async fn hydrate(&self, ctx: &mut E3Context, snapshot: &crate::E3ContextSnapshot)

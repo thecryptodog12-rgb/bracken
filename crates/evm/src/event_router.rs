@@ -4,14 +4,14 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-use crate::messages::{EvmEventProcessor, EvmLog, EvmLogRejected, LoxleyEvmEvent};
+use crate::messages::{EvmEventProcessor, EvmLog, EvmLogRejected, BrackenEvmEvent};
 use actix::{Actor, Handler};
 use alloy_primitives::Address;
 use e3_utils::MAILBOX_LIMIT;
 use std::collections::HashMap;
 use tracing::{debug, error, info};
 
-/// Directs LoxleyEvmEvent::Log events to the correct upstream processors. Drops all other event
+/// Directs BrackenEvmEvent::Log events to the correct upstream processors. Drops all other event
 /// types
 pub struct EvmRouter {
     routing_table: HashMap<Address, EvmEventProcessor>,
@@ -54,12 +54,12 @@ impl Actor for EvmRouter {
     }
 }
 
-impl Handler<LoxleyEvmEvent> for EvmRouter {
+impl Handler<BrackenEvmEvent> for EvmRouter {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvmEvent, _: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvmEvent, _: &mut Self::Context) -> Self::Result {
         match msg.clone() {
             // Take all log events and route them
-            LoxleyEvmEvent::Log(EvmLog { log, chain_id, .. }) => {
+            BrackenEvmEvent::Log(EvmLog { log, chain_id, .. }) => {
                 let address = log.address();
                 if let Some(dest) = self.routing_table.get(&address) {
                     debug!("Found address {address} in routing table forwarding to destination.");
@@ -70,7 +70,7 @@ impl Handler<LoxleyEvmEvent> for EvmRouter {
                         log.address()
                     );
                     if let Some(fallback) = self.fallback.clone() {
-                        fallback.do_send(LoxleyEvmEvent::Rejected(EvmLogRejected::new(
+                        fallback.do_send(BrackenEvmEvent::Rejected(EvmLogRejected::new(
                             msg.get_id(),
                             chain_id,
                             format!("no configured route for provider log address {address}"),
@@ -108,9 +108,9 @@ mod tests {
         type Context = Context<Self>;
     }
 
-    impl Handler<LoxleyEvmEvent> for TestProcessor {
+    impl Handler<BrackenEvmEvent> for TestProcessor {
         type Result = ();
-        fn handle(&mut self, _msg: LoxleyEvmEvent, _ctx: &mut Self::Context) {
+        fn handle(&mut self, _msg: BrackenEvmEvent, _ctx: &mut Self::Context) {
             self.0.fetch_add(1, Ordering::SeqCst);
         }
     }
@@ -127,7 +127,7 @@ mod tests {
             .add_route(test_address, &processor_addr.recipient())
             .start();
 
-        router.do_send(LoxleyEvmEvent::Log(test_log));
+        router.do_send(BrackenEvmEvent::Log(test_log));
 
         sleep(Duration::from_millis(10)).await;
 
@@ -148,7 +148,7 @@ mod tests {
             .add_route(router_addr, &processor_addr.recipient())
             .start();
 
-        router.do_send(LoxleyEvmEvent::Log(test_log));
+        router.do_send(BrackenEvmEvent::Log(test_log));
 
         sleep(Duration::from_millis(10)).await;
 

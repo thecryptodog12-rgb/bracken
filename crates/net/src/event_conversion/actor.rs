@@ -7,7 +7,7 @@ use actix::prelude::*;
 use anyhow::Result;
 use e3_events::{
     prelude::*, trap, BusHandle, DecryptionKeyShared, DocumentReceived, EType,
-    EncryptionKeyCreated, EventType, LoxleyEvent, LoxleyEventData, ThresholdShareCreated,
+    EncryptionKeyCreated, EventType, BrackenEvent, BrackenEventData, ThresholdShareCreated,
     TypedEvent,
 };
 use e3_utils::NotifySync;
@@ -85,21 +85,21 @@ impl Actor for EventConverter {
     type Context = actix::Context<Self>;
 }
 
-impl Handler<LoxleyEvent> for EventConverter {
+impl Handler<BrackenEvent> for EventConverter {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let (data, ec) = msg.into_components();
         match data {
-            LoxleyEventData::ThresholdShareCreated(data) => {
+            BrackenEventData::ThresholdShareCreated(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::EncryptionKeyCreated(data) => {
+            BrackenEventData::EncryptionKeyCreated(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::DecryptionKeyShared(data) => {
+            BrackenEventData::DecryptionKeyShared(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::DocumentReceived(data) => {
+            BrackenEventData::DocumentReceived(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
             _ => (),

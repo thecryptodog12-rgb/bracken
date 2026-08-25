@@ -23,7 +23,7 @@ assert_not_contains() {
     fi
 }
 
-make_mock_loxley() {
+make_mock_bracken() {
     local bin_dir=$1
     mkdir -p "$bin_dir"
     printf '%s\n' \
@@ -41,8 +41,8 @@ make_mock_loxley() {
         'printf "\n" >> "$ARGV_LOG"' \
         '[ "${FAIL_ON:-}" != "$operation" ] || exit 42' \
         '[ "$operation" != unexpected ]' \
-        > "$bin_dir/loxley"
-    chmod +x "$bin_dir/loxley"
+        > "$bin_dir/bracken"
+    chmod +x "$bin_dir/bracken"
 }
 
 make_mock_expect() {
@@ -53,11 +53,11 @@ make_mock_expect() {
         'read -r password_b64' \
         'read -r private_key_b64' \
         'password=$(printf "%s" "$password_b64" | base64 -d)' \
-        'loxley password set --config "$2"' \
+        'bracken password set --config "$2"' \
         'mkdir -p "$(dirname "$PASSWORD_FILE")"' \
         'printf "%s" "$password" > "$PASSWORD_FILE"' \
         'chmod 400 "$PASSWORD_FILE"' \
-        'loxley wallet set --config "$2"' \
+        'bracken wallet set --config "$2"' \
         'unset password password_b64 private_key_b64' \
         > "$bin_dir/expect"
     chmod +x "$bin_dir/expect"
@@ -86,7 +86,7 @@ run_entrypoint() {
     mkdir -p "$case_dir/data" "$case_dir/secrets" "$case_dir/bin"
     : > "$case_dir/calls"
     : > "$case_dir/argv"
-    make_mock_loxley "$case_dir/bin"
+    make_mock_bracken "$case_dir/bin"
     make_mock_expect "$case_dir/bin"
 
     env -u ENCRYPTION_PASSWORD -u NETWORK_PRIVATE_KEY -u PRIVATE_KEY \
@@ -101,10 +101,10 @@ run_entrypoint() {
         ARGV_LOG="$case_dir/argv" \
         RPC_URL="ws://127.0.0.1:8545" \
         NODE_ADDRESS="0x3333333333333333333333333333333333333333" \
-        LOXLEY_CONTRACT="0x4444444444444444444444444444444444444444" \
+        BRACKEN_CONTRACT="0x4444444444444444444444444444444444444444" \
         CIPHERNODE_REGISTRY_CONTRACT="0x5555555555555555555555555555555555555555" \
         BONDING_REGISTRY_CONTRACT="0x6666666666666666666666666666666666666666" \
-        LOXLEY_DEPLOY_BLOCK=1 \
+        BRACKEN_DEPLOY_BLOCK=1 \
         CIPHERNODE_REGISTRY_DEPLOY_BLOCK=2 \
         BONDING_REGISTRY_DEPLOY_BLOCK=3 \
         PRIVATE_KEY="${TEST_PRIVATE_KEY:-}" \
@@ -164,20 +164,20 @@ run_entrypoint "$legacy_credentials_dir"
 [ "$(tr '\n' ' ' < "$legacy_credentials_dir/calls")" = "password wallet start " ] \
     || fail "legacy credential upload was not accepted"
 
-# Malformed or absent first-start credentials fail before invoking Loxley.
+# Malformed or absent first-start credentials fail before invoking Bracken.
 malformed_dir="$TEST_ROOT/malformed"
 mkdir -p "$malformed_dir/secrets"
 printf '%s\n' '{"password":"only-one-field"}' > "$malformed_dir/secrets/secrets.json"
 if run_entrypoint "$malformed_dir"; then
     fail "malformed credentials were accepted"
 fi
-[ ! -s "$malformed_dir/calls" ] || fail "malformed credentials invoked Loxley"
+[ ! -s "$malformed_dir/calls" ] || fail "malformed credentials invoked Bracken"
 
 missing_dir="$TEST_ROOT/missing"
 if run_entrypoint "$missing_dir"; then
     fail "first startup without credentials was accepted"
 fi
-[ ! -s "$missing_dir/calls" ] || fail "missing credentials invoked Loxley"
+[ ! -s "$missing_dir/calls" ] || fail "missing credentials invoked Bracken"
 
 # A normal restart may reuse credentials already encrypted in the persistent
 # /data volume without requiring the one-time plaintext upload again.
@@ -196,17 +196,17 @@ mkdir -p "$upgrade_dir/data/.enclave/config/_default" "$upgrade_dir/data/.enclav
 printf '%s' 'persisted-password' > "$upgrade_dir/data/.enclave/config/_default/key"
 printf '%s' 'legacy-state' > "$upgrade_dir/data/.enclave/data/_default/db/sentinel"
 run_entrypoint "$upgrade_dir" \
-    PASSWORD_FILE="$upgrade_dir/data/.loxley/config/_default/key"
+    PASSWORD_FILE="$upgrade_dir/data/.bracken/config/_default/key"
 [ ! -e "$upgrade_dir/data/.enclave" ] || fail "legacy state namespace remained after upgrade"
-assert_contains "$upgrade_dir/data/.loxley/data/_default/db/sentinel" 'legacy-state'
+assert_contains "$upgrade_dir/data/.bracken/data/_default/db/sentinel" 'legacy-state'
 [ "$(tr '\n' ' ' < "$upgrade_dir/calls")" = "start " ] || fail "legacy state upgrade did not start"
 
 ambiguous_dir="$TEST_ROOT/ambiguous-upgrade"
-mkdir -p "$ambiguous_dir/data/.enclave" "$ambiguous_dir/data/.loxley"
+mkdir -p "$ambiguous_dir/data/.enclave" "$ambiguous_dir/data/.bracken"
 if run_entrypoint "$ambiguous_dir"; then
     fail "ambiguous legacy/current state was accepted"
 fi
-[ ! -s "$ambiguous_dir/calls" ] || fail "ambiguous state invoked Loxley"
+[ ! -s "$ambiguous_dir/calls" ] || fail "ambiguous state invoked Bracken"
 
 # Legacy secret environment variables are explicitly rejected.
 legacy_dir="$TEST_ROOT/legacy-env"
@@ -223,15 +223,15 @@ assert_not_contains "$ROOT_DIR/entrypoint.sh" '--private-key "$private_key"'
 assert_not_contains "$ROOT_DIR/entrypoint.sh" '--net-keypair "$network_private_key"'
 assert_contains "$ROOT_DIR/dappnode_package.json" '"version": "0.2.3"'
 assert_contains "$ROOT_DIR/docker-compose.yml" 'UPSTREAM_VERSION: 0.2.3'
-assert_contains "$ROOT_DIR/healthcheck.sh" '/data/.loxley/data/_default/db'
+assert_contains "$ROOT_DIR/healthcheck.sh" '/data/.bracken/data/_default/db'
 
 # Health probe regression: require the exact process/config, protected files,
 # and bound QUIC listener rather than accepting an arbitrary matching PID.
 health_dir="$TEST_ROOT/health"
 mkdir -p "$health_dir/proc/1" "$health_dir/bin" "$health_dir/data" "$health_dir/data/db" "$health_dir/data/log.0"
-ln -s "$health_dir/bin/loxley" "$health_dir/proc/1/exe"
-: > "$health_dir/bin/loxley"
-printf '/usr/local/bin/loxley\0start\0-v\0--config\0%s\0' "$health_dir/data/config.yaml" > "$health_dir/proc/1/cmdline"
+ln -s "$health_dir/bin/bracken" "$health_dir/proc/1/exe"
+: > "$health_dir/bin/bracken"
+printf '/usr/local/bin/bracken\0start\0-v\0--config\0%s\0' "$health_dir/data/config.yaml" > "$health_dir/proc/1/cmdline"
 printf 'config' > "$health_dir/data/config.yaml"
 printf 'password' > "$health_dir/data/password"
 
@@ -276,7 +276,7 @@ if PROC_ROOT="$health_dir/proc" \
     fail "insecure credential permissions were considered healthy"
 fi
 
-ln -sfn "$health_dir/bin/not-loxley" "$health_dir/proc/1/exe"
+ln -sfn "$health_dir/bin/not-bracken" "$health_dir/proc/1/exe"
 if PROC_ROOT="$health_dir/proc" \
     CONFIG_FILE="$health_dir/data/config.yaml" \
     PASSWORD_FILE="$health_dir/data/password" \
@@ -288,7 +288,7 @@ if PROC_ROOT="$health_dir/proc" \
     fail "unrelated PID 1 was considered healthy"
 fi
 
-ln -sfn "$health_dir/bin/loxley" "$health_dir/proc/1/exe"
+ln -sfn "$health_dir/bin/bracken" "$health_dir/proc/1/exe"
 rmdir "$health_dir/data/log.0"
 if PROC_ROOT="$health_dir/proc" \
     CONFIG_FILE="$health_dir/data/config.yaml" \

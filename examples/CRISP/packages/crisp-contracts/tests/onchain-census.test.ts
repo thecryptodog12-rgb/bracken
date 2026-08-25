@@ -15,8 +15,8 @@ before(async () => {
   setCircuits(await loadCircuits())
 })
 import { expect } from 'chai'
-import { deployCRISPProgram, deployHonkVerifier, deployMockLoxley, deployOnchainHonkVerifier, ethers } from './utils'
-import type { CRISPProgram, HonkVerifier, MockLoxley } from '../types'
+import { deployCRISPProgram, deployHonkVerifier, deployMockBracken, deployOnchainHonkVerifier, ethers } from './utils'
+import type { CRISPProgram, HonkVerifier, MockBracken } from '../types'
 
 const CUSTOM = 1
 const ONCHAIN = 2
@@ -51,7 +51,7 @@ describe('CRISP on-chain census', function () {
   const keys = generateBFVKeys()
   const publicKey = keys.publicKey
 
-  let mockLoxley: MockLoxley
+  let mockBracken: MockBracken
   let honkVerifier: HonkVerifier
   let onchainHonkVerifier: HonkVerifier
   let crispProgram: CRISPProgram
@@ -84,10 +84,10 @@ describe('CRISP on-chain census', function () {
     )
 
   before(async function () {
-    mockLoxley = await deployMockLoxley()
+    mockBracken = await deployMockBracken()
     honkVerifier = await deployHonkVerifier()
     onchainHonkVerifier = await deployOnchainHonkVerifier()
-    crispProgram = await deployCRISPProgram({ mockLoxley, honkVerifier, onchainHonkVerifier })
+    crispProgram = await deployCRISPProgram({ mockBracken, honkVerifier, onchainHonkVerifier })
 
     voter = (await ethers.getSigners())[0]
     slotAddress = await voter.getAddress()
@@ -100,10 +100,10 @@ describe('CRISP on-chain census', function () {
     // Move the clock so the mint lands at a settled timepoint.
     await ethers.provider.send('evm_mine', [])
 
-    e3Id = await mockLoxley.nextE3Id()
+    e3Id = await mockBracken.nextE3Id()
     // CUSTOM credits, so the weight the circuit enforces is the token balance itself rather than a
     // flat per-voter allowance. That is what makes this exercise the token read.
-    const requestTx = await mockLoxley.requestWithParams(
+    const requestTx = await mockBracken.requestWithParams(
       await crispProgram.getAddress(),
       numOptions,
       encodeParams({
@@ -179,9 +179,9 @@ describe('CRISP on-chain census', function () {
   /// Opens another ONCHAIN round over the same token, so a test can publish a first vote for a
   /// slot that has already voted in `e3Id`.
   async function openRound(): Promise<bigint> {
-    const id = await mockLoxley.nextE3Id()
+    const id = await mockBracken.nextE3Id()
     await (
-      await mockLoxley.requestWithParams(
+      await mockBracken.requestWithParams(
         await crispProgram.getAddress(),
         numOptions,
         encodeParams({
@@ -226,7 +226,7 @@ describe('CRISP on-chain census', function () {
   })
 
   it('publishes an ONCHAIN ballot end to end', async function () {
-    await (await mockLoxley.setCommitteePublicKey(voteProof.publicInputs[8])).wait()
+    await (await mockBracken.setCommitteePublicKey(voteProof.publicInputs[8])).wait()
 
     await crispProgram.publishInput(e3Id, encodeSolidityProof(voteProof))
   })
@@ -241,13 +241,13 @@ describe('CRISP on-chain census', function () {
     const round = await openRound()
 
     const inflated = await buildOnchainProof(votingPower * 2n, round)
-    await (await mockLoxley.setCommitteePublicKey(inflated.publicInputs[8])).wait()
+    await (await mockBracken.setCommitteePublicKey(inflated.publicInputs[8])).wait()
     await expect(crispProgram.publishInput(round, encodeSolidityProof(inflated))).to.be.revert(ethers)
 
     // Positive control in the same round and the same slot: the honest power publishes. The only
     // difference between the two ballots is the power, so the revert above is attributable to it.
     const honest = await buildOnchainProof(votingPower, round)
-    await (await mockLoxley.setCommitteePublicKey(honest.publicInputs[8])).wait()
+    await (await mockBracken.setCommitteePublicKey(honest.publicInputs[8])).wait()
     await crispProgram.publishInput(round, encodeSolidityProof(honest))
   })
 
@@ -270,9 +270,9 @@ describe('CRISP on-chain census', function () {
 
   /// A requester that needs different precision names its own divisor; 0 means "derive it".
   it('honours an explicit divisor', async function () {
-    const id = await mockLoxley.nextE3Id()
+    const id = await mockBracken.nextE3Id()
     await (
-      await mockLoxley.requestWithParams(
+      await mockBracken.requestWithParams(
         await crispProgram.getAddress(),
         numOptions,
         encodeParams({
@@ -295,8 +295,8 @@ describe('CRISP on-chain census', function () {
   /// Only ONCHAIN scales. A Merkle round records no divisor, because its bound comes from the
   /// census leaf the coordinator has already scaled.
   it('records no divisor for a non-ONCHAIN round', async function () {
-    const id = await mockLoxley.nextE3Id()
-    await (await mockLoxley.request(await crispProgram.getAddress())).wait()
+    const id = await mockBracken.nextE3Id()
+    await (await mockBracken.request(await crispProgram.getAddress())).wait()
 
     expect(await crispProgram.votingPowerDivisorOf(id)).to.equal(0n)
   })

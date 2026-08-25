@@ -17,7 +17,7 @@ use crate::server::{
 use actix_web::{web, HttpResponse, Responder};
 use alloy::primitives::{Address, Bytes, B256};
 use e3_sdk::evm_helpers::contracts::{
-    LoxleyContract, LoxleyContractFactory, LoxleyWrite, ReadWrite,
+    BrackenContract, BrackenContractFactory, BrackenWrite, ReadWrite,
 };
 use log::{error, info};
 
@@ -141,10 +141,10 @@ async fn handle_program_server_result(data: web::Json<WebhookPayload>) -> impl R
             }
 
             // Create the contract
-            let contract: LoxleyContract<ReadWrite> =
-                match LoxleyContractFactory::create_write(
+            let contract: BrackenContract<ReadWrite> =
+                match BrackenContractFactory::create_write(
                     &CONFIG.http_rpc_url,
-                    &CONFIG.loxley_address,
+                    &CONFIG.bracken_address,
                     &CONFIG.private_key,
                 )
                 .await

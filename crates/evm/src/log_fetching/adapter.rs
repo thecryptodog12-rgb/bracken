@@ -4,7 +4,7 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-use crate::messages::{EvmEventProcessor, EvmLog, LoxleyEvmEvent};
+use crate::messages::{EvmEventProcessor, EvmLog, BrackenEvmEvent};
 use alloy::providers::Provider;
 use alloy::rpc::types::{Filter, Log};
 use anyhow::{anyhow, Context as _};
@@ -49,7 +49,7 @@ pub(crate) async fn process_log<L: LogProvider>(
     timestamp_tracker: &mut TimestampTracker,
 ) -> Result<CorrelationId, anyhow::Error> {
     let timestamp = timestamp_tracker.get(provider, log.block_number).await?;
-    let evt = LoxleyEvmEvent::Log(EvmLog::new(log, chain_id, timestamp));
+    let evt = BrackenEvmEvent::Log(EvmLog::new(log, chain_id, timestamp));
     let id = evt.get_id();
     debug!("Sending event({})", id);
     next.do_send(evt);

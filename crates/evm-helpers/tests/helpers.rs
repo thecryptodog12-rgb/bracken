@@ -16,8 +16,8 @@ use EmitLogs::EmitLogsInstance;
 
 sol!(
     #[sol(rpc)]
-    Loxley,
-    "tests/fixtures/fake_loxley.json"
+    Bracken,
+    "tests/fixtures/fake_bracken.json"
 );
 
 sol!(

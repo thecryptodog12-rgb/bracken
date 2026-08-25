@@ -129,7 +129,7 @@ impl ThresholdKeyshare {
     ///
     /// Only states where the local result is already determined are re-driven. Earlier
     /// phases depend on peer gossip that cannot be reconstructed locally and are surfaced
-    /// (non-destructively) by `loxley node validate` instead of being force-re-driven.
+    /// (non-destructively) by `bracken node validate` instead of being force-re-driven.
     pub(in crate::actors::threshold_keyshare) fn resume_in_flight_work(
         &mut self,
         ec: EventContext<Sequenced>,
@@ -142,7 +142,7 @@ impl ThresholdKeyshare {
             // publishing KeyshareCreated. Re-publishing is idempotent at the aggregator, but
             // ReadyForDecryption is entered *before* C4 honest-set verification authorizes the
             // publish, so only re-drive when a prior authorized publish was recorded. An
-            // un-published ReadyForDecryption is a loose end surfaced by `loxley node validate`.
+            // un-published ReadyForDecryption is a loose end surfaced by `bracken node validate`.
             KeyshareState::ReadyForDecryption(_) if state.keyshare_published => {
                 info!(
                     e3_id = %state.e3_id,
@@ -182,7 +182,7 @@ impl ThresholdKeyshare {
                 trace!(
                     e3_id = %state.e3_id,
                     state = %other.variant_name(),
-                    "No locally re-drivable work on resume; loose ends are surfaced by `loxley node validate`"
+                    "No locally re-drivable work on resume; loose ends are surfaced by `bracken node validate`"
                 );
             }
         }

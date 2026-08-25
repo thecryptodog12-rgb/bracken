@@ -10,7 +10,7 @@ use actix::{Message, Recipient};
 use alloy::rpc::types::Log;
 use anyhow::Result;
 use e3_events::{
-    BusHandle, CorrelationId, EventFactory, EventSource, LoxleyEvent, LoxleyEventData, Unsequenced,
+    BusHandle, CorrelationId, EventFactory, EventSource, BrackenEvent, BrackenEventData, Unsequenced,
 };
 use serde::{Deserialize, Serialize};
 
@@ -60,7 +60,7 @@ impl HistoricalSyncComplete {
 #[derive(Message, Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[rtype(result = "()")]
 pub struct EvmEvent {
-    data: LoxleyEventData,
+    data: BrackenEventData,
     block: u64,
     chain_id: u64,
     ts: u128,
@@ -70,7 +70,7 @@ pub struct EvmEvent {
 impl EvmEvent {
     pub fn new(
         id: CorrelationId,
-        data: LoxleyEventData,
+        data: BrackenEventData,
         block: u64,
         ts: u128,
         chain_id: u64,
@@ -84,7 +84,7 @@ impl EvmEvent {
         }
     }
 
-    pub fn split(self) -> (LoxleyEventData, u128, u64) {
+    pub fn split(self) -> (BrackenEventData, u128, u64) {
         (self.data, self.ts, self.block)
     }
 
@@ -100,7 +100,7 @@ impl EvmEvent {
         self.ts
     }
 
-    pub fn into_loxley_event(self, bus: &BusHandle) -> Result<LoxleyEvent<Unsequenced>> {
+    pub fn into_bracken_event(self, bus: &BusHandle) -> Result<BrackenEvent<Unsequenced>> {
         let data = self.data;
         let ts = self.ts;
         bus.event_from_remote_source(data, None, ts, Some(self.block), EventSource::Evm)
@@ -109,7 +109,7 @@ impl EvmEvent {
 
 #[derive(Message, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[rtype(result = "()")]
-pub enum LoxleyEvmEvent {
+pub enum BrackenEvmEvent {
     /// Signal that this reader has completed historical sync
     HistoricalSyncComplete(HistoricalSyncComplete),
     /// An actual event from the blockchain
@@ -123,14 +123,14 @@ pub enum LoxleyEvmEvent {
     Processed(CorrelationId),
 }
 
-impl LoxleyEvmEvent {
+impl BrackenEvmEvent {
     pub fn get_id(&self) -> CorrelationId {
         match self {
-            LoxleyEvmEvent::HistoricalSyncComplete(e) => e.get_id(),
-            LoxleyEvmEvent::Log(e) => e.get_id(),
-            LoxleyEvmEvent::Rejected(e) => e.id,
-            LoxleyEvmEvent::Event(e) => e.get_id(),
-            LoxleyEvmEvent::Processed(id) => id.to_owned(),
+            BrackenEvmEvent::HistoricalSyncComplete(e) => e.get_id(),
+            BrackenEvmEvent::Log(e) => e.get_id(),
+            BrackenEvmEvent::Rejected(e) => e.id,
+            BrackenEvmEvent::Event(e) => e.get_id(),
+            BrackenEvmEvent::Processed(id) => id.to_owned(),
         }
     }
 }
@@ -181,4 +181,4 @@ impl EvmLog {
     }
 }
 
-pub type EvmEventProcessor = Recipient<LoxleyEvmEvent>;
+pub type EvmEventProcessor = Recipient<BrackenEvmEvent>;

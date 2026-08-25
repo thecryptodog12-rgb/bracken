@@ -4,7 +4,7 @@ set -eu  # Exit immediately if a command exits with a non-zero status
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 INTEGRATION_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-INTEGRATION_NOIR="${INTEGRATION_DIR}/.loxley/noir"
+INTEGRATION_NOIR="${INTEGRATION_DIR}/.bracken/noir"
 VERSIONS_JSON="${ROOT_DIR}/crates/zk-prover/versions.json"
 
 echo ""
@@ -28,7 +28,7 @@ mkdir -p "${INTEGRATION_NOIR}/circuits" "${INTEGRATION_NOIR}/bin"
 if [[ "${FULL_PROOF_AGGREGATION:-false}" == "true" ]]; then
   (cd "$ROOT_DIR" && pnpm build:circuits --preset insecure-512 -o "${INTEGRATION_NOIR}/circuits")
   # `--check`: verify the committed Honk Solidity verifiers in
-  # packages/loxley-contracts/contracts/verifiers/bfv/honk/ match the
+  # packages/bracken-contracts/contracts/verifiers/bfv/honk/ match the
   # freshly-built circuits' recursive VKs. Fails loudly on drift instead of
   # silently rewriting committed contracts mid-test. If this errors, run
   # `pnpm generate:verifiers --write` and commit the diff.

@@ -6,7 +6,7 @@
 
 //! Pure, actor-free E3 lifecycle tracking service.
 //!
-//! Loxley node is choreographed: each subsystem reacts to protocol events
+//! Bracken node is choreographed: each subsystem reacts to protocol events
 //! independently. Historically there was no single, durable source of truth for
 //! "what stage is this E3 at?". [`E3LifecycleService`] fills that gap. It is a
 //! pure observer over the lifecycle-bearing events on the bus: it maintains a
@@ -17,7 +17,7 @@
 //! protocol events or drive subsystems — the owning actor decides what to do
 //! with the [`LifecycleDecision`] (persist, log, surface invalid transitions).
 
-use e3_events::{E3Stage, E3id, LoxleyEventData};
+use e3_events::{E3Stage, E3id, BrackenEventData};
 use std::collections::HashMap;
 
 /// Outcome of observing a single event.
@@ -63,25 +63,25 @@ fn is_terminal(stage: &E3Stage) -> bool {
 }
 
 /// Maps an event to the `(e3_id, stage)` it implies, if any.
-fn implied(event: &LoxleyEventData) -> Option<(E3id, E3Stage)> {
+fn implied(event: &BrackenEventData) -> Option<(E3id, E3Stage)> {
     match event {
-        LoxleyEventData::E3Requested(d) => Some((d.e3_id.clone(), E3Stage::Requested)),
-        LoxleyEventData::CommitteePublished(d) => {
+        BrackenEventData::E3Requested(d) => Some((d.e3_id.clone(), E3Stage::Requested)),
+        BrackenEventData::CommitteePublished(d) => {
             Some((d.e3_id.clone(), E3Stage::CommitteeFinalized))
         }
-        LoxleyEventData::CommitteeFinalized(d) => {
+        BrackenEventData::CommitteeFinalized(d) => {
             Some((d.e3_id.clone(), E3Stage::CommitteeFinalized))
         }
-        LoxleyEventData::PublicKeyAggregated(d) => Some((d.e3_id.clone(), E3Stage::KeyPublished)),
-        LoxleyEventData::CiphertextOutputPublished(d) => {
+        BrackenEventData::PublicKeyAggregated(d) => Some((d.e3_id.clone(), E3Stage::KeyPublished)),
+        BrackenEventData::CiphertextOutputPublished(d) => {
             Some((d.e3_id.clone(), E3Stage::CiphertextReady))
         }
-        LoxleyEventData::PlaintextAggregated(d) => Some((d.e3_id.clone(), E3Stage::Complete)),
-        LoxleyEventData::PlaintextOutputPublished(d) => Some((d.e3_id.clone(), E3Stage::Complete)),
-        LoxleyEventData::E3RequestComplete(d) => Some((d.e3_id.clone(), E3Stage::Complete)),
-        LoxleyEventData::E3Failed(d) => Some((d.e3_id.clone(), E3Stage::Failed)),
+        BrackenEventData::PlaintextAggregated(d) => Some((d.e3_id.clone(), E3Stage::Complete)),
+        BrackenEventData::PlaintextOutputPublished(d) => Some((d.e3_id.clone(), E3Stage::Complete)),
+        BrackenEventData::E3RequestComplete(d) => Some((d.e3_id.clone(), E3Stage::Complete)),
+        BrackenEventData::E3Failed(d) => Some((d.e3_id.clone(), E3Stage::Failed)),
         // `E3StageChanged` carries the authoritative stage directly.
-        LoxleyEventData::E3StageChanged(d) => Some((d.e3_id.clone(), d.new_stage.clone())),
+        BrackenEventData::E3StageChanged(d) => Some((d.e3_id.clone(), d.new_stage.clone())),
         _ => None,
     }
 }
@@ -122,7 +122,7 @@ impl E3LifecycleService {
     }
 
     /// Observes an event and updates the tracked stage monotonically.
-    pub fn observe(&mut self, event: &LoxleyEventData) -> LifecycleDecision {
+    pub fn observe(&mut self, event: &BrackenEventData) -> LifecycleDecision {
         let Some((e3_id, implied_stage)) = implied(event) else {
             return LifecycleDecision::NotLifecycle;
         };

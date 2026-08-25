@@ -54,7 +54,7 @@ pub struct VotingPowerSources {
 
 /// Which unit a census token's `getPastVotes` timepoint is denominated in.
 ///
-/// Set by the census token itself, per EIP-6372 — not by Loxley. The census token is
+/// Set by the census token itself, per EIP-6372 — not by Bracken. The census token is
 /// requester-supplied, and OpenZeppelin's `ERC20Votes` defaults to block numbers, so this
 /// must be read per token rather than assumed.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -180,7 +180,7 @@ impl EtherscanClient {
 
     /// Resolve an EIP-6372 timestamp timepoint to the highest block mined at or before it.
     ///
-    /// The E3 census snapshot is a timepoint, not a block height: `Loxley.request`
+    /// The E3 census snapshot is a timepoint, not a block height: `Bracken.request`
     /// assigns `block.timestamp` to `E3.requestBlock` regardless of the census token.
     /// Log queries address blocks, so the timepoint must be converted before it can
     /// bound a `getLogs` range.
@@ -564,7 +564,7 @@ impl EtherscanClient {
     /// Fetch the addresses named as `bondOwner` by a `BondingRegistry`, and by the
     /// `BondedCheckpoints` it writes to.
     ///
-    /// Bonded LOXLEY carries voting power through a `BondedVotes` adapter, which is a pure view:
+    /// Bonded BRACKEN carries voting power through a `BondedVotes` adapter, which is a pure view:
     /// it emits nothing. Its power comes from two places the adapter merely reads, so an address
     /// can hold bonded weight while appearing in no `Transfer` and no `DelegateVotesChanged` log
     /// at all — scanning only the token would miss every operator.

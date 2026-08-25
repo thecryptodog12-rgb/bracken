@@ -4,25 +4,25 @@
 // without even the implied warranty of MERCHANTABILITY
 // or FITNESS FOR A PARTICULAR PURPOSE.
 
-use e3_events::{E3id, LoxleyEvent};
+use e3_events::{E3id, BrackenEvent};
 use std::collections::HashMap;
 
 /// Buffers events for downstream instances to handle out-of-order event delivery.
 /// Events are scoped by protocol request and recipient until the recipient is ready.
 #[derive(Default)]
 pub struct EventBuffer {
-    buffer: HashMap<(E3id, String), Vec<LoxleyEvent>>,
+    buffer: HashMap<(E3id, String), Vec<BrackenEvent>>,
 }
 
 impl EventBuffer {
-    pub fn add(&mut self, e3_id: &E3id, recipient: &str, event: LoxleyEvent) {
+    pub fn add(&mut self, e3_id: &E3id, recipient: &str, event: BrackenEvent) {
         self.buffer
             .entry((e3_id.clone(), recipient.to_owned()))
             .or_default()
             .push(event)
     }
 
-    pub fn take(&mut self, e3_id: &E3id, recipient: &str) -> Vec<LoxleyEvent> {
+    pub fn take(&mut self, e3_id: &E3id, recipient: &str) -> Vec<BrackenEvent> {
         self.buffer
             .remove(&(e3_id.clone(), recipient.to_owned()))
             .unwrap_or_default()
@@ -39,10 +39,10 @@ impl EventBuffer {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use e3_events::{E3id, LoxleyEvent, Sequenced};
+    use e3_events::{E3id, BrackenEvent, Sequenced};
 
-    fn event(label: &str) -> LoxleyEvent {
-        LoxleyEvent::<Sequenced>::test_event(label)
+    fn event(label: &str) -> BrackenEvent {
+        BrackenEvent::<Sequenced>::test_event(label)
             .e3_id(E3id::new("1", 1))
             .seq(1)
             .build()

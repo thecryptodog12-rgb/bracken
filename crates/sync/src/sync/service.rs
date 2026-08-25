@@ -18,8 +18,8 @@ use e3_data::Repositories;
 use e3_events::{
     AggregateConfig, BusHandle, CorrelationId, EffectsEnabled, Event, EventPublisher,
     EventStoreQueryBy, EventStoreQueryResponse, EventSubscriber, EventType, EvmEventConfig,
-    HistoricalEvmEventsReceived, HistoricalEvmSyncStart, HistoricalNetSyncStart, LoxleyEvent,
-    LoxleyEventData, SeqAgg, StoreKeys, SyncEnded, Unsequenced,
+    HistoricalEvmEventsReceived, HistoricalEvmSyncStart, HistoricalNetSyncStart, BrackenEvent,
+    BrackenEventData, SeqAgg, StoreKeys, SyncEnded, Unsequenced,
 };
 #[cfg(test)]
 use e3_events::{EventBusBarrier, EventBusFanout, EventContextAccessors};
@@ -107,7 +107,7 @@ pub async fn sync(
     // keyshare / decryption share). What sync deliberately avoids is replaying *request* events.
     //
     // Detection of loose ends that cannot be locally re-driven is exposed offline and
-    // non-destructively via `loxley node validate`, which cross-checks the persisted committee
+    // non-destructively via `bracken node validate`, which cross-checks the persisted committee
     // slots against terminal events in the log and reports orphaned tickets. See
     // `crates/entrypoint/src/validate.rs`.
 
@@ -132,7 +132,7 @@ pub async fn sync(
     info!("Loading historical libp2p events...");
     let events_received = bus.wait_for(EventType::HistoricalNetSyncEventsReceived);
     bus.publish_without_context(HistoricalNetSyncStart::new(net_config.clone()))?;
-    let LoxleyEventData::HistoricalNetSyncEventsReceived(event) =
+    let BrackenEventData::HistoricalNetSyncEventsReceived(event) =
         events_received.await?.into_data()
     else {
         bail!("failed to get HistoricalNetSyncEventsReceived");
@@ -163,7 +163,7 @@ pub async fn sync(
 
 async fn publish_reconciled_history(
     bus: &BusHandle,
-    historical: Vec<LoxleyEvent<Unsequenced>>,
+    historical: Vec<BrackenEvent<Unsequenced>>,
 ) -> Result<()> {
     info!("Enabling effects...");
     bus.publish_without_context(EffectsEnabled::new())?;
@@ -185,7 +185,7 @@ async fn publish_reconciled_history(
 }
 
 #[cfg(test)]
-async fn replay_eventstore_events(bus: &BusHandle, mut events: Vec<LoxleyEvent>) -> Result<usize> {
+async fn replay_eventstore_events(bus: &BusHandle, mut events: Vec<BrackenEvent>) -> Result<usize> {
     let total_events = events.len();
     let mut replayed = 0usize;
 

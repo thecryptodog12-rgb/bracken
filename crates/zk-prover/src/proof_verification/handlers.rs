@@ -8,13 +8,13 @@ impl Actor for ProofVerificationActor {
     type Context = Context<Self>;
 }
 
-impl Handler<LoxleyEvent> for ProofVerificationActor {
+impl Handler<BrackenEvent> for ProofVerificationActor {
     type Result = ();
 
-    fn handle(&mut self, msg: LoxleyEvent, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent, ctx: &mut Self::Context) -> Self::Result {
         let (msg, ec) = msg.into_components();
         match msg {
-            LoxleyEventData::CiphernodeSelected(data) => {
+            BrackenEventData::CiphernodeSelected(data) => {
                 self.store_preset(
                     data.e3_id,
                     data.params_preset,
@@ -22,16 +22,16 @@ impl Handler<LoxleyEvent> for ProofVerificationActor {
                     data.threshold_n,
                 );
             }
-            LoxleyEventData::CommitteeFinalized(mut data) => {
+            BrackenEventData::CommitteeFinalized(mut data) => {
                 // The EVM decoder already emits canonical address order, but sorting again keeps
                 // this trust boundary correct for replayed/test-produced events as well.
                 data.sort_by_address();
                 self.store_committee(data.e3_id, &data.committee);
             }
-            LoxleyEventData::EncryptionKeyReceived(data) => {
+            BrackenEventData::EncryptionKeyReceived(data) => {
                 self.notify_sync(ctx, TypedEvent::new(data, ec))
             }
-            LoxleyEventData::E3RequestComplete(data) => {
+            BrackenEventData::E3RequestComplete(data) => {
                 let e3_id = data.e3_id;
                 self.presets.remove(&e3_id);
                 self.committees.remove(&e3_id);

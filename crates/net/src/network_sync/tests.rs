@@ -11,7 +11,7 @@ use crate::{
 };
 use actix::{Actor, Context as ActixContext, Handler};
 use e3_ciphernode_builder::EventSystem;
-use e3_events::{E3id, EventSource, LoxleyEvent, PlaintextAggregated, TestEvent, Unsequenced};
+use e3_events::{E3id, EventSource, BrackenEvent, PlaintextAggregated, TestEvent, Unsequenced};
 use e3_utils::ArcBytes;
 use tokio::sync::{broadcast, mpsc, mpsc::UnboundedSender};
 
@@ -81,8 +81,8 @@ fn protocol_response(command: NetCommand) -> ProtocolResponse {
     incoming.responder.to_response().unwrap().1
 }
 
-fn local_forwardable_event(e3: &str) -> LoxleyEvent {
-    LoxleyEvent::<Unsequenced>::new_with_timestamp(
+fn local_forwardable_event(e3: &str) -> BrackenEvent {
+    BrackenEvent::<Unsequenced>::new_with_timestamp(
         PlaintextAggregated {
             e3_id: E3id::new(e3, 1),
             decrypted_output: vec![ArcBytes::from_bytes(&[1, 2, 3, 4])],
@@ -97,8 +97,8 @@ fn local_forwardable_event(e3: &str) -> LoxleyEvent {
     .into_sequenced(1)
 }
 
-fn local_non_forwardable_event() -> LoxleyEvent {
-    LoxleyEvent::<Unsequenced>::new_with_timestamp(
+fn local_non_forwardable_event() -> BrackenEvent {
+    BrackenEvent::<Unsequenced>::new_with_timestamp(
         TestEvent::new("not-forwardable", 1).into(),
         None,
         11,
@@ -108,7 +108,7 @@ fn local_non_forwardable_event() -> LoxleyEvent {
     .into_sequenced(2)
 }
 
-fn remote_unsequenced(event: LoxleyEvent) -> LoxleyEvent<Unsequenced> {
+fn remote_unsequenced(event: BrackenEvent) -> BrackenEvent<Unsequenced> {
     event.clone_unsequenced().with_source(EventSource::Net)
 }
 
@@ -156,10 +156,10 @@ async fn rebroadcast_only_gossips_forwardable_own_artifacts() {
         panic!("expected GossipPublish, got {cmd:?}");
     };
     assert_eq!(topic, "my-topic");
-    let event: LoxleyEvent<Unsequenced> = data.try_into().unwrap();
+    let event: BrackenEvent<Unsequenced> = data.try_into().unwrap();
     assert!(matches!(
         event.get_data(),
-        LoxleyEventData::PlaintextAggregated(_)
+        BrackenEventData::PlaintextAggregated(_)
     ));
 
     // The non-forwardable event must not have produced a second command.

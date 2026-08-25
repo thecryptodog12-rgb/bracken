@@ -14,7 +14,7 @@ is `false`. `pnpm dev:up` → `crisp_deploy.sh` deploys real verifiers for full 
 verifiers for skipped local-dev runs.
 
 After changing `crisp.dev.env`, re-run `pnpm dev:setup` and a fresh `pnpm dev:up` (wipe
-`.loxley/data` when switching modes).
+`.bracken/data` when switching modes).
 
 Lower-level switches (kept in sync by the scripts):
 
@@ -89,7 +89,7 @@ server — keep `CRISP_BFV_PRESET=insecure-512` for the default Minimum committe
 cd examples/CRISP
 # Edit crisp.dev.env (or crisp.dev.env.example → crisp.dev.env) as above
 pnpm dev:setup    # builds DKG circuits
-rm -rf .loxley/data   # required when switching from Mode A
+rm -rf .bracken/data   # required when switching from Mode A
 pnpm dev:up       # deploy with ENABLE_ZK_VERIFICATION=true
 pnpm cli init
 ```
@@ -108,7 +108,7 @@ proving).
 - Logs: `loaded dkgFoldAttestationVerifier`, `NodeDkgFold complete`, `zk_dkg_aggregation`, then
   `Publishing PublicKeyAggregated (dkg_evm_proof=present)`
 - On-chain: `publishCommittee` succeeds (no `VkHashMismatch`)
-- Registry / Loxley transition to key published; CRISP indexer can serve `/rounds/current`
+- Registry / Bracken transition to key published; CRISP indexer can serve `/rounds/current`
 
 ---
 
@@ -126,8 +126,8 @@ proving).
 
 `pnpm dev:up` runs deploy then automatically updates:
 
-- `loxley.config.yaml` (ciphernode contract watches)
-- `server/.env` (`LOXLEY_ADDRESS`, `E3_PROGRAM_ADDRESS`, `CRISP_VOTING_TOKEN`, registry, fee token,
+- `bracken.config.yaml` (ciphernode contract watches)
+- `server/.env` (`BRACKEN_ADDRESS`, `E3_PROGRAM_ADDRESS`, `CRISP_VOTING_TOKEN`, registry, fee token,
   and mock references)
 - `client/.env` (`VITE_CRISP_TOKEN`)
 
@@ -147,7 +147,7 @@ deploy).
 **Fix:**
 
 1. Set `CRISP_SKIP_PROOF_AGGREGATION=false` in `crisp.dev.env` (and matching `CRISP_BFV_PRESET`)
-2. `pnpm dev:setup` then `rm -rf .loxley/data && pnpm dev:up`
+2. `pnpm dev:setup` then `rm -rf .bracken/data && pnpm dev:up`
 3. `pnpm cli init`
 
 ### `POST /rounds/current` → 500
@@ -164,8 +164,8 @@ RPC is running. Harmless for CRISP-on-Anvil.
 ### After changing mode
 
 1. Fresh deploy (`clean:deployments` + deploy script for chosen mode)
-2. Sync `.env` / `loxley.config.yaml`
-3. `rm -rf .loxley/data`
+2. Sync `.env` / `bracken.config.yaml`
+3. `rm -rf .bracken/data`
 4. Restart stack + `pnpm cli init`
 
 ---
@@ -177,6 +177,6 @@ RPC is running. Harmless for CRISP-on-Anvil.
 | `pnpm dev:setup` | Skips recursive circuit builds               | `pnpm build:circuits --preset …`              |
 | `pnpm dev:up`    | Mock PK/decryption/fold verifiers            | Production verifiers + full recursive proving |
 
-See also: `packages/loxley-contracts/scripts/deployLoxley.ts`,
-`packages/loxley-contracts/contracts/verifiers/bfv/BfvPkVerifier.sol`, and
+See also: `packages/bracken-contracts/scripts/deployBracken.ts`,
+`packages/bracken-contracts/contracts/verifiers/bfv/BfvPkVerifier.sol`, and
 `agent/flow-trace/04_DKG_AND_COMPUTATION.md` for the full DKG publication flow.

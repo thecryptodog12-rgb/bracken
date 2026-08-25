@@ -1,7 +1,7 @@
 [workspace]
 members = [
   "server",
-  ".loxley/support/dev",
+  ".bracken/support/dev",
   "program",
   "crates/zk-inputs",
   "crates/zk-inputs-wasm",
@@ -14,7 +14,7 @@ resolver = "3"
 version = "0.1.0"
 edition = "2021"
 license = "LGPL-3.0-only"
-description = "CRISP — Voting Application on Loxley"
+description = "CRISP — Voting Application on Bracken"
 repository = "https://github.com/thecryptodog12-rgb/loxley"
 
 [workspace.dependencies]

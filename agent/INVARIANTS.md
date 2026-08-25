@@ -1,4 +1,4 @@
-# Loxley — Invariants
+# Bracken — Invariants
 
 Things that must remain true. Breaking any of these is a protocol bug, a soundness bug, or a
 data-loss bug — not a style issue. Each entry cites where it is enforced or documented. When editing
@@ -26,15 +26,15 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 ### Tokens and bonding
 
 - Ticket deposits/withdrawals use **raw stablecoin base units**, never `× ticketPrice`;
-  `ticketPrice` is used only in the activation check and sortition eligibility. tLOXLEY is minted 1:1
+  `ticketPrice` is used only in the activation check and sortition eligibility. tBRACKEN is minted 1:1
   with its underlying asset. — `BondingRegistry.sol` (`addTicketBalance`, `removeTicketBalance`);
   `flow-trace/02`
-- Tickets (tLOXLEY) are **non-transferable**: `permit`/`delegateBySig` always revert; transfers
+- Tickets (tBRACKEN) are **non-transferable**: `permit`/`delegateBySig` always revert; transfers
   restricted to mint/burn/bonding/whitelist. Collateral cannot be moved to dodge slashing; snapshot
   eligibility at `requestBlock-1` stays attributable. — `flow-trace/02`
-- `totalBonded(account)` = active LOXLEY ciphernode bond + pending-but-still-slashable exits; LOXLEY
+- `totalBonded(account)` = active BRACKEN ciphernode bond + pending-but-still-slashable exits; BRACKEN
   `_update` enforces locked-floor accounting. — `flow-trace/02`
-- A bond-owner transfer must preserve the previous owner's locked-LOXLEY coverage. The wallet balance
+- A bond-owner transfer must preserve the previous owner's locked-BRACKEN coverage. The wallet balance
   plus remaining bonds must equal or exceed `lockedBalanceOf(previousOwner)`. —
   `BondingRegistry.acceptBondOwner`; `flow-trace/01`, `02`
 - **Bonded-voting history mirrors the mapping, never a delta.**
@@ -42,7 +42,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   `BondedCheckpoints`, and must be called from every site that mutates it: bond, slash, both sides
   of a bond-owner transfer, and exit claim (which mutates through a storage pointer inside
   `BondingAssetLib`, so the checkpoint is taken by the caller). Unbonding is deliberately not a
-  write site — the LOXLEY stays with the registry until claimed. A missed site is caught by
+  write site — the BRACKEN stays with the registry until claimed. A missed site is caught by
   `bonded(owner) == totalBonded(owner)`, which compares the checkpoint's current value against the
   mapping at the same instant, and holds for every owner that has been synchronized at least once —
   configuring `BondedCheckpoints` does not backfill, so an owner that bonded beforehand reads as
@@ -53,37 +53,37 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   by a checkpoint per block. — `BondingRegistry.sol`; `BondedCheckpoints.sol`; `flow-trace/02`
 - **The numerator comes from the votes source; the denominator is always the token.**
   `BondedVotes.getPastVotes` sums whatever `votesSource` attributes to the account and that
-  account's bonded LOXLEY, while `getPastTotalSupply` passes the **token's** supply through unchanged.
-  `votesSource` is either the token itself (wallet-held LOXLEY votes, the original behaviour) or an
-  escrow adapter (only locked LOXLEY votes, so holders must lock to participate while operators keep
+  account's bonded BRACKEN, while `getPastTotalSupply` passes the **token's** supply through unchanged.
+  `votesSource` is either the token itself (wallet-held BRACKEN votes, the original behaviour) or an
+  escrow adapter (only locked BRACKEN votes, so holders must lock to participate while operators keep
   weight by bonding). Reading the denominator off the escrow instead would omit the bonded half and
   let participation exceed 100%. Summed voting power must never exceed total supply. —
   `BondedVotes.sol`; `flow-trace/02`
-- **Escrowed and bonded LOXLEY cannot overlap; vesting-locked and bonded do, and must be netted.**
+- **Escrowed and bonded BRACKEN cannot overlap; vesting-locked and bonded do, and must be netted.**
   Escrowing custodies the token in the escrow and bonding custodies it in the registry, so no token
   can be in both. Both were transferred rather than burned, so both are still inside the token's
   total supply — which is what makes the ratio sound in either configuration. Under an escrow votes
-  source `BondedVotes` adds a third source, `LoxleyToken.lockedBalanceAt`, because vesting-locked
-  LOXLEY sits in the holder's own wallet and the transfer hook will not let it reach the escrow. That
+  source `BondedVotes` adds a third source, `BrackenToken.lockedBalanceAt`, because vesting-locked
+  BRACKEN sits in the holder's own wallet and the transfer hook will not let it reach the escrow. That
   source **does** overlap the bond: a bond satisfies a lock (`transferableBalanceOf` nets the two),
-  so bonded LOXLEY is reported by `lockedBalanceAt` and by the bonded history while existing once.
+  so bonded BRACKEN is reported by `lockedBalanceAt` and by the bonded history while existing once.
   `_lockedVotes` therefore subtracts the bond from the locked balance, saturating at zero, making
   the pair worth `max(bonded, locked)` — then caps the result at the account's wallet balance,
   because slashing takes the bond without taking the lock and would otherwise leave the account
-  voting with LOXLEY the slash recipient now holds. The lock schedule is read **only** when the votes
-  source is an escrow: when the token votes for itself, locked LOXLEY is wallet LOXLEY the token has
-  already counted. — `BondedVotes.sol`; `LoxleyToken.sol`; `flow-trace/02`
+  voting with BRACKEN the slash recipient now holds. The lock schedule is read **only** when the votes
+  source is an escrow: when the token votes for itself, locked BRACKEN is wallet BRACKEN the token has
+  already counted. — `BondedVotes.sol`; `BrackenToken.sol`; `flow-trace/02`
 - **The lock schedule is present-state, not history.** `lockedBalanceAt` walks an account's
   **current** locks and evaluates them against the timestamp given, so a lock created after a
   governance snapshot appears in that snapshot's answer — unlike the bonded history, which is
   checkpointed. Sound for vesting locks, which are minted or claimed rather than acquired at will;
-  it must not be treated as a general past balance. — `BondedVotes.sol`; `LoxleyToken.sol`
+  it must not be treated as a general past balance. — `BondedVotes.sol`; `BrackenToken.sol`
 - **An escrow votes source requires a token with a lock schedule.** `_bindVotesSource` staticcalls
   `lockedBalanceAt` once at construction and reverts `LockedBalancesUnsupported` if it cannot
   answer. Tolerating the failure at read time would return zero and disenfranchise exactly the
   locked holders the third source exists to enfranchise. — `BondedVotes.sol`
 - **Every summed source must share the token's clock.** `BondedCheckpoints` keys by
-  `block.timestamp` to match `LoxleyToken`'s ERC-6372 `mode=timestamp`, and `BondedVotes` compares
+  `block.timestamp` to match `BrackenToken`'s ERC-6372 `mode=timestamp`, and `BondedVotes` compares
   the history's clock **and** a non-token votes source's clock against the token's at construction.
   Summing a timestamp-keyed history with a block-numbered source answers for two unrelated points in
   time and is undetectable downstream. — `BondedVotes.sol`; `flow-trace/02`
@@ -98,21 +98,21 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   constructed after the registry is configured — `protocol/deployContracts` therefore deploys
   `BondedCheckpoints` only, and `--action activate-voting` deploys `BondedVotes` once the governance
   batch has run. — `BondedVotes.sol`; `protocol/activateVoting.ts`; `flow-trace/02`
-- **`BondedVotes.balanceOf` attributes custodied LOXLEY to whoever it belongs to.** Bonding moves LOXLEY
+- **`BondedVotes.balanceOf` attributes custodied BRACKEN to whoever it belongs to.** Bonding moves BRACKEN
   into the registry and locking moves it into the escrow, while the adapter attributes each to the
   account it belongs to, so counting it at the custodian's address as well would place the same
   tokens twice and push summed balances above total supply — the denominator every holder-percentage
   view divides by. The registry's entry subtracts `totalCiphernodeBondLiability`, saturating at
   zero, and the escrow's own entry is netted to zero for the same reason — every unit it holds is
-  attributed to a locker, and it publishes no liability total to subtract instead; locked LOXLEY is
+  attributed to a locker, and it publishes no liability total to subtract instead; locked BRACKEN is
   added per account via the escrow's `votingPowerForAccount`, which is delegation-blind, rather than
   the adapter's own `balanceOf`, which counts lock NFTs rather than tokens. `getVotes` needs no such
-  adjustment: the registry never delegates, so bonded LOXLEY carries no wallet votes to double. —
+  adjustment: the registry never delegates, so bonded BRACKEN carries no wallet votes to double. —
   `BondedVotes.sol`; `flow-trace/02`
 - **`setBondedCheckpoints` is one-shot per ciphernode bond token, and self-verifying.** It requires
   the checkpoint contract to name this registry **and** to accept a write from it, checked by
   syncing the zero address, whose bonded total is always zero. `registry()` alone is insufficient:
-  `LoxleyTicketToken` answers it with the registry address, so a mix-up would spend the slot on a
+  `BrackenTicketToken` answers it with the registry address, so a mix-up would spend the slot on a
   contract with no `sync` and revert every later bond, slash, claim and owner transfer. Repointing
   while one is attached is refused: it would abandon recorded history and silently change every past
   answer. While unset the sync is a no-op, not a revert, so an upgrade cannot freeze bonding before
@@ -146,12 +146,12 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 - The fee token, expected decimals, and every raw-unit pricing term change as one configuration.
   Each request states its expected token and maximum fee. Each E3 snapshots its fee token at request
   time. Decimal validation checks the unit scale only; it does not establish the token's economic
-  value. — `Loxley.setFeeAssetConfig`; `flow-trace/03`
+  value. — `Bracken.setFeeAssetConfig`; `flow-trace/03`
 - **Custody assets use exact, non-rebasing accounting:** the fee token, ticket underlying, and
   ciphernode bond token must transfer exact amounts and must not rebase account balances. Every
   custody deposit checks the custody increase. Every outbound transfer checks the recipient increase
   and custody decrease. A mismatch reverts the complete accounting transaction and preserves all
-  other pooled liabilities. — `LoxleyPricing.sol`; `LoxleyTicketToken.sol`; `BondingAssetLib.sol`;
+  other pooled liabilities. — `BrackenPricing.sol`; `BrackenTicketToken.sol`; `BondingAssetLib.sol`;
   `E3RefundManager.sol`; `flow-trace/02`, `03`, `05`
 
 ### Activation (auto-evaluated in `_updateOperatorStatus`, never a standalone call)
@@ -169,9 +169,9 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 
 ### E3 request and committee selection
 
-- E3 IDs include the Loxley controller address in their high 160 bits. The low 96 bits form the
+- E3 IDs include the Bracken controller address in their high 160 bits. The low 96 bits form the
   controller-local sequence. On-chain snapshots, signed payloads, Rust persistence, and indexer keys
-  must preserve the complete `uint256`. — `Loxley.initialize`; `flow-trace/03`
+  must preserve the complete `uint256`. — `Bracken.initialize`; `flow-trace/03`
 - A request can select only the parameter set and committee shape in `ActiveCryptoConfig.sol`.
   `pnpm build:circuits` generates that binding from the active preset. Governance cannot enable a
   different parameter hash, `[H, N]`, or verifier threshold without rebuilding the circuits and
@@ -199,7 +199,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   `CiphernodeRegistryOwnable.sortitionSubmissionWindow`. Both value setters and registry-pointer
   setters enforce the relationship; equality is invalid because ticket submission includes the
   deadline. — `BondingRegistry.sol`; `CiphernodeRegistryOwnable.sol`; `flow-trace/02`, `03`
-- **One coherent dependency generation:** each request validates and snapshots the complete Loxley,
+- **One coherent dependency generation:** each request validates and snapshots the complete Bracken,
   registry, bonding, slashing, refund, treasury, and policy graph. Governance must pause requests
   and drain all E3s, committees, operators, bans, and slash routes before it replaces any graph
   member. Old and new generations never serve requests at the same time. — `flow-trace/03`, `05`
@@ -213,11 +213,11 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   deadline watermark. The time-based floor decreases after old windows expire, and the
   BondingRegistry cannot clear its registry pointer. — `flow-trace/02`, `03`, `06`; INDEX Z-37
 - **E3 program allowlist:** production initialization registers one deployed E3 program and assigns
-  Loxley ownership to the configured protocol owner. Later registrations are append-only and
+  Bracken ownership to the configured protocol owner. Later registrations are append-only and
   owner-only. Every registered address must contain runtime code. `MockE3Program` is the stateless
   launch option. It has no administrative controls and applies no application rules. The
   request-time BFV ciphertext verifier and decryption verifier remain mandatory. Its mutable failure
-  controls live only in `MockE3ProgramHarness`. — `Loxley.sol`; `MockE3Program.sol`; `flow-trace/03`
+  controls live only in `MockE3ProgramHarness`. — `Bracken.sol`; `MockE3Program.sol`; `flow-trace/03`
 
 ### Deadlines
 
@@ -227,7 +227,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   end of the input window. Request validation reserves the full worst-case sortition, DKG, compute,
   and decryption lifecycle. — `flow-trace/03`
 - Known open issue: `gracePeriod` is stored/validated but never applied in any deadline check (dead
-  code). — `Loxley.sol`; INDEX concern #3
+  code). — `Bracken.sol`; INDEX concern #3
 
 ### Slashing and failure settlement
 
@@ -240,7 +240,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 - Slashed **ticket** funds are always escrowed first; destination depends on terminal outcome
   (failure → honest nodes; none → snapshotted treasury; success → split by `successSlashedNodeBps`).
   **Ciphernode-bond** slashes do not leave the registry at execution: the amount is recorded in
-  `slashedCiphernodeBond` and the LOXLEY stays in registry custody. Only `withdrawSlashedFunds`
+  `slashedCiphernodeBond` and the BRACKEN stays in registry custody. Only `withdrawSlashedFunds`
   (owner-called) moves it to `slashedFundsTreasury`, releasing the matching
   `totalCiphernodeBondLiability` as it goes — so custody and liability are retired together. —
   `BondingRegistry.slashCiphernodeBond`, `BondingRegistry.withdrawSlashedFunds`; `flow-trace/05`
@@ -293,9 +293,9 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 
 - Committee `(N, T, H)` must be identical across **five** files:
   `circuits/lib/src/configs/committee/active.nr`, `circuits/bin/.active-preset.json`,
-  `packages/loxley-contracts/scripts/utils.ts` (`BFV_DKG_H`/`BFV_THRESHOLD_T`), and
+  `packages/bracken-contracts/scripts/utils.ts` (`BFV_DKG_H`/`BFV_THRESHOLD_T`), and
   `crates/zk-helpers/src/ciphernodes_committee.rs`, plus
-  `packages/loxley-contracts/contracts/lib/ActiveCryptoConfig.sol`. The Solidity file also binds the
+  `packages/bracken-contracts/contracts/lib/ActiveCryptoConfig.sol`. The Solidity file also binds the
   active BFV parameter-set hash. Drift means the next build silently produces verifiers or proofs
   for the wrong configuration. Switch only with `pnpm build:circuits --committee <name>`; enforced
   by `scripts/check-committee.sh`.
@@ -341,7 +341,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   `committeeHash = keccak256(abi.encodePacked(topNodes))` (as 128-bit limbs) against the proof's
   public inputs, binding the proof to the specific committee. — `flow-trace/04`
 - **Decryption-proof replay prevention (C-03):** every secret-bearing C6 proof commits to the domain
-  `(chainId, Loxley address, e3Id, committeeHash, ciphertextOutputHash, committeePublicKey)`;
+  `(chainId, Bracken address, e3Id, committeeHash, ciphertextOutputHash, committeePublicKey)`;
   folding requires one common domain; the wrapper rejects any domain differing from the contract's
   recomputed value and checks per-party SK/ESM commitments against registry-stored DKG anchors. —
   `flow-trace/04`; INDEX concern #34
@@ -351,7 +351,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   witnesses. — INDEX IF-004
 - **Ciphertext-duty proof (Zenith #15):** each E3 snapshots the protocol verifier for its encryption
   scheme at request time. Before `CiphertextReady`, this verifier checks a RISC Zero receipt that
-  binds the chain, Loxley address, E3 ID, scheme ID, BFV parameter hash, committee public key,
+  binds the chain, Bracken address, E3 ID, scheme ID, BFV parameter hash, committee public key,
   output hash, and SAFE commitment. The E3 program verifies application rules separately and cannot
   create a decryption duty by itself. — `flow-trace/04`; INDEX Z-15
 - **The compute path carries no external audit.** The 2026-08-17 Zenith audit covered six Solidity
@@ -359,7 +359,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
   `Risc0BfvCiphertextVerifier.sol` were outside both the audit and its mitigation review, so a
   `Resolved` `Z-` row is this repository's remediation rather than a re-reviewed one. Treat changes
   in these areas as unaudited by default. — `flow-trace/00`;
-  `packages/loxley-contracts/audits/README.md`
+  `packages/bracken-contracts/audits/README.md`
 - **A Secure Process derives its input root; it never receives it.** `ComputeInput` holds only
   `fhe_inputs`, and `ComputeInput::process` derives the leaves from the ciphertexts it processed.
   The protocol verifier takes the input root from the proof envelope and does not constrain it, so
@@ -532,7 +532,7 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 - Upgradeable-contract storage baselines are committed and CI-gated (missing baselines, compiler
   drift, layout incompatibility, bad gap consumption all fail); baseline creation is an explicit
   maintainer command. — INDEX concern #27
-- Contracts CI fails a release if `Loxley` / aggregator-verifier runtime bytecode is within 256
+- Contracts CI fails a release if `Bracken` / aggregator-verifier runtime bytecode is within 256
   bytes of the EIP-170 limit. — INDEX concern #22
 - BFV circuit-verifier and RISC Zero receipt-verifier constructors require deployed verifier
   contracts. BFV circuit wrappers also require nonzero recursive VK hashes. — INDEX concerns #21,
@@ -540,15 +540,15 @@ skip-proof feature containment (`pnpm check:invariants`, baselines in
 - CLI secrets are passed over **stdin only** — never argv or environment; private keys are never
   stored in plaintext. — `flow-trace/00`, `01`
 - **Deployment writes must be mined, not only sent.** Every configuration transaction in
-  `scripts/deployLoxley.ts` goes through the `send()` helper in `scripts/utils.ts`, which awaits the
+  `scripts/deployBracken.ts` goes through the `send()` helper in `scripts/utils.ts`, which awaits the
   receipt and fails on a missing receipt or a non-success status. `send()` also labels a rejection
   from the send or the mining stage and keeps the original error as its `cause`. A bare
   `await contract.setX(...)` resolves when the transaction is dispatched, so on a real network a
   dropped write leaves the reference at `address(0)` while the script still exits zero.
-- **A deployment must end with a verified wiring graph.** After configuration, `deployLoxley.ts`
-  reads back every cross-contract reference (Loxley, CiphernodeRegistry, BondingRegistry,
-  LoxleyTicketToken, SlashingManager, E3RefundManager, LOXLEY as the BondingRegistry ciphernode bond
-  token) plus the BondingRegistry reward-distributor authorization for Loxley, and throws with the
+- **A deployment must end with a verified wiring graph.** After configuration, `deployBracken.ts`
+  reads back every cross-contract reference (Bracken, CiphernodeRegistry, BondingRegistry,
+  BrackenTicketToken, SlashingManager, E3RefundManager, BRACKEN as the BondingRegistry ciphernode bond
+  token) plus the BondingRegistry reward-distributor authorization for Bracken, and throws with the
   full list of mismatches. Add a read-back for each new cross-contract setter.
 - **A deployment must also enable bonded voting.** `protocol/deployContracts` deploys
   `BondedCheckpoints` (bound to the BondingRegistry **proxy**, not the implementation) and the

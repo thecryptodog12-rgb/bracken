@@ -39,8 +39,8 @@
 //! 3. Verifies the addition equations hold at these points
 //! 4. Checks range constraints on all coefficients
 
-use loxley_lib::math::commitments::compute_challenge;
-use loxley_lib::math::polynomial::Polynomial;
+use bracken_lib::math::commitments::compute_challenge;
+use bracken_lib::math::polynomial::Polynomial;
 
 /// The ciphertext an input adds to, which is either the one already in the slot or nothing.
 ///

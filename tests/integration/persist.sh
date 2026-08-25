@@ -25,19 +25,19 @@ else
   pnpm evm:deploy
 fi
 
-(cd "$ROOT_DIR/packages/loxley-contracts" && pnpm utils:sync-integration-config)
+(cd "$ROOT_DIR/packages/bracken-contracts" && pnpm utils:sync-integration-config)
 
-loxley_wallet_set cn1 "$PRIVATE_KEY_CN1"
-loxley_wallet_set cn2 "$PRIVATE_KEY_CN2"
-loxley_wallet_set cn3 "$PRIVATE_KEY_CN3"
-loxley_wallet_set cn4 "$PRIVATE_KEY_CN4"
-loxley_wallet_set cn5 "$PRIVATE_KEY_CN5"
+bracken_wallet_set cn1 "$PRIVATE_KEY_CN1"
+bracken_wallet_set cn2 "$PRIVATE_KEY_CN2"
+bracken_wallet_set cn3 "$PRIVATE_KEY_CN3"
+bracken_wallet_set cn4 "$PRIVATE_KEY_CN4"
+bracken_wallet_set cn5 "$PRIVATE_KEY_CN5"
 
 heading "Setup ZK prover"
-$LOXLEY_BIN noir setup
+$BRACKEN_BIN noir setup
 
 # start swarm
-loxley_nodes_up
+bracken_nodes_up
 
 waiton-files "$ROOT_DIR/target/debug/fake_encrypt"
 
@@ -92,12 +92,12 @@ if [[ -z "$ACTIVE_AGG" ]]; then
 fi
 
 # kill active aggregator
-loxley_nodes_stop "$ACTIVE_AGG"
+bracken_nodes_stop "$ACTIVE_AGG"
 
 sleep 15
 
 # relaunch the active aggregator
-loxley_nodes_start "$ACTIVE_AGG"
+bracken_nodes_start "$ACTIVE_AGG"
 
 sleep 5
 

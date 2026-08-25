@@ -68,7 +68,7 @@ pub async fn execute(config: &AppConfig) -> Result<CiphernodeHandle> {
         .with_persistence(&config.log_file(), &config.db_file())
         .with_sortition_score()
         .with_chains(config.chains())
-        .with_contract_loxley_full()
+        .with_contract_bracken_full()
         .with_contract_bonding_registry()
         .with_multithread_config(reserve, concurrent_jobs)
         .with_max_buffered_evm_events(config.max_buffered_evm_events())

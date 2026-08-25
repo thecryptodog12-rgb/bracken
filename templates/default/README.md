@@ -1,8 +1,8 @@
 # Template
 
-Loxley Protocol Template provides a complete development environment for building and testing
+Bracken Protocol Template provides a complete development environment for building and testing
 applications with Fully Homomorphic Encryption (FHE). This template enables local deployment and
-interaction with the Loxley protocol without requiring the core contracts to be copied and avoiding
+interaction with the Bracken protocol without requiring the core contracts to be copied and avoiding
 complexities of specific programs (as zk circuits for CRISP).
 
 ## Prerequisites
@@ -48,41 +48,41 @@ At this point, you should have all the tools required to develop and deploy an a
 You can add Metamask as an extension to your browser following the official
 [documentation](https://metamask.io).
 
-### Install the Loxley CLI
+### Install the Bracken CLI
 
-The easiest way to install the Loxley CLI is using our installer script:
+The easiest way to install the Bracken CLI is using our installer script:
 `curl -fsSL https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash`
 
 Or if you prefer wget:
 `wget -qO- https://raw.githubusercontent.com/thecryptodog12-rgb/loxley/main/install | bash`
 
-This script will download and install loxleyup, which is the standalone installer for the Loxley
+This script will download and install brackenup, which is the standalone installer for the Bracken
 CLI.
 
-Once you have `loxleyup` installed, you can manage your Loxley CLI installation:
+Once you have `brackenup` installed, you can manage your Bracken CLI installation:
 
 ```bash
 # Install to ~/.local/bin (default)
-loxleyup install
+brackenup install
 
 # Install to /usr/local/bin (requires sudo)
-loxleyup install --system
+brackenup install --system
 ```
 
-Running `loxleyup install` will install the latest version of the Loxley CLI.
+Running `brackenup install` will install the latest version of the Bracken CLI.
 
-After installation, verify that the Loxley CLI is working correctly:
+After installation, verify that the Bracken CLI is working correctly:
 
-`loxley --help`
+`bracken --help`
 
-You should see the help information for the Loxley CLI.
+You should see the help information for the Bracken CLI.
 
 ### Create your Project
 
 Generate a new E3 program from the default template:
 
 ```bash
-loxley init my-first-e3
+bracken init my-first-e3
 cd my-first-e3
 ```
 
@@ -92,14 +92,14 @@ This creates a complete E3 project with:
 - **Smart contracts** (`./contracts/`)
 - **Client application** (`./client/`)
 - **Coordination server** (`./server/`)
-- **Configuration** (`loxley.config.yaml`)
+- **Configuration** (`bracken.config.yaml`)
 
 ### Compile your E3 Program
 
 First, compile your E3 program to build the Risc0 zkvm image:
 
 ```bash
-loxley program compile
+bracken program compile
 ```
 
 This builds the Risc0 zkvm image that will be deployed on the blockchain and used for verification
@@ -109,7 +109,7 @@ If you want to avoid the proof or you have trouble with Risc0 zkvm installation,
 dev mode (no proof).
 
 ```bash
-loxley program start --dev true
+bracken program start --dev true
 ```
 
 ### Start the Development Environment
@@ -167,12 +167,12 @@ You successfully ran a **Fully Homomorphic Encryption** computation where:
 - Your inputs were encrypted before leaving the browser
 - The computation happened on encrypted data
 - The result was computed without exposing your private inputs
-- All coordination was handled by the Loxley protocol
+- All coordination was handled by the Bracken protocol
 
 ## Manual Start
 
-If you prefer to install the Loxley CLI manually, please visit the dedicated section in the
-[documentation](https://docs.loxley.network/installation#manual-installation).
+If you prefer to install the Bracken CLI manually, please visit the dedicated section in the
+[documentation](https://docs.bracken.network/installation#manual-installation).
 
 ## Next Steps
 
@@ -184,5 +184,5 @@ Now that you have a working E3 program:
 4. **Deploy**: Learn about production deployment
 
 Ready to dive deeper? Continue with our
-[Hello World Tutorial](https://docs.loxley.network/hello-world-tutorial) for a step-by-step
+[Hello World Tutorial](https://docs.bracken.network/hello-world-tutorial) for a step-by-step
 breakdown of building E3 programs from scratch.

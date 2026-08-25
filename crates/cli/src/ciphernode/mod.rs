@@ -24,7 +24,7 @@ use crate::helpers::{ensure_hex_zeroizing, parse_zeroizing};
 
 #[derive(Debug, Args, Clone, Default, Serialize, Deserialize)]
 pub struct ChainArgs {
-    /// Chain name as defined in the loxley config (defaults to the first entry)
+    /// Chain name as defined in the bracken config (defaults to the first entry)
     #[arg(long = "chain")]
     pub chain: Option<String>,
 }
@@ -39,7 +39,7 @@ impl ChainArgs {
 pub enum CiphernodeCommands {
     /// Setup local ciphernode configuration
     Setup {
-        /// An rpc url for loxley to connect to
+        /// An rpc url for bracken to connect to
         #[arg(long = "rpc-url", short = 'r')]
         rpc_url: Option<String>,
 
@@ -96,7 +96,7 @@ pub enum CiphernodeCommands {
         #[command(flatten)]
         chain: ChainArgs,
     },
-    /// Manage LOXLEY ciphernode bonding for an operator
+    /// Manage BRACKEN ciphernode bonding for an operator
     Bond {
         #[command(subcommand)]
         command: BondCommands,
@@ -164,12 +164,12 @@ pub enum CiphernodeCommands {
 
 #[derive(Subcommand, Clone, Debug)]
 pub enum BondCommands {
-    /// Bond LOXLEY into an operator position
+    /// Bond BRACKEN into an operator position
     Bond {
         #[arg(long = "amount")]
         amount: String,
     },
-    /// Queue LOXLEY from an operator position for exit
+    /// Queue BRACKEN from an operator position for exit
     Unbond {
         #[arg(long = "amount")]
         amount: String,
@@ -266,7 +266,7 @@ pub async fn execute(out: Console, command: CiphernodeCommands, config: &AppConf
         }
         CiphernodeCommands::Setup { .. } => {
             bail!(
-                "Cannot run `loxley ciphernode setup` when a configuration already exists: {:?}",
+                "Cannot run `bracken ciphernode setup` when a configuration already exists: {:?}",
                 config.config_file()
             );
         }

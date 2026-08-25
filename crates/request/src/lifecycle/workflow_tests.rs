@@ -11,23 +11,23 @@ fn id(n: &str) -> E3id {
     E3id::new(n, 1)
 }
 
-fn requested(n: &str) -> LoxleyEventData {
-    LoxleyEventData::E3Requested(E3Requested {
+fn requested(n: &str) -> BrackenEventData {
+    BrackenEventData::E3Requested(E3Requested {
         e3_id: id(n),
         ..Default::default()
     })
 }
 
-fn stage_changed(n: &str, from: E3Stage, to: E3Stage) -> LoxleyEventData {
-    LoxleyEventData::E3StageChanged(E3StageChanged {
+fn stage_changed(n: &str, from: E3Stage, to: E3Stage) -> BrackenEventData {
+    BrackenEventData::E3StageChanged(E3StageChanged {
         e3_id: id(n),
         previous_stage: from,
         new_stage: to,
     })
 }
 
-fn failed(n: &str, stage: E3Stage) -> LoxleyEventData {
-    LoxleyEventData::E3Failed(E3Failed {
+fn failed(n: &str, stage: E3Stage) -> BrackenEventData {
+    BrackenEventData::E3Failed(E3Failed {
         e3_id: id(n),
         failed_at_stage: stage,
         reason: FailureReason::DKGTimeout,
@@ -136,7 +136,7 @@ fn active_excludes_terminal_e3s() {
 #[test]
 fn non_lifecycle_event_is_ignored() {
     let mut svc = E3LifecycleService::new();
-    let d = svc.observe(&LoxleyEventData::Shutdown(e3_events::Shutdown));
+    let d = svc.observe(&BrackenEventData::Shutdown(e3_events::Shutdown));
     assert_eq!(LifecycleDecision::NotLifecycle, d);
 }
 

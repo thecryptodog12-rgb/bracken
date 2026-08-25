@@ -27,7 +27,7 @@ graph TD
 
   server --"publishInput()"--> evm
   subgraph evm["EVM"]
-    esol1["Loxley Contracts"]
+    esol1["Bracken Contracts"]
     csol1["CRISP Contracts"]
   end
   server -. "WebSocket listener" .-> evm
@@ -40,12 +40,12 @@ CRISP uses BFV fully homomorphic encryption to tally votes without revealing ind
 1. The server collects BFV-encrypted vote ciphertexts from participants.
 2. The program homomorphically adds all ciphertexts together to produce an encrypted tally.
 3. A Risc0 guest program proves the aggregation was performed correctly.
-4. The proof and ciphertext output are submitted on-chain; the Loxley ciphernode committee then
+4. The proof and ciphertext output are submitted on-chain; the Bracken ciphernode committee then
    threshold-decrypts the result.
 
 ## E3 Program Entry Points
 
-The CRISP Solidity contract implements `IE3Program` with three functions called by the Loxley
+The CRISP Solidity contract implements `IE3Program` with three functions called by the Bracken
 contract:
 
 | Function        | When called              | What it does                                                       |

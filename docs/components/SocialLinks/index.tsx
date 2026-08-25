@@ -13,7 +13,7 @@ interface SocialLinksProps {
   url: string
 }
 
-// Alleen kanalen die bestaan en van ons zijn. Hier stonden x.com/theloxley --
+// Alleen kanalen die bestaan en van ons zijn. Hier stonden x.com/thebracken --
 // door de hernoemslag verzonnen, geeft 404 -- en een Telegram-groep die wel
 // bestaat maar niet de onze is. Een dode link is vervelend; een link naar
 // andermans kanaal onder je eigen merk is erger.

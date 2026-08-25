@@ -147,7 +147,7 @@ async fn pk_aggregation_proof_pending_carries_canonical_committee_dims() -> Resu
     let event = next_event(&history).await?;
     assert!(matches!(
         event.into_data(),
-        LoxleyEventData::PkAggregationProofPending(data)
+        BrackenEventData::PkAggregationProofPending(data)
             if data.e3_id == e3_id
                 && data.proof_request.committee_n == threshold_n
                 && data.proof_request.committee_h == circuit_h

@@ -6,7 +6,7 @@
 
 use crate::{
     events::{FlushEventStores, SequencerBarrier, StoreEventRequested, StoreEventResponse},
-    EventBus, LoxleyEvent, Sequenced, Unsequenced,
+    EventBus, BrackenEvent, Sequenced, Unsequenced,
 };
 use actix::{Actor, Addr, AsyncContext, Handler, Recipient, ResponseFuture};
 use anyhow::{Context, Result};
@@ -14,14 +14,14 @@ use e3_utils::MAILBOX_LIMIT;
 
 /// Component to sequence the storage of events
 pub struct Sequencer {
-    bus: Addr<EventBus<LoxleyEvent<Sequenced>>>,
+    bus: Addr<EventBus<BrackenEvent<Sequenced>>>,
     eventstore: Recipient<StoreEventRequested>,
     eventstore_flush: Option<Recipient<FlushEventStores>>,
 }
 
 impl Sequencer {
     pub fn new(
-        bus: &Addr<EventBus<LoxleyEvent<Sequenced>>>,
+        bus: &Addr<EventBus<BrackenEvent<Sequenced>>>,
         eventstore: impl Into<Recipient<StoreEventRequested>>,
     ) -> Self {
         Self {
@@ -32,7 +32,7 @@ impl Sequencer {
     }
 
     pub fn new_with_flush(
-        bus: &Addr<EventBus<LoxleyEvent<Sequenced>>>,
+        bus: &Addr<EventBus<BrackenEvent<Sequenced>>>,
         eventstore: impl Into<Recipient<StoreEventRequested>>,
         eventstore_flush: impl Into<Recipient<FlushEventStores>>,
     ) -> Self {
@@ -56,9 +56,9 @@ impl Actor for Sequencer {
     }
 }
 
-impl Handler<LoxleyEvent<Unsequenced>> for Sequencer {
+impl Handler<BrackenEvent<Unsequenced>> for Sequencer {
     type Result = ();
-    fn handle(&mut self, msg: LoxleyEvent<Unsequenced>, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: BrackenEvent<Unsequenced>, ctx: &mut Self::Context) -> Self::Result {
         self.eventstore
             .do_send(StoreEventRequested::new(msg, ctx.address()));
     }
@@ -97,7 +97,7 @@ impl Handler<SequencerBarrier> for Sequencer {
 #[cfg(test)]
 mod tests {
     use e3_ciphernode_builder::EventSystem;
-    use e3_events::{EventPublisher, GetEvents, LoxleyEvent, TakeEvents, TestEvent};
+    use e3_events::{EventPublisher, GetEvents, BrackenEvent, TakeEvents, TestEvent};
 
     #[actix::test]
     async fn it_adds_seqence_numbers_to_events() -> anyhow::Result<()> {
@@ -117,7 +117,7 @@ mod tests {
 
         let expected = event_data
             .into_iter()
-            .map(|d| LoxleyEvent::new_stored_event(d.clone().into(), 0, d.entropy))
+            .map(|d| BrackenEvent::new_stored_event(d.clone().into(), 0, d.entropy))
             .collect::<Vec<_>>();
         let events = history.send(TakeEvents::new(3)).await?;
 
@@ -125,7 +125,7 @@ mod tests {
             events
                 .events
                 .iter()
-                .map(LoxleyEvent::strip_ts)
+                .map(BrackenEvent::strip_ts)
                 .collect::<Vec<_>>(),
             expected
         );
@@ -147,7 +147,7 @@ mod tests {
 
         let deadline = tokio::time::Instant::now() + std::time::Duration::from_secs(30);
         loop {
-            let events: Vec<LoxleyEvent> = history.send(GetEvents::new()).await?;
+            let events: Vec<BrackenEvent> = history.send(GetEvents::new()).await?;
             if events.len() >= count {
                 let elapsed = start.elapsed();
                 println!("All {count} events arrived in {elapsed:?}");

@@ -24,7 +24,7 @@ cd "$(dirname "$0")/.."
 RPC="${ROBINHOOD_RPC_URL:-https://rpc.mainnet.chain.robinhood.com}"
 NODE_RPC="http://127.0.0.1:8545"
 USDG="0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168"
-STATE="packages/loxley-contracts/deployed_contracts.json"
+STATE="packages/bracken-contracts/deployed_contracts.json"
 WORK="$(mktemp -d)"
 
 rpc() { curl -s --max-time 20 -X POST "$1" -H 'content-type: application/json' -d "$2"; }
@@ -62,7 +62,7 @@ trap cleanup EXIT
 purge_state   # ook vooraf, voor het geval een eerdere run hard is afgebroken
 
 echo "-- Fork starten van ${RPC}"
-pnpm --filter @loxley/contracts exec hardhat node \
+pnpm --filter @bracken/contracts exec hardhat node \
   --fork "$RPC" --chain-id 4663 --port 8545 > "$WORK/node.log" 2>&1 &
 NODE_PID=$!
 
@@ -77,7 +77,7 @@ BLOCK=$(rpc "$NODE_RPC" '{"jsonrpc":"2.0","id":1,"method":"eth_blockNumber","par
 echo "   fork draait op blok $BLOCK"
 
 echo "-- Wegwerp-deployer aanmaken"
-( cd packages/loxley-contracts && node -e "
+( cd packages/bracken-contracts && node -e "
 const {Wallet}=require('ethers');
 const w=Wallet.createRandom();
 require('fs').writeFileSync(process.argv[1],'export PRIVATE_KEY='+w.privateKey+'\nexport ADDR='+w.address+'\n');
@@ -88,16 +88,16 @@ console.log('   ' + w.address);
 rpc "$NODE_RPC" "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"hardhat_setBalance\",\"params\":[\"$ADDR\",\"0x56BC75E2D63100000\"]}" > /dev/null
 
 echo "-- Stap 1: bond token"
-BOND=$(BOND_TOKEN_NAME="${BOND_TOKEN_NAME:-Loxley}" \
-       BOND_TOKEN_SYMBOL="${BOND_TOKEN_SYMBOL:-LOXLEY}" \
+BOND=$(BOND_TOKEN_NAME="${BOND_TOKEN_NAME:-Bracken}" \
+       BOND_TOKEN_SYMBOL="${BOND_TOKEN_SYMBOL:-BRACKEN}" \
        BOND_TOKEN_SUPPLY="${BOND_TOKEN_SUPPLY:-1200000000}" \
-  pnpm --filter @loxley/contracts exec hardhat run scripts/deployBondToken.ts \
-    --network robinhoodLocal 2>&1 | grep -oE "LoxleyBondToken: 0x[0-9a-fA-F]{40}" | cut -d' ' -f2)
+  pnpm --filter @bracken/contracts exec hardhat run scripts/deployBondToken.ts \
+    --network robinhoodLocal 2>&1 | grep -oE "BrackenBondToken: 0x[0-9a-fA-F]{40}" | cut -d' ' -f2)
 [ -n "$BOND" ] || { echo "   GEFAALD"; exit 1; }
 echo "   $BOND"
 
 echo "-- Stap 3: E3-programma"
-PROG=$(pnpm --filter @loxley/contracts exec hardhat run scripts/deployE3Program.ts \
+PROG=$(pnpm --filter @bracken/contracts exec hardhat run scripts/deployE3Program.ts \
   --network robinhoodLocal 2>&1 | grep -oE "MockE3Program: 0x[0-9a-fA-F]{40}" | cut -d' ' -f2)
 [ -n "$PROG" ] || { echo "   GEFAALD"; exit 1; }
 echo "   $PROG"
@@ -108,7 +108,7 @@ FEE_TOKEN_ADDRESS="$USDG" \
 E3_PROGRAM_ADDRESS="$PROG" \
 DEPLOY_MOCKS=false \
 ENABLE_ZK_VERIFICATION=true \
-  pnpm --filter @loxley/contracts exec hardhat run scripts/run.ts \
+  pnpm --filter @bracken/contracts exec hardhat run scripts/run.ts \
     --network robinhoodLocal 2>&1 | grep -E "deployed to:|wiring verified|Enabling|Error" | tail -25
 
 echo "-- Kosten"

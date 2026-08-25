@@ -4,7 +4,7 @@
     "title": "Overview"
   },
   "index": {
-    "title": "Loxley"
+    "title": "Bracken"
   },
   "introduction": {
     "title": "Introduction"
@@ -27,8 +27,8 @@
   "use-cases": {
     "title": "Use Cases"
   },
-  "building-with-loxley": {
-    "title": "Building with Loxley"
+  "building-with-bracken": {
+    "title": "Building with Bracken"
   },
   "best-practices": {
     "title": "Best Practices"
@@ -67,7 +67,7 @@
     "title": "Project Template"
   },
   "sdk": {
-    "title": "Loxley SDK"
+    "title": "Bracken SDK"
   },
   "setting-up-server": {
     "title": "Setting Up the Server"
@@ -118,9 +118,9 @@
   "internals": {
     "title": "Technical Deep Dives"
   },
-  "-- LOXLEY Token": {
+  "-- BRACKEN Token": {
     "type": "separator",
-    "title": "LOXLEY Token"
+    "title": "BRACKEN Token"
   },
   "tokenomics": {
     "title": "Tokenomics"

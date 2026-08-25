@@ -9,7 +9,7 @@ use anyhow::{bail, Context, Result};
 use e3_events::{
     prelude::*, trap, trap_fut, AggregateId, BusHandle, CorrelationId, EType, EventSource,
     EventStoreFilter, EventStoreQueryBy, EventStoreQueryResponse, EventType,
-    HistoricalNetSyncEventsReceived, HistoricalNetSyncStart, LoxleyEvent, LoxleyEventData,
+    HistoricalNetSyncEventsReceived, HistoricalNetSyncStart, BrackenEvent, BrackenEventData,
     NetReady, TsAgg, TypedEvent, Unsequenced,
 };
 use e3_utils::MAILBOX_LIMIT;
@@ -68,7 +68,7 @@ const INCOMING_SYNC_REQUEST_TIMEOUT: Duration = Duration::from_secs(25);
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SyncResponseValue {
-    pub events: Vec<LoxleyEvent<Unsequenced>>,
+    pub events: Vec<BrackenEvent<Unsequenced>>,
     pub ts: u128,
 }
 
@@ -99,7 +99,7 @@ struct PendingSyncRequest {
 }
 
 pub struct NetSyncManager {
-    /// Loxley EventBus
+    /// Bracken EventBus
     bus: BusHandle,
     /// NetCommand sender to forward commands to the Libp2pNetInterface
     tx: mpsc::Sender<NetCommand>,

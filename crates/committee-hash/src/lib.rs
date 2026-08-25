@@ -7,7 +7,7 @@
 //! Canonical EVM hashes for DKG / decryption aggregator proofs.
 //! Committee hashing must match `CommitteeHashLib.sol`
 //! (`keccak256` over ordered raw 20-byte addresses). Decryption-domain hashing
-//! must match `LoxleyPricing.decryptionDomain`.
+//! must match `BrackenPricing.decryptionDomain`.
 
 use alloy::{
     primitives::{keccak256, Address, B256, U256},
@@ -26,7 +26,7 @@ pub struct CommitteeHashLimbs {
 /// the E3 that authorized it.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct DecryptionDomainContext {
-    pub loxley_address: Address,
+    pub bracken_address: Address,
     pub committee_hash: B256,
     pub committee_public_key: B256,
 }
@@ -73,10 +73,10 @@ pub fn committee_hash_field_hex(addresses: &[Address]) -> (String, String) {
 
 /// Compute the E3 decryption domain:
 ///
-/// `keccak256(abi.encode(chainId, loxley, e3Id, committeeHash,
+/// `keccak256(abi.encode(chainId, bracken, e3Id, committeeHash,
 /// ciphertextOutputHash, committeePublicKey))`.
 ///
-/// Loxley address prevents cross-deployment replay. The remaining
+/// Bracken address prevents cross-deployment replay. The remaining
 /// fields prevent replay across chains, E3s, committees, ciphertexts, or DKG
 /// keys within one deployment.
 pub fn hash_decryption_domain(
@@ -88,7 +88,7 @@ pub fn hash_decryption_domain(
     keccak256(
         (
             U256::from(chain_id),
-            context.loxley_address,
+            context.bracken_address,
             e3_id,
             context.committee_hash,
             ciphertext_output_hash,
@@ -179,7 +179,7 @@ mod tests {
     #[test]
     fn decryption_domain_matches_solidity_abi_layout() {
         let context = DecryptionDomainContext {
-            loxley_address: address!("0x1111111111111111111111111111111111111111"),
+            bracken_address: address!("0x1111111111111111111111111111111111111111"),
             committee_hash: B256::repeat_byte(0x22),
             committee_public_key: B256::repeat_byte(0x44),
         };
@@ -193,7 +193,7 @@ mod tests {
             .iter()
             .enumerate()
             .for_each(|(index, byte)| encoded[index] = *byte);
-        encoded[32 + 12..64].copy_from_slice(context.loxley_address.as_slice());
+        encoded[32 + 12..64].copy_from_slice(context.bracken_address.as_slice());
         e3_id
             .to_be_bytes_vec()
             .iter()
