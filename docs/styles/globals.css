@@ -49,32 +49,32 @@ img {
    ───────────────────────────────────────────────────────────────────────── */
 
 :root {
-  --lox-ink: #1d3527;
-  --lox-ink-2: #33513c;
-  --lox-ink-3: #5c7a65;
-  --lox-paper: #e9f4e6;
-  --lox-paper-2: #fbfdfa;
-  --lox-rule: #cfe0cb;
-  --lox-accent: #1c5c3f;
-  --lox-brass: #9a7328;
+  --bra-ink: #1a2f27;
+  --bra-ink-2: #33534a;
+  --bra-ink-3: #5e7d73;
+  --bra-paper: #edf2ec;
+  --bra-paper-2: #fbfcfa;
+  --bra-rule: #ccdbd3;
+  --bra-accent: #1e6b4b;
+  --bra-brass: #a8521f;
 
   /* Greenwood i.p.v. Nextra's standaard blauw (203deg). */
   --nextra-primary-hue: 155deg;
   --nextra-primary-saturation: 54%;
 
-  --lox-display: 'Instrument Serif', 'Iowan Old Style', Palatino, Georgia, serif;
-  --lox-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --bra-display: 'Instrument Serif', 'Iowan Old Style', Palatino, Georgia, serif;
+  --bra-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 }
 
 .dark {
-  --lox-ink: #e4f0e4;
-  --lox-ink-2: #bed2c1;
-  --lox-ink-3: #8ea795;
-  --lox-paper: #0d1610;
-  --lox-paper-2: #131f17;
-  --lox-rule: #22352a;
-  --lox-accent: #6fcb9a;
-  --lox-brass: #d8a548;
+  --bra-ink: #1a2f27;
+  --bra-ink-2: #33534a;
+  --bra-ink-3: #5e7d73;
+  --bra-paper: #edf2ec;
+  --bra-paper-2: #fbfcfa;
+  --bra-rule: #ccdbd3;
+  --bra-accent: #1e6b4b;
+  --bra-brass: #a8521f;
 
   --nextra-primary-hue: 152deg;
   --nextra-primary-saturation: 46%;
@@ -84,8 +84,8 @@ img {
    winnen. !important is hier het overschrijven van een vendor-regel, niet
    luiheid -- er is geen selector die specifieker kan zijn dan `body`. */
 body {
-  background-color: var(--lox-paper) !important;
-  color: var(--lox-ink-2);
+  background-color: var(--bra-paper) !important;
+  color: var(--bra-ink-2);
 }
 
 /* Koppen krijgen de display-serif. Nextra zet ze standaard vet-sans, wat naast
@@ -93,10 +93,10 @@ body {
 article h1,
 article h2,
 article h3 {
-  font-family: var(--lox-display);
+  font-family: var(--bra-display);
   font-weight: 400 !important;
   letter-spacing: -0.012em;
-  color: var(--lox-ink);
+  color: var(--bra-ink);
 }
 article h1 {
   font-size: clamp(34px, 4.2vw, 52px) !important;
@@ -104,7 +104,7 @@ article h1 {
 }
 article h2 {
   font-size: clamp(26px, 2.8vw, 34px) !important;
-  border-top: 1px solid var(--lox-rule);
+  border-top: 1px solid var(--bra-rule);
   padding-top: 1.6rem;
 }
 article h3 {
@@ -113,13 +113,13 @@ article h3 {
 article h4,
 article h5,
 article h6 {
-  color: var(--lox-ink);
+  color: var(--bra-ink);
 }
 
 /* Micro-typografie: mono-kapitalen met brede tracking, zoals het dashboard. */
 .nextra-breadcrumb,
 .nextra-toc > div > p:first-child {
-  font-family: var(--lox-mono);
+  font-family: var(--bra-mono);
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -137,7 +137,7 @@ article table {
   overflow-x: auto;
   width: max-content;
   min-width: 100%;
-  border: 1px solid var(--lox-rule);
+  border: 1px solid var(--bra-rule);
   border-radius: 10px;
   border-collapse: separate;
   border-spacing: 0;
@@ -145,17 +145,17 @@ article table {
   font-size: 13px;
 }
 article table th {
-  background: var(--lox-paper);
-  font-family: var(--lox-mono);
+  background: var(--bra-paper);
+  font-family: var(--bra-mono);
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 400;
-  color: var(--lox-ink-3);
-  border-bottom: 1px solid var(--lox-rule);
+  color: var(--bra-ink-3);
+  border-bottom: 1px solid var(--bra-rule);
 }
 article table td {
-  border-bottom: 1px solid var(--lox-rule);
+  border-bottom: 1px solid var(--bra-rule);
 }
 article table tr:last-child td {
   border-bottom: 0;
@@ -166,9 +166,9 @@ article table code {
 
 /* Inline code: de adressen en env-vars waar deze docs vol mee staan. */
 article code {
-  font-family: var(--lox-mono);
-  background: color-mix(in oklab, var(--lox-accent) 9%, transparent);
-  color: var(--lox-ink);
+  font-family: var(--bra-mono);
+  background: color-mix(in oklab, var(--bra-accent) 9%, transparent);
+  color: var(--bra-ink);
   border-radius: 4px;
   padding: 0.1em 0.34em;
 }
@@ -179,8 +179,8 @@ article pre code {
 
 /* Blockquote als kanttekening, niet als grijze doos. */
 article blockquote {
-  border-left: 2px solid var(--lox-accent);
-  color: var(--lox-ink-3);
+  border-left: 2px solid var(--bra-accent);
+  color: var(--bra-ink-3);
   font-style: normal;
 }
 
@@ -194,16 +194,16 @@ img {
    uit en daar in dat van het dashboard, zonder dat een van de twee van de
    ander hoeft te weten. */
 .lxd {
-  --lxd-ink: var(--lox-ink);
-  --lxd-ink-soft: var(--lox-ink-3);
-  --lxd-ink-faint: var(--lox-ink-3);
-  --lxd-surface: var(--lox-paper-2);
-  --lxd-rule: var(--lox-rule);
-  --lxd-accent: var(--lox-accent);
-  --lxd-accent-bg: color-mix(in oklab, var(--lox-accent) 12%, transparent);
-  --lxd-warn: var(--lox-brass);
-  --lxd-mono: var(--lox-mono);
-  --lxd-display: var(--lox-display);
+  --lxd-ink: var(--bra-ink);
+  --lxd-ink-soft: var(--bra-ink-3);
+  --lxd-ink-faint: var(--bra-ink-3);
+  --lxd-surface: var(--bra-paper-2);
+  --lxd-rule: var(--bra-rule);
+  --lxd-accent: var(--bra-accent);
+  --lxd-accent-bg: color-mix(in oklab, var(--bra-accent) 12%, transparent);
+  --lxd-warn: var(--bra-brass);
+  --lxd-mono: var(--bra-mono);
+  --lxd-display: var(--bra-display);
 }
 /* Nextra's prose-regels zouden anders marges op de figuur en de lijst zetten. */
 .lxd figure,

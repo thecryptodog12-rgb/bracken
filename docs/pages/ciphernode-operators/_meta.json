@@ -16,7 +16,7 @@
   },
   "interactive-guide": {
     "title": "Interactive Setup Guide",
-    "href": "https://app.loxley-rh.com/#operator",
+    "href": "https://bracken-dashboard-solplay.vercel.app/#operator",
     "newWindow": true
   }
 }

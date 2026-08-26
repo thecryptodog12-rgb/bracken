@@ -19,7 +19,7 @@ const REPO = 'https://github.com/thecryptodog12-rgb/bracken'
 // Waar deze docs zelf staan. Stond hardgecodeerd op een vreemd domein in elke
 // og:- en twitter:-tag, dus elke gedeelde link kondigde dat aan als de
 // canonieke plek van onze pagina's.
-const DOCS_URL = (process.env.NEXT_PUBLIC_DOCS_URL || 'https://docs.loxley-rh.com').replace(/\/$/, '')
+const DOCS_URL = (process.env.NEXT_PUBLIC_DOCS_URL || 'https://bracken-docs-solplay.vercel.app').replace(/\/$/, '')
 
 export default {
   // Wijst naar buiten, naar de voordeur -- niet naar de docs-root, waar je al
@@ -31,23 +31,22 @@ export default {
           zijn greenwood, de naam erft de tekstkleur van het thema. */}
       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '9px' }}>
         <svg width='22' height='22' viewBox='0 0 24 24' fill='none' aria-hidden='true'>
+          <path d='M5.5 11C4.1 14.2 4.8 18.6 8.2 22' stroke='var(--bra-accent)' strokeWidth='1.9' strokeLinecap='round' opacity='0.55' />
           <path
-            d='M12 1.6c-4.9 0-8.6 3.9-8.6 9.2v9.4c0 1 .8 1.8 1.8 1.8h3.4v-8.2a3.4 3.4 0 0 1 6.8 0V22h3.4c1 0 1.8-.8 1.8-1.8v-9.4c0-5.3-3.7-9.2-8.6-9.2Z'
-            fill='var(--lox-accent)'
-          />
-          <path
-            d='M12 5.4c-3 0-5.2 2.4-5.2 5.6 0 1.5.5 2.8 1.4 3.8V13a3.8 3.8 0 0 1 7.6 0v1.8c.9-1 1.4-2.3 1.4-3.8 0-3.2-2.2-5.6-5.2-5.6Z'
-            fill='var(--lox-accent)'
-            fillOpacity='0.28'
+            d='M5.5 11A5.5 5.5 0 0 1 16.5 11A4 4 0 0 1 8.5 11A2.6 2.6 0 0 1 13.7 11'
+            stroke='var(--bra-accent)'
+            strokeWidth='1.9'
+            strokeLinecap='round'
+            strokeLinejoin='round'
           />
         </svg>
         <span
           style={{
-            fontFamily: 'var(--lox-display)',
+            fontFamily: 'var(--bra-display)',
             fontSize: '22px',
             lineHeight: 1,
             letterSpacing: '-0.014em',
-            color: 'var(--lox-ink)',
+            color: 'var(--bra-ink)',
           }}
         >
           Bracken

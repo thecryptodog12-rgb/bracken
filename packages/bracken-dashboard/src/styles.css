@@ -20,32 +20,32 @@
      grijs blad leest als "standaard template" en dat is precies wat dit niet
      moet zijn. Datavlakken (--paper-2) blijven bijna-wit, anders wordt een
      tabel met cijfers onleesbaar. */
-  --ink: #1d3527;
+  --ink: #1a2f27;
   --ink-2: #33513c;
   --ink-3: #5c7a65;
   --ink-4: #8ba392;
-  --rule: #cfe0cb;
-  --rule-soft: #dcebd7;
-  --paper: #e9f4e6;
+  --rule: #ccdbd3;
+  --rule-soft: #dbe7e1;
+  --paper: #edf2ec;
   --paper-2: #fbfdfa;
   --paper-3: #d8e8d4;
 
-  --accent-bg: #e7f1e8;
-  --accent-soft: #c3ddc9;
-  --accent-deep: #1c5c3f;
-  --accent-ink: #10301f;
+  --accent-bg: #e5efe9;
+  --accent-soft: #bdd8c9;
+  --accent-deep: #1e6b4b;
+  --accent-ink: #0e3224;
 
-  --brass: #9a7328;
-  --brass-bg: #f7efdd;
+  --brass: #a8521f;
+  --brass-bg: #faeee5;
 
   /* De footer is een volle balk en moet in BEIDE thema's donker blijven --
      hij mag niet meekantelen zoals --ink/--paper dat doen. */
-  --foot-bg: #15211b;
-  --foot-ink: #f6f3e9;
+  --foot-bg: #14211c;
+  --foot-ink: #f4f1e8;
   /* De hero is in beide thema's donker, dus zijn accent mag niet meekantelen.
      --accent-deep is in light #1c5c3f: donkergroen op een donker slab, en dus
      onleesbaar. Dit blijft licht. */
-  --hero-accent: #7fd3a4;
+  --hero-accent: #86d3a6;
 
   /* Display staat los van de leesserif: hoog contrast, alleen voor de paar
      plekken waar de pagina iets beweert. */
@@ -64,46 +64,46 @@
    in dit bestand hoeft ervan te weten. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --ink: #e8eee6;
+    --ink: #e6ede8;
     --ink-2: #c4cfc6;
     --ink-3: #94a29a;
     --ink-4: #6d7c74;
-    --rule: #263029;
-    --rule-soft: #1d2620;
-    --paper: #10160f;
+    --rule: #24302b;
+    --rule-soft: #1b2521;
+    --paper: #0f1512;
     --paper-2: #161e17;
     --paper-3: #1c251d;
-    --accent-bg: #14291d;
-    --accent-soft: #234c36;
-    --accent-deep: #6fcb9a;
-    --accent-ink: #d3f0de;
-    --brass: #d8a548;
-    --brass-bg: #2a2113;
-    --foot-bg: #0b100a;
-    --foot-ink: #e8eee6;
-    --hero-accent: #7fd3a4;
+    --accent-bg: #132a20;
+    --accent-soft: #214d38;
+    --accent-deep: #6fcda0;
+    --accent-ink: #d0f0df;
+    --brass: #e08a4e;
+    --brass-bg: #2b1c11;
+    --foot-bg: #0a100d;
+    --foot-ink: #e6ede8;
+    --hero-accent: #86d3a6;
   }
 }
 
 :root[data-theme='dark'] {
-  --ink: #e4f0e4;
+  --ink: #e6ede8;
   --ink-2: #bed2c1;
   --ink-3: #8ea795;
   --ink-4: #67806f;
-  --rule: #22352a;
-  --rule-soft: #1a2a20;
-  --paper: #0d1610;
+  --rule: #24302b;
+  --rule-soft: #1b2521;
+  --paper: #0f1512;
   --paper-2: #131f17;
   --paper-3: #1a281e;
-  --accent-bg: #14291d;
-  --accent-soft: #234c36;
-  --accent-deep: #6fcb9a;
-  --accent-ink: #d3f0de;
-  --brass: #d8a548;
-  --brass-bg: #2a2113;
-  --foot-bg: #0b100a;
-  --foot-ink: #e8eee6;
-  --hero-accent: #7fd3a4;
+  --accent-bg: #132a20;
+  --accent-soft: #214d38;
+  --accent-deep: #6fcda0;
+  --accent-ink: #d0f0df;
+  --brass: #e08a4e;
+  --brass-bg: #2b1c11;
+  --foot-bg: #0a100d;
+  --foot-ink: #e6ede8;
+  --hero-accent: #86d3a6;
 }
 
 * {

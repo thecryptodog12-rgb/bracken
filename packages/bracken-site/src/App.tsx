@@ -22,9 +22,9 @@ import Reveal from './Reveal'
 import ThemeToggle from './ThemeToggle'
 import { Wordmark } from './Wordmark'
 
-const DOCS_BASE = 'https://docs.loxley-rh.com'
+const DOCS_BASE = 'https://bracken-docs-solplay.vercel.app'
 const DOCS = `${DOCS_BASE}/introduction`
-const DASHBOARD = 'https://app.loxley-rh.com'
+const DASHBOARD = 'https://bracken-dashboard-solplay.vercel.app'
 const REPO = 'https://github.com/thecryptodog12-rgb/bracken'
 
 type Path = { eyebrow: string; title: string; body: string; cta: string; href: string; ready: boolean }
@@ -112,13 +112,13 @@ export default function App() {
         <div className='status__inner'>
           <span className='status__tag'>Where this stands</span>
           <p>
-            Bracken is <strong>live on Robinhood Chain</strong> (chain 4663). The protocol runs end to end — sortition, distributed key
-            generation, threshold decryption, a plaintext published on chain — and every contract address is{' '}
-            <a href={`${DOCS_BASE}/deployments`} target='_blank' rel='noreferrer'>
-              published and readable
+            Bracken targets Robinhood Chain (chain 4663). <strong>Nothing is deployed yet.</strong> The protocol runs end to end on a local
+            network — sortition, distributed key generation, threshold decryption, a plaintext published on chain — and no contract exists
+            on a public one. Everything on this page is checkable in{' '}
+            <a href={REPO} target='_blank' rel='noreferrer'>
+              the source
             </a>
-            . Two things are not there yet, and they matter: <strong>no independent operators are running</strong>, and the registered E3
-            program enforces no application rules. Both are stated in the docs rather than left for you to discover.
+            .
           </p>
         </div>
       </section>

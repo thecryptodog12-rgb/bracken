@@ -141,7 +141,7 @@ Addresses land in `packages/bracken-contracts/deployed_contracts.json` under
 
 ```bash
 # packages/bracken-dashboard/.env
-VITE_DOCS_URL=https://docs.loxley-rh.com
+VITE_DOCS_URL=https://bracken-docs-solplay.vercel.app
 ```
 
 Then update `src/lib/chain.ts` to read chain 4663 and the new addresses, and
